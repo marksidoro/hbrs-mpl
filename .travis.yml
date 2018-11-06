@@ -68,7 +68,6 @@ install:
   - echo $PATH
   - echo $PWD
   - >
-    set -e
     if [ ! -d "${INSTALL_PREFIX}" ]; then 
         mkdir "${INSTALL_PREFIX}";
     fi;
@@ -100,17 +99,15 @@ before_script:
   - ctest --version
 
   - >
-    set -e
-    git clone --depth 1 https://github.com/JM1/hbrs-cmake.git
-    cd hbrs-cmake
-    mkdir build && cd build/
-    cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} "-DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX}" -DHBRS_CMAKE_ENABLE_TESTS=OFF ..
-    make -j$(nproc) install
-    cd ../ && rm -rf build/
+    git clone --depth 1 https://github.com/JM1/hbrs-cmake.git &&
+    cd hbrs-cmake &&
+    mkdir build && cd build/ &&
+    cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} "-DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX}" -DHBRS_CMAKE_ENABLE_TESTS=OFF .. &&
+    make -j$(nproc) install &&
+    cd ../ && rm -rf build/ &&
     cd ../ && rm -rf hbrs-cmake/
 
 script:
-#  - set -o errexit
   - ccache -s
   - >
     mkdir build && cd build &&
