@@ -38,29 +38,39 @@ matrix:
         packages: [ "lynx", "ccache", "libstdc++-8-dev", "libboost1.61-all-dev", "clang-6.0" ]
       } }
 
-    # Clang trunk
-    - env: CC=clang CXX=clang++ BUILD_TYPE=Debug
+#    # Clang 7.0
+#    - env: CC=clang-7.0 CXX=clang++-7.0 BUILD_TYPE=Debug
+#      addons: { apt: { 
+#        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty-7.0", { sourceline: "ppa:rakhimov/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
+#        packages: [ "lynx", "ccache", "libstdc++-8-dev", "libboost1.61-all-dev", "clang-7.0" ]
+#      } }
+
+    # Debug
+    - env: CC=clang-6.0 CXX=clang++-6.0 BUILD_TYPE=Debug
       addons: { apt: { 
-        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty", { sourceline: "ppa:rakhimov/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
-        packages: [ "lynx", "ccache", "libstdc++-8-dev", "libboost1.61-all-dev", "clang" ]
+        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty-6.0", { sourceline: "ppa:rakhimov/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
+        packages: [ "lynx", "ccache", "libstdc++-8-dev", "libboost1.61-all-dev", "clang-6.0" ]
       } }
 
-    - env: CC=clang CXX=clang++ BUILD_TYPE=MinSizeRel
+    # MinSizeRel
+    - env: CC=clang-6.0 CXX=clang++-6.0 BUILD_TYPE=MinSizeRel
       addons: { apt: { 
-        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty", { sourceline: "ppa:rakhimov/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
-        packages: [ "lynx", "ccache", "libstdc++-8-dev", "libboost1.61-all-dev", "clang" ]
+        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty-6.0", { sourceline: "ppa:rakhimov/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
+        packages: [ "lynx", "ccache", "libstdc++-8-dev", "libboost1.61-all-dev", "clang-6.0" ]
       } }
 
-    - env: CC=clang CXX=clang++ BUILD_TYPE=RelWithDebInfo
+    # RelWithDebInfo
+    - env: CC=clang-6.0 CXX=clang++-6.0 BUILD_TYPE=RelWithDebInfo
       addons: { apt: { 
-        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty", { sourceline: "ppa:rakhimov/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
-        packages: [ "lynx", "ccache", "libstdc++-8-dev", "libboost1.61-all-dev", "clang" ]
+        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty-6.0", { sourceline: "ppa:rakhimov/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
+        packages: [ "lynx", "ccache", "libstdc++-8-dev", "libboost1.61-all-dev", "clang-6.0" ]
       } }
 
-    - env: CC=clang CXX=clang++ BUILD_TYPE=Release
+    # Release
+    - env: CC=clang-6.0 CXX=clang++-6.0 BUILD_TYPE=Release
       addons: { apt: { 
-        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty", { sourceline: "ppa:rakhimov/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
-        packages: [ "lynx", "ccache", "libstdc++-8-dev", "libboost1.61-all-dev", "clang" ]
+        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty-6.0", { sourceline: "ppa:rakhimov/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
+        packages: [ "lynx", "ccache", "libstdc++-8-dev", "libboost1.61-all-dev", "clang-6.0" ]
       } }
 
 install:
