@@ -48,7 +48,7 @@ struct fold1_impl_zas_smc_Matrix_irange {
 	>
 	constexpr decltype(auto)
 	operator()(mpl::zas<mpl::smc<Matrix, El::Int>, boost::integer_range<Integer>> const& a, F && f) const {
-		return mpl::fold1_left(a, HBRS_MPL_FWD(f));
+		return (*mpl::fold1_left)(a, HBRS_MPL_FWD(f));
 	}
 };
 
@@ -64,7 +64,7 @@ struct fold1_impl_zas_smr_Matrix_irange {
 	>
 	constexpr decltype(auto)
 	operator()(mpl::zas<mpl::smr<Matrix, El::Int>, boost::integer_range<Integer>> const& a, F && f) const {
-		return mpl::fold1_left(a, HBRS_MPL_FWD(f));
+		return (*mpl::fold1_left)(a, HBRS_MPL_FWD(f));
 	}
 };
 
