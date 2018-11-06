@@ -1,4 +1,4 @@
-/* Copyright (c) 2019 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,19 +14,28 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FN_PCA_IMPL_HPP
-#define HBRS_MPL_FN_PCA_IMPL_HPP
+#ifndef HBRS_MPL_FN_PCA_FWD_HBRS_MPL_HPP
+#define HBRS_MPL_FN_PCA_FWD_HBRS_MPL_HPP
 
-#include "fwd.hpp"
+#include <hbrs/mpl/config.hpp>
 
-#include <hbrs/mpl/dt/function.hpp>
+#include <boost/hana/tuple.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
-HBRS_MPL_DEF_F2(pca, pca_t)
+namespace hana = boost::hana;
+namespace detail {
+
+struct pca_impl_matrix {
+	template <typename Matrix>
+	constexpr auto
+	operator()(Matrix const& a, bool economy) const;
+};
+
+/* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#include "impl/matlab.hpp"
-#include "impl/elemental.hpp"
-#include "impl/hbrs_mpl.hpp"
+#define HBRS_MPL_FN_PCA_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                        \
+		hbrs::mpl::detail::pca_impl_matrix{}                                                                           \
+	)
 
-#endif // !HBRS_MPL_FN_PCA_IMPL_HPP
+#endif // !HBRS_MPL_FN_PCA_FWD_HBRS_MPL_HPP

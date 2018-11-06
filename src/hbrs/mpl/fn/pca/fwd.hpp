@@ -26,10 +26,11 @@ HBRS_MPL_DEC_F2(pca, pca_t)
 HBRS_MPL_NAMESPACE_END
 
 #include "fwd/elemental.hpp"
+#include "fwd/hbrs_mpl.hpp"
 #include "fwd/matlab.hpp"
 
 //TODO: (a) Describe input matrix X and its properties (e.g. rows of X correspond to observations and columns correspond to variables) or  
 //      (b) Wrap input matrix in wrapper data structure, which describes meanings of rows and columns
-HBRS_MPL_MAP_IMPLS(pca_t, HBRS_MPL_FN_PCA_IMPLS_ELEMENTAL, HBRS_MPL_FN_PCA_IMPLS_MATLAB)
+HBRS_MPL_MAP_IMPLS(pca_t, HBRS_MPL_FN_PCA_IMPLS_ELEMENTAL, HBRS_MPL_FN_PCA_IMPLS_HBRS_MPL, HBRS_MPL_FN_PCA_IMPLS_MATLAB)
 
 #endif // !HBRS_MPL_FN_PCA_FWD_HPP
