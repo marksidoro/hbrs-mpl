@@ -20,9 +20,10 @@
 #include "fwd.hpp"
 
 #include <hbrs/mpl/core/implementations_of.hpp>
+#include <hbrs/mpl/core/call.hpp>
+#include <hbrs/mpl/core/reference_wrapper.hpp>
+#include <hbrs/mpl/dt/expression.hpp>
 
-#include <boost/hana/unpack.hpp>
-#include <boost/hana/functional/overload_linearly.hpp>
 #include <boost/hana/basic_tuple.hpp>
 #include <boost/hana/type.hpp>
 
@@ -49,7 +50,7 @@ struct call_impl<OperationTag, hana::basic_tuple<OperandsTag...>, hana::when<Con
 	>
 	static constexpr decltype(auto)
 	apply(Operation&& o, Operands&&... os) {
-        return hana::unpack(implementations_of(HBRS_MPL_FWD(o)), hana::overload_linearly)(HBRS_MPL_FWD(os)...);
+		return make_expression(HBRS_MPL_FWD(o), wrap_references(HBRS_MPL_FWD(os)...));
 	}
 };
 

@@ -21,6 +21,8 @@
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/core/call.hpp>
+#include <hbrs/mpl/core/evaluate.hpp>
+#include <boost/hana/functional/demux.hpp>
 
 #define HBRS_MPL_DEFINE_FUNCTION_ARITY1(f_name, f_type)                                                                \
 	template <typename T1>                                                                                             \
@@ -32,7 +34,7 @@
 	                                                                                                                   \
 	constexpr decltype(auto)                                                                                           \
 	f_type::operator*() const {                                                                                        \
-		return f_name;                                                          \
+		return boost::hana::demux(hbrs::mpl::evaluate)(f_name);                                                        \
 	}
 
 #define HBRS_MPL_DEF_F1(...)                                                                                           \
@@ -48,7 +50,7 @@
 	                                                                                                                   \
 	constexpr decltype(auto)                                                                                           \
 	f_type::operator*() const {                                                                                        \
-		return f_name;                                                          \
+		return boost::hana::demux(hbrs::mpl::evaluate)(f_name);                                                        \
 	}
 
 #define HBRS_MPL_DEF_F2(...)                                                                                           \
@@ -64,7 +66,7 @@
 	                                                                                                                   \
 	constexpr decltype(auto)                                                                                           \
 	f_type::operator*() const {                                                                                        \
-		return f_name;                                                          \
+		return boost::hana::demux(hbrs::mpl::evaluate)(f_name);                                                        \
 	}
 
 #define HBRS_MPL_DEF_F3(...)                                                                                           \
@@ -80,7 +82,7 @@
 	                                                                                                                   \
 	constexpr decltype(auto)                                                                                           \
 	f_type::operator*() const {                                                                                        \
-		return f_name;                                                          \
+		return boost::hana::demux(hbrs::mpl::evaluate)(f_name);                                                        \
 	}
 
 #define HBRS_MPL_DEF_F1N(...)                                                                                          \

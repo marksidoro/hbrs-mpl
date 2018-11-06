@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,39 +14,38 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_CORE_EVALUATE_FWD_HPP
-#define HBRS_MPL_CORE_EVALUATE_FWD_HPP
+#pragma once
+
+#ifndef HBRS_MPL_FWD_CORE_ANNOTATION_HPP
+#define HBRS_MPL_FWD_CORE_ANNOTATION_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/core/preprocessor.hpp>
-#include <hbrs/mpl/dt/no_context.hpp>
 #include <boost/hana/fwd/core/make.hpp>
 #include <boost/hana/fwd/core/to.hpp>
+#include <hbrs/mpl/preprocessor/core.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 
-HBRS_MPL_DEF_FLAG(delay_evaluation)
-HBRS_MPL_DEC_CF3(choose_implementation)
+namespace detail {
+	
+template <typename Object, typename Annotations>
+struct annotated;
+struct annotated_tag {};
+constexpr auto make_annotated = hana::make<annotated_tag>;
+constexpr auto to_annotated = hana::to<annotated_tag>;
 
-template <
-	typename ExpressionTag,
-	typename ContextTag,
-	typename = void
->
-struct evaluate_impl : evaluate_impl<ExpressionTag, ContextTag, hana::when<true>> { };
+/* namespace detail */ }
 
-struct evaluate_t {
-	template <
-		typename Expression,
-		typename Context = no_context
-	>
-	constexpr decltype(auto)
-	operator()(Expression&&, Context&& = make_no_context()) const;
-};
+HBRS_MPL_DEC_CF1(annotations)
 
-inline constexpr evaluate_t evaluate{};
+HBRS_MPL_DEC_CF1(object)
+HBRS_MPL_DEC_CF1(has_annotations)
+HBRS_MPL_DEC_CF2(has_annotation)
+HBRS_MPL_DEC_CF2(add_annotation)
+HBRS_MPL_DEC_CF1(unwrap_if_no_annotations)
+HBRS_MPL_DEC_CF2(remove_annotation)
 
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_CORE_EVALUATE_FWD_HPP
+#endif // !HBRS_MPL_FWD_CORE_ANNOTATION_HPP

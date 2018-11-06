@@ -124,30 +124,29 @@ BOOST_AUTO_TEST_CASE(if_test_1) {
 	BOOST_CHECK((*if_)(true, 1, 2) == 1);
 	BOOST_CHECK((*if_)(false, 1, 2) == 2);
 	
-	//NOTE: Without lazy evaluation of both if branches those statements will fail to compile, 
-	//      because hana::front is invoked early on empty std::tuple!
-// 	static_assert(std::is_same<
-// 		decltype(detail::if_impl_hana_bool{}(
-// 			hana::true_c, 
-// 			invoke(hana::front, hana::make_tuple(hana::int_c<1337>)), 
-// 			invoke(hana::front, std::make_tuple())
-// 		)),
-// 		expression<
-// 			invoke_t,
-// 			hana::tuple<
-// 				detail::lvalue_reference_wrapper<const hana::front_t>,
-// 				detail::rvalue_reference_wrapper<
-// 					hana::tuple< hana::integral_constant<int, 1337> >
-// 				>
-// 			>
-// 		> &&
-// 	>{}, "");
-// 	
-// 	constexpr hana::int_<1337> if8 = (*if_)(
-// 		hana::true_c, 
-// 		invoke(hana::front, hana::make_tuple(hana::int_c<1337>)), 
-//         invoke(hana::front, hana::make_tuple())
-// 	);
+	
+	static_assert(std::is_same<
+		decltype(detail::if_impl_hana_bool{}(
+			hana::true_c, 
+			invoke(hana::front, hana::make_tuple(hana::int_c<1337>)), 
+			invoke(hana::front, std::make_tuple())
+		)),
+		expression<
+			invoke_t,
+			hana::tuple<
+				detail::lvalue_reference_wrapper<const hana::front_t>,
+				detail::rvalue_reference_wrapper<
+					hana::tuple< hana::integral_constant<int, 1337> >
+				>
+			>
+		> &&
+	>{}, "");
+	
+	constexpr hana::int_<1337> if8 = (*if_)(
+		hana::true_c, 
+		invoke(hana::front, hana::make_tuple(hana::int_c<1337>)), 
+        invoke(hana::front, hana::make_tuple())
+	);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

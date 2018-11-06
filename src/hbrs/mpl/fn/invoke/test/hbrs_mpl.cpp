@@ -74,16 +74,49 @@ BOOST_AUTO_TEST_CASE(invoke_test_1) {
 		decltype(hana::front(hana::make_tuple(hana::int_c<1337>))),
 		hana::int_<1337> &&
 	>{}, "");
+	static_assert(std::is_same<
+		decltype(invoke(hana::front, hana::make_tuple(hana::int_c<1337>))),
+		expression<
+			invoke_t, 
+			hana::tuple<
+				detail::lvalue_reference_wrapper<hana::front_t const>,
+				detail::rvalue_reference_wrapper<
+					hana::tuple< hana::int_<1337> >
+				>
+			>
+		> 
+	>{}, "");
+	
+	static_assert(std::is_same<
+		decltype(hana::back(invoke(hana::front, hana::make_tuple(hana::int_c<1337>)).operands())),
+		detail::rvalue_reference_wrapper<
+			hana::tuple<
+				hana::integral_constant<int, 1337> 
+			>
+		> &&
+	>{}, "");
+	
 	
 	static_assert(std::is_same<
 		decltype((*invoke)(hana::front, hana::make_tuple(hana::int_c<1337>))),
-		hana::int_<1337> &&
+		hana::int_<1337>
 	>{}, "");
 	
 	static_assert(std::is_same<
 		decltype(hana::id((*invoke)(hana::front, hana::make_tuple(hana::int_c<1337>)))),
 		hana::int_<1337>
 	>{}, "");
+	
+	static_assert(std::is_same<
+		decltype(wrap_reference((*invoke)(hana::front, hana::make_tuple(hana::int_c<1337>)))),
+		detail::rvalue_reference_wrapper< hana::int_<1337> >
+	>{}, "");
+	
+	static_assert(std::is_same<
+		decltype(hana::id(unwrap_reference((*invoke)(hana::front, hana::make_tuple(hana::int_c<1337>))))),
+		hana::int_<1337>
+	>{}, "");
+	
 }
 
 BOOST_AUTO_TEST_SUITE_END()
