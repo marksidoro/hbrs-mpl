@@ -1,0 +1,51 @@
+# Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+#
+# Redistribution and use is allowed according to the terms of the BSD license.
+# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+#
+
+@PACKAGE_INIT@
+
+set_and_check(hbrs-mpl_BINDIR      "@PACKAGE_HBRS_MPL_INSTALL_BINDIR@")
+set_and_check(hbrs-mpl_LIBDIR      "@PACKAGE_HBRS_MPL_INSTALL_LIBDIR@")
+set_and_check(hbrs-mpl_INCLUDEDIR  "@PACKAGE_HBRS_MPL_INSTALL_INCLUDEDIR@")
+set_and_check(hbrs-mpl_CMAKEDIR    "@PACKAGE_HBRS_MPL_INSTALL_CMAKEDIR@")
+set(hbrs-mpl_elemental_FOUND       @HBRS_MPL_ENABLE_ADDON_ELEMENTAL@)
+set(hbrs-mpl_matlab_FOUND          @HBRS_MPL_ENABLE_ADDON_MATLAB@)
+
+check_required_components(hbrs-mpl)
+
+
+
+# NOTE: Keep list of dependencies in sync with packages in CMakeLists.txt!
+include(CMakeFindDependencyMacro)
+#find_dependency(hbrs-cmake REQUIRED)
+find_dependency(Boost 1.61 REQUIRED COMPONENTS unit_test_framework system thread serialization chrono program_options filesystem iostreams regex exception signals)
+find_dependency(LAPACK)
+find_dependency(LAPACKE)
+find_dependency(OpenMP)
+find_dependency(MPI)
+find_dependency(netcdf)
+find_dependency(VTK)
+find_dependency(Matlab COMPONENTS MAIN_PROGRAM)
+find_dependency(FLAME)
+find_dependency(Elemental)
+set(QT_USE_IMPORTED_TARGETS TRUE)
+find_dependency(Qt5 COMPONENTS Core Widgets)
+
+
+
+set(hbrs-mpl_CXX_COMPILER_ID "@CMAKE_CXX_COMPILER_ID@")
+set(hbrs-mpl_CXX_COMPILER_VERSION "@CMAKE_CXX_COMPILER_VERSION@")
+
+if((NOT hbrs-mpl_CXX_COMPILER_ID STREQUAL CMAKE_CXX_COMPILER_ID) OR
+   (NOT hbrs-mpl_CXX_COMPILER_VERSION STREQUAL CMAKE_CXX_COMPILER_VERSION))
+    message(WARNING 
+    "This code was built with C++ compiler ${hbrs-mpl_CXX_COMPILER_ID} ${hbrs-mpl_CXX_COMPILER_VERSION}, "
+    "but you're using ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}. "
+    "This might cause linking problems or hardly traceable errors at runtime due to binary incompatibilities! "
+    "Better use the same compiler and same compiler version. For details see "
+    "https://community.kde.org/Policies/Binary_Compatibility_Issues_With_C++")
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/hbrs-mpl-targets.cmake")

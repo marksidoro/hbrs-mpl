@@ -1,0 +1,11 @@
+--- /opt/MATLAB/R2018b/toolbox/eml/eml/+coder/+internal/+reflapack/xzsvdc.m.orig	2017-09-14 18:15:23.000000000 +0200
++++ /opt/MATLAB/R2018b/toolbox/eml/eml/+coder/+internal/+reflapack/xzsvdc.m	2018-10-09 11:42:20.943147488 +0200
+@@ -40,6 +40,8 @@
+ end
+ if wantv
+     Vf = eml_expand(aZERO,[nrv,ncv]);
++else
++    Vf = eml_expand(aZERO,[0,0]);
+ end
+ if isempty(A)
+     if wantu
