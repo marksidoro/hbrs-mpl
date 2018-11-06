@@ -122,7 +122,7 @@ script:
   - >
     mkdir build && cd build &&
     (
-      cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} "-DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX}"
+      cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} "-DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX}" \
         -DHBRS_MPL_ENABLE_TESTS=ON -DHBRS_MPL_ENABLE_ADDON_ELEMENTAL=OFF -DHBRS_MPL_ENABLE_ADDON_MATLAB=OFF .. ||
           (cat CMakeFiles/CMakeError.log; travis_terminate 1)
     ) &&
