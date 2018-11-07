@@ -20,7 +20,7 @@ check_required_components(hbrs-mpl)
 # NOTE: Keep list of dependencies in sync with packages in CMakeLists.txt!
 include(CMakeFindDependencyMacro)
 #find_dependency(hbrs-cmake REQUIRED)
-find_dependency(Boost 1.61 REQUIRED COMPONENTS unit_test_framework system thread serialization chrono program_options filesystem iostreams regex exception signals)
+find_dependency(Boost 1.62 REQUIRED COMPONENTS unit_test_framework system thread serialization chrono program_options filesystem iostreams regex exception signals)
 find_dependency(LAPACK)
 find_dependency(LAPACKE)
 find_dependency(OpenMP)
