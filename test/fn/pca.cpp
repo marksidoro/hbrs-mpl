@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 		for(bool economy : { true, false }) {
 			BOOST_TEST_MESSAGE("economy=" << (economy ? "true" : "false"));
 			
-			auto funs = hana::make_tuple(
+			auto funs = hana::drop_back(hana::make_tuple(
 				#ifdef HBRS_MPL_ENABLE_ADDON_MATLAB
 				[](auto && a, auto economy) {
 					return matlab::detail::pca_impl_level0{}(matlab::make_matrix(HBRS_MPL_FWD(a)), economy);
@@ -92,20 +92,13 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 					return elemental::detail::pca_impl_Matrix{}(elemental::make_matrix(HBRS_MPL_FWD(a)), economy); 
 				},
 				#endif
-				"PLACEHOLDER_FOR_DROP_BACK"
-			);
+				"SEQUENCE_TERMINATOR___REMOVED_BY_DROP_BACK"
+			));
 			
-			static_assert(hana::length(funs) > hana::size_c<1>, "");
+			auto results = hana::transform(funs, [&dataset, &economy](auto f) { return f(dataset, economy); });
 			
-			auto results = hana::transform(
-				hana::drop_back(funs),
-				[&dataset, &economy](auto f) { return f(dataset, economy); }
-			);
-			
-			hana::for_each(
-				hana::make_range(hana::ushort_c<0>, hana::length(results)-hana::ushort_c<1>),
-				[&dataset, &economy, &results](auto i) {
-					
+			if constexpr(hana::length(results) >= 2u) {
+				auto compare = [&dataset, &economy, &results](auto i) {
 					using hbrs::mpl::select;
 					
 					auto j = i+hana::ushort_c<1>;
@@ -135,8 +128,16 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 					BOOST_TEST_MESSAGE("comparing pca_mean of impl nr " << i << " and " << j);
 					_BOOST_TEST_VVEQ((*at)(pca_i, pca_mean{}),   (*at)(pca_j, pca_mean{}), false);
 					BOOST_TEST_MESSAGE("comparing impl nr " << i << " and " << j << " done.");
-				}
-			);
+				};
+				
+				hana::for_each(
+					hana::make_range(
+						hana::size_c<0>, 
+						hana::length(results)-hana::size_c<2>
+					),
+					compare
+				);
+			}
 			
 			{
 				auto rebuilds = hana::transform(results, [](auto && pca_result) {

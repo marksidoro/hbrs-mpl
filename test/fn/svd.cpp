@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(0.000000001)) {
 				)
 			);
 			
-			auto funs = hana::make_tuple(
+			auto funs = hana::drop_back(hana::make_tuple(
 				#ifdef HBRS_MPL_ENABLE_ADDON_MATLAB
 				[](auto && a, auto mode) {
 					return matlab::detail::svd_impl_level0{}(matlab::make_matrix(HBRS_MPL_FWD(a)), mode);
@@ -106,19 +106,13 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(0.000000001)) {
 					return elemental::detail::svd_impl_Matrix{}(elemental::make_matrix(HBRS_MPL_FWD(a)), mode);
 				},
 				#endif
-				"PLACEHOLDER_FOR_DROP_BACK"
-			);
+				"SEQUENCE_TERMINATOR___REMOVED_BY_DROP_BACK"
+			));
 			
-			static_assert(hana::length(funs) > hana::size_c<1>, "");
+			auto results = hana::transform(funs, [&dataset, &mode](auto f) { return f(dataset, mode); });
 			
-			auto results = hana::transform(
-				hana::drop_back(funs),
-				[&dataset, &mode](auto f) { return f(dataset, mode); }
-			);
-			
-			hana::for_each(
-				hana::make_range(hana::ushort_c<0>, hana::length(results)-hana::ushort_c<1>),
-				[&dataset, &mode, &results](auto i) {
+			if constexpr(hana::length(results) >= 2u) {
+				auto compare = [&dataset, &mode, &results](auto i) {
 					using hbrs::mpl::select;
 					
 					auto j = i+hana::ushort_c<1>;
@@ -164,8 +158,16 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(0.000000001)) {
 					}
 					
 					BOOST_TEST_MESSAGE("comparing impl nr " << i << " and " << j << " done.");
-				}
-			);
+				};
+				
+				hana::for_each(
+					hana::make_range(
+						hana::size_c<0>, 
+						hana::length(results)-hana::size_c<2>
+					),
+					compare
+				);
+			}
 			
 			{
 				std::size_t f_nr = 0;
