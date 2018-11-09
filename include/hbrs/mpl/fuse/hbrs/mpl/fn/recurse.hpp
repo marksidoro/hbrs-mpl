@@ -36,7 +36,7 @@ struct recurse_functor_t {
 	template<typename Condition_, typename LastStep_, typename RecursionStep_>
 	constexpr
 	recurse_functor_t(Condition_ && c, LastStep_ && ls, RecursionStep_ && rs)
-	: c{HBRS_MPL_FWD(c)}, ls{HBRS_MPL_FWD(ls)}, rs{HBRS_MPL_FWD(rs)} {};
+	: c{HBRS_MPL_FWD(c)}, ls{HBRS_MPL_FWD(ls)}, rs{HBRS_MPL_FWD(rs)} {}
 	
 	template <typename Args>
 	constexpr decltype(auto)
