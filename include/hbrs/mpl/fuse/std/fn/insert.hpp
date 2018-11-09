@@ -82,7 +82,7 @@ struct insert_impl_std_map {
 			decltype(args_ok(std::declval<M>(), std::declval<Pair>())){}
 		>* = nullptr
 	>
-	constexpr decltype(auto)
+	constexpr auto
 	operator()(M const& m, Pair && p) const {
 		M m_{m};
 		return operator()(std::move(m_), HBRS_MPL_FWD(p));

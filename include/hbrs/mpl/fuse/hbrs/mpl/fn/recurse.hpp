@@ -30,14 +30,13 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-template<
-	typename Condition, 
-	typename LastStep,
-	typename RecursionStep
->
+template<typename Condition, typename LastStep, typename RecursionStep>
 struct recurse_functor_t {
+	
+	template<typename Condition_, typename LastStep_, typename RecursionStep_>
 	constexpr
-	recurse_functor_t(Condition const c, LastStep ls, RecursionStep rs) : c{c}, ls{ls}, rs{rs} {};
+	recurse_functor_t(Condition_ && c, LastStep_ && ls, RecursionStep_ && rs)
+	: c{HBRS_MPL_FWD(c)}, ls{HBRS_MPL_FWD(ls)}, rs{HBRS_MPL_FWD(rs)} {};
 	
 	template <typename Args>
 	constexpr decltype(auto)
@@ -88,24 +87,26 @@ struct recurse_functor_t {
 		);
 	}
 	
-	Condition const c;
+	Condition c;
 	LastStep ls;
 	RecursionStep rs;
 };
 
 struct recurse_impl {
-	
 	template <
-		typename Condition, 
+		typename Condition,
 		typename LastStep,
 		typename RecursionStep
 		//TODO: enable only if invokable...
 	>
-	constexpr decltype(auto)
+	constexpr recurse_functor_t<
+		std::decay_t<Condition>,
+		std::decay_t<LastStep>,
+		std::decay_t<RecursionStep>
+	>
 	operator()(Condition && c, LastStep && ls, RecursionStep && rs) const {
-		return recurse_functor_t<Condition, LastStep, RecursionStep>{c, ls, rs};
+		return {HBRS_MPL_FWD(c), HBRS_MPL_FWD(ls), HBRS_MPL_FWD(rs)};
 	}
-	
 };
 
 /* namespace detail */ }

@@ -33,6 +33,7 @@
 #include <boost/hana/functional/id.hpp>
 #include <boost/hana/functional/compose.hpp>
 #include <boost/hana/equal.hpp>
+#include <boost/hana/at.hpp>
 
 #include <tuple>
 #include <array>
@@ -79,9 +80,9 @@ BOOST_AUTO_TEST_CASE(apply_at_test_1) {
 	auto t_ii_rt = _tuple_ii{2, 3};
 	auto t_i_ii_rt = _tuple_i_ii_rt{ t_i_rt, t_ii_rt };
 	
-	BOOST_CHECK(detail::apply_at(hana::id, t_i_rt, 1) == 4);
+	BOOST_CHECK(detail::apply_at(hana::id, t_i_rt, 0) == hana::at(t_i_rt, 0_c));
 	static_assert(hana::Sequence<std::tuple<int>&>::value, "");
-	BOOST_CHECK(detail::at_impl_std_tuple_hmg_integral{}(t_i_rt, 1_c) == 4);
+	BOOST_CHECK(detail::at_impl_std_tuple_hmg_integral{}(t_i_rt, 0_c) == 1);
 	(*apply_at)(first_at, t_i_ii_rt, 1_c) = 4;
 	BOOST_CHECK((*at)(t_ii_rt, 0_c) == 4);
 	BOOST_CHECK(detail::apply_at(hana::id, t_ii_rt, 0) == 4);

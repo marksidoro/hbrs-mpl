@@ -69,8 +69,8 @@ BOOST_AUTO_TEST_CASE(recurse_test_1) {
 	
 	BOOST_CHECK(
 		(*recurse)(
-			[](auto a, auto b, auto c) { return (a == 1); },
-			[](auto a, auto b, auto c) { return a+b; }, 
+			[](auto a, auto b, auto c) { return (c == 1); },
+			[](auto a, auto b, auto c) { return a+b; },
 			[](auto a, auto b, auto c) { return std::make_tuple(a, a+b, c-1); }
 		)(2,0,10) == 20
 	);

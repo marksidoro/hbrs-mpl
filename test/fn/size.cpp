@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(size_vector) {
 		return HBRS_MPL_FWD(v);
 	};
 	
-	BOOST_TEST(f1(std::vector<int>{1,2,3}).empty() == true);
+	BOOST_TEST(f1(std::vector<int>{1,2,3}).empty() == false);
 	BOOST_TEST(f2(std::vector<int>{1,2,3}).empty() == false);
 }
 

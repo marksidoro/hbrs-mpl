@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE(uscsv_test_1) {
 	BOOST_CHECK(rv_dd[3u] == 0xBEEF);
 	
 	auto rv_e = make_uscsv(e_rv);
-	BOOST_CHECK(rv_e.length() == 2);
+	BOOST_CHECK(rv_e.length() == e_rv.length());
 	BOOST_CHECK(rv_e[0u] == 1);
 	BOOST_CHECK(rv_e[1u] == 2);
 	
