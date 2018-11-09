@@ -13,12 +13,26 @@
 % You should have received a copy of the GNU General Public License
 % along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+% Singular value decomposition of m*n matrix A, where A=U*S*V' with U and V being orthogonal
+% and S having singular values on the main diagonal.
+%
+% Based on 
+%  - Algorithm 8.6.1 (Golub-Kahan SVD Step) [1, page 491] and Errata [5]
+%  - Algorithm 8.6.2 (The SVD Algorithm) [1, page 492] and Errata [5]
+%
+% References:
+% [1] Gene Howard Golub and Charles Francis Van Loan (2013): Matrix Computations [4th ed.]
+% [2] https://www.cs.cornell.edu/cv/GVL4/M-Files/Chapter%208/Functions/GKsvdStep.m
+% [3] https://www.cs.cornell.edu/cv/GVL4/M-Files/Chapter%208/Demos/ShowGKsvd.m
+% [4] https://www.cs.cornell.edu/cv/GVL4/M-Files/Chapter%205/Functions/Givens.m
+% [5] https://www.cs.cornell.edu/cv/GVL4/Errata.htm
+
 function [U,S,V] = svd_level1(A, mode)
     coder.varsize('A', 'x');
     
     x = A; % make copy of A in order to keep A constant / untouched
     
-    % TODO: Replace level 0 dummy with level 1 implementation
+    % TODO: Replace dummy implementation with SVD algorithm from [2], [3] and [4].
     
     switch(mode)
         case decompose_mode.complete

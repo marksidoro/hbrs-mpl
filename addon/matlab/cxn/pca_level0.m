@@ -31,7 +31,7 @@ function [coeff,score,latent,mu] = pca_level0(A, Economy)
     coder.varsize('A', 'x');
     
     x = A; % make copy of A in order to keep A constant / untouched
-    [m,n] = size(x)
+    [m,n] = size(x);
     [coeff,score,latent,~,~,mu] = pca(x, 'Economy', Economy);
     
     if (~Economy && (m < n)) % equals decompose_mode::complete

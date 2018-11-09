@@ -17,6 +17,7 @@ function test()
     pca_filter_test();
     pca_test();
     svd_test();
+    bidiag_test();
 end
 
 function pca_filter_test()
@@ -162,6 +163,43 @@ function svd_test()
             assert(isequal(Us{1,i+funs_sz*2}, Us{1,i+funs_sz*2+1}));
             assert(isequal(Ss{1,i+funs_sz*2}, Ss{1,i+funs_sz*2+1}));
             assert(isequal(Vs{1,i+funs_sz*2}, Vs{1,i+funs_sz*2+1}));
+        end
+    end
+end
+
+function bidiag_test()
+    datasets = samples();
+    
+    [~, ds_sz ] = size(datasets);
+    funs = { @bidiag_level0, };
+    [~, funs_sz] = size(funs);
+    
+    for ds_i = 1:ds_sz
+        dataset = datasets{1,ds_i};
+        
+        Us = cell(1,funs_sz*3);
+        Bs = cell(1,funs_sz*3);
+        Vs = cell(1,funs_sz*3);
+
+        for i = 1:funs_sz
+            fun = funs{1,i};
+            [Us{1,i},Bs{1,i},Vs{1,i}] ...
+                = fun(dataset, decompose_mode.complete);
+            [Us{1,i+funs_sz},Bs{1,i+funs_sz},Vs{1,i+funs_sz}] ...
+                = fun(dataset, decompose_mode.economy);
+            [Us{1,i+funs_sz*2},Bs{1,i+funs_sz*2},Vs{1,i+funs_sz*2}] ...
+                = fun(dataset, decompose_mode.zero);
+        end
+
+        for i = 1:funs_sz
+            for mode = 0:funs_sz-1
+                U = Us{1,i+funs_sz*mode};
+                B = Bs{1,i+funs_sz*mode};
+                V = Vs{1,i+funs_sz*mode};
+
+                reconstructed = U * B * V';
+                assert(isequal(dataset, reconstructed));
+            end
         end
     end
 end

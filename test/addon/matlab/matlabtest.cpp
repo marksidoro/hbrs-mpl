@@ -124,9 +124,9 @@ BOOST_AUTO_TEST_CASE(matrix_base, * utf::tolerance(_TOL)) {
 	auto const a0_m = (*m)(a0_size);
 	auto const a0_n = (*n)(a0_size);
 	{
-		cell_1 ds;
+		cell_0 ds;
 		samples(&ds);
-		std::copy(ds.f2, ds.f2+8, a0.data().data);
+		std::copy(ds.f4, ds.f4+8, a0.data().data);
 	}
 	for(int i = 0; i < a0_m; ++i) {
 		for(int j = 0; j < a0_n; ++j) {
@@ -229,7 +229,7 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 	BOOST_TEST(a3_n == test::mat_g_n);
 	
 	{
-		cell_1 ds;
+		cell_0 ds;
 		samples(&ds);
 		double * a3_ref = ds.f1;
 		
@@ -775,8 +775,16 @@ BOOST_AUTO_TEST_CASE(matrix_bidiag, * utf::tolerance(_TOL)) {
 		make_dataset(test::mat_j_m, test::mat_j_n, test::mat_j)
 	};
 	
+	std::size_t dataset_nr = 0;
 	for(auto && dataset : datasets) {
-		for(auto && mode : { mpl::decompose_mode::complete }) {
+		++dataset_nr;
+		//TODO: Reenable other modes once implemented!
+		for(auto && mode : { mpl::decompose_mode::complete /*, mpl::decompose_mode::economy, mpl::decompose_mode::zero */ }) {
+			BOOST_TEST_MESSAGE(
+				"dataset nr := " << dataset_nr << 
+				"; mode := " << (mode == mpl::decompose_mode::complete ? "complete" : (mode == mpl::decompose_mode::economy ? "economy" : "zero"))
+			);
+			
 			auto const a = matlab::make_matrix(dataset);
 			bidiag_result<matlab::matrix<real_T>, matlab::matrix<real_T>, matlab::matrix<real_T>>
 				bg = (*bidiag)(a, mode);
