@@ -29,6 +29,14 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include <hbrs/mpl/detail/integral_value.hpp>
 #include <cstdlib>
+#include <boost/test/results_collector.hpp>
+
+#define _BOOST_TEST_REQUIRE_PASSED                                                                                     \
+	BOOST_REQUIRE(                                                                                                     \
+		boost::unit_test::results_collector.results(                                                                   \
+			boost::unit_test::framework::current_test_case().p_id                                                      \
+		).passed()                                                                                                     \
+	);
 
 #define _BOOST_TEST_MMEQ(a, b, ucmp)                                                                                   \
 	{                                                                                                                  \
