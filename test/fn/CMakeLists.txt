@@ -9,7 +9,7 @@
 get_filename_component(_pwd "${CMAKE_CURRENT_LIST_DIR}" NAME)
 add_custom_target(_${_pwd}_tests)
 
-foreach(target append apply apply_at at contains first fold1_left fold_left if insert invoke iterate operators pca recurse second signum size svd transform where zip)
+foreach(target append apply apply_at at columns contains expand first fold1_left fold_left if insert invoke iterate mean operators pca pca_filter recurse second signum size svd transform where zip)
 	hbrs_mpl_add_test(${target})
 	add_dependencies(_${_pwd}_tests ${target})
 	target_link_libraries(${target} fuse_lib)

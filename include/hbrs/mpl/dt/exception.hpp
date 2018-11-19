@@ -20,6 +20,7 @@
 #define HBRS_MPL_DT_EXCEPTION_HPP
 
 #include <hbrs/mpl/fwd/dt/exception.hpp>
+#include <hbrs/mpl/dt/matrix_size.hpp>
 #include <boost/exception/all.hpp>
 #include <stdexcept>
 

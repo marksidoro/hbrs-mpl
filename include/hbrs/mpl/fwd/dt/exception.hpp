@@ -41,14 +41,19 @@ typedef boost::error_info<
 	std::tuple< std::size_t, std::size_t>
 > errinfo_sequences_sizes;
 
-typedef boost::error_info<struct errinfo_matrix_size_, mpl::matrix_size<std::size_t, std::size_t> >
+typedef boost::error_info<struct errinfo_vector_sizes_, std::tuple<std::size_t, std::size_t> >
+	errinfo_vector_sizes;
+typedef boost::error_info<struct errinfo_vector_size_, std::size_t > 
+	errinfo_vector_size;
+
+typedef boost::error_info<struct errinfo_matrix_size_, matrix_size<std::size_t, std::size_t> >
 	errinfo_matrix_size;
 
 typedef boost::error_info<
 	struct errinfo_matrix_sizes_,
 	std::tuple< 
-		mpl::matrix_size<std::size_t, std::size_t>,
-		mpl::matrix_size<std::size_t, std::size_t>
+		matrix_size<std::size_t, std::size_t>,
+		matrix_size<std::size_t, std::size_t>
 	>
 > errinfo_matrix_sizes;
 
