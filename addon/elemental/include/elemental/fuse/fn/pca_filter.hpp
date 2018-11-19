@@ -65,7 +65,9 @@ struct pca_filter_impl_Matrix {
 		auto && latent = (*at)(rslt, pca_latent{});
 		auto && mean =   (*at)(rslt, pca_mean{});
 		
-		BOOST_ASSERT((*equal)(size(keep), std::min(a_m, a_n)));
+		BOOST_ASSERT((*equal)(size(keep), score.Width()));
+		BOOST_ASSERT(keep.size() == a_m-1<a_n ? a_m-1 : std::min(a_m, a_n));
+		
 		for (El::Int i = 0; i < score.Width(); ++i) {
 			if (keep[i] == false) {
 				auto column = score(El::ALL, i);

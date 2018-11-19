@@ -41,6 +41,7 @@ namespace hana = boost::hana;
 namespace mpl = hbrs::mpl;
 namespace detail {
 
+//TODO: Join with matlab::detail::expand_impl_smr!
 struct expand_impl_smr {
 	template<
 		typename Matrix,
@@ -89,6 +90,7 @@ struct expand_impl_smr {
 	}
 };
 
+//TODO: Join with matlab::detail::expand_impl_row_vector!
 struct expand_impl_row_vector {
 	template<typename Ring>
 	auto

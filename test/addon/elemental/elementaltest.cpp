@@ -14,6 +14,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define BOOST_TEST_MODULE elemental_test
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
+
 #include <elemental/dt/matrix.hpp>
 #include <elemental/dt/vector.hpp>
 #include <hbrs/mpl/dt/ctsav.hpp>
@@ -51,16 +56,10 @@
 #include <hbrs/mpl/fn/diag.hpp>
 #include <hbrs/mpl/fn/times.hpp>
 #include <boost/hana/pair.hpp>
+#include <El.hpp>
 
 #include "../../data.hpp"
 #include "../../detail.hpp"
-
-#include <El.hpp>
-
-#define BOOST_TEST_MODULE elemental_test
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MAIN
-#include <boost/test/unit_test.hpp>
 
 namespace utf = boost::unit_test;
 namespace tt = boost::test_tools;
@@ -1312,12 +1311,7 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 	auto rcst /* reconstructed */ = (*plus)(r_centered, expand(r_mean, size(r_centered)));
 	
 	_BOOST_TEST_MMEQ(b, rcst, false);
-	
-	for(std::size_t i = 0; i < a_m; ++i) {
-		for(std::size_t j = 0; j < a_n; ++j) {
-			BOOST_TEST((*at)(b, make_matrix_index((El::Int)i, (El::Int)j)) == a[i][j]);
-		}
-	}
+	_BOOST_TEST_MMEQ(a, b, false);
 
 	auto const e_coeff = elemental::make_matrix(
 		std::initializer_list<double>{
