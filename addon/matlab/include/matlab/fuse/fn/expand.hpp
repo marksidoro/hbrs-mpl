@@ -30,6 +30,7 @@
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
 #include <matlab/dt/matrix.hpp>
+#include <matlab/dt/vector.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
@@ -40,6 +41,7 @@ namespace mpl = hbrs::mpl;
 
 namespace detail {
 
+//TODO: Join with elemental::detail::expand_impl_smr!
 struct expand_impl_smr {
 	template<
 		typename Matrix,
@@ -87,11 +89,56 @@ struct expand_impl_smr {
 	}
 };
 
+//TODO: Join with elemental::detail::expand_impl_row_vector!
+struct expand_impl_row_vector {
+	template<typename Ring>
+	auto
+	operator()(
+		row_vector<Ring> const& v,
+		mpl::matrix_size<int, int> const& sz
+	) const {
+		using namespace hbrs::mpl;
+		
+		auto v_sz = (*size)(v);
+		auto a_m = (*m)(sz);
+		auto a_n = (*n)(sz);
+		
+		if (((a_n % v_sz) != 0) || (a_m == 0)) {
+			BOOST_THROW_EXCEPTION((
+				incompatible_matrix_vector_exception{} 
+				<< matlab::errinfo_vector_size{v_sz}
+				<< matlab::errinfo_matrix_size{sz}
+			));
+		}
+		
+		bool vert_expand = a_m > 1;
+		bool horz_expand = a_n != v_sz;
+		
+		auto c = make_matrix(hana::type_c<std::decay_t<Ring>>, sz);
+		
+		if ((vert_expand && horz_expand) || vert_expand) {
+			for(int i = 0; i < a_m; ++i) {
+				for(int j = 0; j < a_n; ++j) {
+					(*at)(c, make_matrix_index(i, j)) = (*at)(v, j % v_sz);
+				}
+			}
+		} else {
+			//only horz_expand or no expansion
+			for(int i = 0; i < a_n; ++i) {
+				(*at)(c, make_matrix_index(0, i)) = (*at)(v, i % v_sz);
+			}
+		}
+		
+		return c;
+	}
+};
+
 /* namespace detail */ }
 MATLAB_NAMESPACE_END
 
 #define MATLAB_FUSE_FN_EXPAND_IMPLS boost::hana::make_tuple(                                                           \
-		matlab::detail::expand_impl_smr{}                                                                              \
+		matlab::detail::expand_impl_smr{},                                                                             \
+		matlab::detail::expand_impl_row_vector{}                                                                       \
 	)
 
 #endif // !MATLAB_FUSE_FN_EXPAND_HPP

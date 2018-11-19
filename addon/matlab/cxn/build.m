@@ -60,8 +60,6 @@ function build(bin_dir, src_dir, build_type)
         flags = {flags{:}, fun{1}, '-args', {matrix_double_type, vector_bool_type} };
     end
     
-    flags = { flags{:}, 'pca_filter_level0_pt2', '-args', {matrix_double_type, matrix_double_type, vector_double_type, vector_bool_type}};
-    
     flags = { flags{:}, 'transpose_m', '-args', {matrix_double_type}};
     flags = { flags{:}, 'mean_m', '-args', {matrix_double_type, mean_mode_type}};
     flags = { flags{:}, 'multiply_mm', '-args', {matrix_double_type, matrix_double_type}};

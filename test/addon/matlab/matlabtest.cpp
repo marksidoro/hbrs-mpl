@@ -55,7 +55,6 @@ extern "C" {
 	#include <matlab/cxn/samples.h>
 	#include <matlab/cxn/debug1.h>
 	#include <matlab/cxn/debug2.h>
-	#include <matlab/cxn/pca_filter_level0_pt2.h>
 }
 #undef I /* I is defined by MATLAB Coder, but also used within Boost Unit Test Framework as a template parameter. */
 
@@ -74,35 +73,6 @@ debug2(matlab::matrix<real_T> const& a) {
 	matlab::matrix<real_T> b;
 	debug2(&a.data(), &b.data());
 	return b;
-}
-
-matlab::matrix<real_T> /* data */
-pca_filter_pt2(
-	matlab::matrix<real_T> const& coeff,
-	matlab::matrix<real_T> const& score,
-	matlab::row_vector<real_T> const& mean,
-	std::function<bool(int)> filter
-) {
-	auto sz = (*mpl::size)(score);
-	auto n_ = (*mpl::n)(sz);
-	
-	matlab::column_vector<boolean_T> filtered{n_}; /* row or column vector does not matter */
-	
-	for(int i = 0; i < n_; ++i) {
-		(*mpl::at)(filtered, i) = filter(i);
-	}
-	
-	matlab::matrix<real_T> data;
-	
-	pca_filter_level0_pt2(
-		&coeff.data(),
-		&score.data(),
-		&mean.data(),
-		&filtered.data(),
-		&data.data()
-	);
-	
-	return data;
 }
 
 /* namespace detail */ }
@@ -343,27 +313,10 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 	BOOST_TEST((unsigned)(*size)(pca1_latent) == pca1_l_n);
 	BOOST_TEST((unsigned)(*size)(pca1_mean) == pca1_m_n);
 	
-	
-	for(std::size_t i = 0; i < (*m)(pca1_cm_sz); ++i) {
-		for(std::size_t j = 0; j < (*n)(pca1_cm_sz); ++j) {
-			BOOST_TEST(pca1_coeff[(int)i][(int)j] == pca1_cm[i][j]);
-		}
-	}
-	
-	for(std::size_t i = 0; i < (*m)(pca1_sm_sz); ++i) {
-		for(std::size_t j = 0; j < (*n)(pca1_sm_sz); ++j) {
-			BOOST_TEST(pca1_score[(int)i][(int)j] == pca1_sm[i][j]);
-		}
-	}
-	
-	for(std::size_t i = 0; i < (*size)(pca1_lcv); ++i) {
-		BOOST_TEST(pca1_latent[(int)i] == pca1_lcv[i]);
-	}
-	
-	for(std::size_t i = 0; i < (*size)(pca1_mrv); ++i) {
-		BOOST_TEST(pca1_mean[(int)i] == pca1_mrv[i]);
-	}
-	
+	_BOOST_TEST_MMEQ(pca1_coeff, pca1_cm, false);
+	_BOOST_TEST_MMEQ(pca1_score, pca1_sm, false);
+	_BOOST_TEST_VVEQ(pca1_latent, pca1_lcv, false);
+	_BOOST_TEST_VVEQ(pca1_mean, pca1_mrv, false);
 	
 	matlab::matrix<real_T> pca1_cmm{ (int)pca1_c_m, (int)pca1_c_n};
 	for(std::size_t i = 0; i < pca1_c_m; ++i) {
@@ -384,14 +337,10 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 		pca1_mmrv[(int)i] = pca1_mean[(int)i];
 	}
 	
-	matlab::matrix<real_T> red2a = matlab::detail::pca_filter_pt2(pca1_cmm, pca1_smm, pca1_mmrv, [](int){ return true; });
-	auto red2a_sz = size(red2a);
-	BOOST_TEST((*size)(red2a) == (*size)(a3));
-	for(std::size_t i = 0; i < a3_m; ++i) {
-		for(std::size_t j = 0; j < a3_n; ++j) {
-			BOOST_TEST(red2a[(int)i][(int)j] == a3[i][j]);
-		}
-	}
+	matlab::matrix<real_T> r_centered = (*multiply)(pca1_smm, transpose(pca1_cmm));
+	matlab::matrix<real_T> red2a /*rcst*/ /* reconstructed */ = (*plus)(r_centered, expand(pca1_mmrv, size(r_centered)));
+	
+	_BOOST_TEST_MMEQ(red2a, a3, false);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_pca_filter, * utf::tolerance(_TOL)) {

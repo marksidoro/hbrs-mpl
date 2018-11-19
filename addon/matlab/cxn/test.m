@@ -21,7 +21,7 @@ function test()
 end
 
 function pca_filter_test()
-    datasets = { coder.load('hald.mat', 'ingredients').ingredients };
+    datasets = samples();
     
     [~, ds_sz ] = size(datasets);
     funs = { @pca_filter_level0, @pca_filter_level0};
@@ -29,7 +29,13 @@ function pca_filter_test()
     
     for ds_i = 1:ds_sz
         dataset = datasets{1,ds_i};
-        [~,p] = size(dataset);
+        [m,n] = size(dataset);
+        
+        if m-1<n
+            p = m-1;
+        else
+            p = min(m,n);
+        end
         
         runs_per_fun = 2+p;
         data = cell(1,funs_sz*runs_per_fun);
@@ -79,12 +85,7 @@ function pca_filter_test()
 end
 
 function pca_test()
-    load 'hald.mat';
-    
-    datasets = { ingredients, ...
-        [ 1 2 3 4
-          5 6 7 8 ]
-        };
+    datasets = samples();
     
     [~, ds_sz ] = size(datasets);
     funs = { @pca_level0, @pca_level1, @pca_level2 };
@@ -118,17 +119,7 @@ function pca_test()
 end
 
 function svd_test()
-    datasets = { ...
-        [ 1     0     1
-         -1    -2     0
-          0     1    -1 ], ...
-        [ 1     2
-          3     4
-          5     6
-          7     8 ], ...
-        [ 1 2 3 4 5
-          6 7 8 9 0 ] ...
-        };
+    datasets = samples();
     
     [~, ds_sz ] = size(datasets);
     funs = { @svd_level0, @svd_level1 };

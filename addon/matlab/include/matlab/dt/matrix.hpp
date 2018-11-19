@@ -206,6 +206,12 @@ struct tag_of< matlab::matrix<BaseType> > {
 
 template <>
 struct make_impl<matlab::matrix_tag> {
+	template <typename Ring>
+	static constexpr matlab::matrix<Ring>
+	apply(basic_type<Ring>, hbrs::mpl::matrix_size<int, int> sz) {
+		return {sz.m(), sz.n()};
+	}
+	
 	template <
 		typename T,
 		typename M,

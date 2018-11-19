@@ -20,7 +20,9 @@
 #include <hbrs/mpl/fn/equal.hpp>
 #include <memory>
 #include <vector>
+#include <algorithm>
 #include <boost/assert.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 
 extern "C" {
 	#include <matlab/cxn/pca_filter_level0.h>
@@ -38,15 +40,17 @@ pca_filter_impl::operator()(matlab::matrix<real_T> const& a, std::vector<bool> k
 	using namespace hbrs::mpl;
 	
 	auto sz = (*size)(a);
-	auto n_ = (*n)(sz);
-	BOOST_ASSERT((*equal)(keep.size(), n_));
+	int m_ = (*m)(sz);
+	int n_ = (*n)(sz);
+	int filter_sz = boost::numeric_cast<int>((*size)(keep));
+	
+	BOOST_ASSERT(filter_sz == m_-1<n_ ? m_-1 : std::min(m_, n_));
 	
 	matlab::matrix<real_T> data;
 	matlab::column_vector<real_T> latent;
+	matlab::column_vector<boolean_T> filter{filter_sz}; /* row or column vector does not matter */
 	
-	matlab::column_vector<boolean_T> filter{n_}; /* row or column vector does not matter */
-	
-	for(int i = 0; i < n_; ++i) {
+	for(int i = 0; i < filter_sz; ++i) {
 		filter[i] = keep[i];
 	}
 	
@@ -57,7 +61,7 @@ pca_filter_impl::operator()(matlab::matrix<real_T> const& a, std::vector<bool> k
 		&latent.data()
 	);
 	
-	return { data, latent };
+	return {data, latent};
 }
 
 /* namespace detail */ }

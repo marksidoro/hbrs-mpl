@@ -15,9 +15,16 @@
 
 function [data,latent] = pca_filter_level0(A, filtered)
     coder.varsize('A', 'filtered');
-    
+
+    [m,n] = size(A);
+    if m-1<n
+        assert(size(filtered, 1) == m-1);
+    else
+        assert(size(filtered, 1) == min([m,n]));
+    end
+	
     [coeff,score,latent,~,~,mu] = pca(A, 'Economy', true);
-    
+		
 %   [m,n] = size(coeff);
 %   for i = 1:n
 %       if filter(i) == false
@@ -26,7 +33,14 @@ function [data,latent] = pca_filter_level0(A, filtered)
 %    end
 %   data = (score * transpose(coeff)) + mu;
     
-    data = pca_filter_level0_pt2(coeff, score, mu, filtered);
+    data = score * diag(filtered) * coeff';
+    [m,n] = size(data);
+    for i = 1:m
+        for j = 1:n
+            data(i,j) = data(i,j) + mu(j);
+        end
+    end
+    
 %   data = score * diag(filtered) * coeff' + mu;
 %   data = score * coeff' + mu;
     
