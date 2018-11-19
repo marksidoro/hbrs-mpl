@@ -14,6 +14,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define BOOST_TEST_MODULE pca_test
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
+
 #include <hbrs/mpl/fn/pca.hpp>
 
 #include <hbrs/mpl/dt/ctsav.hpp>
@@ -42,11 +47,6 @@
 
 #include "../data.hpp"
 #include "../detail.hpp"
-
-#define BOOST_TEST_MODULE pca_test
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MAIN
-#include <boost/test/unit_test.hpp>
 
 namespace utf = boost::unit_test;
 namespace tt = boost::test_tools;
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 				hana::for_each(
 					hana::make_range(
 						hana::size_c<0>, 
-						hana::length(results)-hana::size_c<2>
+						hana::length(results)-hana::size_c<1>
 					),
 					compare
 				);
@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 				hana::for_each(
 					hana::make_range(hana::ushort_c<0>, hana::length(results)),
 					[&dataset, &rebuilds](auto i) {
-						BOOST_TEST_MESSAGE("comparing original and reconstructed dataset nr " << i);
+						BOOST_TEST_MESSAGE("comparing original and reconstructed dataset of impl nr " << i);
 						auto const& rebuild = hana::at(rebuilds, i);
 						_BOOST_TEST_MMEQ(dataset, rebuild, false);
 					}
