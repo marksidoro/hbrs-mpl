@@ -38,7 +38,25 @@ struct pca_filter_impl {
 		matlab::matrix<real_T> /* data */,
 		matlab::column_vector<real_T> /* latent*/
 	>
-	operator()(matlab::matrix<real_T> const& a, std::vector<bool> keep) const;
+	operator()(matlab::matrix<real_T> const& a, std::vector<bool> const& keep) const;
+	
+	mpl::pca_filter_result<
+		matlab::matrix<real_T> /* data */,
+		matlab::column_vector<real_T> /* latent*/
+	>
+	operator()(matlab::matrix<real_T> const& a, matlab::column_vector<boolean_T> const& keep) const;
+	
+	mpl::pca_filter_result<
+		matlab::matrix<real_T> /* data */,
+		matlab::column_vector<real_T> /* latent*/
+	>
+	operator()(matlab::matrix<real_T> const& a, matlab::row_vector<boolean_T> const& keep) const = delete /* TODO: implement... */;
+	
+	mpl::pca_filter_result<
+		matlab::matrix<real_T> /* data */,
+		matlab::column_vector<real_T> /* latent*/
+	>
+	operator()(matlab::matrix<real_T> const& a, std::function<bool(int)> const& keep) const;
 };
 
 /* namespace detail */ }
