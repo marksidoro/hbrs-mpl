@@ -52,6 +52,11 @@ BOOST_AUTO_TEST_CASE(array_vector_irange_tuple) {
 		std::tuple<hana::llong<4>,hana::llong<5>,hana::llong<6>>
 	> z4 = (*zip)(t1, t2);
 	
+	std::vector<std::tuple<double, int>> z5 = detail::zip_impl_std_tuple_vector{}(
+		std::vector<double>{3.,4.,5.}, std::vector<int>{7,8,9}
+	);
+	BOOST_TEST((z5 == std::vector<std::tuple<double, int>>{ {3.,7}, {4.,8}, {5., 9} }));
+	
 	//TODO: Compare contents of zipped sequences!
 }
 
