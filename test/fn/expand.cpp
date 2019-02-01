@@ -25,9 +25,8 @@
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/dt/rtsam.hpp>
 #include <hbrs/mpl/dt/srv.hpp>
+#include <hbrs/mpl/detail/test.hpp>
 #include <vector>
-
-#include "../detail.hpp"
 
 BOOST_AUTO_TEST_SUITE(expand_test)
 
@@ -46,7 +45,7 @@ BOOST_AUTO_TEST_CASE(srv_expand) {
 	srv<std::vector<double>> rv{ std::vector<double>{ 1., 2., 3. } };
 	
 	rtsam<double, storage_order::row_major> b = (*expand)(rv, (*size)(a));
-	_BOOST_TEST_MMEQ(a, b, false);
+	HBRS_MPL_TEST_MMEQ(a, b, false);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

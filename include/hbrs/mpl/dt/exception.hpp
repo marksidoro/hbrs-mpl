@@ -23,17 +23,68 @@
 #include <hbrs/mpl/dt/matrix_size.hpp>
 #include <boost/exception/all.hpp>
 #include <stdexcept>
+#include <string>
 
 HBRS_MPL_NAMESPACE_BEGIN
 
 struct exception : virtual boost::exception, virtual std::exception {};
-struct incompatible_sequence_exception : virtual mpl::exception {};
-struct incompatible_sequences_exception : virtual mpl::exception {};
-struct incompatible_vectors_exception : virtual mpl::exception {};
-struct incompatible_matrix_exception : virtual mpl::exception {};
-struct incompatible_matrix_sequence_exception : virtual mpl::exception {};
-struct incompatible_matrix_vector_exception : virtual mpl::exception {};
-struct incompatible_matrices_exception : virtual mpl::exception {};
+struct incompatible_sequence_exception : virtual exception {};
+struct incompatible_sequences_exception : virtual exception {};
+struct incompatible_vectors_exception : virtual exception {};
+struct incompatible_matrix_exception : virtual exception {};
+struct incompatible_matrix_sequence_exception : virtual exception {};
+struct incompatible_matrix_vector_exception : virtual exception {};
+struct incompatible_matrices_exception : virtual exception {};
+struct mpi_exception : virtual exception {};
+struct io_exception : virtual exception {};
+
+struct mpi_error_info {
+	mpi_error_info(int code);
+	mpi_error_info(int code, int class_, std::string string);
+	
+	mpi_error_info(mpi_error_info const&) = default;
+	mpi_error_info(mpi_error_info &&) = default;
+	
+	mpi_error_info&
+	operator=(mpi_error_info const&) = default;
+	mpi_error_info&
+	operator=(mpi_error_info &&) = default;
+	
+	
+	constexpr decltype(auto)
+	code() & { return (code_); };
+	
+	constexpr decltype(auto)
+	code() const& { return (code_); };
+	
+	constexpr decltype(auto)
+	code() && { return HBRS_MPL_FWD(code_); };
+	
+	
+	constexpr decltype(auto)
+	class_() & { return (class__); };
+	
+	constexpr decltype(auto)
+	class_() const& { return (class__); };
+	
+	constexpr decltype(auto)
+	class_() && { return HBRS_MPL_FWD(class__); };
+	
+	
+	constexpr decltype(auto)
+	string() & { return (string_); };
+	
+	constexpr decltype(auto)
+	string() const& { return (string_); };
+	
+	constexpr decltype(auto)
+	string() && { return HBRS_MPL_FWD(string_); };
+	
+private:
+	int code_;
+	int class__;
+	std::string string_;
+};
 
 HBRS_MPL_NAMESPACE_END
 

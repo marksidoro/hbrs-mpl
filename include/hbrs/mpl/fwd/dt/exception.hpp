@@ -22,6 +22,7 @@
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/fwd/dt/matrix_size.hpp>
 #include <boost/exception/error_info.hpp>
+#include <boost/system/error_code.hpp>
 #include <tuple>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -34,6 +35,8 @@ struct incompatible_matrix_exception;
 struct incompatible_matrix_sequence_exception;
 struct incompatible_matrix_vector_exception;
 struct incompatible_matrices_exception;
+struct mpi_exception;
+struct io_exception;
 
 typedef boost::error_info<struct errinfo_sequence_size_, std::size_t > errinfo_sequence_size;
 typedef boost::error_info<
@@ -56,6 +59,9 @@ typedef boost::error_info<
 		matrix_size<std::size_t, std::size_t>
 	>
 > errinfo_matrix_sizes;
+
+struct mpi_error_info;
+typedef boost::error_info<struct errinfo_mpi_error_info_, mpi_error_info> errinfo_mpi_error_info;
 
 HBRS_MPL_NAMESPACE_END
 

@@ -7,7 +7,10 @@
 #################### build ####################
 
 add_library(hbrs_mpl STATIC
+    detail/environment.cpp
+    detail/mpi.cpp
     dt/ctsav.cpp
+    dt/exception.cpp
     fuse/std/fn/absolute.cpp
     fuse/std/fn/power.cpp)
 

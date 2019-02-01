@@ -28,10 +28,11 @@
 #include <hbrs/mpl/fn/m.hpp>
 #include <hbrs/mpl/fn/n.hpp>
 #include <hbrs/mpl/fn/at.hpp>
+
+#include <hbrs/mpl/detail/test.hpp>
+
 #include <boost/hana/integral_constant.hpp>
 #include <array>
-
-#include "../detail.hpp"
 
 BOOST_AUTO_TEST_SUITE(submatrix_test)
 
@@ -94,10 +95,10 @@ BOOST_AUTO_TEST_CASE(m_n_size_assignment) {
 	static_assert( (*at)(rb0, make_matrix_index(0u,0u)) == (*at)(a, make_matrix_index(0u,0u)), "");
 	static_assert( rb0[0u][0u] == (*at)(a, make_matrix_index(0u,0u)), "");
 	
-	_BOOST_TEST_MMEQ(b, rb0, false);
-	_BOOST_TEST_MMEQ(c, rc0, false);
-	_BOOST_TEST_MMEQ(d, rd0, false);
-	_BOOST_TEST_MMEQ(e, re0, false);
+	HBRS_MPL_TEST_MMEQ(b, rb0, false);
+	HBRS_MPL_TEST_MMEQ(c, rc0, false);
+	HBRS_MPL_TEST_MMEQ(d, rd0, false);
+	HBRS_MPL_TEST_MMEQ(e, re0, false);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -24,6 +24,7 @@
 #include <hbrs/mpl/dt/matrix_size.hpp>
 #include <matlab/dt/matrix.hpp>
 #include <matlab/dt/vector.hpp>
+#include <hbrs/mpl/detail/test.hpp>
 
 #include <boost/hana/less.hpp>
 #include <hbrs/mpl/dt/rtsav.hpp>
@@ -49,7 +50,6 @@
 #include <hbrs/mpl/fn/select.hpp>
 
 #include "../../data.hpp"
-#include "../../detail.hpp"
 
 extern "C" {
 	#include <matlab/cxn/samples.h>
@@ -84,6 +84,9 @@ namespace tt = boost::test_tools;
 #define _TOL 0.000000001
 
 BOOST_AUTO_TEST_SUITE(matlab_test)
+
+using hbrs::mpl::detail::environment_fixture;
+BOOST_TEST_GLOBAL_FIXTURE(environment_fixture);
 
 BOOST_AUTO_TEST_CASE(matrix_base, * utf::tolerance(_TOL)) {
 	using namespace hbrs::mpl;
@@ -313,10 +316,10 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 	BOOST_TEST((unsigned)(*size)(pca1_latent) == pca1_l_n);
 	BOOST_TEST((unsigned)(*size)(pca1_mean) == pca1_m_n);
 	
-	_BOOST_TEST_MMEQ(pca1_coeff, pca1_cm, false);
-	_BOOST_TEST_MMEQ(pca1_score, pca1_sm, false);
-	_BOOST_TEST_VVEQ(pca1_latent, pca1_lcv, false);
-	_BOOST_TEST_VVEQ(pca1_mean, pca1_mrv, false);
+	HBRS_MPL_TEST_MMEQ(pca1_coeff, pca1_cm, false);
+	HBRS_MPL_TEST_MMEQ(pca1_score, pca1_sm, false);
+	HBRS_MPL_TEST_VVEQ(pca1_latent, pca1_lcv, false);
+	HBRS_MPL_TEST_VVEQ(pca1_mean, pca1_mrv, false);
 	
 	matlab::matrix<real_T> pca1_cmm{ (int)pca1_c_m, (int)pca1_c_n};
 	for(std::size_t i = 0; i < pca1_c_m; ++i) {
@@ -340,7 +343,7 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 	matlab::matrix<real_T> r_centered = (*multiply)(pca1_smm, transpose(pca1_cmm));
 	matlab::matrix<real_T> red2a /*rcst*/ /* reconstructed */ = (*plus)(r_centered, expand(pca1_mmrv, size(r_centered)));
 	
-	_BOOST_TEST_MMEQ(red2a, a3, false);
+	HBRS_MPL_TEST_MMEQ(red2a, a3, false);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_pca_filter, * utf::tolerance(_TOL)) {
@@ -694,20 +697,20 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 	auto rd2 = (*select)(a, std::make_pair(make_matrix_index(0,0), make_matrix_size(3,2)));
 	auto re2 = (*select)(a, std::make_pair(make_matrix_index(0,1), make_matrix_size(3,2)));
 	
-	_BOOST_TEST_MMEQ(b, rb0, false);
-	_BOOST_TEST_MMEQ(c, rc0, false);
-	_BOOST_TEST_MMEQ(d, rd0, false);
-	_BOOST_TEST_MMEQ(e, re0, false);
+	HBRS_MPL_TEST_MMEQ(b, rb0, false);
+	HBRS_MPL_TEST_MMEQ(c, rc0, false);
+	HBRS_MPL_TEST_MMEQ(d, rd0, false);
+	HBRS_MPL_TEST_MMEQ(e, re0, false);
 	
-	_BOOST_TEST_MMEQ(b, rb1, false);
-	_BOOST_TEST_MMEQ(c, rc1, false);
-	_BOOST_TEST_MMEQ(d, rd1, false);
-	_BOOST_TEST_MMEQ(e, re1, false);
+	HBRS_MPL_TEST_MMEQ(b, rb1, false);
+	HBRS_MPL_TEST_MMEQ(c, rc1, false);
+	HBRS_MPL_TEST_MMEQ(d, rd1, false);
+	HBRS_MPL_TEST_MMEQ(e, re1, false);
 	
-	_BOOST_TEST_MMEQ(b, rb2, false);
-	_BOOST_TEST_MMEQ(c, rc2, false);
-	_BOOST_TEST_MMEQ(d, rd2, false);
-	_BOOST_TEST_MMEQ(e, re2, false);
+	HBRS_MPL_TEST_MMEQ(b, rb2, false);
+	HBRS_MPL_TEST_MMEQ(c, rc2, false);
+	HBRS_MPL_TEST_MMEQ(d, rd2, false);
+	HBRS_MPL_TEST_MMEQ(e, re2, false);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_bidiag, * utf::tolerance(_TOL)) {
@@ -745,7 +748,7 @@ BOOST_AUTO_TEST_CASE(matrix_bidiag, * utf::tolerance(_TOL)) {
 			
 			auto const ra = (*multiply)(bg_u, multiply(bg_b, transpose(bg_v)));
 			
-			_BOOST_TEST_MMEQ(a, ra, false);
+			HBRS_MPL_TEST_MMEQ(a, ra, false);
 		}
 	}
 }

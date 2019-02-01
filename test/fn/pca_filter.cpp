@@ -20,7 +20,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <hbrs/mpl/fn/pca_filter.hpp>
-
+#include <hbrs/mpl/detail/test.hpp>
 #include <hbrs/mpl/dt/ctsav.hpp>
 #include <hbrs/mpl/dt/sm.hpp>
 #include <hbrs/mpl/fn/at.hpp>
@@ -46,14 +46,17 @@
 #include <boost/hana/at.hpp>
 #include <boost/hana/length.hpp>
 #include <boost/hana/drop_back.hpp>
+#include <boost/hana/min.hpp>
 
 #include "../data.hpp"
-#include "../detail.hpp"
 
 namespace utf = boost::unit_test;
 namespace tt = boost::test_tools;
 
 BOOST_AUTO_TEST_SUITE(pca_filter_test)
+
+using hbrs::mpl::detail::environment_fixture;
+BOOST_TEST_GLOBAL_FIXTURE(environment_fixture);
 
 BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 	using namespace hbrs::mpl;
@@ -89,7 +92,7 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 				
 				#ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
 				[](auto && a, auto keep) {
-					return elemental::detail::pca_filter_impl_Matrix{}(elemental::make_matrix(HBRS_MPL_FWD(a)), keep); 
+					return elemental::detail::pca_filter_impl_Matrix{}(elemental::make_matrix(HBRS_MPL_FWD(a)), keep);
 				},
 				#endif
 				"SEQUENCE_TERMINATOR___REMOVED_BY_DROP_BACK"
@@ -108,9 +111,9 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 					auto const& pca_filter_j = hana::at(results, j);
 					
 					BOOST_TEST_MESSAGE("comparing data of impl nr " << i << " and " << j);
-					_BOOST_TEST_MMEQ((*at)(pca_filter_i, pca_filter_data{}),  (*at)(pca_filter_j, pca_filter_data{}), false);
+					HBRS_MPL_TEST_MMEQ((*at)(pca_filter_i, pca_filter_data{}),  (*at)(pca_filter_j, pca_filter_data{}), false);
 					BOOST_TEST_MESSAGE("comparing pca_latent of impl nr " << i << " and " << j);
-					_BOOST_TEST_VVEQ((*at)(pca_filter_i, pca_filter_latent{}), (*at)(pca_filter_j, pca_filter_latent{}), false);
+					HBRS_MPL_TEST_VVEQ((*at)(pca_filter_i, pca_filter_latent{}), (*at)(pca_filter_j, pca_filter_latent{}), false);
 					BOOST_TEST_MESSAGE("comparing impl nr " << i << " and " << j << " done.");
 				};
 				
@@ -126,19 +129,22 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 			{
 				hana::for_each(
 					hana::make_range(hana::ushort_c<0>, hana::length(results)),
-					[&dataset, &results, &keep](auto i) {
+					[&dataset, &results, &keep, &m_, &n_](auto i) {
 						
 						BOOST_TEST_MESSAGE("comparing original and reconstructed dataset from impl nr " << i);
 						auto const& result = hana::at(results, i);
 						
-						auto && data_ =  (*at)(result, pca_filter_data{});
+						auto && data_   = (*at)(result, pca_filter_data{});
+						auto && latent_ = (*at)(result, pca_filter_latent{});
 						
 						if (keep) {
-							_BOOST_TEST_MMEQ(dataset, data_, false);
+							HBRS_MPL_TEST_MMEQ(dataset, data_, false);
 						} else {
 							auto mean_ = (*expand)(mean(columns(dataset)), size(dataset));
-							_BOOST_TEST_MMEQ(mean_, data_, false);
+							HBRS_MPL_TEST_MMEQ(mean_, data_, false);
 						}
+						
+						BOOST_TEST((*equal)(size(latent_), (m_-1u)<n_ ? m_-1u : hana::min(m_,n_)));
 					}
 				);
 				BOOST_TEST_MESSAGE("comparing original and reconstructed datasets done.");

@@ -20,7 +20,8 @@
 #include <boost/test/unit_test.hpp>
 
 #include <hbrs/mpl/fn/svd.hpp>
-
+#include <hbrs/mpl/detail/test.hpp>
+#include <hbrs/mpl/detail/gather.hpp>
 #include <hbrs/mpl/dt/ctsav.hpp>
 #include <hbrs/mpl/dt/sm.hpp>
 #include <hbrs/mpl/dt/range.hpp>
@@ -49,6 +50,9 @@
 #include <boost/hana/at.hpp>
 #include <boost/hana/pair.hpp>
 #include <boost/hana/drop_back.hpp>
+#include <boost/hana/value.hpp>
+#include <boost/hana/less_equal.hpp>
+#include <boost/hana/integral_constant.hpp>
 
 #include "../data.hpp"
 #include "../detail.hpp"
@@ -57,6 +61,9 @@ namespace utf = boost::unit_test;
 namespace tt = boost::test_tools;
 
 BOOST_AUTO_TEST_SUITE(svd_test)
+
+using hbrs::mpl::detail::environment_fixture;
+BOOST_TEST_GLOBAL_FIXTURE(environment_fixture);
 
 BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(0.000000001)) {
 	using namespace hbrs::mpl;
@@ -74,10 +81,12 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(0.000000001)) {
 		)
 	);
 	
+	static constexpr auto modes = hana::make_tuple(complete_decompose_c, economy_decompose_c, zero_decompose_c);
+	
 	std::size_t dataset_nr = 0;
 	hana::for_each(datasets, [&dataset_nr](auto const& dataset) {
 		BOOST_TEST_MESSAGE("dataset_nr=" << dataset_nr);
-		for(decompose_mode mode : { decompose_mode::complete, decompose_mode::economy, decompose_mode::zero }) {
+		hana::for_each(modes, [&dataset](auto const& mode) {
 			 BOOST_TEST_MESSAGE(
 				 "decompose_mode=" << 
 				 (
@@ -118,46 +127,51 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(0.000000001)) {
 					auto j = i+hana::ushort_c<1>;
 					auto const& svd_i = hana::at(results, i);
 					auto const& svd_j = hana::at(results, j);
+					//TODO: Take ++j if j not supported!
 					
-					auto sz_ = (*size)(dataset);
-					auto m_ = (*m)(sz_);
-					auto n_ = (*n)(sz_);
-					
-					BOOST_TEST_MESSAGE("comparing svd_u of impl nr " << i << " and " << j);
-					auto const& svd_u_i = (*at)(svd_i, svd_u{});
-					auto const& svd_u_j = (*at)(svd_j, svd_u{});
-					if ((m_ > n_) && (mode == decompose_mode::complete)) {
-						auto rng = std::make_pair(make_matrix_index(0,0), make_matrix_size((int)m_, (int)n_));
-						auto svd_u_i_mxn = (*select)(svd_u_i, rng);
-						auto svd_u_j_mxn = (*select)(svd_u_j, rng);
-						_BOOST_TEST_MMEQ(svd_u_i_mxn, svd_u_j_mxn, true);
-					} else {
-						_BOOST_TEST_MMEQ(svd_u_i, svd_u_j, true);
-					}
-					
-					
-					BOOST_TEST_MESSAGE("comparing svd_s of impl nr " << i << " and " << j);
-					auto const& svd_s_i = (*at)(svd_i, svd_s{});
-					auto const& svd_s_j = (*at)(svd_j, svd_s{});
-					_BOOST_TEST_MMEQ(svd_s_i, svd_s_j, false);
-					
-					
-					BOOST_TEST_MESSAGE("comparing svd_v of impl nr " << i << " and " << j);
-					auto const& svd_v_i = (*at)(svd_i, svd_v{});
-					auto const& svd_v_j = (*at)(svd_j, svd_v{});
-					if (
-						(m_ < n_) && 
-						((mode == decompose_mode::complete) || (mode == decompose_mode::zero))
+					if constexpr(
+						is_supported(svd_i) && is_supported(svd_j)
 					) {
-						auto rng = std::make_pair(make_matrix_index(0,0), make_matrix_size((int)n_, (int)m_));
-						auto svd_v_i_mxn = (*select)(svd_v_i, rng);
-						auto svd_v_j_mxn = (*select)(svd_v_j, rng);
-						_BOOST_TEST_MMEQ(svd_v_i_mxn, svd_v_j_mxn, true);
-					} else {
-						_BOOST_TEST_MMEQ(svd_v_i, svd_v_j, true);
+						auto sz_ = (*size)(dataset);
+						auto m_ = (*m)(sz_);
+						auto n_ = (*n)(sz_);
+						
+						BOOST_TEST_MESSAGE("comparing svd_u of impl nr " << i << " and " << j);
+						auto const& svd_u_i = (*at)(svd_i, svd_u{});
+						auto const& svd_u_j = (*at)(svd_j, svd_u{});
+						if ((m_ > n_) && (mode == decompose_mode::complete)) {
+							auto rng = std::make_pair(make_matrix_index(0,0), make_matrix_size((int)m_, (int)n_));
+							auto const svd_u_i_mxn = (*select)(svd_u_i, rng);
+							auto const svd_u_j_mxn = (*select)(svd_u_j, rng);
+							HBRS_MPL_TEST_MMEQ(svd_u_i_mxn, svd_u_j_mxn, true);
+						} else {
+							HBRS_MPL_TEST_MMEQ(svd_u_i, svd_u_j, true);
+						}
+						
+						
+						BOOST_TEST_MESSAGE("comparing svd_s of impl nr " << i << " and " << j);
+						auto const& svd_s_i = (*at)(svd_i, svd_s{});
+						auto const& svd_s_j = (*at)(svd_j, svd_s{});
+						HBRS_MPL_TEST_MMEQ(svd_s_i, svd_s_j, false);
+						
+						
+						BOOST_TEST_MESSAGE("comparing svd_v of impl nr " << i << " and " << j);
+						auto const& svd_v_i = (*at)(svd_i, svd_v{});
+						auto const& svd_v_j = (*at)(svd_j, svd_v{});
+						if (
+							(m_ < n_) && 
+							((mode == decompose_mode::complete) || (mode == decompose_mode::zero))
+						) {
+							auto rng = std::make_pair(make_matrix_index(0,0), make_matrix_size((int)n_, (int)m_));
+							auto const svd_v_i_mxn = (*select)(svd_v_i, rng);
+							auto const svd_v_j_mxn = (*select)(svd_v_j, rng);
+							HBRS_MPL_TEST_MMEQ(svd_v_i_mxn, svd_v_j_mxn, true);
+						} else {
+							HBRS_MPL_TEST_MMEQ(svd_v_i, svd_v_j, true);
+						}
+						
+						BOOST_TEST_MESSAGE("comparing impl nr " << i << " and " << j << " done.");
 					}
-					
-					BOOST_TEST_MESSAGE("comparing impl nr " << i << " and " << j << " done.");
 				};
 				
 				hana::for_each(
@@ -172,93 +186,97 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(0.000000001)) {
 			{
 				std::size_t f_nr = 0;
 				auto rebuilds = hana::transform(results, [&dataset, &mode, &f_nr](auto && svd_result) {
-					auto sz_ = (*size)(dataset);
-					auto m_ = (*m)(sz_);
-					auto n_ = (*n)(sz_);
-					
-					auto && u = (*at)(svd_result, svd_u{});
-					auto && s = (*at)(svd_result, svd_s{});
-					auto && v = (*at)(svd_result, svd_v{});
-					
-					auto u_sz = (*size)(u);
-					auto u_m = (*m)(u_sz);
-					auto u_n = (*n)(u_sz);
-					auto s_sz = (*size)(s);
-					auto s_m = (*m)(s_sz);
-					auto s_n = (*n)(s_sz);
-					auto v_sz = (*size)(v);
-					auto v_m = (*m)(v_sz);
-					auto v_n = (*n)(v_sz);
-					
-					if (
-						(mode == decompose_mode::complete) ||
-						((mode == decompose_mode::zero) && (m_ <= n_))
-					) {
-						BOOST_TEST( (*equal)(u_m,m_) );
-						BOOST_TEST( (*equal)(u_n,m_) );
+					if constexpr(is_not_supported(svd_result)) {
+						return hbrs::mpl::detail::not_supported{};
+					} else {
+						auto sz_ = (*size)(dataset);
+						auto m_ = (*m)(sz_);
+						auto n_ = (*n)(sz_);
 						
-						BOOST_TEST( (*equal)(s_m,m_) );
-						BOOST_TEST( (*equal)(s_n,n_) );
+						auto && u = (*at)(svd_result, svd_u{});
+						auto && s = (*at)(svd_result, svd_s{});
+						auto && v = (*at)(svd_result, svd_v{});
 						
-						BOOST_TEST( (*equal)(v_m,n_) );
-						BOOST_TEST( (*equal)(v_n,n_) );
-					} else if (
-						(mode == decompose_mode::economy) ||
-						((mode == decompose_mode::zero) && (m_ > n_))
-					) {
-						BOOST_TEST( (*equal)(u_m,m_) );
-						if (m_ > n_) {
-							BOOST_TEST( (*equal)(u_n,n_) );
-						} else {
+						auto u_sz = (*size)(u);
+						auto u_m = (*m)(u_sz);
+						auto u_n = (*n)(u_sz);
+						auto s_sz = (*size)(s);
+						auto s_m = (*m)(s_sz);
+						auto s_n = (*n)(s_sz);
+						auto v_sz = (*size)(v);
+						auto v_m = (*m)(v_sz);
+						auto v_n = (*n)(v_sz);
+						
+						if (
+							(mode == decompose_mode::complete) ||
+							((mode == decompose_mode::zero) && (m_ <= n_))
+						) {
+							BOOST_TEST( (*equal)(u_m,m_) );
 							BOOST_TEST( (*equal)(u_n,m_) );
-						}
-						
-						if (m_ > n_) {
-							BOOST_TEST( (*equal)(s_m,n_) );
-							BOOST_TEST( (*equal)(s_n,n_) );
-						} else if (m_ == n_) {
+							
 							BOOST_TEST( (*equal)(s_m,m_) );
 							BOOST_TEST( (*equal)(s_n,n_) );
-						} else if (m_ < n_) {
-							BOOST_TEST( (*equal)(s_m,m_) );
-							BOOST_TEST( (*equal)(s_n,m_) );
-						}
-						
-						BOOST_TEST( (*equal)(v_m,n_) );
-						if (m_ < n_) {
-							BOOST_TEST( (*equal)(v_n,m_) );
-						} else {
+							
+							BOOST_TEST( (*equal)(v_m,n_) );
 							BOOST_TEST( (*equal)(v_n,n_) );
+						} else if (
+							(mode == decompose_mode::economy) ||
+							((mode == decompose_mode::zero) && (m_ > n_))
+						) {
+							BOOST_TEST( (*equal)(u_m,m_) );
+							if (m_ > n_) {
+								BOOST_TEST( (*equal)(u_n,n_) );
+							} else {
+								BOOST_TEST( (*equal)(u_n,m_) );
+							}
+							
+							if (m_ > n_) {
+								BOOST_TEST( (*equal)(s_m,n_) );
+								BOOST_TEST( (*equal)(s_n,n_) );
+							} else if (m_ == n_) {
+								BOOST_TEST( (*equal)(s_m,m_) );
+								BOOST_TEST( (*equal)(s_n,n_) );
+							} else if (m_ < n_) {
+								BOOST_TEST( (*equal)(s_m,m_) );
+								BOOST_TEST( (*equal)(s_n,m_) );
+							}
+							
+							BOOST_TEST( (*equal)(v_m,n_) );
+							if (m_ < n_) {
+								BOOST_TEST( (*equal)(v_n,m_) );
+							} else {
+								BOOST_TEST( (*equal)(v_n,n_) );
+							}
+						} else {
+							BOOST_ASSERT(false);
 						}
-					} else {
-						BOOST_ASSERT(false);
+						
+						if (
+							(m_ > n_) && 
+							((mode==decompose_mode::economy) || (mode==decompose_mode::zero))
+						) {
+							BOOST_TEST_MESSAGE("Skipping U*U'==I for f_nr=" << f_nr);
+						} else {
+							BOOST_TEST_MESSAGE("Testing U*U'==I for f_nr=" << f_nr);
+							auto uxut = (*multiply)(u, transpose(u));
+							BOOST_TEST((*size)(uxut) == make_matrix_size(m_, m_));
+							HBRS_MPL_TEST_IS_IDENTITY(uxut);
+						}
+						
+						if ( (m_ < n_) && (mode==decompose_mode::economy) ) {
+							BOOST_TEST_MESSAGE("Skipping V*V'==I for f_nr=" << f_nr);
+						} else {
+							BOOST_TEST_MESSAGE("Testing V*V'==I for f_nr=" << f_nr);
+							auto vxvt = (*multiply)(v, transpose(v));
+							BOOST_TEST((*size)(vxvt) == make_matrix_size(n_, n_));
+							HBRS_MPL_TEST_IS_IDENTITY(vxvt);
+						}
+						
+						BOOST_TEST_MESSAGE("Testing unitary matrices for f_nr=" << f_nr << " done");
+						++f_nr;
+						
+						return (*multiply)(u, multiply(s,transpose(v)));
 					}
-					
-					if (
-						(m_ > n_) && 
-						((mode==decompose_mode::economy) || (mode==decompose_mode::zero))
-					) {
-						BOOST_TEST_MESSAGE("Skipping U*U'==I for f_nr=" << f_nr);
-					} else {
-						BOOST_TEST_MESSAGE("Testing U*U'==I for f_nr=" << f_nr);
-						auto uxut = (*multiply)(u, transpose(u));
-						BOOST_TEST((*size)(uxut) == make_matrix_size(m_, m_));
-						_BOOST_TEST_IS_IDENTITY_MATRIX(uxut);
-					}
-					
-					if ( (m_ < n_) && (mode==decompose_mode::economy) ) {
-						BOOST_TEST_MESSAGE("Skipping V*V'==I for f_nr=" << f_nr);
-					} else {
-						BOOST_TEST_MESSAGE("Testing V*V'==I for f_nr=" << f_nr);
-						auto vxvt = (*multiply)(v, transpose(v));
-						BOOST_TEST((*size)(vxvt) == make_matrix_size(n_, n_));
-						_BOOST_TEST_IS_IDENTITY_MATRIX(vxvt);
-					}
-					
-					BOOST_TEST_MESSAGE("Testing unitary matrices for f_nr=" << f_nr << " done");
-					++f_nr;
-					
-					return (*multiply)(u, multiply(s,transpose(v)));
 				});
 				
 				hana::for_each(
@@ -267,12 +285,14 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(0.000000001)) {
 						BOOST_TEST_MESSAGE("comparing original and reconstructed dataset of impl nr " << i);
 						
 						auto const& rebuild = hana::at(rebuilds, i);
-						_BOOST_TEST_MMEQ(dataset, rebuild, false);
+						if constexpr(is_supported(rebuild)) {
+							HBRS_MPL_TEST_MMEQ(dataset, rebuild, false);
+						}
 					}
 				);
 				BOOST_TEST_MESSAGE("comparing original and reconstructed datasets done.");
 			}
-		};
+		});
 		
 		++dataset_nr;
 	});

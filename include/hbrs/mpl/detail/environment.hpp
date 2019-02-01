@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,24 +16,35 @@
 
 #pragma once
 
-#ifndef HBRS_MPL_TEST_DETAIL_HPP
-#define HBRS_MPL_TEST_DETAIL_HPP
+#ifndef HBRS_MPL_DETAIL_ENVIRONMENT_HPP
+#define HBRS_MPL_DETAIL_ENVIRONMENT_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <type_traits>
+#include <memory>
+#include <experimental/propagate_const>
+#include <mpi.h>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-struct not_supported{};
+struct /*HBRS_MPL_API*/ environment {
+	environment();
+	environment(int & argc, char ** &argv);
+	virtual ~environment();
 
-#define is_not_supported(x)                                                                                            \
-	boost::hana::bool_c<std::is_same<std::decay_t<decltype(x)>, hbrs::mpl::detail::not_supported>::value>
-
-#define is_supported(x)                                                                                                \
-	(!is_not_supported(x))
+	environment(environment const& other);
+	environment & operator=(environment other);
+	environment(environment&& other);
+	
+	void swap(environment& other);
+	friend void swap(environment& lhs, environment& rhs);
+private:
+	struct pimpl;
+	//TODO: Replace std::experimental::propagate_const?!
+	std::experimental::propagate_const<std::unique_ptr<pimpl>> m;
+};
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_TEST_DETAIL_HPP
+#endif // !HBRS_MPL_DETAIL_ENVIRONMENT_HPP

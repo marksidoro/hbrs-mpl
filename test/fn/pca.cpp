@@ -20,7 +20,8 @@
 #include <boost/test/unit_test.hpp>
 
 #include <hbrs/mpl/fn/pca.hpp>
-
+#include <hbrs/mpl/detail/test.hpp>
+#include <hbrs/mpl/detail/gather.hpp>
 #include <hbrs/mpl/dt/ctsav.hpp>
 #include <hbrs/mpl/dt/sm.hpp>
 #include <hbrs/mpl/fn/at.hpp>
@@ -53,6 +54,9 @@ namespace tt = boost::test_tools;
 
 BOOST_AUTO_TEST_SUITE(pca_test)
 
+using hbrs::mpl::detail::environment_fixture;
+BOOST_TEST_GLOBAL_FIXTURE(environment_fixture);
+
 BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 	using namespace hbrs::mpl;
 	
@@ -71,25 +75,29 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 	std::size_t dataset_nr = 0;
 	hana::for_each(datasets, [&dataset_nr](auto const& dataset) {
 		BOOST_TEST_MESSAGE("dataset_nr=" << dataset_nr);
-		for(bool economy : { true, false }) {
+		hana::for_each(hana::make_tuple(hana::true_c, hana::false_c), [&dataset](auto economy) {
 			BOOST_TEST_MESSAGE("economy=" << (economy ? "true" : "false"));
 			
 			auto funs = hana::drop_back(hana::make_tuple(
 				#ifdef HBRS_MPL_ENABLE_ADDON_MATLAB
 				[](auto && a, auto economy) {
+					BOOST_TEST_PASSPOINT();
 					return matlab::detail::pca_impl_level0{}(matlab::make_matrix(HBRS_MPL_FWD(a)), economy);
 				},
 				//TODO: Fix pca_impl_level1 and pca_impl_level2 and then reenable their tests here!
 // 				[](auto && a, auto economy) {
+// 					BOOST_TEST_PASSPOINT();
 // 					return matlab::detail::pca_impl_level1{}(matlab::make_matrix(HBRS_MPL_FWD(a)), economy);
 // 				},
 // 				[](auto && a, auto economy) {
+// 					BOOST_TEST_PASSPOINT();
 // 					return matlab::detail::pca_impl_level2{}(matlab::make_matrix(HBRS_MPL_FWD(a)), economy);
 // 				},
 				#endif
 				
 				#ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
 				[](auto && a, auto economy) {
+					BOOST_TEST_PASSPOINT();
 					return elemental::detail::pca_impl_Matrix{}(elemental::make_matrix(HBRS_MPL_FWD(a)), economy); 
 				},
 				#endif
@@ -106,29 +114,36 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 					auto const& pca_i = hana::at(results, i);
 					auto const& pca_j = hana::at(results, j);
 					
-					auto sz_ = (*size)(dataset);
-					auto m_ = (*m)(sz_);
-					auto n_ = (*n)(sz_);
-					
-					BOOST_TEST_MESSAGE("comparing pca_coeff of impl nr " << i << " and " << j);
-					auto const& pca_coeff_i = (*at)(pca_i, pca_coeff{});
-					auto const& pca_coeff_j = (*at)(pca_j, pca_coeff{});
-					if ((m_ < n_) && !economy) {
-						auto rng = std::make_pair(make_matrix_index(0,0), make_matrix_size((int)n_, (int)m_-1 /* TODO: Why n*DOF instead of n*m? */));
-						auto pca_coeff_i_mxn = (*select)(pca_coeff_i, rng);
-						auto pca_coeff_j_mxn = (*select)(pca_coeff_j, rng);
-						_BOOST_TEST_MMEQ(pca_coeff_i_mxn, pca_coeff_j_mxn, true);
-					} else {
-						_BOOST_TEST_MMEQ(pca_coeff_i, pca_coeff_j, true);
+					//TODO: Take ++j if j not supported!
+					if constexpr(is_supported(pca_i) && is_supported(pca_j)) {
+						auto sz_ = (*size)(dataset);
+						auto m_ = (*m)(sz_);
+						auto n_ = (*n)(sz_);
+						
+						BOOST_TEST_PASSPOINT();
+						
+						BOOST_TEST_MESSAGE("comparing pca_coeff of impl nr " << i << " and " << j);
+						auto const& pca_coeff_i = (*at)(pca_i, pca_coeff{});
+						auto const& pca_coeff_j = (*at)(pca_j, pca_coeff{});
+						if ((m_ < n_) && !economy) {
+							auto rng = std::make_pair(make_matrix_index(0,0), make_matrix_size((int)n_, (int)m_-1 /* TODO: Why n*DOF instead of n*m? */));
+							auto pca_coeff_i_mxn = (*select)(pca_coeff_i, rng);
+							auto pca_coeff_j_mxn = (*select)(pca_coeff_j, rng);
+							HBRS_MPL_TEST_MMEQ(pca_coeff_i_mxn, pca_coeff_j_mxn, true);
+						} else {
+							HBRS_MPL_TEST_MMEQ(pca_coeff_i, pca_coeff_j, true);
+						}
+						
+						BOOST_TEST_MESSAGE("comparing pca_score of impl nr " << i << " and " << j);
+						HBRS_MPL_TEST_MMEQ((*at)(pca_i, pca_score{}),  (*at)(pca_j, pca_score{}), true);
+						BOOST_TEST_MESSAGE("comparing pca_latent of impl nr " << i << " and " << j);
+						HBRS_MPL_TEST_VVEQ((*at)(pca_i, pca_latent{}), (*at)(pca_j, pca_latent{}), false);
+						BOOST_TEST_MESSAGE("comparing pca_mean of impl nr " << i << " and " << j);
+						HBRS_MPL_TEST_VVEQ((*at)(pca_i, pca_mean{}),   (*at)(pca_j, pca_mean{}), false);
+						BOOST_TEST_MESSAGE("comparing impl nr " << i << " and " << j << " done.");
+						
+						BOOST_TEST_PASSPOINT();
 					}
-					
-					BOOST_TEST_MESSAGE("comparing pca_score of impl nr " << i << " and " << j);
-					_BOOST_TEST_MMEQ((*at)(pca_i, pca_score{}),  (*at)(pca_j, pca_score{}), true);
-					BOOST_TEST_MESSAGE("comparing pca_latent of impl nr " << i << " and " << j);
-					_BOOST_TEST_VVEQ((*at)(pca_i, pca_latent{}), (*at)(pca_j, pca_latent{}), false);
-					BOOST_TEST_MESSAGE("comparing pca_mean of impl nr " << i << " and " << j);
-					_BOOST_TEST_VVEQ((*at)(pca_i, pca_mean{}),   (*at)(pca_j, pca_mean{}), false);
-					BOOST_TEST_MESSAGE("comparing impl nr " << i << " and " << j << " done.");
 				};
 				
 				hana::for_each(
@@ -142,13 +157,17 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 			
 			{
 				auto rebuilds = hana::transform(results, [](auto && pca_result) {
-					auto && coeff_ =  (*at) (pca_result, pca_coeff{});
-					auto && score_ =  (*at) (pca_result, pca_score{});
-// 					auto && latent_ = (*at) (pca_result, pca_latent{});
-					auto && mean_ =   (*at) (pca_result, pca_mean{});
-					
-					auto centered = (*multiply)(score_, transpose(coeff_));
-					return (*plus)(centered, expand(mean_, size(centered)));
+					if constexpr(is_not_supported(pca_result)) {
+						return hbrs::mpl::detail::not_supported{};
+					} else {
+						auto && coeff_ =  (*at) (pca_result, pca_coeff{});
+						auto && score_ =  (*at) (pca_result, pca_score{});
+	// 					auto && latent_ = (*at) (pca_result, pca_latent{});
+						auto && mean_ =   (*at) (pca_result, pca_mean{});
+						
+						auto centered = (*multiply)(score_, transpose(coeff_));
+						return (*plus)(centered, expand(mean_, size(centered)));
+					}
 				});
 				
 				hana::for_each(
@@ -156,12 +175,15 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 					[&dataset, &rebuilds](auto i) {
 						BOOST_TEST_MESSAGE("comparing original and reconstructed dataset of impl nr " << i);
 						auto const& rebuild = hana::at(rebuilds, i);
-						_BOOST_TEST_MMEQ(dataset, rebuild, false);
+						
+						if constexpr(is_supported(rebuild)) {
+							HBRS_MPL_TEST_MMEQ(dataset, rebuild, false);
+						}
 					}
 				);
 				BOOST_TEST_MESSAGE("comparing original and reconstructed datasets done.");
 			}
-		};
+		});
 		
 		++dataset_nr;
 	});

@@ -23,7 +23,7 @@
 #include <array>
 
 #include <hbrs/mpl/fn/equal.hpp>
-#include "../detail.hpp"
+#include <hbrs/mpl/detail/test.hpp>
 
 BOOST_AUTO_TEST_SUITE(subsequence_test)
 
@@ -39,9 +39,9 @@ BOOST_AUTO_TEST_CASE(m_n_size_assignment) {
 	static constexpr auto rc = make_subsequence(a, 3u, 6u);
 	static constexpr auto rd = make_subsequence(a, 3u, 3u);
 	
-	_BOOST_TEST_VVEQ(b, rb, false);
-	_BOOST_TEST_VVEQ(c, rc, false);
-	_BOOST_TEST_VVEQ(d, rd, false);
+	HBRS_MPL_TEST_VVEQ(b, rb, false);
+	HBRS_MPL_TEST_VVEQ(c, rc, false);
+	HBRS_MPL_TEST_VVEQ(d, rd, false);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

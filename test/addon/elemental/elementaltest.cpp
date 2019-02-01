@@ -14,11 +14,27 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// #define BOOST_TEST_TOOLS_UNDER_DEBUGGER
 #define BOOST_TEST_MODULE elemental_test
-#define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
-#include <boost/test/unit_test.hpp>
 
+// #define HBRS_MPL_TEST_DO_NOT_CATCH_EXCEPTIONS
+#ifdef HBRS_MPL_TEST_DO_NOT_CATCH_EXCEPTIONS
+	// catch exceptions with debugger and allow to examine stack trace
+	
+	/* NOTE: If linked against boost test library, this program will crash on exit, 
+	 *       see e.g.: https://bugzilla.redhat.com/show_bug.cgi?id=1446852
+	 */
+	#include <boost/throw_exception.hpp>
+	#define BOOST_NO_EXCEPTIONS
+	#include <boost/test/included/unit_test.hpp>
+#else
+	#define BOOST_TEST_DYN_LINK
+	#include <boost/test/unit_test.hpp>
+#endif // !HBRS_MPL_TEST_DO_NOT_CATCH_EXCEPTIONS
+
+#include <hbrs/mpl/detail/test.hpp>
+#include <hbrs/mpl/detail/gather.hpp>
 #include <elemental/dt/matrix.hpp>
 #include <elemental/dt/vector.hpp>
 #include <hbrs/mpl/dt/ctsav.hpp>
@@ -57,9 +73,9 @@
 #include <hbrs/mpl/fn/times.hpp>
 #include <boost/hana/pair.hpp>
 #include <El.hpp>
+#include <boost/format.hpp>
 
 #include "../../data.hpp"
-#include "../../detail.hpp"
 
 namespace utf = boost::unit_test;
 namespace tt = boost::test_tools;
@@ -67,6 +83,9 @@ namespace tt = boost::test_tools;
 #define _TOL 0.000000001
 
 BOOST_AUTO_TEST_SUITE(elemental_test)
+
+using hbrs::mpl::detail::environment_fixture;
+BOOST_TEST_GLOBAL_FIXTURE(environment_fixture);
 
 BOOST_AUTO_TEST_CASE(matrix_m_n_size) {
 	using namespace elemental;
@@ -264,7 +283,7 @@ BOOST_AUTO_TEST_CASE(matrix_multiply_1, * utf::tolerance(_TOL)) {
 	elemental::detail::multiply_impl_Matrix_Matrix{}(a, b);
 	El::Matrix<double> rc0 = (*multiply)(a, b);
 	
-	_BOOST_TEST_MMEQ(c, rc0, false);
+	HBRS_MPL_TEST_MMEQ(c, rc0, false);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_multiply_2, * utf::tolerance(_TOL)) {
@@ -284,7 +303,7 @@ BOOST_AUTO_TEST_CASE(matrix_multiply_2, * utf::tolerance(_TOL)) {
 	elemental::detail::multiply_impl_Matrix_Matrix{}(a, elemental::detail::multiply_impl_Matrix_Matrix{}(a, a));
 	El::Matrix<double> const rb0 = (*multiply)(a, multiply(a, a));
 	
-	_BOOST_TEST_MMEQ(a, rb0, false);
+	HBRS_MPL_TEST_MMEQ(a, rb0, false);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_multiply_3) {
@@ -332,14 +351,7 @@ BOOST_AUTO_TEST_CASE(matrix_multiply_3) {
 	auto const c_n = (*n)(c_sz);
 	
 	auto d = (*multiply)(a, b);
-	auto d_sz = (*size)(d);
-	BOOST_TEST(c_sz == d_sz);
-	for(El::Int j = 0; j < c_n; ++j) {
-		for(El::Int i = 0; i < c_m; ++i) {
-			auto ix = make_matrix_index(i,j);
-			BOOST_TEST((*at)(d, ix) == (*at)(c, ix));
-		}
-	}
+	HBRS_MPL_TEST_MMEQ(c, d, false);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_multiply_4) {
@@ -373,14 +385,7 @@ BOOST_AUTO_TEST_CASE(matrix_multiply_4) {
 	auto const b_n = (*n)(b_sz);
 	
 	auto d = (*multiply)(a, 2.);
-	auto d_sz = (*size)(d);
-	BOOST_TEST(b_sz == d_sz);
-	for(El::Int j = 0; j < b_n; ++j) {
-		for(El::Int i = 0; i < b_m; ++i) {
-			auto ix = make_matrix_index(i,j);
-			BOOST_TEST((*at)(d, ix) == (*at)(b, ix));
-		}
-	}
+	HBRS_MPL_TEST_MMEQ(b, d, false);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_vector_multiply) {
@@ -1005,37 +1010,46 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 	);
 	
 	elemental::detail::select_impl_Matrix{}(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
-	El::Matrix<double> rb0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
-	El::Matrix<double> rc0 = (*select)(a, make_range(make_matrix_index(1,0), make_matrix_index(2,2)));
-	El::Matrix<double> rd0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(2,1)));
-	El::Matrix<double> re0 = (*select)(a, make_range(make_matrix_index(0,1), make_matrix_index(2,2)));
+	El::Matrix<double> const rb0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
+	El::Matrix<double> const rc0 = (*select)(a, make_range(make_matrix_index(1,0), make_matrix_index(2,2)));
+	El::Matrix<double> const rd0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(2,1)));
+	El::Matrix<double> const re0 = (*select)(a, make_range(make_matrix_index(0,1), make_matrix_index(2,2)));
 	
-	El::Matrix<double> rb1 = (*select)(a, std::make_pair(El::IR(0,2), El::IR(0,3)));
-	El::Matrix<double> rc1 = (*select)(a, std::make_pair(El::IR(1,3), El::IR(0,3)));
-	El::Matrix<double> rd1 = (*select)(a, std::make_pair(El::IR(0,3), El::IR(0,2)));
-	El::Matrix<double> re1 = (*select)(a, std::make_pair(El::IR(0,3), El::IR(1,3)));
+	El::Matrix<double> const rb1 = (*select)(a, std::make_pair(El::IR(0,2), El::IR(0,3)));
+	El::Matrix<double> const rc1 = (*select)(a, std::make_pair(El::IR(1,3), El::IR(0,3)));
+	El::Matrix<double> const rd1 = (*select)(a, std::make_pair(El::IR(0,3), El::IR(0,2)));
+	El::Matrix<double> const re1 = (*select)(a, std::make_pair(El::IR(0,3), El::IR(1,3)));
 	
-	El::Matrix<double> rb2 = (*select)(a, std::make_pair(make_matrix_index(0,0), make_matrix_size(2,3)));
-	El::Matrix<double> rc2 = (*select)(a, std::make_pair(make_matrix_index(1,0), make_matrix_size(2,3)));
-	El::Matrix<double> rd2 = (*select)(a, std::make_pair(make_matrix_index(0,0), make_matrix_size(3,2)));
-	El::Matrix<double> re2 = (*select)(a, std::make_pair(make_matrix_index(0,1), make_matrix_size(3,2)));
+	El::Matrix<double> const rb2 = (*select)(a, std::make_pair(make_matrix_index(0,0), make_matrix_size(2,3)));
+	El::Matrix<double> const rc2 = (*select)(a, std::make_pair(make_matrix_index(1,0), make_matrix_size(2,3)));
+	El::Matrix<double> const rd2 = (*select)(a, std::make_pair(make_matrix_index(0,0), make_matrix_size(3,2)));
+	El::Matrix<double> const re2 = (*select)(a, std::make_pair(make_matrix_index(0,1), make_matrix_size(3,2)));
 	
-	_BOOST_TEST_MMEQ(b, rb0, false);
-	_BOOST_TEST_MMEQ(c, rc0, false);
-	_BOOST_TEST_MMEQ(d, rd0, false);
-	_BOOST_TEST_MMEQ(e, re0, false);
+	El::Matrix<double>       rb3 = (*select)(std::move(a), std::make_pair(El::IR(0,2), El::IR(0,3)));
+	El::Matrix<double>       rc3 = (*select)(std::move(a), std::make_pair(El::IR(1,3), El::IR(0,3)));
+	El::Matrix<double>       rd3 = (*select)(std::move(a), std::make_pair(El::IR(0,3), El::IR(0,2)));
+	El::Matrix<double>       re3 = (*select)(std::move(a), std::make_pair(El::IR(0,3), El::IR(1,3)));
 	
-	_BOOST_TEST_MMEQ(b, rb1, false);
-	_BOOST_TEST_MMEQ(c, rc1, false);
-	_BOOST_TEST_MMEQ(d, rd1, false);
-	_BOOST_TEST_MMEQ(e, re1, false);
+	HBRS_MPL_TEST_MMEQ(b, rb0, false);
+	HBRS_MPL_TEST_MMEQ(c, rc0, false);
+	HBRS_MPL_TEST_MMEQ(d, rd0, false);
+	HBRS_MPL_TEST_MMEQ(e, re0, false);
 	
-	_BOOST_TEST_MMEQ(b, rb2, false);
-	_BOOST_TEST_MMEQ(c, rc2, false);
-	_BOOST_TEST_MMEQ(d, rd2, false);
-	_BOOST_TEST_MMEQ(e, re2, false);
+	HBRS_MPL_TEST_MMEQ(b, rb1, false);
+	HBRS_MPL_TEST_MMEQ(c, rc1, false);
+	HBRS_MPL_TEST_MMEQ(d, rd1, false);
+	HBRS_MPL_TEST_MMEQ(e, re1, false);
+	
+	HBRS_MPL_TEST_MMEQ(b, rb2, false);
+	HBRS_MPL_TEST_MMEQ(c, rc2, false);
+	HBRS_MPL_TEST_MMEQ(d, rd2, false);
+	HBRS_MPL_TEST_MMEQ(e, re2, false);
+	
+	HBRS_MPL_TEST_MMEQ(b, rb3, false);
+	HBRS_MPL_TEST_MMEQ(c, rc3, false);
+	HBRS_MPL_TEST_MMEQ(d, rd3, false);
+	HBRS_MPL_TEST_MMEQ(e, re3, false);
 }
-
 
 BOOST_AUTO_TEST_CASE(column_vector_select) {
 	using namespace elemental;
@@ -1067,11 +1081,11 @@ BOOST_AUTO_TEST_CASE(column_vector_select) {
 	column_vector<double> rb1 = (*select)(a, El::IR(0,6));
 	column_vector<double> rc1 = (*select)(a, El::IR(3,9));
 	
-	_BOOST_TEST_VVEQ(b, rb0, false);
-	_BOOST_TEST_VVEQ(c, rc0, false);
+	HBRS_MPL_TEST_VVEQ(b, rb0, false);
+	HBRS_MPL_TEST_VVEQ(c, rc0, false);
 	
-	_BOOST_TEST_VVEQ(b, rb1, false);
-	_BOOST_TEST_VVEQ(c, rc1, false);
+	HBRS_MPL_TEST_VVEQ(b, rb1, false);
+	HBRS_MPL_TEST_VVEQ(c, rc1, false);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_columns) {
@@ -1310,8 +1324,8 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 	auto r_centered = (*multiply)(r_score, transpose(r_coeff));
 	auto rcst /* reconstructed */ = (*plus)(r_centered, expand(r_mean, size(r_centered)));
 	
-	_BOOST_TEST_MMEQ(b, rcst, false);
-	_BOOST_TEST_MMEQ(a, b, false);
+	HBRS_MPL_TEST_MMEQ(b, rcst, false);
+	HBRS_MPL_TEST_MMEQ(a, b, false);
 
 	auto const e_coeff = elemental::make_matrix(
 		std::initializer_list<double>{
@@ -1366,10 +1380,10 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 	BOOST_TEST((unsigned)(*size)(r_latent) == (unsigned)(*size)(e_latent));
 	BOOST_TEST((unsigned)(*size)(r_mean) == (unsigned)(*size)(e_mean));
 	
-	_BOOST_TEST_MMEQ(e_coeff, r_coeff, true);
-	_BOOST_TEST_MMEQ(e_score, r_score, true);
-	_BOOST_TEST_VVEQ(e_latent, r_latent, false);
-	_BOOST_TEST_VVEQ(e_mean, r_mean, false);
+	HBRS_MPL_TEST_MMEQ(e_coeff, r_coeff, true);
+	HBRS_MPL_TEST_MMEQ(e_score, r_score, true);
+	HBRS_MPL_TEST_VVEQ(e_latent, r_latent, false);
+	HBRS_MPL_TEST_VVEQ(e_mean, r_mean, false);
 }
 
 
@@ -1399,7 +1413,7 @@ BOOST_AUTO_TEST_CASE(matrix_diag) {
 	elemental::detail::diag_impl_Matrix{}(a);
 	elemental::column_vector<double> rb0 = (*diag)(a);
 	
-	_BOOST_TEST_VVEQ(b, rb0, false);
+	HBRS_MPL_TEST_VVEQ(b, rb0, false);
 }
 
 
@@ -1434,7 +1448,7 @@ BOOST_AUTO_TEST_CASE(column_vector_transform) {
 	elemental::detail::transform_impl_vector{}(a, f);
 	column_vector<double> rb0 = (*transform)(a, f);
 	
-	_BOOST_TEST_VVEQ(b, rb0, false);
+	HBRS_MPL_TEST_VVEQ(b, rb0, false);
 }
 
 BOOST_AUTO_TEST_CASE(row_vector_transform) {
@@ -1458,7 +1472,7 @@ BOOST_AUTO_TEST_CASE(row_vector_transform) {
 	elemental::detail::transform_impl_vector{}(a, f);
 	row_vector<double> rb0 = (*transform)(a, f);
 	
-	_BOOST_TEST_VVEQ(b, rb0, false);
+	HBRS_MPL_TEST_VVEQ(b, rb0, false);
 }
 
 BOOST_AUTO_TEST_CASE(column_vector_divide) {
@@ -1490,13 +1504,12 @@ BOOST_AUTO_TEST_CASE(column_vector_divide) {
 	elemental::detail::divide_impl_vector_Scalar{}(a, 2.);
 	column_vector<double> rb0 = (*divide)(a, 2.);
 	
-	_BOOST_TEST_VVEQ(b, rb0, false);
+	HBRS_MPL_TEST_VVEQ(b, rb0, false);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_times) {
 	using namespace elemental;
 	using namespace hbrs::mpl;
-	using hbrs::mpl::select;
 	
 	auto const a = elemental::make_matrix(
 		std::initializer_list<double>{
@@ -1531,7 +1544,7 @@ BOOST_AUTO_TEST_CASE(matrix_times) {
 	elemental::detail::times_impl_Matrix_Matrix{}(a, b);
 	El::Matrix<double> rc0 = (*times)(a, b);
 	
-	_BOOST_TEST_MMEQ(c, rc0, false);
+	HBRS_MPL_TEST_MMEQ(c, rc0, false);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_pca_filter, * utf::tolerance(_TOL)) {
@@ -1561,9 +1574,8 @@ BOOST_AUTO_TEST_CASE(matrix_pca_filter, * utf::tolerance(_TOL)) {
 	auto && data   = (*at)(rslt, pca_filter_data{});
 	auto && latent = (*at)(rslt, pca_filter_latent{});
 	
-	_BOOST_TEST_MMEQ(b, data, false);
+	HBRS_MPL_TEST_MMEQ(b, data, false);
 	BOOST_TEST((*size)(latent) == (El::Int) a_n);
 }
-
 
 BOOST_AUTO_TEST_SUITE_END()

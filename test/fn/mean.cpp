@@ -33,13 +33,14 @@
 #include <hbrs/mpl/dt/matrix_size.hpp>
 #include <hbrs/mpl/dt/storage_order.hpp>
 
+#include <hbrs/mpl/detail/test.hpp>
+
 #include <boost/hana/integral_constant.hpp>
 #include <boost/hana/tuple.hpp>
 #include <tuple>
 #include <vector>
 
 #include "../data.hpp"
-#include "../detail.hpp"
 
 BOOST_AUTO_TEST_SUITE(mean_test)
 
@@ -73,7 +74,7 @@ BOOST_AUTO_TEST_CASE(column_mean_sm_ctsav_icsz) {
 		24.75, 24.25, 23.75, 24.25, 24.50, 24.25, 24.25, 24.50, 24.00, 24.50, 24.50, 24.50, 24.50
 	} };
 	BOOST_TEST((*equal)(size(ocm), a_n));
-	_BOOST_TEST_VVEQ(cm, ocm, false);
+	HBRS_MPL_TEST_VVEQ(cm, ocm, false);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
