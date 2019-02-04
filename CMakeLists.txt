@@ -60,9 +60,10 @@ set_package_properties(OpenMP PROPERTIES
     PURPOSE "Required for addon elemental."
 )
 
-find_package(MPI)
+find_package(MPI REQUIRED)
 set_package_properties(MPI PROPERTIES
-    PURPOSE "Required for addon elemental."
+    PURPOSE "Required for distributed computations, e.g. in addon elemental."
+    TYPE REQUIRED
 )
 
 find_package(Matlab COMPONENTS MAIN_PROGRAM)

@@ -36,10 +36,18 @@ target_include_directories(hbrs_mpl
 
 target_include_directories(hbrs_mpl
     SYSTEM
-    PUBLIC ${Boost_INCLUDE_DIRS})
+    PUBLIC ${Boost_INCLUDE_DIRS}
+    PUBLIC ${MPI_CXX_INCLUDE_DIRS})
+
+target_compile_definitions(hbrs_mpl PUBLIC ${MPI_CXX_COMPILE_DEFINITIONS})
+set_target_properties(hbrs_mpl PROPERTIES
+    COMPILE_FLAGS "${MPI_CXX_COMPILE_OPTIONS}"
+    LINK_FLAGS "${MPI_CXX_LINK_FLAGS}"
+)
 
 target_link_libraries(hbrs_mpl PUBLIC
     ${Boost_LIBRARIES}
+    ${MPI_CXX_LIBRARIES}
     fuse_lib)
 
 target_link_libraries(fuse_lib INTERFACE hbrs_mpl)
