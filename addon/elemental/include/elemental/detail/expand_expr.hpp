@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,18 +14,26 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/diag.hpp>
-#include <elemental/dt/matrix.hpp>
+#pragma once
+
+#ifndef ELEMENTAL_DETAIL_EXPAND_EXPR_HPP
+#define ELEMENTAL_DETAIL_EXPAND_EXPR_HPP
+
+#include <elemental/config.hpp>
+#include <hbrs/mpl/dt/matrix_size.hpp>
+#include <El.hpp>
 
 ELEMENTAL_NAMESPACE_BEGIN
+namespace mpl = hbrs::mpl;
 namespace detail {
 
-template auto diag_impl_Matrix::operator()(El::Matrix<float> const&) const;
-template auto diag_impl_Matrix::operator()(El::Matrix<El::Complex<float>> const&) const;
-template auto diag_impl_Matrix::operator()(El::Matrix<double> const&) const;
-template auto diag_impl_Matrix::operator()(El::Matrix<El::Complex<double>> const&) const;
-
-//TODO Add diag_impl_DistMatrix impl!
+template<typename Expandable>
+struct expand_expr {
+	Expandable from;
+	mpl::matrix_size<El::Int, El::Int> to_size;
+};
 
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END
+
+#endif // !ELEMENTAL_DETAIL_EXPAND_EXPR_HPP

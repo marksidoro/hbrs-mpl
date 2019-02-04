@@ -20,6 +20,7 @@
 #define ELEMENTAL_FUSE_FN_MULTIPLY_HPP
 
 #include <elemental/config.hpp>
+#include <elemental/detail/Ring.hpp>
 #include <El.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/hana/tuple.hpp>
@@ -39,6 +40,34 @@ ELEMENTAL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 namespace detail {
 
+template <typename A, typename B, typename C>
+auto
+multiply_impl(A const& a, B const& b, C c) {
+	typedef Ring_t<std::decay_t<A>> Ring;
+	typedef std::decay_t<Ring> _Ring_;
+	using namespace hbrs::mpl;
+	
+	if (a.Width() != b.Height()) {
+		BOOST_THROW_EXCEPTION((
+			incompatible_matrices_exception{}
+			<< elemental::errinfo_matrix_sizes{{(*size)(a), (*size)(b)}}
+		));
+	}
+	
+	c.Resize(a.Height(), b.Width());
+	
+	El::Gemm(
+		El::Orientation::NORMAL,
+		El::Orientation::NORMAL,
+		_Ring_(1),
+		a,
+		b,
+		_Ring_(0), /* zero all entries in c because El::Matrix<> constructor does no zero initialisation */
+		c
+	);
+	return c;
+}
+
 struct multiply_impl_Matrix_Matrix {
 	template <
 		typename RingL,
@@ -51,44 +80,25 @@ struct multiply_impl_Matrix_Matrix {
 	auto
 	operator()(El::Matrix<RingL> const& a, El::Matrix<RingR> const& b) const {
 		using namespace hbrs::mpl;
-		
-		if (a.Width() != b.Height()) {
-			BOOST_THROW_EXCEPTION((
-				incompatible_matrices_exception{}
-				<< elemental::errinfo_matrix_sizes{{(*size)(a), (*size)(b)}}
-			));
-		}
-		
 		typedef std::common_type_t<RingL, RingR> Ring;
-		
-		El::Matrix<Ring> a_ct {a.Height(), a.Width()};
-		El::Matrix<Ring> b_ct {b.Height(), b.Width()};
-		El::Matrix<Ring> c{a.Height(), b.Width()};
 		
 		//Replace with faster algorithm (e.g. Strassen algorithm) and use parallelization
 		
+		El::Matrix<Ring> a_ct {a.Height(), a.Width()};
 		for(El::Int j = 0; j < a.Width(); ++j) {
 			for(El::Int i = 0; i < a.Height(); ++i) {
 				*a_ct.Buffer(i,j) = *a.LockedBuffer(i,j);
 			}
 		}
 		
+		El::Matrix<Ring> b_ct {b.Height(), b.Width()};
 		for(El::Int j = 0; j < b.Width(); ++j) {
 			for(El::Int i = 0; i < b.Height(); ++i) {
 				*b_ct.Buffer(i,j) = *b.LockedBuffer(i,j);
 			}
 		}
 		
-		El::Gemm(
-			El::Orientation::NORMAL,
-			El::Orientation::NORMAL,
-			Ring(1),
-			a_ct,
-			b_ct,
-			Ring(0), /* zero all entries in c because El::Matrix<> constructor does no zero initialisation */
-			c
-		);
-		return c;
+		return multiply_impl(a_ct, b_ct, El::Matrix<Ring>{});
 	}
 	
 	template <typename Ring>
@@ -96,25 +106,19 @@ struct multiply_impl_Matrix_Matrix {
 	operator()(El::Matrix<Ring> const& a, El::Matrix<Ring> const& b) const {
 		using namespace hbrs::mpl;
 		
-		if (a.Width() != b.Height()) {
-			BOOST_THROW_EXCEPTION((
-				incompatible_matrices_exception{}
-				<< elemental::errinfo_matrix_sizes{{(*size)(a), (*size)(b)}}
-			));
-		}
+		return multiply_impl(a, b, El::Matrix<Ring>{});
+	}
+};
+
+struct multiply_impl_AbstractDistMatrix_AbstractDistMatrix {
+	template <typename Ring>
+	auto
+	operator()(El::AbstractDistMatrix<Ring> const& a, El::AbstractDistMatrix<Ring> const& b) const {
+		using namespace hbrs::mpl;
 		
-		El::Matrix<Ring> c{a.Height(), b.Width()};
-		
-		El::Gemm(
-			El::Orientation::NORMAL,
-			El::Orientation::NORMAL,
-			Ring(1.0),
-			a,
-			b,
-			Ring(0.0), /* zero all entries in c because El::Matrix<> constructor does no zero initialisation */
-			c
-		);
-		return c;
+		BOOST_ASSERT(a.Grid() == b.Grid());
+		// "El::MC, El::MR" as used by proxy in Elemental/src/blas_like/level3/Gemm/NN.hpp
+		return multiply_impl(a, b, El::DistMatrix<Ring, El::MC, El::MR>{a.Grid()});
 	}
 };
 
@@ -175,7 +179,8 @@ ELEMENTAL_NAMESPACE_END
 #define ELEMENTAL_FUSE_FN_MULTIPLY_IMPLS boost::hana::make_tuple(                                                      \
 		elemental::detail::multiply_impl_Matrix_Matrix{},                                                              \
 		elemental::detail::multiply_impl_Matrix_scv_vector{},                                                          \
-		elemental::detail::multiply_impl_Matrix_Scalar{}                                                               \
+		elemental::detail::multiply_impl_Matrix_Scalar{},                                                              \
+		elemental::detail::multiply_impl_AbstractDistMatrix_AbstractDistMatrix{}                                       \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_MULTIPLY_HPP

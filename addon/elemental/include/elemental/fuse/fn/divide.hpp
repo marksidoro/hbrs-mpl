@@ -21,7 +21,10 @@
 
 #include <elemental/config.hpp>
 #include <El.hpp>
+#include <elemental/detail/Ring.hpp>
 #include <elemental/fwd/dt/vector.hpp>
+#include <elemental/fwd/dt/dist_vector.hpp>
+#include <elemental/dt/dist_matrix.hpp> // TODO: Remove once dist_column_vector is correctly implemented
 #include <boost/hana/tuple.hpp>
 #include <type_traits>
 
@@ -32,21 +35,42 @@ namespace detail {
 struct divide_impl_vector_Scalar {
 	template <
 		typename Vector,
-		typename Ring,
+		typename Scalar,
 		typename std::enable_if_t< 
 			(
 				std::is_same< hana::tag_of_t<Vector>, column_vector_tag >::value ||
 				std::is_same< hana::tag_of_t<Vector>, row_vector_tag >::value
 			) &&
-			std::is_arithmetic<Ring>::value
+			std::is_arithmetic<Scalar>::value
 		>* = nullptr
 	>
 	auto
-	operator()(Vector v, Ring const& b) const {
+	operator()(Vector v, Scalar const& b) const {
 		//TODO: Move to member function? Or replace with transform call?
+		El::Scale(Scalar(1)/b, v.data());
+		return v;
+	}
+};
+
+//TODO: replace this hack!
+struct divide_impl_dist_vector_Scalar {
+	template <
+		typename DistMatrix,
+		typename Scalar,
+		typename std::enable_if_t< 
+			(
+				std::is_same< hana::tag_of_t<DistMatrix>, hana::ext::El::DistMatrix_tag >::value
+			) &&
+			std::is_arithmetic<Scalar>::value
+		>* = nullptr
+	>
+	auto
+	operator()(dist_column_vector<DistMatrix> && v, Scalar const& b) const {
+		//TODO: Move to member function? Or replace with transform call?
+		typedef Ring_t<std::decay_t<DistMatrix>> Ring;
 		typedef std::decay_t<Ring> _Ring_;
 		El::Scale(_Ring_(1)/b, v.data());
-		return v;
+		return HBRS_MPL_FWD(v);
 	}
 };
 
@@ -69,6 +93,7 @@ ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_DIVIDE_IMPLS boost::hana::make_tuple(                                                        \
 		elemental::detail::divide_impl_vector_Scalar{},                                                                \
+		elemental::detail::divide_impl_dist_vector_Scalar{},                                                           \
 		elemental::detail::divide_impl_Matrix_Scalar{}                                                                 \
 	)
 

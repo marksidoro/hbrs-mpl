@@ -24,6 +24,7 @@
 #include <hbrs/mpl/detail/function_object.hpp>
 
 #include <elemental/fwd/dt/vector.hpp>
+#include <elemental/fwd/dt/dist_vector.hpp>
 
 #include <hbrs/mpl/dt/matrix_size.hpp>
 #include <El.hpp>
@@ -46,8 +47,19 @@ struct size_impl_Matrix {
 	}
 };
 
+struct size_impl_AbstractDistMatrix {
+	template <typename Ring>
+	auto
+	operator()(El::AbstractDistMatrix<Ring> const& m) const {
+		return mpl::make_matrix_size(m.Height(), m.Width());
+	}
+};
+
 HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_column_vector, column_vector_tag, length)
 HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_row_vector, row_vector_tag, length)
+
+HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_dist_column_vector, dist_column_vector_tag, length)
+HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_dist_row_vector, dist_row_vector_tag, length)
 
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END
@@ -55,7 +67,10 @@ ELEMENTAL_NAMESPACE_END
 #define ELEMENTAL_FUSE_FN_SIZE_IMPLS boost::hana::make_tuple(                                                          \
 		elemental::detail::length_impl_column_vector{},                                                                \
 		elemental::detail::length_impl_row_vector{},                                                                   \
-		elemental::detail::size_impl_Matrix{}                                                                          \
+		elemental::detail::length_impl_dist_column_vector{},                                                           \
+		elemental::detail::length_impl_dist_row_vector{},                                                              \
+		elemental::detail::size_impl_Matrix{},                                                                         \
+		elemental::detail::size_impl_AbstractDistMatrix{}                                                              \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_SIZE_HPP

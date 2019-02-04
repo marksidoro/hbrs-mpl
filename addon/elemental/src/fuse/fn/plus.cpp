@@ -16,6 +16,9 @@
 
 #include <hbrs/mpl/fn/plus.hpp>
 
+#include <elemental/dt/dist_matrix.hpp>
+#include <elemental/dt/dist_vector.hpp>
+
 ELEMENTAL_NAMESPACE_BEGIN
 namespace detail {
 
@@ -28,6 +31,8 @@ template auto plus_impl_Matrix_Scalar::operator()(El::Matrix<float>,            
 template auto plus_impl_Matrix_Scalar::operator()(El::Matrix<El::Complex<float>>,  El::Complex<float>  const&) const;
 template auto plus_impl_Matrix_Scalar::operator()(El::Matrix<double>,              double              const&) const;
 template auto plus_impl_Matrix_Scalar::operator()(El::Matrix<El::Complex<double>>, El::Complex<double> const&) const;
+
+//TODO: Add dist_*_vector impls!
 
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END

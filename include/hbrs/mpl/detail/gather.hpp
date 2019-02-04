@@ -29,7 +29,9 @@
 
 #ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
 	#include <elemental/dt/matrix.hpp>
+	#include <elemental/dt/dist_matrix.hpp>
 	#include <elemental/dt/vector.hpp>
+	#include <elemental/dt/dist_vector.hpp>
 	#include <elemental/detail/Ring.hpp>
 	#include <El.hpp>
 #endif
@@ -78,6 +80,49 @@ constexpr decltype(auto)
 gather(T && t) {
 	return HBRS_MPL_FWD(t);
 }
+
+#ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
+	template <
+		typename T,
+		typename std::enable_if_t< 
+			std::is_same< hana::tag_of_t<T>, hana::ext::El::AbstractDistMatrix_tag >::value ||
+			std::is_same< hana::tag_of_t<T>, hana::ext::El::DistMatrix_tag >::value
+		>* = nullptr
+	>
+	constexpr auto
+	gather(T && t) {
+		typedef elemental::detail::Ring_t<std::decay_t<T>> Ring;
+		El::DistMatrix<Ring, El::CIRC, El::CIRC, El::ELEMENT> dmat{HBRS_MPL_FWD(t)};
+		El::Matrix<Ring> lmat;
+		if (dmat.Grid().Rank() == 0) {
+			El::Copy(dmat.Matrix(), lmat);
+		}
+		return lmat;
+	}
+	#define _DEF_GATHER_DIST_VECTOR(vector_kind)                                                                       \
+		template <                                                                                                     \
+			typename Matrix,                                                                                           \
+			typename std::enable_if_t<                                                                                 \
+				std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::DistMatrix_tag >::value                           \
+			>* = nullptr                                                                                               \
+		>                                                                                                              \
+		constexpr auto                                                                                                 \
+		gather(elemental::dist_ ## vector_kind ## _vector<Matrix> const& t) {                                          \
+			typedef elemental::detail::Ring_t<std::decay_t<Matrix>> Ring;                                              \
+			El::DistMatrix<Ring, El::CIRC, El::CIRC, El::ELEMENT> dmat{t.data()};                                      \
+			                                                                                                           \
+			if (dmat.Grid().Rank() == 0) {                                                                             \
+				return elemental::make_ ## vector_kind ## _vector(dmat.Matrix());                                      \
+			} else {                                                                                                   \
+				return elemental::make_ ## vector_kind ## _vector(El::Matrix<Ring>{dmat.Height(), dmat.Width()});      \
+			}                                                                                                          \
+		}
+	
+	_DEF_GATHER_DIST_VECTOR(column)
+	_DEF_GATHER_DIST_VECTOR(row)
+	
+	#undef _DEF_GATHER_DIST_VECTOR
+#endif
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END

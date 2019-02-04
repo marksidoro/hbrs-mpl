@@ -19,10 +19,12 @@
 ELEMENTAL_NAMESPACE_BEGIN
 namespace detail {
 
-template auto transform_impl_Matrix::operator()(El::Matrix<float>              , std::function<              float(float              )> const&) const;
-template auto transform_impl_Matrix::operator()(El::Matrix<El::Complex<float>> , std::function< El::Complex<float>(El::Complex<float> )> const&) const;
-template auto transform_impl_Matrix::operator()(El::Matrix<double>             , std::function<             double(double             )> const&) const;
-template auto transform_impl_Matrix::operator()(El::Matrix<El::Complex<double>>, std::function<El::Complex<double>(El::Complex<double>)> const&) const;
+//TODO: Add transform_impl_vector and transform_impl_dist_vector impls!
+
+template auto transform_impl_Matrix::operator()(El::Matrix<float>              const&, std::function<              float(float              )> const&) const;
+template auto transform_impl_Matrix::operator()(El::Matrix<El::Complex<float>> const&, std::function< El::Complex<float>(El::Complex<float> )> const&) const;
+template auto transform_impl_Matrix::operator()(El::Matrix<double>             const&, std::function<             double(double             )> const&) const;
+template auto transform_impl_Matrix::operator()(El::Matrix<El::Complex<double>>const&, std::function<El::Complex<double>(El::Complex<double>)> const&) const;
 
 template auto transform_impl_smr_Matrix::operator()(mpl::smr<El::Matrix<float>              , El::Int> const&, std::function<              float(float              )> const&) const;
 template auto transform_impl_smr_Matrix::operator()(mpl::smr<El::Matrix<El::Complex<float>> , El::Int> const&, std::function< El::Complex<float>(El::Complex<float> )> const&) const;

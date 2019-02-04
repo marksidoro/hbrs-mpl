@@ -36,6 +36,7 @@
 #include <hbrs/mpl/fn/select.hpp>
 #ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
 	#include <elemental/dt/matrix.hpp>
+	#include <elemental/dt/dist_matrix.hpp>
 #endif
 #ifdef HBRS_MPL_ENABLE_ADDON_MATLAB
 	#include <matlab/dt/matrix.hpp>
@@ -113,6 +114,27 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(0.000000001)) {
 				#ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
 				[](auto && a, auto mode) {
 					return elemental::detail::svd_impl_Matrix{}(elemental::make_matrix(HBRS_MPL_FWD(a)), mode);
+				},
+				[](auto && a, auto mode) {
+					auto sz_ = (*size)(a);
+					auto m_ = (*m)(sz_);
+					auto n_ = (*n)(sz_);
+					
+					if constexpr(
+						(mode == decompose_mode::complete) ||
+						(mode == decompose_mode::zero && hana::value(m_) <= hana::value(n_))
+					) {
+						return hbrs::mpl::detail::not_supported{};
+					} else {
+						static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
+						return elemental::detail::svd_impl_AbstractDistMatrix{}(
+							elemental::make_dist_matrix(
+								grid,
+								elemental::make_matrix(HBRS_MPL_FWD(a))
+							),
+							mode
+						);
+					}
 				},
 				#endif
 				"SEQUENCE_TERMINATOR___REMOVED_BY_DROP_BACK"

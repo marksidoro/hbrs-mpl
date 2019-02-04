@@ -20,6 +20,7 @@
 #define ELEMENTAL_FUSE_FN_SVD_HPP
 
 #include <elemental/config.hpp>
+#include <elemental/detail/Ring.hpp>
 #include <hbrs/mpl/preprocessor/core.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
@@ -34,71 +35,109 @@ namespace hana = boost::hana;
 namespace mpl = hbrs::mpl;
 namespace detail {
 
-struct svd_impl_Matrix {
-	template <typename Ring>
-	auto
-	operator()(El::Matrix<Ring> const& A, mpl::decompose_mode mode) const {
-		/* Example: https://github.com/elemental/Elemental/blob/master/tests/lapack_like/SVD.cpp */
-		typedef std::decay_t<Ring> _Ring_;
-		typedef El::Base<_Ring_> Real;
-		
-		El::SVDCtrl<Real> ctrl;
-		ctrl.useLAPACK = true;
-		ctrl.useScaLAPACK = true;
-		ctrl.bidiagSVDCtrl.wantU = true;
-		ctrl.bidiagSVDCtrl.wantV = true;
-		
-		if (mode == mpl::decompose_mode::complete) {
-			ctrl.bidiagSVDCtrl.approach = El::SVDApproach::FULL_SVD;
-		} else if (mode == mpl::decompose_mode::economy) {
+/* Example: https://github.com/elemental/Elemental/blob/master/tests/lapack_like/SVD.cpp */
+template <typename A, typename U, typename S, typename V>
+auto
+svd_impl(A const& a, mpl::decompose_mode mode, U u, S s, S s_, V v) {
+	typedef Ring_t<std::decay_t<A>> Ring;
+	typedef std::decay_t<Ring> _Ring_;
+	
+	El::SVDCtrl<El::Base<_Ring_>> ctrl;
+	ctrl.useLAPACK = true;
+	ctrl.useScaLAPACK = true;
+	ctrl.bidiagSVDCtrl.wantU = true;
+	ctrl.bidiagSVDCtrl.wantV = true;
+	
+	if (mode == mpl::decompose_mode::complete) {
+		ctrl.bidiagSVDCtrl.approach = El::SVDApproach::FULL_SVD;
+	} else if (mode == mpl::decompose_mode::economy) {
+		ctrl.bidiagSVDCtrl.approach = El::SVDApproach::THIN_SVD;
+	} else if (mode == mpl::decompose_mode::zero) {
+		if (a.Height() > a.Width()) {
 			ctrl.bidiagSVDCtrl.approach = El::SVDApproach::THIN_SVD;
-		} else if (mode == mpl::decompose_mode::zero) {
-			if (A.Height() > A.Width()) {
-				ctrl.bidiagSVDCtrl.approach = El::SVDApproach::THIN_SVD;
-			} else {
-				ctrl.bidiagSVDCtrl.approach = El::SVDApproach::FULL_SVD;
-			}
+		} else {
+			ctrl.bidiagSVDCtrl.approach = El::SVDApproach::FULL_SVD;
 		}
-		
-		El::Matrix<Real> s;
-		El::Matrix<_Ring_> U, V;
-		
-		/* auto info = */El::SVD(A, U, s, V, ctrl);
-		
-		El::Matrix<Real> s_;
-		if (mode == mpl::decompose_mode::complete) {
-			El::Zeros(s_, A.Height(), A.Width());
-		} else if (mode == mpl::decompose_mode::economy) {
-			// copy singular values from n*1 matrix to diagonal of n*n matrix
-			auto min_mn = std::min(A.Height(), A.Width());
+	}
+	
+	/* auto info = */El::SVD(a, u, s, v, ctrl);
+	BOOST_ASSERT(!u.Locked());
+	BOOST_ASSERT(!s.Locked());
+	BOOST_ASSERT(!v.Locked());
+	
+	if (mode == mpl::decompose_mode::complete) {
+		El::Zeros(s_, a.Height(), a.Width());
+	} else if (mode == mpl::decompose_mode::economy) {
+		// copy singular values from n*1 matrix to diagonal of n*n matrix
+		auto min_mn = std::min(a.Height(), a.Width());
+		BOOST_ASSERT(min_mn >= s.Height());
+		El::Zeros(s_, min_mn, min_mn);
+	} else if (mode == mpl::decompose_mode::zero) {
+		if (a.Height() > a.Width()) {
+			auto min_mn = std::min(a.Height(), a.Width());
 			BOOST_ASSERT(min_mn >= s.Height());
 			El::Zeros(s_, min_mn, min_mn);
-		} else if (mode == mpl::decompose_mode::zero) {
-			if (A.Height() > A.Width()) {
-				auto min_mn = std::min(A.Height(), A.Width());
-				BOOST_ASSERT(min_mn >= s.Height());
-				El::Zeros(s_, min_mn, min_mn);
-			} else {
-				El::Zeros(s_, A.Height(), A.Width());
-			}
+		} else {
+			El::Zeros(s_, a.Height(), a.Width());
 		}
+	}
+	
+	//TODO: make abstraction instead of copying values?
+	for(El::Int i = 0; i < s.Height(); ++i) {
+		s_.Set(i,i, s.Get(i,0));
+	}
+	
+	if (ctrl.bidiagSVDCtrl.approach == El::SVDApproach::THIN_SVD) {
+		// u is m x min(m,n)
+		BOOST_ASSERT(u.Height() == a.Height());
+		BOOST_ASSERT(u.Width() == std::min(a.Height(), a.Width()));
 		
-		//TODO: make abstraction instead of copying values?
-		for(El::Int i = 0; i < s.Height(); ++i) {
-			s_.Set(i,i, s.Get(i,0));
-		}
-		
-		if (ctrl.bidiagSVDCtrl.approach == El::SVDApproach::THIN_SVD) {
-			// U is m x min(m,n)
-			BOOST_ASSERT(U.Height() == A.Height());
-			BOOST_ASSERT(U.Width() == std::min(A.Height(), A.Width()));
-			
-			// V is n x min(m,n)
-			BOOST_ASSERT(V.Height() == A.Width());
-			BOOST_ASSERT(V.Width() == std::min(A.Height(), A.Width()));
-		}
-		
-		return mpl::make_svd_result(U, s_, V);
+		// v is n x min(m,n)
+		BOOST_ASSERT(v.Height() == a.Width());
+		BOOST_ASSERT(v.Width() == std::min(a.Height(), a.Width()));
+	}
+	
+	return mpl::make_svd_result(u, s_, v);
+}
+
+struct svd_impl_Matrix {
+	template <typename Field>
+	auto
+	operator()(El::Matrix<Field> const& a, mpl::decompose_mode mode) const {
+		typedef std::decay_t<Field> _Field_;
+		return svd_impl(
+			a, mode,
+			El::Matrix<_Field_>{} /*u*/,
+			El::Matrix<El::Base<_Field_>>{} /*s*/,
+			El::Matrix<El::Base<_Field_>>{} /*s_*/,
+			El::Matrix<_Field_>{} /*v*/
+		);
+	}
+};
+
+struct svd_impl_AbstractDistMatrix {
+	template <typename Field>
+	auto
+	operator()(El::AbstractDistMatrix<Field> const& a, mpl::decompose_mode mode) const {
+		typedef std::decay_t<Field> _Field_;
+		/* Elemental uses Read-/Write-Proxies to map input matrix distributions (defined by user) to matrix distribution
+		 * types that are suitable for SVD. Elemental uses these distributions:
+		 *  - with ScaLAPACK: DistMatrix<Field,MC,MR,BLOCK> for A, U and V,
+		 *                    DistMatrix<Real,STAR,STAR> for S,
+		 *                    see Elemental/src/lapack_like/spectral/SVD.cpp
+		 *  - without ScaLAPACK: DistMatrix<Field,MC,MR> for A, U and V,
+		 *                       DistMatrix<Real,STAR,STAR> for S,
+		 *                       see Elemental/src/lapack_like/spectral/BidiagSVD.cpp
+		 * To prevent unnecessary conversations or redistributions we just use those SVD distributions directly.
+		 * TODO: Do proxies cause redistributions or performance penalties?
+		 */
+		return svd_impl(
+			a, mode,
+			El::DistMatrix<_Field_, El::MC, El::MR>{a.Grid()} /*u*/,
+			El::DistMatrix<El::Base<_Field_>, El::STAR, El::STAR>{a.Grid()} /*s*/,
+			El::DistMatrix<El::Base<_Field_>, El::STAR, El::STAR>{a.Grid()} /*s_*/,
+			El::DistMatrix<_Field_, El::MC, El::MR>{a.Grid()} /*v*/
+		);
 	}
 };
 
@@ -106,7 +145,8 @@ struct svd_impl_Matrix {
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_SVD_IMPLS boost::hana::make_tuple(                                                           \
-		elemental::detail::svd_impl_Matrix{}                                                                           \
+		elemental::detail::svd_impl_Matrix{},                                                                          \
+		elemental::detail::svd_impl_AbstractDistMatrix{}                                                               \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_SVD_HPP

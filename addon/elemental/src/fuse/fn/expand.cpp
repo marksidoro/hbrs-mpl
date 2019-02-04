@@ -35,7 +35,7 @@ template auto expand_impl_smr::operator()(
 	mpl::smr<El::Matrix<El::Complex<double>>, El::Int> const&,
 	mpl::matrix_size<El::Int, El::Int> const&) const;
 
-//TODO: Add row_vector and column_vector impls!
+//TODO: Add (dist-)row_vector and (dist-)column_vector impls!
 
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END

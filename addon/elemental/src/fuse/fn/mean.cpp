@@ -31,5 +31,10 @@ template auto mean_impl_smrs_Matrix::operator()(mpl::smrs<El::Matrix<El::Complex
 template auto mean_impl_smrs_Matrix::operator()(mpl::smrs<El::Matrix<double>> const&) const;
 template auto mean_impl_smrs_Matrix::operator()(mpl::smrs<El::Matrix<El::Complex<double>>> const&) const;
 
+template auto mean_impl_DistMatrix_columns::operator()(columns_expr<El::DistMatrix<float>> const&) const;
+template auto mean_impl_DistMatrix_columns::operator()(columns_expr<El::DistMatrix<El::Complex<float>>> const&) const;
+template auto mean_impl_DistMatrix_columns::operator()(columns_expr<El::DistMatrix<double>> const&) const;
+template auto mean_impl_DistMatrix_columns::operator()(columns_expr<El::DistMatrix<El::Complex<double>>> const&) const;
+
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END

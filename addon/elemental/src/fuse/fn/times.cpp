@@ -24,5 +24,7 @@ template auto times_impl_Matrix_Matrix::operator()(El::Matrix<El::Complex<float>
 template auto times_impl_Matrix_Matrix::operator()(El::Matrix<double>              const&, El::Matrix<double>              const&) const;
 template auto times_impl_Matrix_Matrix::operator()(El::Matrix<El::Complex<double>> const&, El::Matrix<El::Complex<double>> const&) const;
 
+//TODO: Add dist impls
+
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END

@@ -25,6 +25,8 @@
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
 
+#include <elemental/fwd/dt/matrix.hpp>
+#include <elemental/fwd/dt/dist_matrix.hpp>
 #include <hbrs/mpl/fn/pca.hpp>
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/fn/size.hpp>
@@ -48,39 +50,98 @@ namespace hana = boost::hana;
 namespace mpl = hbrs::mpl;
 namespace detail {
 
-struct pca_filter_impl_Matrix {
-	template <typename Ring>
-	auto
-	operator()(El::Matrix<Ring> const& a, std::vector<bool> const& keep) const {
-		using namespace hbrs::mpl;
-		
-		auto a_sz = (*size)(a);
-		auto a_m = (*m)(a_sz);
-		auto a_n = (*n)(a_sz);
-		
-		auto rslt = (*pca)(a, true);
-		
-		auto && coeff =  (*at)(rslt, pca_coeff{});
-		auto    score =  (*at)(rslt, pca_score{});
-		auto && latent = (*at)(rslt, pca_latent{});
-		auto && mean =   (*at)(rslt, pca_mean{});
-		
-		BOOST_ASSERT((*equal)(size(keep), score.Width()));
-		BOOST_ASSERT(keep.size() == a_m-1<a_n ? a_m-1 : std::min(a_m, a_n));
-		
-		for (El::Int i = 0; i < score.Width(); ++i) {
-			if (keep[i] == false) {
-				auto column = score(El::ALL, i);
-				El::Zero(column);
-			}
+template<typename Matrix>
+auto
+pca_filter_impl(Matrix && a, std::function<bool(El::Int)> const& keep) {
+	using namespace hbrs::mpl;
+	
+	auto rslt = (*pca)(HBRS_MPL_FWD(a), true);
+	
+	auto & coeff  =  (*at)(rslt, pca_coeff{});
+	auto & score  =  (*at)(rslt, pca_score{});
+	auto & latent = (*at)(rslt, pca_latent{});
+	auto & mean   =   (*at)(rslt, pca_mean{});
+	
+	// size(keep) == n(size(score))
+	for (El::Int i = 0; i < score.Width(); ++i) {
+		if (keep(i) == false) {
+			auto column = score(El::ALL, i);
+			El::Zero(column);
 		}
-		
-		auto centered = (*multiply)(score, transpose(coeff));
-		BOOST_ASSERT((*equal)(a_sz, size(centered)));
-		
-		auto data = (*plus)(centered, expand(mean, size(centered)));
-		
-		return make_pca_filter_result(data, latent);
+	}
+	
+	auto centered = (*multiply)(score, transpose(coeff));
+	BOOST_ASSERT((*equal)(size(a), size(centered)));
+	
+	auto data = (*plus)(centered, expand(mean, size(centered)));
+	
+	return make_pca_filter_result(data, latent);
+}
+
+template<typename Matrix>
+auto
+pca_filter_impl(Matrix && a, std::vector<bool> const& keep) {
+	using namespace hbrs::mpl;
+	
+	auto a_sz = (*size)(a);
+	auto a_m = (*m)(a_sz);
+	auto a_n = (*n)(a_sz);
+	
+	BOOST_ASSERT(keep.size() == a_m-1<a_n ? a_m-1 : std::min(a_m, a_n));
+	
+	return pca_filter_impl(
+		HBRS_MPL_FWD(a), 
+		[&keep](El::Int i) {
+			return keep.at(static_cast<std::size_t>(i));
+		}
+	);
+}
+
+struct pca_filter_impl_Matrix {
+	template <
+		typename Matrix,
+		typename std::enable_if_t< 
+			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value
+		>* = nullptr
+	>
+	auto
+	operator()(Matrix && a, std::function<bool(El::Int)> const& keep) const {
+		return pca_filter_impl(HBRS_MPL_FWD(a), keep);
+	}
+	
+	template <
+		typename Matrix,
+		typename std::enable_if_t< 
+			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value
+		>* = nullptr
+	>
+	auto
+	operator()(Matrix && a, std::vector<bool> const& keep) const {
+		return pca_filter_impl(HBRS_MPL_FWD(a), keep);
+	}
+};
+
+struct pca_filter_impl_DistMatrix {
+	template <
+		typename DistMatrix,
+		typename std::enable_if_t< 
+			std::is_same< hana::tag_of_t<DistMatrix>, hana::ext::El::DistMatrix_tag >::value
+		>* = nullptr
+	>
+	auto
+	operator()(DistMatrix && a, std::function<bool(El::Int)> const& keep) const {
+		return pca_filter_impl(HBRS_MPL_FWD(a), keep);
+	}
+	
+	template <
+		typename DistMatrix,
+		typename std::enable_if_t< 
+			std::is_same< hana::tag_of_t<DistMatrix>, hana::ext::El::DistMatrix_tag >::value
+		>* = nullptr
+	>
+	auto
+	operator()(DistMatrix && a, std::vector<bool> const& keep) const {
+		return pca_filter_impl(HBRS_MPL_FWD(a), keep);
 	}
 };
 
@@ -88,7 +149,8 @@ struct pca_filter_impl_Matrix {
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_PCA_FILTER_IMPLS boost::hana::make_tuple(                                                    \
-		elemental::detail::pca_filter_impl_Matrix{}                                                                    \
+		elemental::detail::pca_filter_impl_Matrix{},                                                                   \
+		elemental::detail::pca_filter_impl_DistMatrix{}                                                                \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_PCA_FILTER_HPP

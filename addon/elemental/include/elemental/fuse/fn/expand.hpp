@@ -21,14 +21,14 @@
 
 #include <elemental/config.hpp>
 #include <hbrs/mpl/preprocessor/core.hpp>
+#include <elemental/detail/expand_expr.hpp>
 #include <elemental/dt/matrix.hpp>
+#include <elemental/dt/dist_matrix.hpp>
 #include <elemental/dt/vector.hpp>
+#include <elemental/dt/dist_vector.hpp>
 
 #include <hbrs/mpl/dt/smr.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>
-#include <hbrs/mpl/fn/size.hpp>
-#include <hbrs/mpl/fn/m.hpp>
-#include <hbrs/mpl/fn/n.hpp>
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
 #include <elemental/dt/exception.hpp>
@@ -41,6 +41,7 @@ namespace hana = boost::hana;
 namespace mpl = hbrs::mpl;
 namespace detail {
 
+	
 //TODO: Join with matlab::detail::expand_impl_smr!
 struct expand_impl_smr {
 	template<
@@ -56,9 +57,9 @@ struct expand_impl_smr {
 	) const {
 		using namespace hbrs::mpl;
 		
-		auto a_sz = (*size)(a);
-		auto m_ = (*m)(sz);
-		auto n_ = (*n)(sz);
+		auto a_sz = a.length(); //TODO: Replace with (*size)(a);
+		auto m_ = sz.m(); // TODO: Replace with (*m)(sz);
+		auto n_ = sz.n(); // TODO: Replace with (*n)(sz);
 		
 		if (((n_ % a_sz) != 0) || (m_ == 0)) {
 			BOOST_THROW_EXCEPTION((
@@ -97,12 +98,12 @@ struct expand_impl_row_vector {
 	operator()(
 		row_vector<Ring> const& v,
 		mpl::matrix_size<El::Int, El::Int> const& sz
-	) const {
+	) const  {
 		using namespace hbrs::mpl;
 		
-		auto v_sz = (*size)(v);
-		auto a_m = (*m)(sz);
-		auto a_n = (*n)(sz);
+		auto v_sz = v.length(); // TODO: Replace with (*size)(v);
+		auto a_m = sz.m(); // TODO: Replace with (*m)(sz);
+		auto a_n = sz.n(); // TODO: Replace with (*n)(sz);
 		
 		if (((a_n % v_sz) != 0) || (a_m == 0)) {
 			BOOST_THROW_EXCEPTION((
@@ -136,12 +137,43 @@ struct expand_impl_row_vector {
 
 //TODO: Add expand_impl_column_vector
 
+struct expand_impl_dist_row_vector {
+	template <
+		typename DistMatrix,
+		typename std::enable_if_t< 
+			std::is_same< hana::tag_of_t<DistMatrix>, hana::ext::El::DistMatrix_tag >::value
+		>* = nullptr
+	>
+	constexpr auto
+	operator()(dist_row_vector<DistMatrix> const& v, mpl::matrix_size<El::Int, El::Int> const& sz) const {
+		using namespace hbrs::mpl;
+		
+		auto v_sz = v.length(); // TODO: Replace with (*size)(v);
+		auto a_m = sz.m(); // TODO: Replace with (*m)(sz);
+		auto a_n = sz.n(); // TODO: Replace with (*n)(sz);
+		
+		if (((a_n % v_sz) != 0) || (a_m == 0)) {
+			BOOST_THROW_EXCEPTION((
+				incompatible_matrix_vector_exception{} 
+				<< elemental::errinfo_vector_size{v_sz}
+				<< elemental::errinfo_matrix_size{sz}
+			));
+		}
+		
+		//TODO: replace this hack!
+		return expand_expr<dist_row_vector<DistMatrix>>{HBRS_MPL_FWD(v), sz};
+	}
+};
+
+//TODO: Add expand_impl_dist_column_vector
+
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_EXPAND_IMPLS boost::hana::make_tuple(                                                        \
 		elemental::detail::expand_impl_smr{},                                                                          \
-		elemental::detail::expand_impl_row_vector{}                                                                    \
+		elemental::detail::expand_impl_row_vector{},                                                                   \
+		elemental::detail::expand_impl_dist_row_vector{}                                                               \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_EXPAND_HPP

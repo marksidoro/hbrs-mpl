@@ -17,6 +17,7 @@
 #include <hbrs/mpl/fn/size.hpp>
 
 #include <elemental/dt/vector.hpp>
+#include <elemental/dt/dist_vector.hpp>
 
 ELEMENTAL_NAMESPACE_BEGIN
 namespace detail {
@@ -25,6 +26,11 @@ template auto size_impl_Matrix::operator()(El::Matrix<float> const&) const;
 template auto size_impl_Matrix::operator()(El::Matrix<El::Complex<float>> const&) const;
 template auto size_impl_Matrix::operator()(El::Matrix<double> const&) const;
 template auto size_impl_Matrix::operator()(El::Matrix<El::Complex<double>> const&) const;
+
+template auto size_impl_AbstractDistMatrix::operator()(El::AbstractDistMatrix<float> const&) const;
+template auto size_impl_AbstractDistMatrix::operator()(El::AbstractDistMatrix<El::Complex<float>> const&) const;
+template auto size_impl_AbstractDistMatrix::operator()(El::AbstractDistMatrix<double> const&) const;
+template auto size_impl_AbstractDistMatrix::operator()(El::AbstractDistMatrix<El::Complex<double>> const&) const;
 
 template decltype(auto) length_impl_row_vector::operator()(row_vector<float> const&) const;
 template decltype(auto) length_impl_row_vector::operator()(row_vector<El::Complex<float>> const&) const;
@@ -35,6 +41,17 @@ template decltype(auto) length_impl_column_vector::operator()(column_vector<floa
 template decltype(auto) length_impl_column_vector::operator()(column_vector<El::Complex<float>> const&) const;
 template decltype(auto) length_impl_column_vector::operator()(column_vector<double> const&) const;
 template decltype(auto) length_impl_column_vector::operator()(column_vector<El::Complex<double>> const&) const;
+
+// TODO: 
+// template decltype(auto) length_impl_dist_row_vector::operator()(dist_row_vector<float> const&) const;
+// template decltype(auto) length_impl_dist_row_vector::operator()(dist_row_vector<El::Complex<float>> const&) const;
+// template decltype(auto) length_impl_dist_row_vector::operator()(dist_row_vector<double> const&) const;
+// template decltype(auto) length_impl_dist_row_vector::operator()(dist_row_vector<El::Complex<double>> const&) const;
+// 
+// template decltype(auto) length_impl_dist_column_vector::operator()(dist_column_vector<float> const&) const;
+// template decltype(auto) length_impl_dist_column_vector::operator()(dist_column_vector<El::Complex<float>> const&) const;
+// template decltype(auto) length_impl_dist_column_vector::operator()(dist_column_vector<double> const&) const;
+// template decltype(auto) length_impl_dist_column_vector::operator()(dist_column_vector<El::Complex<double>> const&) const;
 
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END

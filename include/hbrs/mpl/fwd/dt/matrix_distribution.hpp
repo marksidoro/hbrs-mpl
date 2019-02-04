@@ -14,18 +14,25 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/diag.hpp>
-#include <elemental/dt/matrix.hpp>
+#pragma once
 
-ELEMENTAL_NAMESPACE_BEGIN
-namespace detail {
+#ifndef HBRS_MPL_FWD_DT_MATRIX_DISTRIBUTION_HPP
+#define HBRS_MPL_FWD_DT_MATRIX_DISTRIBUTION_HPP
 
-template auto diag_impl_Matrix::operator()(El::Matrix<float> const&) const;
-template auto diag_impl_Matrix::operator()(El::Matrix<El::Complex<float>> const&) const;
-template auto diag_impl_Matrix::operator()(El::Matrix<double> const&) const;
-template auto diag_impl_Matrix::operator()(El::Matrix<El::Complex<double>> const&) const;
+#include <hbrs/mpl/config.hpp>
+#include <boost/hana/fwd/core/make.hpp>
+#include <boost/hana/fwd/core/to.hpp>
+#include <ostream>
 
-//TODO Add diag_impl_DistMatrix impl!
+HBRS_MPL_NAMESPACE_BEGIN
+namespace hana = boost::hana;
 
-/* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+template<typename Columnwise, typename Rowwise, typename Wrapping>
+struct matrix_distribution;
+struct matrix_distribution_tag{};
+constexpr auto make_matrix_distribution = hana::make<matrix_distribution_tag>;
+constexpr auto to_matrix_distribution = hana::to<matrix_distribution_tag>;
+
+HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_FWD_DT_MATRIX_DISTRIBUTION_HPP

@@ -14,18 +14,24 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/diag.hpp>
-#include <elemental/dt/matrix.hpp>
+#pragma once
+
+#ifndef ELEMENTAL_FWD_DT_DIST_MATRIX_HPP
+#define ELEMENTAL_FWD_DT_DIST_MATRIX_HPP
+
+#include <elemental/config.hpp>
+#include <boost/hana/fwd/core/make.hpp>
+#include <boost/hana/fwd/core/to.hpp>
+#include <elemental/ext/boost/hana/ext/El/core/AbstractDistMatrix.hpp>
+#include <elemental/ext/boost/hana/ext/El/core/DistMatrix.hpp>
+#include <El.hpp>
 
 ELEMENTAL_NAMESPACE_BEGIN
-namespace detail {
+namespace hana = boost::hana;
 
-template auto diag_impl_Matrix::operator()(El::Matrix<float> const&) const;
-template auto diag_impl_Matrix::operator()(El::Matrix<El::Complex<float>> const&) const;
-template auto diag_impl_Matrix::operator()(El::Matrix<double> const&) const;
-template auto diag_impl_Matrix::operator()(El::Matrix<El::Complex<double>> const&) const;
+constexpr auto make_dist_matrix = hana::make<hana::ext::El::DistMatrix_tag>;
+constexpr auto to_dist_matrix = hana::to<hana::ext::El::DistMatrix_tag>;
 
-//TODO Add diag_impl_DistMatrix impl!
-
-/* namespace detail */ }
 ELEMENTAL_NAMESPACE_END
+
+#endif // !ELEMENTAL_FWD_DT_DIST_MATRIX_HPP

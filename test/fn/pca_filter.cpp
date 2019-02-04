@@ -33,6 +33,7 @@
 #include <hbrs/mpl/fn/mean.hpp>
 #ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
 	#include <elemental/dt/matrix.hpp>
+	#include <elemental/dt/dist_matrix.hpp>
 #endif
 #ifdef HBRS_MPL_ENABLE_ADDON_MATLAB
 	#include <matlab/dt/matrix.hpp>
@@ -93,6 +94,16 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 				#ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
 				[](auto && a, auto keep) {
 					return elemental::detail::pca_filter_impl_Matrix{}(elemental::make_matrix(HBRS_MPL_FWD(a)), keep);
+				},
+				[](auto && a, auto keep) {
+					static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
+					return elemental::detail::pca_filter_impl_DistMatrix{}(
+						elemental::make_dist_matrix(
+							grid,
+							elemental::make_matrix(HBRS_MPL_FWD(a))
+						),
+						keep
+					);
 				},
 				#endif
 				"SEQUENCE_TERMINATOR___REMOVED_BY_DROP_BACK"

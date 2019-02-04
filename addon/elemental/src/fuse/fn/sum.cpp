@@ -14,18 +14,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/diag.hpp>
-#include <elemental/dt/matrix.hpp>
+#include <hbrs/mpl/fn/sum.hpp>
 
 ELEMENTAL_NAMESPACE_BEGIN
+namespace mpl = hbrs::mpl;
+
 namespace detail {
 
-template auto diag_impl_Matrix::operator()(El::Matrix<float> const&) const;
-template auto diag_impl_Matrix::operator()(El::Matrix<El::Complex<float>> const&) const;
-template auto diag_impl_Matrix::operator()(El::Matrix<double> const&) const;
-template auto diag_impl_Matrix::operator()(El::Matrix<El::Complex<double>> const&) const;
+//TODO: Add non-dist impls
 
-//TODO Add diag_impl_DistMatrix impl!
+template auto sum_impl_DistMatrix_columns::operator()(columns_expr<El::DistMatrix<float>> const&) const;
+template auto sum_impl_DistMatrix_columns::operator()(columns_expr<El::DistMatrix<El::Complex<float>>> const&) const;
+template auto sum_impl_DistMatrix_columns::operator()(columns_expr<El::DistMatrix<double>> const&) const;
+template auto sum_impl_DistMatrix_columns::operator()(columns_expr<El::DistMatrix<El::Complex<double>>> const&) const;
 
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END

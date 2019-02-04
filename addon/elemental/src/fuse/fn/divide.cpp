@@ -19,6 +19,8 @@
 ELEMENTAL_NAMESPACE_BEGIN
 namespace detail {
 
+//TODO: Add divide_impl_vector_Scalar and divide_impl_dist_vector_Scalar impls!
+
 template auto divide_impl_Matrix_Scalar::operator()(El::Matrix<float>              , float               const&) const;
 template auto divide_impl_Matrix_Scalar::operator()(El::Matrix<El::Complex<float>> , El::Complex<float>  const&) const;
 template auto divide_impl_Matrix_Scalar::operator()(El::Matrix<double>             , double              const&) const;

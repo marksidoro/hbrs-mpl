@@ -21,6 +21,7 @@
 
 #include <elemental/config.hpp>
 #include <elemental/dt/matrix.hpp>
+#include <elemental/dt/dist_matrix.hpp>
 // #include <elemental/dt/vector.hpp>
 // #include <hbrs/mpl/fn/size.hpp>
 // #include <hbrs/mpl/fn/m.hpp>
@@ -68,11 +69,31 @@ struct columns_impl_Matrix {
 	}
 };
 
+//TODO: replace this hack!
+template<typename Matrix>
+struct columns_expr {
+	Matrix from;
+};
+
+struct columns_impl_DistMatrix {
+	template <
+		typename DistMatrix,
+		typename std::enable_if_t< 
+			std::is_same< hana::tag_of_t<DistMatrix>, hana::ext::El::DistMatrix_tag >::value
+		>* = nullptr
+	>
+	constexpr columns_expr<std::decay_t<DistMatrix>>
+	operator()(DistMatrix && a) const {
+		return {HBRS_MPL_FWD(a)};
+	}
+};
+
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_COLUMNS_IMPLS boost::hana::make_tuple(                                                       \
-		elemental::detail::columns_impl_Matrix{}                                                                       \
+		elemental::detail::columns_impl_Matrix{},                                                                      \
+		elemental::detail::columns_impl_DistMatrix{}                                                                   \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_COLUMNS_HPP

@@ -37,6 +37,8 @@
 #include <hbrs/mpl/detail/gather.hpp>
 #include <elemental/dt/matrix.hpp>
 #include <elemental/dt/vector.hpp>
+#include <elemental/dt/dist_matrix.hpp>
+#include <elemental/dt/dist_vector.hpp>
 #include <hbrs/mpl/dt/ctsav.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>
 #include <hbrs/mpl/dt/sm.hpp>
@@ -71,6 +73,7 @@
 #include <hbrs/mpl/fn/select.hpp>
 #include <hbrs/mpl/fn/diag.hpp>
 #include <hbrs/mpl/fn/times.hpp>
+#include <hbrs/mpl/fn/sum.hpp>
 #include <boost/hana/pair.hpp>
 #include <El.hpp>
 #include <boost/format.hpp>
@@ -284,6 +287,339 @@ BOOST_AUTO_TEST_CASE(matrix_multiply_1, * utf::tolerance(_TOL)) {
 	El::Matrix<double> rc0 = (*multiply)(a, b);
 	
 	HBRS_MPL_TEST_MMEQ(c, rc0, false);
+}
+
+BOOST_AUTO_TEST_CASE(dist_matrix_svd_1, * utf::tolerance(_TOL)) {
+	using namespace elemental;
+	using namespace hbrs::mpl;
+	
+	// Ref.: https://github.com/elemental/Elemental/blob/master/tests/lapack_like/SVD.cpp
+	
+	El::Grid grid{El::mpi::COMM_WORLD};
+	
+	El::Int m = 10;
+	El::Int n = 10;
+	typedef double Real;
+	El::DistMatrix<Real, El::VC, El::STAR, El::ELEMENT> A{grid};
+	El::Uniform(A, m, n);
+	
+	El::SVDCtrl<Real> ctrl;
+	ctrl.useLAPACK = true;
+	ctrl.useScaLAPACK = true;
+	ctrl.bidiagSVDCtrl.wantU = true;
+	ctrl.bidiagSVDCtrl.wantV = true;
+	ctrl.bidiagSVDCtrl.approach = El::SVDApproach::FULL_SVD;
+	
+	El::DistMatrix<Real, El::VC, El::STAR, El::ELEMENT> U{grid}, V{grid};
+    El::DistMatrix<Real,El::STAR,El::STAR> s{grid};
+	
+	BOOST_CHECK_EXCEPTION(
+		El::SVD(A, U, s, V, ctrl),
+		std::logic_error,
+		[](std::logic_error const& e){
+			return std::string{"Only Thin and Compact singular value options currently supported\n"} == e.what();
+		}
+	);
+	
+	ctrl.bidiagSVDCtrl.approach = El::SVDApproach::THIN_SVD;
+	/* auto info = */El::SVD(A, U, s, V, ctrl);
+	
+	auto E = A;
+	
+	El::DiagonalScale( El::RIGHT, El::NORMAL, s, U );
+	El::Gemm( El::NORMAL, El::ADJOINT, Real(-1.), U, V, Real(1.), E );
+	
+	const Real twoNormA = MaxNorm( s );
+	const Real maxNormE = El::MaxNorm( E );
+	const Real frobNormE = El::FrobeniusNorm( E );
+	const Real eps = El::limits::Epsilon<Real>();
+	const Real scaledResidual = frobNormE / (El::Max(m,n)*eps*twoNormA);
+	
+	BOOST_TEST_MESSAGE("||A - U Sigma V^H||_max = " << maxNormE);
+	BOOST_TEST_MESSAGE("||A - U Sigma V^H||_F   = " << frobNormE);
+	BOOST_TEST_MESSAGE("||A - U Sigma V_H||_F / (max(m,n) eps ||A||_2) = " << scaledResidual);
+	
+	BOOST_TEST(maxNormE == 0.);
+}
+
+BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
+	using namespace elemental;
+	using namespace hbrs::mpl;
+	typedef double Real;
+	
+	auto copy = [](auto x) { return x; };
+	
+	El::Grid grid{El::mpi::COMM_WORLD};
+	
+	// generate and distribute test matrix
+	El::DistMatrix<Real, El::VC, El::STAR, El::ELEMENT> b{
+		elemental::make_dist_matrix(
+			grid,
+			elemental::make_matrix(
+				std::initializer_list<double>{
+					1.,2.,3.,
+					4.,5.,6.,
+					7.,8.,9.
+				},
+				make_matrix_size(3,3),
+				row_major_c
+			)
+		)
+	};
+	
+	El::mpi::Barrier();
+	BOOST_TEST_PASSPOINT();
+	//TODO: Split this big monolithic test into multiple test functions
+	
+	/////////////////////////// columns ///////////////////////////
+	
+	elemental::detail::columns_expr<
+		El::DistMatrix<Real, El::VC, El::STAR, El::ELEMENT>
+	> columns_expr0 = (*columns)(b);
+	
+	//TODO: implement real unit test for columns(DistMatrix)
+	
+	/////////////////////////// column sum ///////////////////////////
+	
+	// Sum up columns
+	auto sums_dmat = (*sum)(columns(b));
+	{
+		auto const expected = elemental::make_row_vector(
+			std::initializer_list<double>{
+				12.,15.,18.,
+			}
+		);
+		
+		HBRS_MPL_TEST_VVEQ(expected, sums_dmat, false);
+	}
+	
+	El::Print(b, "original");
+	El::Print(sums_dmat.data(), "column sums");
+	
+	El::mpi::Barrier();
+	BOOST_TEST_PASSPOINT();
+	
+	auto d_local = elemental::make_matrix(
+		make_sm(
+			make_ctsav(test::mat_g), make_matrix_size(hana::size_c<test::mat_g_m>, hana::size_c<test::mat_g_n>), row_major_c
+		)
+	);
+	auto d_dist = elemental::make_dist_matrix(grid, d_local);
+	auto sums_dmat2 = (*sum)(columns(d_dist));
+	{
+		auto const expected = (*sum)(columns(d_local));
+		HBRS_MPL_TEST_VVEQ(expected, sums_dmat2, false);
+	}
+	
+	El::mpi::Barrier();
+	BOOST_TEST_PASSPOINT();
+	/////////////////////////// column mean ///////////////////////////
+	auto column_mean_dmat = (*mean)(columns(b));
+	{
+		auto const expected = elemental::make_row_vector(
+			std::initializer_list<double>{
+				4.,5.,6.,
+			}
+		);
+		
+		HBRS_MPL_TEST_VVEQ(expected, column_mean_dmat, false);
+	}
+	
+	El::Print(b, "original");
+	El::Print(column_mean_dmat.data(), "column mean");
+	
+	El::mpi::Barrier();
+	BOOST_TEST_PASSPOINT();
+	/////////////////////////// expand ///////////////////////////
+	
+	elemental::detail::expand_expr<
+		dist_row_vector<
+			El::DistMatrix<Real, El::STAR, El::STAR, El::ELEMENT>
+		>
+	> expand_expr0 = (*expand)(column_mean_dmat, make_matrix_size(3,3));
+	
+	//TODO: implement real unit test for expand(dist_row_vector)
+	
+	/////////////////////////// size ///////////////////////////
+	
+	//TODO: implement unit test for size(El::DistMatrix<...>)
+	
+	/////////////////////////// minus ///////////////////////////
+	
+	auto minus_dmat = (*minus)(b, expand(column_mean_dmat, (*size)(b)));
+	{
+		auto const expected = elemental::make_matrix(
+			std::initializer_list<double>{
+				-3.,-3.,-3.,
+				0.,0.,0.,
+				3.,3.,3.
+			},
+			make_matrix_size(3,3),
+			row_major_c
+		);
+		
+		HBRS_MPL_TEST_MMEQ(expected, minus_dmat, false);
+	}
+	
+	El::Print(b, "original");
+	El::Print(minus_dmat, "minus");
+	
+	El::mpi::Barrier();
+	BOOST_TEST_PASSPOINT();
+	
+	/////////////////////////// plus ///////////////////////////
+	
+	auto plus_dmat = (*plus)(minus_dmat, expand(column_mean_dmat, (*size)(minus_dmat)));
+	{
+		HBRS_MPL_TEST_MMEQ(b, plus_dmat, false);
+	}
+	
+	El::Print(b, "original");
+	El::Print(plus_dmat, "plus");
+	
+	El::mpi::Barrier();
+	BOOST_TEST_PASSPOINT();
+	
+	/////////////////////////// svd ///////////////////////////
+	
+	struct svd_result {
+		El::DistMatrix<Real, El::MC, El::MR> u;
+		El::DistMatrix<Real, El::STAR, El::STAR> s;
+		El::DistMatrix<Real, El::MC, El::MR> v;
+	};
+	
+	auto usv = (*svd)(minus_dmat, mpl::decompose_mode::economy);
+	svd_result usv_{
+		(*at)(usv, svd_u{}),
+		(*at)(usv, svd_s{}),
+		(*at)(usv, svd_v{})
+	};
+	
+	{
+		El::DistMatrix<Real, El::MC, El::MR> rec_dmat /* reconstructed */ = (*multiply)((*multiply)(usv_.u, usv_.s), (*transpose)(usv_.v));
+		HBRS_MPL_TEST_MMEQ(minus_dmat, rec_dmat, false);
+	}
+	
+	El::mpi::Barrier();
+	BOOST_TEST_PASSPOINT();
+	
+	auto c = elemental::make_dist_matrix(
+		grid,
+		elemental::make_matrix(
+			std::initializer_list<double>{
+				1.,2.,3.,
+				4.,5.,6.,
+				7.,8.,9.
+			},
+			make_matrix_size(3,3),
+			row_major_c
+		)
+	);
+	
+	auto usv2 = (*svd)(c, mpl::decompose_mode::economy);
+	{
+		auto rec_dmat /* reconstructed */ = (*multiply)((*multiply)(usv2.u(), usv2.s()), (*transpose)(usv2.v()));
+		HBRS_MPL_TEST_MMEQ(c, rec_dmat, false);
+	}
+	
+	El::mpi::Barrier();
+	BOOST_TEST_PASSPOINT();
+	/////////////////////////// diag ///////////////////////////
+	
+	auto diag_dmat = (*diag)(b).data();
+	{
+		auto const expected = elemental::make_matrix(
+			std::initializer_list<double>{
+				1.,
+				5.,
+				9.
+			},
+			make_matrix_size(3,1),
+			row_major_c
+		);
+		
+		HBRS_MPL_TEST_MMEQ(expected, diag_dmat, false);
+	}
+	
+	El::Print(b, "original");
+	El::Print(diag_dmat, "diag");
+	
+	El::mpi::Barrier();
+	BOOST_TEST_PASSPOINT();
+	/////////////////////////// transform ///////////////////////////
+	auto transform_dmat = (*transform)(copy(b), [](auto a) { return a * 2; });
+	{
+		auto const expected = elemental::make_matrix(
+			std::initializer_list<double>{
+				2.,4.,6.,
+				8.,10.,12.,
+				14.,16.,18.
+			},
+			make_matrix_size(3,3),
+			row_major_c
+		);
+		
+		HBRS_MPL_TEST_MMEQ(expected, transform_dmat, false);
+	}
+	
+	El::Print(b, "original");
+	El::Print(transform_dmat, "transform: x*2");
+	
+	El::mpi::Barrier();
+	BOOST_TEST_PASSPOINT();
+	
+	auto transform_dist_cv = (*transform)(diag(b), [](auto a) { return a * 3; });
+	{
+		auto const expected = elemental::make_matrix(
+			std::initializer_list<double>{
+				3.,
+				15.,
+				27.
+			},
+			make_matrix_size(3,1),
+			row_major_c
+		);
+		
+		auto got = transform_dist_cv.data();
+		HBRS_MPL_TEST_MMEQ(expected, got, false);
+	}
+	
+	El::Print(diag_dmat, "original");
+	El::Print(transform_dist_cv.data(), "transform: x*3");
+	
+	El::mpi::Barrier();
+	BOOST_TEST_PASSPOINT();
+	/////////////////////////// divide ///////////////////////////
+	auto divide_dmat = (*divide)( copy(transform_dist_cv), 3).data();
+	{
+		auto const expected = elemental::make_matrix(
+			std::initializer_list<double>{
+				1.,
+				5.,
+				9.
+			},
+			make_matrix_size(3,1),
+			row_major_c
+		);
+		
+		HBRS_MPL_TEST_MMEQ(expected, divide_dmat, false);
+	}
+	
+	El::Print(transform_dist_cv.data(), "original");
+	El::Print(divide_dmat, "divide: x/3");
+	
+	El::mpi::Barrier();
+	BOOST_TEST_PASSPOINT();
+	/////////////////////////// select ///////////////////////////
+	
+	// see unit test dist_matrix_select below
+	
+	/////////////////////////// - ///////////////////////////
+	
+	/////////////////////////// - ///////////////////////////
+	//TODO
+	
+	El::Output( boost::format("ColStride: %d, RowStride %d, DistSize %d, CrossSize %d, RedundantSize %d") % b.ColStride() % b.RowStride() % b.DistSize() % b.CrossSize() % b.RedundantSize() );
 }
 
 BOOST_AUTO_TEST_CASE(matrix_multiply_2, * utf::tolerance(_TOL)) {
@@ -753,6 +1089,56 @@ BOOST_AUTO_TEST_CASE(vector_expand) {
 	}
 }
 
+BOOST_AUTO_TEST_CASE(matrix_column_sum) {
+	using namespace elemental;
+	using namespace hbrs::mpl;
+	
+	auto const a = elemental::make_matrix(
+		std::initializer_list<double>{
+			1.,2.,3.,
+			4.,5.,6.,
+			7.,8.,9.
+		},
+		matrix_size<El::Int, El::Int>{3,3},
+		row_major_c
+	);
+	
+	auto const b = elemental::make_row_vector(
+		std::initializer_list<double>{
+			12.,15.,18.
+		}
+	);
+	
+	auto c = (*sum)(columns(a));
+	HBRS_MPL_TEST_VVEQ(b, c, false);
+}
+
+BOOST_AUTO_TEST_CASE(matrix_row_sum) {
+	using namespace elemental;
+	using namespace hbrs::mpl;
+	
+	auto const a = elemental::make_matrix(
+		std::initializer_list<double>{
+			1.,2.,3.,
+			4.,5.,6.,
+			7.,8.,9.
+		},
+		matrix_size<El::Int, El::Int>{3,3},
+		row_major_c
+	);
+	
+	auto const b = elemental::make_column_vector(
+		std::initializer_list<double>{
+			6.,
+			15.,
+			24.
+		}
+	);
+	
+	auto c = (*sum)(rows(a));
+	HBRS_MPL_TEST_VVEQ(b, c, false);
+}
+
 BOOST_AUTO_TEST_CASE(matrix_mean) {
 	using namespace elemental;
 	using namespace hbrs::mpl;
@@ -1051,6 +1437,114 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 	HBRS_MPL_TEST_MMEQ(e, re3, false);
 }
 
+BOOST_AUTO_TEST_CASE(dist_matrix_select) {
+	using namespace elemental;
+	using namespace hbrs::mpl;
+	using hbrs::mpl::select;
+	
+	El::Grid grid{El::mpi::COMM_WORLD};
+	
+	auto const a = elemental::make_dist_matrix(
+		grid,
+		elemental::make_matrix(
+			std::initializer_list<double>{
+				1.,2.,3.,
+				4.,5.,6.,
+				7.,8.,9.
+			},
+			make_matrix_size(3,3),
+			row_major_c
+			)
+	);
+	
+	auto const b = elemental::make_dist_matrix(
+		grid,
+		elemental::make_matrix(
+			std::initializer_list<double>{
+				1.,2.,3.,
+				4.,5.,6.,
+			},
+			make_matrix_size(2,3),
+			row_major_c
+		)
+	);
+	
+	auto const c = elemental::make_dist_matrix(
+		grid,
+		elemental::make_matrix(
+			std::initializer_list<double>{
+				4.,5.,6.,
+				7.,8.,9.
+			},
+			make_matrix_size(2,3),
+			row_major_c
+		)
+	);
+	
+	auto const d = elemental::make_dist_matrix(
+		grid,
+		elemental::make_matrix(
+			std::initializer_list<double>{
+				1.,2.,
+				4.,5.,
+				7.,8.
+			},
+			make_matrix_size(3,2),
+			row_major_c
+		)
+	);
+	
+	auto const e = elemental::make_dist_matrix(
+		grid,
+		elemental::make_matrix(
+			std::initializer_list<double>{
+				2.,3.,
+				5.,6.,
+				8.,9.
+			},
+			make_matrix_size(3,2),
+			row_major_c
+		)
+	);
+	
+	elemental::detail::select_impl_Matrix{}(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
+	auto const rb0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
+	auto const rc0 = (*select)(a, make_range(make_matrix_index(1,0), make_matrix_index(2,2)));
+	auto const rd0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(2,1)));
+	auto const re0 = (*select)(a, make_range(make_matrix_index(0,1), make_matrix_index(2,2)));
+	auto const rb1 = (*select)(a, std::make_pair(El::IR(0,2), El::IR(0,3)));
+	auto const rc1 = (*select)(a, std::make_pair(El::IR(1,3), El::IR(0,3)));
+	auto const rd1 = (*select)(a, std::make_pair(El::IR(0,3), El::IR(0,2)));
+	auto const re1 = (*select)(a, std::make_pair(El::IR(0,3), El::IR(1,3)));
+	auto const rb2 = (*select)(a, std::make_pair(make_matrix_index(0,0), make_matrix_size(2,3)));
+	auto const rc2 = (*select)(a, std::make_pair(make_matrix_index(1,0), make_matrix_size(2,3)));
+	auto const rd2 = (*select)(a, std::make_pair(make_matrix_index(0,0), make_matrix_size(3,2)));
+	auto const re2 = (*select)(a, std::make_pair(make_matrix_index(0,1), make_matrix_size(3,2)));
+	auto       rb3 = (*select)(std::move(a), std::make_pair(El::IR(0,2), El::IR(0,3)));
+	auto       rc3 = (*select)(std::move(a), std::make_pair(El::IR(1,3), El::IR(0,3)));
+	auto       rd3 = (*select)(std::move(a), std::make_pair(El::IR(0,3), El::IR(0,2)));
+	auto       re3 = (*select)(std::move(a), std::make_pair(El::IR(0,3), El::IR(1,3)));
+	
+	
+	HBRS_MPL_TEST_MMEQ(b, rb0, false);
+	HBRS_MPL_TEST_MMEQ(c, rc0, false);
+	HBRS_MPL_TEST_MMEQ(d, rd0, false);
+	HBRS_MPL_TEST_MMEQ(e, re0, false);
+	HBRS_MPL_TEST_MMEQ(b, rb1, false);
+	HBRS_MPL_TEST_MMEQ(c, rc1, false);
+	HBRS_MPL_TEST_MMEQ(d, rd1, false);
+	HBRS_MPL_TEST_MMEQ(e, re1, false);
+	HBRS_MPL_TEST_MMEQ(b, rb2, false);
+	HBRS_MPL_TEST_MMEQ(c, rc2, false);
+	HBRS_MPL_TEST_MMEQ(d, rd2, false);
+	HBRS_MPL_TEST_MMEQ(e, re2, false);
+	HBRS_MPL_TEST_MMEQ(b, rb3, false);
+	HBRS_MPL_TEST_MMEQ(c, rc3, false);
+	HBRS_MPL_TEST_MMEQ(d, rd3, false);
+	HBRS_MPL_TEST_MMEQ(e, re3, false);
+	
+}
+
 BOOST_AUTO_TEST_CASE(column_vector_select) {
 	using namespace elemental;
 	using namespace hbrs::mpl;
@@ -1083,9 +1577,52 @@ BOOST_AUTO_TEST_CASE(column_vector_select) {
 	
 	HBRS_MPL_TEST_VVEQ(b, rb0, false);
 	HBRS_MPL_TEST_VVEQ(c, rc0, false);
-	
 	HBRS_MPL_TEST_VVEQ(b, rb1, false);
 	HBRS_MPL_TEST_VVEQ(c, rc1, false);
+}
+
+BOOST_AUTO_TEST_CASE(dist_column_vector_select) {
+	using namespace elemental;
+	using namespace hbrs::mpl;
+	using hbrs::mpl::select;
+	
+	El::Grid grid{El::mpi::COMM_WORLD};
+	
+	auto const a = elemental::make_dist_column_vector(
+		grid,
+		std::initializer_list<double>{
+			1.,2.,3.,4.,5.,6.,7.,8.,9.
+		}
+	);
+	
+	auto const b = elemental::make_dist_column_vector(
+		grid,
+		std::initializer_list<double>{
+			1.,2.,3.,4.,5.,6.,
+		}
+	);
+	
+	auto const c = elemental::make_dist_column_vector(
+		grid,
+		std::initializer_list<double>{
+			4.,5.,6.,7.,8.,9.
+		}
+	);
+	
+	elemental::detail::select_impl_dist_column_vector{}(a, make_range(0,5));
+	auto const rb0 = (*select)(a, make_range(0,5));
+	auto const rc0 = (*select)(a, make_range(3,8));
+	auto const rb1 = (*select)(a, El::IR(0,6));
+	auto const rc1 = (*select)(a, El::IR(3,9));
+	auto const rb2 = (*select)(std::move(a), El::IR(0,6));
+	auto const rc2 = (*select)(std::move(a), El::IR(3,9));
+	
+	HBRS_MPL_TEST_VVEQ(b, rb0, false);
+	HBRS_MPL_TEST_VVEQ(c, rc0, false);
+	HBRS_MPL_TEST_VVEQ(b, rb1, false);
+	HBRS_MPL_TEST_VVEQ(c, rc1, false);
+	HBRS_MPL_TEST_VVEQ(b, rb2, false);
+	HBRS_MPL_TEST_VVEQ(c, rc2, false);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_columns) {
@@ -1544,6 +2081,49 @@ BOOST_AUTO_TEST_CASE(matrix_times) {
 	elemental::detail::times_impl_Matrix_Matrix{}(a, b);
 	El::Matrix<double> rc0 = (*times)(a, b);
 	
+	HBRS_MPL_TEST_MMEQ(c, rc0, false);
+}
+
+BOOST_AUTO_TEST_CASE(dist_matrix_times) {
+	using namespace elemental;
+	using namespace hbrs::mpl;
+	
+	El::Grid grid{El::mpi::COMM_WORLD};
+	
+	auto const a = elemental::make_dist_matrix(
+		grid,
+		elemental::make_matrix(
+			std::initializer_list<double>{
+				1.,2.,3.,
+				4.,5.,6.,
+				7.,8.,9.
+			},
+			make_matrix_size(3,3),
+			row_major_c
+		)
+	);
+	
+	auto const b = elemental::make_dist_row_vector(
+		grid,
+		std::initializer_list<double>{
+			2.,2.,2.,
+		}
+	);
+	
+	auto const c = elemental::make_dist_matrix(
+		grid,
+		elemental::make_matrix(
+			std::initializer_list<double>{
+				2.,4.,6.,
+				8.,10.,12.,
+				14.,16.,18.
+			},
+			make_matrix_size(3,3),
+			row_major_c
+		)
+	);
+	
+	auto rc0 = (*times)(a, expand(b, size(a)));
 	HBRS_MPL_TEST_MMEQ(c, rc0, false);
 }
 

@@ -14,18 +14,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/diag.hpp>
-#include <elemental/dt/matrix.hpp>
+#pragma once
 
-ELEMENTAL_NAMESPACE_BEGIN
-namespace detail {
+#ifndef HBRS_MPL_FN_SUM_HPP
+#define HBRS_MPL_FN_SUM_HPP
 
-template auto diag_impl_Matrix::operator()(El::Matrix<float> const&) const;
-template auto diag_impl_Matrix::operator()(El::Matrix<El::Complex<float>> const&) const;
-template auto diag_impl_Matrix::operator()(El::Matrix<double> const&) const;
-template auto diag_impl_Matrix::operator()(El::Matrix<El::Complex<double>> const&) const;
+#include <hbrs/mpl/fwd/fn/sum.hpp>
+#include <hbrs/mpl/dt/function.hpp>
 
-//TODO Add diag_impl_DistMatrix impl!
+HBRS_MPL_NAMESPACE_BEGIN
+HBRS_MPL_DEF_F1(sum, sum_t)
+HBRS_MPL_NAMESPACE_END
 
-/* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+#include <hbrs/mpl/fuse/fn/sum.hpp>
+#include <hbrs/mpl/core/implementations_of.hpp>
+HBRS_MPL_MAP_IMPLS(sum_t, HBRS_MPL_FUSE_FN_SUM_IMPLS)
+
+#endif // !HBRS_MPL_FN_SUM_HPP

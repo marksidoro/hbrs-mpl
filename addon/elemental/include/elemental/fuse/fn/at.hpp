@@ -25,7 +25,10 @@
 
 #include <hbrs/mpl/fwd/dt/matrix_index.hpp>
 #include <elemental/fwd/dt/matrix.hpp>
+#include <elemental/fwd/dt/dist_matrix.hpp>
 #include <elemental/fwd/dt/vector.hpp>
+#include <elemental/fwd/dt/dist_vector.hpp>
+#include <elemental/ext/boost/hana/ext/El/core/Matrix.hpp>
 
 #include <hbrs/mpl/dt/smr.hpp>
 #include <El.hpp>
@@ -46,13 +49,16 @@ struct at_impl_Matrix {
 		typename Matrix,
 		typename std::enable_if_t< 
 			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value &&
-			!std::is_const< std::remove_reference_t<Matrix&&> >::value
+			!std::is_const< std::remove_reference_t<Matrix> >::value
 		>* = nullptr
 	>
 	decltype(auto)
 	operator()(Matrix && m, mpl::matrix_index<El::Int, El::Int> const& i) const {
 		BOOST_ASSERT(i.m() >= 0 && i.m() < m.Height());
 		BOOST_ASSERT(i.n() >= 0 && i.n() < m.Width());
+		
+		//NOTE: This assertion does not hold always, e.g. El::Matrix<double>{El::Matrix<double> const}.Locked() == true!
+		BOOST_ASSERT(m.Locked() == false);
 		return *HBRS_MPL_FWD(m).Buffer(i.m(), i.n());
 	}
 	
@@ -60,7 +66,7 @@ struct at_impl_Matrix {
 		typename Matrix,
 		typename std::enable_if_t< 
 			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value && 
-			std::is_const< std::remove_reference_t<Matrix&&> >::value
+			std::is_const< std::remove_reference_t<Matrix> >::value
 		>* = nullptr
 	>
 	decltype(auto)

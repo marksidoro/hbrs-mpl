@@ -24,5 +24,10 @@ template auto svd_impl_Matrix::operator()(El::Matrix<El::Complex<float>>  const&
 template auto svd_impl_Matrix::operator()(El::Matrix<double>              const&, mpl::decompose_mode) const;
 template auto svd_impl_Matrix::operator()(El::Matrix<El::Complex<double>> const&, mpl::decompose_mode) const;
 
+template auto svd_impl_AbstractDistMatrix::operator()(El::AbstractDistMatrix<float>               const&, mpl::decompose_mode) const;
+template auto svd_impl_AbstractDistMatrix::operator()(El::AbstractDistMatrix<El::Complex<float>>  const&, mpl::decompose_mode) const;
+template auto svd_impl_AbstractDistMatrix::operator()(El::AbstractDistMatrix<double>              const&, mpl::decompose_mode) const;
+template auto svd_impl_AbstractDistMatrix::operator()(El::AbstractDistMatrix<El::Complex<double>> const&, mpl::decompose_mode) const;
+
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END

@@ -64,6 +64,7 @@ template auto select_impl_Matrix::operator()(El::Matrix<double>              &, 
 template auto select_impl_Matrix::operator()(El::Matrix<El::Complex<double>> &, std::pair<El::IR, El::IR> const&) const;
 
 //TODO: More!!
+//TODO: Add Dist* impls!
 
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END

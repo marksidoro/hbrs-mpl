@@ -18,12 +18,16 @@
 
 ELEMENTAL_NAMESPACE_BEGIN
 namespace detail {
-	
+
+//TODO: Add impls!
+
 // template auto pca_impl_Matrix::operator()(El::Matrix<float> const&, bool) const;
 // template auto pca_impl_Matrix::operator()(El::Matrix<El::Complex<float>> const&, bool) const;
 
 template auto pca_impl_Matrix::operator()(El::Matrix<double> const&, bool) const;
 // template auto pca_impl_Matrix::operator()(El::Matrix<El::Complex<double>> const&, bool) const;
+
+template auto pca_impl_DistMatrix::operator()(El::DistMatrix<double> const&, bool) const;
 
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END

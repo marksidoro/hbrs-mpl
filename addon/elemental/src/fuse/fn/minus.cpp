@@ -16,6 +16,9 @@
 
 #include <hbrs/mpl/fn/minus.hpp>
 
+#include <elemental/dt/dist_matrix.hpp>
+#include <elemental/dt/dist_vector.hpp>
+
 ELEMENTAL_NAMESPACE_BEGIN
 namespace detail {
 
@@ -23,6 +26,15 @@ template auto minus_impl_Matrix_Matrix::operator()(El::Matrix<float>,           
 template auto minus_impl_Matrix_Matrix::operator()(El::Matrix<El::Complex<float>>,  El::Matrix<El::Complex<float>>  const&) const;
 template auto minus_impl_Matrix_Matrix::operator()(El::Matrix<double>,              El::Matrix<double>              const&) const;
 template auto minus_impl_Matrix_Matrix::operator()(El::Matrix<El::Complex<double>>, El::Matrix<El::Complex<double>> const&) const;
+
+template auto minus_impl_DistMatrix_expand_expr_DistMatrix::operator()(
+	El::DistMatrix<float>,               expand_expr<dist_row_vector<El::DistMatrix<float>>>               const&) const;
+template auto minus_impl_DistMatrix_expand_expr_DistMatrix::operator()(
+	El::DistMatrix<El::Complex<float>>,  expand_expr<dist_row_vector<El::DistMatrix<El::Complex<float>>>>  const&) const;
+template auto minus_impl_DistMatrix_expand_expr_DistMatrix::operator()(
+	El::DistMatrix<double>,              expand_expr<dist_row_vector<El::DistMatrix<double>>>              const&) const;
+template auto minus_impl_DistMatrix_expand_expr_DistMatrix::operator()(
+	El::DistMatrix<El::Complex<double>>, expand_expr<dist_row_vector<El::DistMatrix<El::Complex<double>>>> const&) const;
 
 template auto minus_impl_Matrix_Scalar::operator()(El::Matrix<float>,               float               const&) const;
 template auto minus_impl_Matrix_Scalar::operator()(El::Matrix<El::Complex<float>>,  El::Complex<float>  const&) const;

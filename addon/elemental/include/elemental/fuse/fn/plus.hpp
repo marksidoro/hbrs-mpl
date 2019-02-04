@@ -20,7 +20,13 @@
 #define ELEMENTAL_FUSE_FN_PLUS_HPP
 
 #include <elemental/config.hpp>
+#include <elemental/dt/dist_matrix.hpp>
+#include <elemental/dt/dist_vector.hpp>
+#include <elemental/detail/Ring.hpp>
+#include <elemental/detail/expand_expr.hpp>
+
 #include <El.hpp>
+#include <boost/assert.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
@@ -33,13 +39,47 @@ struct plus_impl_Matrix_Matrix {
 	template <
 		typename Ring,
 		typename std::enable_if_t<
-			!std::is_const<Ring>::value
+			!std::is_const<Ring>::value && !std::is_lvalue_reference<Ring>::value
 		>* = nullptr
 	>
 	auto
 	operator()(El::Matrix<Ring> a, El::Matrix<Ring> const& b) const {
-		El::Axpy(Ring{1.0},b,a);
+		El::Axpy(Ring{1},b,a);
 		return a;
+	}
+};
+
+//TODO: replace this hack! (like minus_impl_DistMatrix_expand_expr_DistMatrix)
+struct plus_impl_DistMatrix_expand_expr_DistMatrix {
+	template <
+		typename DistMatrixL,
+		typename DistMatrixR,
+		typename std::enable_if_t<
+			std::is_same< hana::tag_of_t<DistMatrixL>, hana::ext::El::DistMatrix_tag >::value &&
+			std::is_same< hana::tag_of_t<DistMatrixR>, hana::ext::El::DistMatrix_tag >::value &&
+			std::is_same<
+				Ring_t<std::decay_t<DistMatrixL>>,
+				Ring_t<std::decay_t<DistMatrixR>>
+			>::value &&
+			!std::is_const< Ring_t<std::decay_t<DistMatrixL>> >::value
+		>* = nullptr
+	>
+	auto
+	operator()(DistMatrixL lhs, expand_expr<dist_row_vector<DistMatrixR>> const& rhs) const {
+		typedef Ring_t<std::decay_t<DistMatrixL>> Ring;
+		typedef std::decay_t<Ring> _Ring_;
+		BOOST_ASSERT(lhs.Height() == rhs.to_size.m());
+		BOOST_ASSERT(lhs.Width() == rhs.to_size.n());
+		
+		BOOST_ASSERT(rhs.from.data().Height() == 1);
+		BOOST_ASSERT(rhs.from.data().Width() == lhs.Width());
+		
+		for(El::Int i = 0; i < lhs.Height(); ++i) {
+			auto lhs_row = El::View(lhs, i, El::ALL);
+			El::Axpy(_Ring_{1}, rhs.from.data(), lhs_row);
+		}
+		
+		return lhs;
 	}
 };
 
@@ -47,7 +87,7 @@ struct plus_impl_Matrix_Scalar {
 	template <
 		typename Ring,
 		typename std::enable_if_t< 
-			!std::is_const< Ring >::value
+			!std::is_const< Ring >::value && !std::is_lvalue_reference<Ring>::value
 		>* = nullptr
 	>
 	auto
@@ -67,6 +107,7 @@ ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_PLUS_IMPLS boost::hana::make_tuple(                                                          \
 		elemental::detail::plus_impl_Matrix_Matrix{},                                                                  \
+		elemental::detail::plus_impl_DistMatrix_expand_expr_DistMatrix{},                                              \
 		elemental::detail::plus_impl_Matrix_Scalar{}                                                                   \
 	)
 

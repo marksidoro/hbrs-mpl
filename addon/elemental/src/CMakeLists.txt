@@ -26,6 +26,7 @@ add_library(elemental STATIC
     fuse/fn/rows.cpp
     fuse/fn/select.cpp
     fuse/fn/size.cpp
+    fuse/fn/sum.cpp
     fuse/fn/svd.cpp
     fuse/fn/times.cpp
     fuse/fn/transform.cpp

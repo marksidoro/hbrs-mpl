@@ -22,6 +22,7 @@
 #include <hbrs/mpl/preprocessor/core.hpp>
 
 #include <hbrs/mpl/fwd/dt/smcs.hpp>
+#include <hbrs/mpl/fwd/dt/rtsam.hpp>
 #include <hbrs/mpl/fwd/dt/sm.hpp>
 #include <hbrs/mpl/fwd/dt/ctsav.hpp>
 #include <hbrs/mpl/fwd/dt/matrix_size.hpp>
@@ -46,6 +47,44 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
+template<typename Columns, typename Ring, storage_order Order>
+auto
+mean_impl_smcs_matrix(Columns && cols, hana::basic_type<Ring>, storage_order_<Order>) {
+	decltype(auto) a = HBRS_MPL_FWD(cols).data();
+	auto a_sz = (*size)(a);
+	auto a_m = (*m)(a_sz);
+	auto a_n = (*n)(a_sz);
+	
+	if ((*equal)(a_m, 0) || (*equal)(a_n, 0)) {
+		BOOST_THROW_EXCEPTION(incompatible_matrix_exception{} << errinfo_matrix_size{a_sz});
+	}
+	
+	//TODO: parallelize and optimize for column major vs row major storage order, possibly using BLAS/LAPACK functions
+	
+	// column mean
+	srv<std::vector<Ring>> mean_{ std::vector<Ring>(a_n, 0) };
+	
+	if constexpr(Order == storage_order::row_major) {
+		for(std::size_t i = 0; i < a_m; ++i) {
+			for(std::size_t j = 0; j < a_n; ++j) {
+				mean_.at(j) += (*at)(HBRS_MPL_FWD(a), make_matrix_index(i,j));
+			}
+		}
+	} else {
+		for(std::size_t j = 0; j < a_n; ++j) {
+			for(std::size_t i = 0; i < a_m; ++i) {
+				mean_.at(j) += (*at)(HBRS_MPL_FWD(a), make_matrix_index(i,j));
+			}
+		}
+	}
+	
+	for(std::size_t j = 0; j < a_n; ++j) {
+		mean_.at(j) /= a_m;
+	}
+	
+	return mean_;
+}
+
 struct mean_impl_smcs_sm_ctsav_icsz {
 	template <
 		typename Ring, std::size_t SequenceSize,
@@ -66,40 +105,26 @@ struct mean_impl_smcs_sm_ctsav_icsz {
 			> const&
 		> const& a) const {
 		typedef std::decay_t<Ring> _Ring_;
-		
-		using namespace hbrs::mpl;
-		auto a_sz = (*size)(a.data());
-		auto a_m = (*m)(a_sz);
-		auto a_n = (*n)(a_sz);
-		
-		if ((*equal)(a_m, 0) || (*equal)(a_n, 0)) {
-			BOOST_THROW_EXCEPTION(incompatible_matrix_exception{} << errinfo_matrix_size{a_sz});
-		}
-		
-		//TODO: parallelize and optimize for column major vs row major storage order, possibly using BLAS/LAPACK functions
-		
-		// column mean
-		srv<std::vector<_Ring_>> mean_{ std::vector<_Ring_>(a_n, 0) };
-		
-		if constexpr(Order == storage_order::row_major) {
-			for(std::size_t i = 0; i < a_m; ++i) {
-				for(std::size_t j = 0; j < a_n; ++j) {
-					mean_.at(j) += (*at)(a.data(), make_matrix_index(i,j));
-				}
-			}
-		} else {
-			for(std::size_t j = 0; j < a_n; ++j) {
-				for(std::size_t i = 0; i < a_m; ++i) {
-					mean_.at(j) += (*at)(a.data(), make_matrix_index(i,j));
-				}
-			}
-		}
-		
-		for(std::size_t j = 0; j < a_n; ++j) {
-			mean_.at(j) /= a_m;
-		}
-		
-		return mean_;
+		return mean_impl_smcs_matrix(a, hana::type_c<_Ring_>, storage_order_c<Order>);
+	}
+};
+
+struct mean_impl_smcs_rtsam {
+	template <
+		typename Ring,
+		storage_order Order,
+		typename std::enable_if_t<
+			std::is_arithmetic<std::decay_t<Ring>>::value
+		>* = nullptr
+	>
+	auto
+	operator()(
+		//TODO: extend to non-ref, non-const-ref, ...
+		mpl::smcs<
+			rtsam<Ring, Order> const&
+		> const& a) const {
+		typedef std::decay_t<Ring> _Ring_;
+		return mean_impl_smcs_matrix(a, hana::type_c<_Ring_>, storage_order_c<Order>);
 	}
 };
 
@@ -107,7 +132,8 @@ struct mean_impl_smcs_sm_ctsav_icsz {
 HBRS_MPL_NAMESPACE_END
 
 #define HBRS_MPL_FUSE_HBRS_MPL_FN_MEAN_IMPLS boost::hana::make_tuple(                                                  \
-		hbrs::mpl::detail::mean_impl_smcs_sm_ctsav_icsz{}                                                              \
+		hbrs::mpl::detail::mean_impl_smcs_sm_ctsav_icsz{},                                                             \
+		hbrs::mpl::detail::mean_impl_smcs_rtsam{}                                                                      \
 	)
 
 #endif // !HBRS_MPL_FUSE_HBRS_MPL_FN_MEAN_HPP

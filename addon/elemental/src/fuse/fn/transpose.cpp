@@ -22,11 +22,19 @@ namespace detail {
 
 #define PROTO(type_spec_1, cv_qual_1, ref_decl_1)                                                                      \
 	template auto transpose_impl_Matrix::operator()(type_spec_1 cv_qual_1 ref_decl_1) const;
-
 HBRS_MPL_INST_FWDREFS(PROTO, El::Matrix<float>)
 HBRS_MPL_INST_FWDREFS(PROTO, El::Matrix<El::Complex<float>>)
 HBRS_MPL_INST_FWDREFS(PROTO, El::Matrix<double>)
 HBRS_MPL_INST_FWDREFS(PROTO, El::Matrix<El::Complex<double>>)
+#undef PROTO
+
+#define PROTO(type_spec_1, cv_qual_1, ref_decl_1)                                                                      \
+	template auto transpose_impl_DistMatrix::operator()(type_spec_1 cv_qual_1 ref_decl_1) const;
+HBRS_MPL_INST_FWDREFS(PROTO, El::DistMatrix<float>)
+HBRS_MPL_INST_FWDREFS(PROTO, El::DistMatrix<El::Complex<float>>)
+HBRS_MPL_INST_FWDREFS(PROTO, El::DistMatrix<double>)
+HBRS_MPL_INST_FWDREFS(PROTO, El::DistMatrix<El::Complex<double>>)
+#undef PROTO
 
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END

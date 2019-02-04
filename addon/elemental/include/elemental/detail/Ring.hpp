@@ -33,6 +33,16 @@ struct Ring<El::Matrix<Ring_>> {
 	typedef Ring_ type;
 };
 
+template<typename Ring_>
+struct Ring<El::AbstractDistMatrix<Ring_>> {
+	typedef Ring_ type;
+};
+
+template<typename Ring_, El::Dist U, El::Dist V, El::DistWrap wrap>
+struct Ring<El::DistMatrix<Ring_, U, V, wrap>> {
+	typedef Ring_ type;
+};
+
 template<typename Matrix>
 using Ring_t = typename Ring<Matrix>::type;
 

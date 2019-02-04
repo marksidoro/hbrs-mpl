@@ -14,18 +14,39 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/diag.hpp>
-#include <elemental/dt/matrix.hpp>
+#pragma once
 
-ELEMENTAL_NAMESPACE_BEGIN
+#ifndef HBRS_MPL_DETAIL_ADD_CONST_HPP
+#define HBRS_MPL_DETAIL_ADD_CONST_HPP
+
+#include <hbrs/mpl/config.hpp>
+
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-template auto diag_impl_Matrix::operator()(El::Matrix<float> const&) const;
-template auto diag_impl_Matrix::operator()(El::Matrix<El::Complex<float>> const&) const;
-template auto diag_impl_Matrix::operator()(El::Matrix<double> const&) const;
-template auto diag_impl_Matrix::operator()(El::Matrix<El::Complex<double>> const&) const;
+template<
+	typename T,
+	typename std::enable_if_t<
+		std::is_lvalue_reference<T>::value
+	>* = nullptr
+>
+constexpr auto const&
+add_const(T && t) {
+	return t;
+}
 
-//TODO Add diag_impl_DistMatrix impl!
+template<
+	typename T,
+	typename std::enable_if_t<
+		!std::is_lvalue_reference<T>::value
+	>* = nullptr
+>
+constexpr auto const &&
+add_const(T && t) {
+	return HBRS_MPL_FWD(t);
+}
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_DETAIL_ADD_CONST_HPP
