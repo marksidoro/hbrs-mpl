@@ -68,37 +68,36 @@ struct mpi {
 
 struct environment::pimpl {
 	pimpl()
-		: mpi{}
+		: mpi_{}
 	#ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
-		, elemental{}
+		, elemental_{}
 	#endif
 	{};
 	
 	pimpl(int & argc, char ** &argv)
-		: mpi{argc, argv}
+		: mpi_{argc, argv}
 	#ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
-		, elemental{argc, argv}
+		, elemental_{argc, argv}
 	#endif
 	{}
 	
 private:
-	mpi mpi;
+	mpi mpi_;
 #ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
-	El::Environment elemental;
+	El::Environment elemental_;
 #endif
 };
 
 environment::environment()
-: m{std::make_unique<pimpl>()} {};
+: m{std::make_unique<pimpl>()} {}
 
 environment::environment(int & argc, char ** &argv)
-: m{std::make_unique<pimpl>(argc, argv)} {};
+: m{std::make_unique<pimpl>(argc, argv)} {}
 
 environment::~environment() {}
 
 environment::environment(environment const& other)
-: m{std::make_unique<pimpl>(*other.m)} { 
-};
+: m{std::make_unique<pimpl>(*other.m)} {}
 
 environment::environment(environment&& other) 
 : m{std::make_unique<pimpl>()} 
