@@ -43,4 +43,4 @@ ctest --output-on-failure
 sudo make install
 ```
 
-For more examples how to build and test code see [`.travis.yml`](https://github.com/JM1/hbrs-mpl/blob/master/.travis.yml).
+For more examples on how to build and test this code see [`.travis.yml`](https://github.com/JM1/hbrs-mpl/blob/master/.travis.yml).
