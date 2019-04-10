@@ -42,7 +42,6 @@ target_include_directories(elemental
     SYSTEM
     PUBLIC ${Boost_INCLUDE_DIRS}
     PUBLIC ${Elemental_INCLUDE_DIRS}
-    PUBLIC ${FLAME_INCLUDE_DIRS}
     PUBLIC ${MPI_CXX_INCLUDE_DIRS})
 
 target_compile_definitions(elemental PUBLIC ${Elemental_DEFINITIONS} ${MPI_CXX_COMPILE_DEFINITIONS})
@@ -61,7 +60,6 @@ set_target_properties(elemental PROPERTIES
 
 target_link_libraries(elemental PUBLIC
     ${Boost_LIBRARIES}
-    ${FLAME_LIBRARIES}
     ${Elemental_LIBRARIES}
     ${MPI_CXX_LIBRARIES}
     ${OpenMP_CXX_LIBRARIES}

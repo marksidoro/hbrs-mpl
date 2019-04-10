@@ -8,10 +8,6 @@ if (NOT OpenMP_FOUND)
 	message(FATAL_ERROR "OpenMP not found. Required dependency of addon elemental.")
 endif()
 
-if (NOT FLAME_FOUND)
-	message(FATAL_ERROR "FLAME library not found. Required dependency of addon elemental.")
-endif()
-
 if (NOT TARGET El)
 	message(FATAL_ERROR "Elemental library not found. Required dependency of addon elemental.")
 endif()

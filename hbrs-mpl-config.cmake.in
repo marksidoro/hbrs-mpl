@@ -25,13 +25,8 @@ find_dependency(LAPACK)
 find_dependency(LAPACKE)
 find_dependency(OpenMP)
 find_dependency(MPI)
-find_dependency(netcdf)
-find_dependency(VTK)
 find_dependency(Matlab COMPONENTS MAIN_PROGRAM)
-find_dependency(FLAME)
 find_dependency(Elemental)
-set(QT_USE_IMPORTED_TARGETS TRUE)
-find_dependency(Qt5 COMPONENTS Core Widgets)
 
 
 

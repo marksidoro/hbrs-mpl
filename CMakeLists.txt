@@ -71,22 +71,10 @@ set_package_properties(Matlab PROPERTIES
     PURPOSE "Required for addon matlab and unit tests."
 )
 
-find_package(FLAME)
-set_package_properties(FLAME PROPERTIES
-    DESCRIPTION "Accelerated LAPACK algorithms"
-    PURPOSE "Required for addon elemental."
-)
-
 find_package(Elemental)
 set_package_properties(Elemental PROPERTIES
     DESCRIPTION "Distributed linear algebra algorithms"
     PURPOSE "Required for addon elemental."
-)
-
-set(QT_USE_IMPORTED_TARGETS TRUE)
-find_package(Qt5 COMPONENTS Core Widgets)
-set_package_properties(Qt5 PROPERTIES
-    PURPOSE "Required for Elemental library."
 )
 
 #################### source settings ####################
