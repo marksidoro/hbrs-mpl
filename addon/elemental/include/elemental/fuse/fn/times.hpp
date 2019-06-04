@@ -25,9 +25,10 @@
 #include <elemental/fwd/dt/dist_matrix.hpp>
 #include <elemental/fwd/dt/vector.hpp>
 #include <elemental/fwd/dt/dist_vector.hpp>
+#include <hbrs/mpl/fwd/fn/expand.hpp>
+#include <hbrs/mpl/dt/expression.hpp>
 
 #include <elemental/detail/Ring.hpp>
-#include <elemental/detail/expand_expr.hpp>
 #include <elemental/dt/exception.hpp>
 
 #include <boost/hana/tuple.hpp>
@@ -97,10 +98,22 @@ struct times_impl_DistMatrix_expand_expr_DistMatrix {
 		>* = nullptr
 	>
 	auto
-	operator()(DistMatrixL const& lhs, expand_expr<dist_row_vector<DistMatrixR>> const& rhs) const {
+	operator()(
+		DistMatrixL const& lhs,
+		mpl::expression<
+			mpl::expand_t,
+			std::tuple<
+				dist_row_vector<DistMatrixR> const&,
+				mpl::matrix_size<El::Int, El::Int> const&
+			>
+		> rhs
+	) const {
+		auto const& from = hana::at_c<0>(rhs.operands());
+		auto const& to_size = hana::at_c<1>(rhs.operands());
+		
 		using namespace hbrs::mpl;
 		auto lhs_sz = (*size)(lhs);
-		auto rhs_sz = rhs.to_size;
+		auto rhs_sz = to_size;
 		auto lhs_m = (*m)(lhs_sz);
 		auto lhs_n = (*n)(lhs_sz);
 		auto rhs_m = (*m)(rhs_sz);
@@ -123,11 +136,11 @@ struct times_impl_DistMatrix_expand_expr_DistMatrix {
 		c.Resize(lhs_m, lhs_n);
 		
 		//TODO: Replace with faster alg
-		BOOST_ASSERT(rhs.from.data().Height() == 1);
-		BOOST_ASSERT(rhs.from.data().Width() == lhs.Width());
+		BOOST_ASSERT(from.data().Height() == 1);
+		BOOST_ASSERT(from.data().Width() == lhs.Width());
 		for(El::Int j = 0; j < lhs_n; ++j) {
 			for(El::Int i = 0; i < lhs_m; ++i) {
-				c.Set(i,j, lhs.Get(i,j) * rhs.from.data().Get(0,j));
+				c.Set(i,j, lhs.Get(i,j) * from.data().Get(0,j));
 			}
 		}
 		

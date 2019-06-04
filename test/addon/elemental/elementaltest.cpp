@@ -432,9 +432,11 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	BOOST_TEST_PASSPOINT();
 	/////////////////////////// expand ///////////////////////////
 	
-	elemental::detail::expand_expr<
-		dist_row_vector<
-			El::DistMatrix<Real, El::STAR, El::STAR, El::ELEMENT>
+	mpl::expression<
+		mpl::expand_t,
+		std::tuple<
+			dist_row_vector<El::DistMatrix<Real, El::STAR, El::STAR, El::ELEMENT>> const&,
+			mpl::matrix_size<El::Int, El::Int> const&
 		>
 	> expand_expr0 = (*expand)(column_mean_dmat, make_matrix_size(3,3));
 	

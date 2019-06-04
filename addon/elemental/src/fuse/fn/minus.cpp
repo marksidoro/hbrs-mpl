@@ -28,13 +28,41 @@ template auto minus_impl_Matrix_Matrix::operator()(El::Matrix<double>,          
 template auto minus_impl_Matrix_Matrix::operator()(El::Matrix<El::Complex<double>>, El::Matrix<El::Complex<double>> const&) const;
 
 template auto minus_impl_DistMatrix_expand_expr_DistMatrix::operator()(
-	El::DistMatrix<float>,               expand_expr<dist_row_vector<El::DistMatrix<float>>>               const&) const;
+	El::DistMatrix<float>,
+	mpl::expression<
+		mpl::expand_t,
+		std::tuple<
+			dist_row_vector<El::DistMatrix<float>> const&,
+			mpl::matrix_size<El::Int, El::Int> const&
+		>
+	>) const;
 template auto minus_impl_DistMatrix_expand_expr_DistMatrix::operator()(
-	El::DistMatrix<El::Complex<float>>,  expand_expr<dist_row_vector<El::DistMatrix<El::Complex<float>>>>  const&) const;
+	El::DistMatrix<El::Complex<float>>,
+	mpl::expression<
+		mpl::expand_t,
+		std::tuple<
+			dist_row_vector<El::DistMatrix<El::Complex<float>>> const&,
+			mpl::matrix_size<El::Int, El::Int> const&
+		>
+	>) const;
 template auto minus_impl_DistMatrix_expand_expr_DistMatrix::operator()(
-	El::DistMatrix<double>,              expand_expr<dist_row_vector<El::DistMatrix<double>>>              const&) const;
+	El::DistMatrix<double>,
+	mpl::expression<
+		mpl::expand_t,
+		std::tuple<
+			dist_row_vector<El::DistMatrix<double>> const&,
+			mpl::matrix_size<El::Int, El::Int> const&
+		>
+	>) const;
 template auto minus_impl_DistMatrix_expand_expr_DistMatrix::operator()(
-	El::DistMatrix<El::Complex<double>>, expand_expr<dist_row_vector<El::DistMatrix<El::Complex<double>>>> const&) const;
+	El::DistMatrix<El::Complex<double>>,
+	mpl::expression<
+		mpl::expand_t,
+		std::tuple<
+			dist_row_vector<El::DistMatrix<El::Complex<double>>> const&,
+			mpl::matrix_size<El::Int, El::Int> const&
+		>
+	>) const;
 
 template auto minus_impl_Matrix_Scalar::operator()(El::Matrix<float>,               float               const&) const;
 template auto minus_impl_Matrix_Scalar::operator()(El::Matrix<El::Complex<float>>,  El::Complex<float>  const&) const;

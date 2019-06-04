@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +21,12 @@
 
 #include <elemental/config.hpp>
 #include <hbrs/mpl/preprocessor/core.hpp>
-#include <elemental/detail/expand_expr.hpp>
 #include <elemental/dt/matrix.hpp>
 #include <elemental/dt/dist_matrix.hpp>
 #include <elemental/dt/vector.hpp>
 #include <elemental/dt/dist_vector.hpp>
 
+#include <hbrs/mpl/dt/expression.hpp>
 #include <hbrs/mpl/dt/smr.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>
 #include <hbrs/mpl/fn/at.hpp>
@@ -160,8 +160,7 @@ struct expand_impl_dist_row_vector {
 			));
 		}
 		
-		//TODO: replace this hack!
-		return expand_expr<dist_row_vector<DistMatrix>>{HBRS_MPL_FWD(v), sz};
+		return mpl::make_expression(mpl::expand, std::tuple<decltype(v), decltype(sz)>{v, sz});
 	}
 };
 

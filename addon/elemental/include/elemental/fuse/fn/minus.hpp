@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,8 @@
 #include <elemental/dt/dist_matrix.hpp>
 #include <elemental/dt/dist_vector.hpp>
 #include <elemental/detail/Ring.hpp>
-#include <elemental/detail/expand_expr.hpp>
+#include <hbrs/mpl/fwd/fn/expand.hpp>
+#include <hbrs/mpl/dt/expression.hpp>
 
 #include <El.hpp>
 #include <boost/assert.hpp>
@@ -65,18 +66,29 @@ struct minus_impl_DistMatrix_expand_expr_DistMatrix {
 		>* = nullptr
 	>
 	auto
-	operator()(DistMatrixL lhs, expand_expr<dist_row_vector<DistMatrixR>> const& rhs) const {
+	operator()(
+		DistMatrixL lhs,
+		mpl::expression<
+			mpl::expand_t,
+			std::tuple<
+				dist_row_vector<DistMatrixR> const&,
+				mpl::matrix_size<El::Int, El::Int> const&
+			>
+		> rhs
+	) const {
+		auto const& from = hana::at_c<0>(rhs.operands());
+		auto const& to_size = hana::at_c<1>(rhs.operands());
 		typedef Ring_t<std::decay_t<DistMatrixL>> Ring;
 		typedef std::decay_t<Ring> _Ring_;
-		BOOST_ASSERT(lhs.Height() == rhs.to_size.m());
-		BOOST_ASSERT(lhs.Width() == rhs.to_size.n());
+		BOOST_ASSERT(lhs.Height() == to_size.m());
+		BOOST_ASSERT(lhs.Width() == to_size.n());
 		
-		BOOST_ASSERT(rhs.from.data().Height() == 1);
-		BOOST_ASSERT(rhs.from.data().Width() == lhs.Width());
+		BOOST_ASSERT(from.data().Height() == 1);
+		BOOST_ASSERT(from.data().Width() == lhs.Width());
 		
 		for(El::Int i = 0; i < lhs.Height(); ++i) {
 			auto lhs_row = El::View(lhs, i, El::ALL);
-			El::Axpy(_Ring_{-1}, rhs.from.data(), lhs_row);
+			El::Axpy(_Ring_{-1}, from.data(), lhs_row);
 		}
 		
 		return lhs;
