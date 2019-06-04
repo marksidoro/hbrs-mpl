@@ -84,7 +84,7 @@ struct transform_impl_dist_vector {
 			e = mpl::evaluate(f(e));
 		}
 		
-		return v;
+		return HBRS_MPL_FWD(v);
 	}
 };
 
