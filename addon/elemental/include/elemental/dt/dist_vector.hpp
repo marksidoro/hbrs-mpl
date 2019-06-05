@@ -100,7 +100,7 @@ struct make_impl<elemental::dist_column_vector_tag> {
 			data,
 			hbrs::mpl::matrix_size<El::Int, El::Int>{(El::Int)data.size(), 1},
 			hbrs::mpl::row_major_c
-		);
+		).data();
 		
 		return elemental::dist_column_vector<Matrix>{dmat};
 	}
@@ -123,7 +123,7 @@ struct make_impl<elemental::dist_row_vector_tag> {
 			data,
 			hbrs::mpl::matrix_size<El::Int, El::Int>{1, (El::Int)data.size()},
 			hbrs::mpl::row_major_c
-		);
+		).data();
 		
 		return elemental::dist_row_vector<Matrix>{dmat};
 	}

@@ -42,23 +42,110 @@
 #include <type_traits>
 #include <initializer_list>
 
-BOOST_HANA_NAMESPACE_BEGIN
+ELEMENTAL_NAMESPACE_BEGIN
+namespace mpl = hbrs::mpl;
 
-template <typename Ring>
-struct tag_of<El::Matrix<Ring>> {
-	using type = ext::El::Matrix_tag;
+template<typename Ring>
+struct matrix {
+	template<
+		typename Ring_ = Ring,
+		typename std::enable_if_t<
+			std::is_same_v<std::remove_const_t<Ring>, Ring_>
+		>* = nullptr
+	>
+	matrix(El::Matrix<Ring_> data) : data_{data} {
+		//NOTE: This assertion does not hold always, e.g. El::Matrix<double>{El::Matrix<double> const}.Locked() == true!
+		BOOST_ASSERT(data_.Locked() == std::is_const_v<Ring>);
+	}
+	
+	matrix(El::Int m, El::Int n) : data_{m,n} {
+		El::Zero(data_);
+	}
+	
+	matrix(matrix const&) = default;
+	matrix(matrix &&) = default;
+		
+	matrix&
+	operator=(matrix const&) = default;
+	matrix&
+	operator=(matrix &&) = default;
+	
+	auto
+	m() const {
+		return data_.Height();
+	}
+	
+	auto
+	n() const {
+		return data_.Width();
+	}
+
+	mpl::matrix_size<El::Int, El::Int>
+	size() const {
+		return { m(), n() };
+	}
+	
+	decltype(auto)
+	at(mpl::matrix_index<El::Int, El::Int> const& i) {
+		return at_(data_, i);
+	}
+	
+	decltype(auto)
+	at(mpl::matrix_index<El::Int, El::Int> const& i) const {
+		return at_(data_, i);
+	}
+	
+	decltype(auto)
+	data() & { return (data_); };
+
+	decltype(auto)
+	data() const& { return (data_); }; 
+
+	decltype(auto)
+	data() && { return HBRS_MPL_FWD(data_); }; 
+
+private:
+	template<typename Matrix>
+	decltype(auto)
+	static at_(Matrix && m, mpl::matrix_index<El::Int, El::Int> const& i) {
+		BOOST_ASSERT(i.m() >= 0 && i.m() < HBRS_MPL_FWD(m).Height());
+		BOOST_ASSERT(i.n() >= 0 && i.n() < HBRS_MPL_FWD(m).Width());
+		
+		if constexpr(std::is_const_v<Ring> || std::is_const_v<std::remove_reference_t<Matrix>>) {
+			return *HBRS_MPL_FWD(m).LockedBuffer(i.m(), i.n());
+		} else {
+			return *HBRS_MPL_FWD(m).Buffer(i.m(), i.n());
+		}
+	}
+	
+	El::Matrix<std::remove_const_t<Ring>> data_; /* elemental handles constness using a boolean El::Matrix<>.Locked() */
 };
 
+ELEMENTAL_NAMESPACE_END
+
+BOOST_HANA_NAMESPACE_BEGIN
+
+template <typename Ring> 
+struct tag_of< elemental::matrix<Ring> > { 
+	using type = elemental::matrix_tag;
+}; 
+
 template <>
-struct make_impl<ext::El::Matrix_tag> {
+struct make_impl<elemental::matrix_tag> {
 	template <typename Ring>
-	static constexpr El::Matrix<Ring>
+	static elemental::matrix<Ring> 
 	apply(basic_type<Ring>, hbrs::mpl::matrix_size<El::Int, El::Int> sz) {
 		return {sz.m(), sz.n()};
 	}
 	
+	template <typename Ring> 
+	static elemental::matrix<Ring>
+	apply(El::Matrix<Ring> data) {
+		return {data}; 
+	}
+	
 	template <
-		typename T,
+		typename Ring,
 		typename M,
 		typename N,
 		hbrs::mpl::storage_order Order,
@@ -68,13 +155,16 @@ struct make_impl<ext::El::Matrix_tag> {
 	>
 	static constexpr auto
 	apply(
-		hbrs::mpl::sm<hbrs::mpl::rtsav<T>, hbrs::mpl::matrix_size<M, N>, Order> const& b
+		hbrs::mpl::sm<hbrs::mpl::rtsav<Ring>, hbrs::mpl::matrix_size<M, N>, Order> const& b
 	) {
-		return hbrs::mpl::detail::copy_matrix(b, El::Matrix<std::remove_cv_t<T>>{(El::Int)b.size().m(), (El::Int)b.size().n()});
+		typedef std::remove_cv_t<Ring> _Ring_;
+		hbrs::mpl::matrix_size<El::Int, El::Int> sz{b.size()};
+		elemental::matrix<_Ring_> m{sz.m(), sz.n()};
+		return hbrs::mpl::detail::copy_matrix(b, m);
 	}
 	
 	template <
-		typename T,
+		typename Ring,
 		std::size_t Length,
 		typename M,
 		typename N,
@@ -85,9 +175,12 @@ struct make_impl<ext::El::Matrix_tag> {
 	>
 	static constexpr auto
 	apply(
-		hbrs::mpl::sm<hbrs::mpl::ctsav<T, Length>, hbrs::mpl::matrix_size<M, N>, Order> const& b
+		hbrs::mpl::sm<hbrs::mpl::ctsav<Ring, Length>, hbrs::mpl::matrix_size<M, N>, Order> const& b
 	) {
-		return hbrs::mpl::detail::copy_matrix(b, El::Matrix<std::remove_cv_t<T>>{(El::Int)b.size().m(), (El::Int)b.size().n()});
+		typedef std::remove_cv_t<Ring> _Ring_;
+		hbrs::mpl::matrix_size<El::Int, El::Int> sz{b.size()};
+		elemental::matrix<_Ring_> m{sz.m(), sz.n()};
+		return hbrs::mpl::detail::copy_matrix(b, m);
 	}
 	
 	template <
@@ -100,13 +193,11 @@ struct make_impl<ext::El::Matrix_tag> {
 		hbrs::mpl::matrix_size<El::Int, El::Int> sz,
 		hbrs::mpl::storage_order_<Order>
 	) {
-		return hbrs::mpl::detail::copy_matrix(
-			data,
-			hbrs::mpl::storage_order_c<Order>,
-			El::Matrix<std::remove_const_t<Ring>> {sz.m(), sz.n()}
-		);
+		typedef std::remove_cv_t<Ring> _Ring_;
+		elemental::matrix<_Ring_> m{sz.m(), sz.n()};
+		return hbrs::mpl::detail::copy_matrix(data, hbrs::mpl::storage_order_c<Order>, m);
 	}
-};
+}; 
 
 BOOST_HANA_NAMESPACE_END
 

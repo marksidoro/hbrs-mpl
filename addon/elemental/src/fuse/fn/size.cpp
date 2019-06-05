@@ -22,10 +22,10 @@
 ELEMENTAL_NAMESPACE_BEGIN
 namespace detail {
 
-template auto size_impl_Matrix::operator()(El::Matrix<float> const&) const;
-template auto size_impl_Matrix::operator()(El::Matrix<El::Complex<float>> const&) const;
-template auto size_impl_Matrix::operator()(El::Matrix<double> const&) const;
-template auto size_impl_Matrix::operator()(El::Matrix<El::Complex<double>> const&) const;
+template decltype(auto) size_impl_matrix::operator()(matrix<float> const&) const;
+template decltype(auto) size_impl_matrix::operator()(matrix<El::Complex<float>> const&) const;
+template decltype(auto) size_impl_matrix::operator()(matrix<double> const&) const;
+template decltype(auto) size_impl_matrix::operator()(matrix<El::Complex<double>> const&) const;
 
 template auto size_impl_AbstractDistMatrix::operator()(El::AbstractDistMatrix<float> const&) const;
 template auto size_impl_AbstractDistMatrix::operator()(El::AbstractDistMatrix<El::Complex<float>> const&) const;

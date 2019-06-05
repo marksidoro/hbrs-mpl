@@ -19,10 +19,10 @@
 ELEMENTAL_NAMESPACE_BEGIN
 namespace detail {
 
-template auto times_impl_Matrix_Matrix::operator()(El::Matrix<float>               const&, El::Matrix<float>               const&) const;
-template auto times_impl_Matrix_Matrix::operator()(El::Matrix<El::Complex<float>>  const&, El::Matrix<El::Complex<float>>  const&) const;
-template auto times_impl_Matrix_Matrix::operator()(El::Matrix<double>              const&, El::Matrix<double>              const&) const;
-template auto times_impl_Matrix_Matrix::operator()(El::Matrix<El::Complex<double>> const&, El::Matrix<El::Complex<double>> const&) const;
+template auto times_impl_matrix_matrix::operator()(matrix<float>               const&, matrix<float>               const&) const;
+template auto times_impl_matrix_matrix::operator()(matrix<El::Complex<float>>  const&, matrix<El::Complex<float>>  const&) const;
+template auto times_impl_matrix_matrix::operator()(matrix<double>              const&, matrix<double>              const&) const;
+template auto times_impl_matrix_matrix::operator()(matrix<El::Complex<double>> const&, matrix<El::Complex<double>> const&) const;
 
 //TODO: Add dist impls
 

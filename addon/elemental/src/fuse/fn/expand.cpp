@@ -20,19 +20,19 @@ ELEMENTAL_NAMESPACE_BEGIN
 namespace detail {
 
 template auto expand_impl_smr::operator()(
-	mpl::smr<El::Matrix<float>, El::Int> const&,
+	mpl::smr<matrix<float>, El::Int> const&,
 	mpl::matrix_size<El::Int, El::Int> const&) const;
 
 template auto expand_impl_smr::operator()(
-	mpl::smr<El::Matrix<El::Complex<float>>, El::Int> const&,
+	mpl::smr<matrix<El::Complex<float>>, El::Int> const&,
 	mpl::matrix_size<El::Int, El::Int> const&) const;
 
 template auto expand_impl_smr::operator()(
-	mpl::smr<El::Matrix<double>, El::Int> const&,
+	mpl::smr<matrix<double>, El::Int> const&,
 	mpl::matrix_size<El::Int, El::Int> const&) const;
 
 template auto expand_impl_smr::operator()(
-	mpl::smr<El::Matrix<El::Complex<double>>, El::Int> const&,
+	mpl::smr<matrix<El::Complex<double>>, El::Int> const&,
 	mpl::matrix_size<El::Int, El::Int> const&) const;
 
 //TODO: Add (dist-)row_vector and (dist-)column_vector impls!

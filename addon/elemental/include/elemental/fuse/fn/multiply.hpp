@@ -50,7 +50,7 @@ multiply_impl(A const& a, B const& b, C c) {
 	if (a.Width() != b.Height()) {
 		BOOST_THROW_EXCEPTION((
 			incompatible_matrices_exception{}
-			<< elemental::errinfo_matrix_sizes{{(*size)(a), (*size)(b)}}
+			<< elemental::errinfo_matrix_sizes{{ {a.Height(), a.Width()}, {b.Height(), b.Width()} }}
 		));
 	}
 	
@@ -68,7 +68,7 @@ multiply_impl(A const& a, B const& b, C c) {
 	return c;
 }
 
-struct multiply_impl_Matrix_Matrix {
+struct multiply_impl_matrix_matrix {
 	template <
 		typename RingL,
 		typename RingR,
@@ -78,35 +78,33 @@ struct multiply_impl_Matrix_Matrix {
 		>* = nullptr
 	>
 	auto
-	operator()(El::Matrix<RingL> const& a, El::Matrix<RingR> const& b) const {
+	operator()(matrix<RingL> const& a, matrix<RingR> const& b) const {
 		using namespace hbrs::mpl;
 		typedef std::common_type_t<RingL, RingR> Ring;
 		
 		//Replace with faster algorithm (e.g. Strassen algorithm) and use parallelization
 		
-		El::Matrix<Ring> a_ct {a.Height(), a.Width()};
-		for(El::Int j = 0; j < a.Width(); ++j) {
-			for(El::Int i = 0; i < a.Height(); ++i) {
-				*a_ct.Buffer(i,j) = *a.LockedBuffer(i,j);
+		matrix<Ring> a_ct {a.m(), a.n()};
+		for(El::Int j = 0; j < a.n(); ++j) {
+			for(El::Int i = 0; i < a.m(); ++i) {
+				a_ct.at({i,j}) = a.at({i,j});
 			}
 		}
 		
-		El::Matrix<Ring> b_ct {b.Height(), b.Width()};
-		for(El::Int j = 0; j < b.Width(); ++j) {
-			for(El::Int i = 0; i < b.Height(); ++i) {
-				*b_ct.Buffer(i,j) = *b.LockedBuffer(i,j);
+		matrix<Ring> b_ct {b.m(), b.n()};
+		for(El::Int j = 0; j < b.n(); ++j) {
+			for(El::Int i = 0; i < b.m(); ++i) {
+				b_ct.at({i,j}) = b.at({i,j});
 			}
 		}
 		
-		return multiply_impl(a_ct, b_ct, El::Matrix<Ring>{});
+		return make_matrix( multiply_impl(a_ct.data(), b_ct.data(), El::Matrix<Ring>{}) );
 	}
 	
 	template <typename Ring>
 	auto
-	operator()(El::Matrix<Ring> const& a, El::Matrix<Ring> const& b) const {
-		using namespace hbrs::mpl;
-		
-		return multiply_impl(a, b, El::Matrix<Ring>{});
+	operator()(matrix<Ring> const& a, matrix<Ring> const& b) const {
+		return make_matrix( multiply_impl(a.data(), b.data(), El::Matrix<Ring>{}) );
 	}
 };
 
@@ -122,8 +120,7 @@ struct multiply_impl_AbstractDistMatrix_AbstractDistMatrix {
 	}
 };
 
-struct multiply_impl_Matrix_scv_vector {
-	
+struct multiply_impl_matrix_scv_vector {
 	template <
 		typename MatrixRing,
 		typename Sequence,
@@ -133,13 +130,13 @@ struct multiply_impl_Matrix_scv_vector {
 		>* = nullptr
 	>
 	auto
-	operator()(El::Matrix<MatrixRing> const& a, mpl::scv<Sequence> const& b) const {
+	operator()(matrix<MatrixRing> const& a, mpl::scv<Sequence> const& b) const {
 		using namespace hbrs::mpl;
 		
 		typedef typename std::remove_reference_t<Sequence>::value_type VectorRing;
 		typedef std::decay_t<decltype( std::declval<MatrixRing>() * std::declval<VectorRing>() )> Ring;
 		
-		if ((*not_equal)(a.Width(), b.size())) {
+		if ((*not_equal)(a.n(), b.size())) {
 			BOOST_THROW_EXCEPTION((
 				incompatible_matrix_vector_exception{}
 				<< elemental::errinfo_matrix_size{(*size)(a)}
@@ -147,10 +144,10 @@ struct multiply_impl_Matrix_scv_vector {
 			));
 		}
 		
-		std::vector<Ring> c(a.Height(), 0);
+		std::vector<Ring> c(a.m(), 0);
 		
-		for(El::Int j = 0; j < a.Width(); ++j ) {
-			for(El::Int i = 0; i < a.Height(); ++i ) {
+		for(El::Int j = 0; j < a.n(); ++j ) {
+			for(El::Int i = 0; i < a.m(); ++i ) {
 				(*at)(c,i) += (*at)(a, make_matrix_index(i,j)) * b.at(j);
 			}
 		}
@@ -159,7 +156,7 @@ struct multiply_impl_Matrix_scv_vector {
 	}
 };
 
-struct multiply_impl_Matrix_Scalar {
+struct multiply_impl_matrix_scalar {
 	template <
 		typename Ring,
 		typename std::enable_if_t< 
@@ -167,8 +164,8 @@ struct multiply_impl_Matrix_Scalar {
 		>* = nullptr
 	>
 	auto
-	operator()(El::Matrix<Ring> a, Ring const& b) const {
-		El::Scale(b, a);
+	operator()(matrix<Ring> a, Ring const& b) const {
+		El::Scale(b, a.data());
 		return a;
 	}
 };
@@ -177,9 +174,9 @@ struct multiply_impl_Matrix_Scalar {
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_MULTIPLY_IMPLS boost::hana::make_tuple(                                                      \
-		elemental::detail::multiply_impl_Matrix_Matrix{},                                                              \
-		elemental::detail::multiply_impl_Matrix_scv_vector{},                                                          \
-		elemental::detail::multiply_impl_Matrix_Scalar{},                                                              \
+		elemental::detail::multiply_impl_matrix_matrix{},                                                              \
+		elemental::detail::multiply_impl_matrix_scv_vector{},                                                          \
+		elemental::detail::multiply_impl_matrix_scalar{},                                                              \
 		elemental::detail::multiply_impl_AbstractDistMatrix_AbstractDistMatrix{}                                       \
 	)
 

@@ -34,12 +34,12 @@ ELEMENTAL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 namespace detail {
 
-struct zip_impl_smc_Matrix_integer_range {
+struct zip_impl_smc_matrix_integer_range {
 	template <
 		typename Matrix,
 		typename Integer,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value &&
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value &&
 			std::is_lvalue_reference<Matrix>::value
 		>* = nullptr
 	>
@@ -52,29 +52,30 @@ struct zip_impl_smc_Matrix_integer_range {
 		typename Matrix,
 		typename Integer,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value &&
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value &&
 			!std::is_lvalue_reference<Matrix>::value
 		>* = nullptr
 	>
 	constexpr auto
 	operator()(mpl::smc<Matrix, El::Int> a, boost::integer_range<Integer> b) const {
-		typedef Ring_t<std::decay_t<Matrix>> Ring;
+		typedef decltype(a.at(0)) Ring;
+		typedef std::decay_t<Ring> _Ring_;
 		
-		El::Matrix<std::decay_t<Ring>> c{a.length(), 1};
+		matrix<_Ring_> c{a.length(), 1};
 		for(El::Int i = 0; i < a.length(); ++i) {
-			*c.Buffer(i, 0) = a.at(i);
+			c.at({i, 0}) = a.at(i);
 		}
 		
 		return mpl::make_zas(mpl::make_smc(std::move(c), 0), b);
 	}
 };
 
-struct zip_impl_smr_Matrix_integer_range {
+struct zip_impl_smr_matrix_integer_range {
 	template <
 		typename Matrix,
 		typename Integer,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value &&
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value &&
 			std::is_lvalue_reference<Matrix>::value
 		>* = nullptr
 	>
@@ -87,17 +88,18 @@ struct zip_impl_smr_Matrix_integer_range {
 		typename Matrix,
 		typename Integer,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value &&
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value &&
 			!std::is_lvalue_reference<Matrix>::value
 		>* = nullptr
 	>
 	constexpr auto
 	operator()(mpl::smr<Matrix, El::Int> a, boost::integer_range<Integer> b) const {
-		typedef Ring_t<std::decay_t<Matrix>> Ring;
+		typedef decltype(a.at(0)) Ring;
+		typedef std::decay_t<Ring> _Ring_;
 		
-		El::Matrix<std::decay_t<Ring>> c{1, a.length()};
+		matrix<_Ring_> c{1, a.length()};
 		for(El::Int i = 0; i < a.length(); ++i) {
-			*c.Buffer(0, i) = a.at(i);
+			c.at({0, i}) = a.at(i);
 		}
 		
 		return mpl::make_zas(mpl::make_smr(std::move(c), 0), b);
@@ -108,8 +110,8 @@ struct zip_impl_smr_Matrix_integer_range {
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_ZIP_IMPLS boost::hana::make_tuple(                                                           \
-		elemental::detail::zip_impl_smc_Matrix_integer_range{},                                                        \
-		elemental::detail::zip_impl_smr_Matrix_integer_range{}                                                         \
+		elemental::detail::zip_impl_smc_matrix_integer_range{},                                                        \
+		elemental::detail::zip_impl_smr_matrix_integer_range{}                                                         \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_ZIP_HPP

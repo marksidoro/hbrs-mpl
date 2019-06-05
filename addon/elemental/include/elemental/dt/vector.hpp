@@ -85,7 +85,20 @@
 		data() && { return HBRS_MPL_FWD(data_); };                                                                     \
 		                                                                                                               \
 	private:                                                                                                           \
-		El::Matrix<Ring> data_;                                                                                        \
+		template<typename Matrix>                                                                                      \
+		decltype(auto)                                                                                                 \
+		static at_(Matrix && m, mpl::matrix_index<El::Int, El::Int> const& i) {                                        \
+			BOOST_ASSERT(i.m() >= 0 && i.m() < HBRS_MPL_FWD(m).Height());                                              \
+			BOOST_ASSERT(i.n() >= 0 && i.n() < HBRS_MPL_FWD(m).Width());                                               \
+			                                                                                                           \
+			if constexpr(std::is_const_v<Ring> || std::is_const_v<std::remove_reference_t<Matrix>>) {                  \
+				return *HBRS_MPL_FWD(m).LockedBuffer(i.m(), i.n());                                                    \
+			} else {                                                                                                   \
+				return *HBRS_MPL_FWD(m).Buffer(i.m(), i.n());                                                          \
+			}                                                                                                          \
+		}                                                                                                              \
+		                                                                                                               \
+		El::Matrix<std::remove_const_t<Ring>> data_;                                                                   \
 	};                                                                                                                 \
 	                                                                                                                   \
 	ELEMENTAL_NAMESPACE_END                                                                                            \
@@ -135,11 +148,13 @@ ELEMENTAL_NAMESPACE_BEGIN
 
 template<typename Ring>
 column_vector<Ring>::column_vector(El::Matrix<Ring> data) : data_{data} {
+	BOOST_ASSERT(data_.Locked() == std::is_const_v<Ring>);
 	BOOST_ASSERT(data_.Width() == 1);
 }
 
 template<typename Ring>
 row_vector<Ring>::row_vector(El::Matrix<Ring> data) : data_{data} {
+	BOOST_ASSERT(data_.Locked() == std::is_const_v<Ring>);
 	BOOST_ASSERT(data_.Height() == 1);
 }
 
@@ -168,29 +183,25 @@ row_vector<Ring>::length() const {
 template<typename Ring>
 decltype(auto)
 column_vector<Ring>::at(El::Int i) {
-	using hbrs::mpl::at;
-	return (*at)(data_, mpl::make_matrix_index(i, 0));
+	return at_(data_, mpl::make_matrix_index(i, 0));
 }
 
 template<typename Ring>
 decltype(auto)
 column_vector<Ring>::at(El::Int i) const {
-	using hbrs::mpl::at;
-	return (*at)(data_, mpl::make_matrix_index(i, 0));
+	return at_(data_, mpl::make_matrix_index(i, 0));
 }
 
 template<typename Ring>
 decltype(auto)
 row_vector<Ring>::at(El::Int i) {
-	using hbrs::mpl::at;
-	return (*at)(data_, mpl::make_matrix_index(0, i));
+	return at_(data_, mpl::make_matrix_index(0, i));
 }
 
 template<typename Ring>
 decltype(auto)
 row_vector<Ring>::at(El::Int i) const {
-	using hbrs::mpl::at;
-	return (*at)(data_, mpl::make_matrix_index(0, i));
+	return at_(data_, mpl::make_matrix_index(0, i));
 }
 
 ELEMENTAL_NAMESPACE_END

@@ -60,7 +60,7 @@ template <
 			std::is_same< hana::tag_of_t<T>, matlab::row_vector_tag >::value ||
 		#endif
 		#ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
-			std::is_same< hana::tag_of_t<T>, hana::ext::El::Matrix_tag >::value ||
+			std::is_same< hana::tag_of_t<T>, elemental::matrix_tag >::value ||
 			std::is_same< hana::tag_of_t<T>, elemental::column_vector_tag >::value ||
 			std::is_same< hana::tag_of_t<T>, elemental::row_vector_tag >::value ||
 		#endif
@@ -97,7 +97,7 @@ gather(T && t) {
 		if (dmat.Grid().Rank() == 0) {
 			El::Copy(dmat.Matrix(), lmat);
 		}
-		return lmat;
+		return elemental::make_matrix(lmat);
 	}
 	#define _DEF_GATHER_DIST_VECTOR(vector_kind)                                                                       \
 		template <                                                                                                     \

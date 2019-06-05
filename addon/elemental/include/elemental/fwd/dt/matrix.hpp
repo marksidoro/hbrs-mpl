@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,14 +22,15 @@
 #include <elemental/config.hpp>
 #include <boost/hana/fwd/core/make.hpp>
 #include <boost/hana/fwd/core/to.hpp>
-#include <elemental/ext/boost/hana/ext/El/core/Matrix.hpp>
-#include <El.hpp>
 
 ELEMENTAL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 
-constexpr auto make_matrix = hana::make<hana::ext::El::Matrix_tag>;
-constexpr auto to_matrix = hana::to<hana::ext::El::Matrix_tag>;
+template<typename Ring>
+struct matrix;
+struct matrix_tag;
+constexpr auto make_matrix = hana::make<matrix_tag>;
+constexpr auto to_matrix = hana::to<matrix_tag>;
 
 ELEMENTAL_NAMESPACE_END
 

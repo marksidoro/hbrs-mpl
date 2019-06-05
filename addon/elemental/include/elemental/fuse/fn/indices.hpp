@@ -33,11 +33,11 @@ ELEMENTAL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 namespace detail {
 
-struct indices_impl_smc_Matrix {
+struct indices_impl_smc_matrix {
 	template <
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
 		>* = nullptr
 	>
 	constexpr auto
@@ -46,11 +46,11 @@ struct indices_impl_smc_Matrix {
 	}
 };
 
-struct indices_impl_smr_Matrix {
+struct indices_impl_smr_matrix {
 	template <
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
 		>* = nullptr
 	>
 	constexpr auto
@@ -63,8 +63,8 @@ struct indices_impl_smr_Matrix {
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_INDICES_IMPLS boost::hana::make_tuple(                                                       \
-		elemental::detail::indices_impl_smc_Matrix{},                                                                  \
-		elemental::detail::indices_impl_smr_Matrix{}                                                                   \
+		elemental::detail::indices_impl_smc_matrix{},                                                                  \
+		elemental::detail::indices_impl_smr_matrix{}                                                                   \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_INDICES_HPP

@@ -23,6 +23,7 @@
 #include <hbrs/mpl/preprocessor/core.hpp>
 #include <hbrs/mpl/detail/function_object.hpp>
 
+#include <elemental/fwd/dt/matrix.hpp>
 #include <elemental/fwd/dt/vector.hpp>
 #include <elemental/fwd/dt/dist_vector.hpp>
 
@@ -39,13 +40,7 @@ namespace mpl = hbrs::mpl;
 
 namespace detail {
 
-struct size_impl_Matrix {
-	template <typename Ring>
-	auto
-	operator()(El::Matrix<Ring> const& m) const {
-		return mpl::make_matrix_size(m.Height(), m.Width());
-	}
-};
+HBRS_MPL_DEF_FO_TRY_METHOD(size_impl_matrix, matrix_tag, size)
 
 struct size_impl_AbstractDistMatrix {
 	template <typename Ring>
@@ -69,7 +64,7 @@ ELEMENTAL_NAMESPACE_END
 		elemental::detail::length_impl_row_vector{},                                                                   \
 		elemental::detail::length_impl_dist_column_vector{},                                                           \
 		elemental::detail::length_impl_dist_row_vector{},                                                              \
-		elemental::detail::size_impl_Matrix{},                                                                         \
+		elemental::detail::size_impl_matrix{},                                                                         \
 		elemental::detail::size_impl_AbstractDistMatrix{}                                                              \
 	)
 

@@ -32,7 +32,7 @@ ELEMENTAL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 namespace detail {
 
-struct divide_impl_vector_Scalar {
+struct divide_impl_vector_scalar {
 	template <
 		typename Vector,
 		typename Scalar,
@@ -53,7 +53,7 @@ struct divide_impl_vector_Scalar {
 };
 
 //TODO: replace this hack!
-struct divide_impl_dist_vector_Scalar {
+struct divide_impl_dist_vector_scalar {
 	template <
 		typename DistMatrix,
 		typename Scalar,
@@ -74,7 +74,7 @@ struct divide_impl_dist_vector_Scalar {
 	}
 };
 
-struct divide_impl_Matrix_Scalar {
+struct divide_impl_matrix_scalar {
 	template <
 		typename Ring,
 		typename std::enable_if_t< 
@@ -82,8 +82,8 @@ struct divide_impl_Matrix_Scalar {
 		>* = nullptr
 	>
 	auto
-	operator()(El::Matrix<Ring> a, Ring const& b) const {
-		El::Scale(Ring(1)/b, a);
+	operator()(matrix<Ring> a, Ring const& b) const {
+		El::Scale(Ring(1)/b, a.data());
 		return a;
 	}
 };
@@ -92,9 +92,9 @@ struct divide_impl_Matrix_Scalar {
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_DIVIDE_IMPLS boost::hana::make_tuple(                                                        \
-		elemental::detail::divide_impl_vector_Scalar{},                                                                \
-		elemental::detail::divide_impl_dist_vector_Scalar{},                                                           \
-		elemental::detail::divide_impl_Matrix_Scalar{}                                                                 \
+		elemental::detail::divide_impl_vector_scalar{},                                                                \
+		elemental::detail::divide_impl_dist_vector_scalar{},                                                           \
+		elemental::detail::divide_impl_matrix_scalar{}                                                                 \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_DIVIDE_HPP

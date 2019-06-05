@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(matrix_m_n_size) {
 	using namespace elemental;
 	using namespace hbrs::mpl;
 	
-	El::Matrix<double> a0{2,4};
+	matrix<double> a0{2,4};
 	
 	auto const a0_size = (*size)(a0);
 	auto const a0_m = (*m)(a0_size);
@@ -134,12 +134,12 @@ BOOST_AUTO_TEST_CASE(vector_size_at) {
 	BOOST_TEST((*size)(cv2) == rnd.size());
 	
 	for(El::Int i = 0; i < rnd_rv.Width(); ++i) {
-		BOOST_TEST((*at)(rv1, i) == (*at)(rnd_rv, mpl::matrix_index<El::Int, El::Int>{0, i}));
+		BOOST_TEST((*at)(rv1, i) == rnd_rv(0, i));
 		BOOST_TEST((*at)(rv2, i) == (*at)(rnd, i));
 	}
 	
 	for(El::Int i = 0; i < rnd_cv.Height(); ++i) {
-		BOOST_TEST((*at)(cv1, i) == (*at)(rnd_cv, mpl::matrix_index<El::Int, El::Int>{i, 0}));
+		BOOST_TEST((*at)(cv1, i) == rnd_cv(i, 0));
 		BOOST_TEST((*at)(cv2, i) == (*at)(rnd, i));
 	}
 }
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(matrix_svd, * utf::tolerance(_TOL)) {
 	BOOST_TEST(a3_m == test::mat_g_m);
 	BOOST_TEST(a3_n == test::mat_g_n);
 	
-	El::Matrix<double> a4 = elemental::make_matrix(a3);
+	matrix<double> a4 = elemental::make_matrix(a3);
 	
 	for(std::size_t i = 0; i < a3_m; ++i) {
 		for(std::size_t j = 0; j < a3_n; ++j) {
@@ -220,12 +220,12 @@ BOOST_AUTO_TEST_CASE(matrix_svd, * utf::tolerance(_TOL)) {
 		}
 	}
 	
-	elemental::detail::svd_impl_Matrix{}(a4, mpl::decompose_mode::complete);
+	elemental::detail::svd_impl_matrix{}(a4, mpl::decompose_mode::complete);
 	auto const svd1 = (*svd)(a4, mpl::decompose_mode::complete);
 	
 	static_assert(std::is_same<
 		decltype(svd1),
-		mpl::svd_result<El::Matrix<double>, El::Matrix<double>, El::Matrix<double>> const
+		mpl::svd_result<matrix<double>, matrix<double>, matrix<double>> const
 	>::value, "");
 	
 	auto && svd1_u = (*at)(svd1, svd_u{});
@@ -283,8 +283,8 @@ BOOST_AUTO_TEST_CASE(matrix_multiply_1, * utf::tolerance(_TOL)) {
 		row_major_c
 	);
 	
-	elemental::detail::multiply_impl_Matrix_Matrix{}(a, b);
-	El::Matrix<double> rc0 = (*multiply)(a, b);
+	elemental::detail::multiply_impl_matrix_matrix{}(a, b);
+	matrix<double> rc0 = (*multiply)(a, b);
 	
 	HBRS_MPL_TEST_MMEQ(c, rc0, false);
 }
@@ -372,9 +372,11 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	//TODO: Split this big monolithic test into multiple test functions
 	
 	/////////////////////////// columns ///////////////////////////
-	
-	elemental::detail::columns_expr<
-		El::DistMatrix<Real, El::VC, El::STAR, El::ELEMENT>
+	mpl::expression<
+		mpl::columns_t,
+		std::tuple<
+			El::DistMatrix<Real, El::VC, El::STAR, El::ELEMENT> &
+		>
 	> columns_expr0 = (*columns)(b);
 	
 	//TODO: implement real unit test for columns(DistMatrix)
@@ -638,8 +640,8 @@ BOOST_AUTO_TEST_CASE(matrix_multiply_2, * utf::tolerance(_TOL)) {
 		row_major_c
 	);
 	
-	elemental::detail::multiply_impl_Matrix_Matrix{}(a, elemental::detail::multiply_impl_Matrix_Matrix{}(a, a));
-	El::Matrix<double> const rb0 = (*multiply)(a, multiply(a, a));
+	elemental::detail::multiply_impl_matrix_matrix{}(a, elemental::detail::multiply_impl_matrix_matrix{}(a, a));
+	matrix<double> const rb0 = (*multiply)(a, multiply(a, a));
 	
 	HBRS_MPL_TEST_MMEQ(a, rb0, false);
 }
@@ -817,8 +819,8 @@ BOOST_AUTO_TEST_CASE(matrix_plus_1) {
 	using namespace elemental;
 	using namespace hbrs::mpl;
 	
-	El::Matrix<double> a11{2,3};
-	El::Matrix<double> a12{2,3};
+	matrix<double> a11{2,3};
+	matrix<double> a12{2,3};
 	auto const a11_m = (*m)(size(a11));
 	auto const a11_n = (*n)(size(a11));
 	
@@ -978,7 +980,7 @@ BOOST_AUTO_TEST_CASE(matrix_vertcat) {
 	auto a_r2 = (*at)(a, 2);
 	
 	elemental::detail::vertcat_impl_smr_smr{}(a_r0, a_r1);
-	elemental::detail::vertcat_impl_Matrix_smr{}(elemental::detail::vertcat_impl_smr_smr{}(a_r0, a_r1), a_r2);
+	elemental::detail::vertcat_impl_matrix_smr{}(elemental::detail::vertcat_impl_smr_smr{}(a_r0, a_r1), a_r2);
 	
 	auto b = (*mpl::vertcat)(mpl::vertcat(a_r0, a_r1), a_r2);
 	auto const a_m = (*m)(size(a));
@@ -1157,11 +1159,11 @@ BOOST_AUTO_TEST_CASE(matrix_mean) {
 	auto a_m = (*m)(size(a));
 	auto a_n = (*n)(size(a));
 	
-	elemental::detail::mean_impl_smcs_Matrix{}((*columns)(a));
+	elemental::detail::mean_impl_smcs_matrix{}((*columns)(a));
 	auto cm = (*mean)(columns(a));
 	auto cm_sz = (*size)(cm);
 	
-	elemental::detail::mean_impl_smrs_Matrix{}((*rows)(a));
+	elemental::detail::mean_impl_smrs_matrix{}((*rows)(a));
 	auto rm = (*mean)(rows(a));
 	auto rm_sz = (*size)(rm);
 	
@@ -1252,7 +1254,7 @@ BOOST_AUTO_TEST_CASE(matrix_transform) {
 	
 	std::function<double(double)> f = [](double d) -> double { return 2.*d; };
 	
-	elemental::detail::transform_impl_Matrix{}(a, f);
+	elemental::detail::transform_impl_matrix{}(a, f);
 	auto d = (*transform)(a, f);
 	auto d_sz = (*size)(d);
 	BOOST_TEST(b_sz == d_sz);
@@ -1332,7 +1334,7 @@ BOOST_AUTO_TEST_CASE(matrix_absolute) {
 	auto const b_m = (*m)(b_sz);
 	auto const b_n = (*n)(b_sz);
 	
-	elemental::detail::absolute_impl_Matrix{}(a);
+	elemental::detail::absolute_impl_matrix{}(a);
 	auto d = (*absolute)(a);
 	auto d_sz = (*size)(d);
 	BOOST_TEST(b_sz == d_sz);
@@ -1397,26 +1399,31 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 		row_major_c
 	);
 	
-	elemental::detail::select_impl_Matrix{}(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
-	El::Matrix<double> const rb0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
-	El::Matrix<double> const rc0 = (*select)(a, make_range(make_matrix_index(1,0), make_matrix_index(2,2)));
-	El::Matrix<double> const rd0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(2,1)));
-	El::Matrix<double> const re0 = (*select)(a, make_range(make_matrix_index(0,1), make_matrix_index(2,2)));
+	elemental::detail::select_impl_matrix{}(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
+	matrix<double const> rb0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
+	matrix<double const> rc0 = (*select)(a, make_range(make_matrix_index(1,0), make_matrix_index(2,2)));
+	matrix<double const> rd0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(2,1)));
+	matrix<double const> re0 = (*select)(a, make_range(make_matrix_index(0,1), make_matrix_index(2,2)));
 	
-	El::Matrix<double> const rb1 = (*select)(a, std::make_pair(El::IR(0,2), El::IR(0,3)));
-	El::Matrix<double> const rc1 = (*select)(a, std::make_pair(El::IR(1,3), El::IR(0,3)));
-	El::Matrix<double> const rd1 = (*select)(a, std::make_pair(El::IR(0,3), El::IR(0,2)));
-	El::Matrix<double> const re1 = (*select)(a, std::make_pair(El::IR(0,3), El::IR(1,3)));
+	matrix<double const> rb1 = (*select)(a, std::make_pair(El::IR(0,2), El::IR(0,3)));
+	matrix<double const> rc1 = (*select)(a, std::make_pair(El::IR(1,3), El::IR(0,3)));
+	matrix<double const> rd1 = (*select)(a, std::make_pair(El::IR(0,3), El::IR(0,2)));
+	matrix<double const> re1 = (*select)(a, std::make_pair(El::IR(0,3), El::IR(1,3)));
 	
-	El::Matrix<double> const rb2 = (*select)(a, std::make_pair(make_matrix_index(0,0), make_matrix_size(2,3)));
-	El::Matrix<double> const rc2 = (*select)(a, std::make_pair(make_matrix_index(1,0), make_matrix_size(2,3)));
-	El::Matrix<double> const rd2 = (*select)(a, std::make_pair(make_matrix_index(0,0), make_matrix_size(3,2)));
-	El::Matrix<double> const re2 = (*select)(a, std::make_pair(make_matrix_index(0,1), make_matrix_size(3,2)));
+	matrix<double const> rb2 = (*select)(a, std::make_pair(make_matrix_index(0,0), make_matrix_size(2,3)));
+	matrix<double const> rc2 = (*select)(a, std::make_pair(make_matrix_index(1,0), make_matrix_size(2,3)));
+	matrix<double const> rd2 = (*select)(a, std::make_pair(make_matrix_index(0,0), make_matrix_size(3,2)));
+	matrix<double const> re2 = (*select)(a, std::make_pair(make_matrix_index(0,1), make_matrix_size(3,2)));
 	
-	El::Matrix<double>       rb3 = (*select)(std::move(a), std::make_pair(El::IR(0,2), El::IR(0,3)));
-	El::Matrix<double>       rc3 = (*select)(std::move(a), std::make_pair(El::IR(1,3), El::IR(0,3)));
-	El::Matrix<double>       rd3 = (*select)(std::move(a), std::make_pair(El::IR(0,3), El::IR(0,2)));
-	El::Matrix<double>       re3 = (*select)(std::move(a), std::make_pair(El::IR(0,3), El::IR(1,3)));
+	matrix<double const> rb3 = (*select)(std::move(a), std::make_pair(El::IR(0,2), El::IR(0,3)));
+	matrix<double const> rc3 = (*select)(std::move(a), std::make_pair(El::IR(1,3), El::IR(0,3)));
+	matrix<double const> rd3 = (*select)(std::move(a), std::make_pair(El::IR(0,3), El::IR(0,2)));
+	matrix<double const> re3 = (*select)(std::move(a), std::make_pair(El::IR(0,3), El::IR(1,3)));
+	
+	matrix<double> rb4 = (*select)(matrix<double>{a}, std::make_pair(El::IR(0,2), El::IR(0,3)));
+	matrix<double> rc4 = (*select)(matrix<double>{a}, std::make_pair(El::IR(1,3), El::IR(0,3)));
+	matrix<double> rd4 = (*select)(matrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(0,2)));
+	matrix<double> re4 = (*select)(matrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(1,3)));
 	
 	HBRS_MPL_TEST_MMEQ(b, rb0, false);
 	HBRS_MPL_TEST_MMEQ(c, rc0, false);
@@ -1437,6 +1444,11 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 	HBRS_MPL_TEST_MMEQ(c, rc3, false);
 	HBRS_MPL_TEST_MMEQ(d, rd3, false);
 	HBRS_MPL_TEST_MMEQ(e, re3, false);
+	
+	HBRS_MPL_TEST_MMEQ(b, rb4, false);
+	HBRS_MPL_TEST_MMEQ(c, rc4, false);
+	HBRS_MPL_TEST_MMEQ(d, rd4, false);
+	HBRS_MPL_TEST_MMEQ(e, re4, false);
 }
 
 BOOST_AUTO_TEST_CASE(dist_matrix_select) {
@@ -1509,7 +1521,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_select) {
 		)
 	);
 	
-	elemental::detail::select_impl_Matrix{}(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
+	elemental::detail::select_impl_matrix{}(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
 	auto const rb0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
 	auto const rc0 = (*select)(a, make_range(make_matrix_index(1,0), make_matrix_index(2,2)));
 	auto const rd0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(2,1)));
@@ -1522,10 +1534,10 @@ BOOST_AUTO_TEST_CASE(dist_matrix_select) {
 	auto const rc2 = (*select)(a, std::make_pair(make_matrix_index(1,0), make_matrix_size(2,3)));
 	auto const rd2 = (*select)(a, std::make_pair(make_matrix_index(0,0), make_matrix_size(3,2)));
 	auto const re2 = (*select)(a, std::make_pair(make_matrix_index(0,1), make_matrix_size(3,2)));
-	auto       rb3 = (*select)(std::move(a), std::make_pair(El::IR(0,2), El::IR(0,3)));
-	auto       rc3 = (*select)(std::move(a), std::make_pair(El::IR(1,3), El::IR(0,3)));
-	auto       rd3 = (*select)(std::move(a), std::make_pair(El::IR(0,3), El::IR(0,2)));
-	auto       re3 = (*select)(std::move(a), std::make_pair(El::IR(0,3), El::IR(1,3)));
+	auto       rb3 = (*select)(El::DistMatrix<double>{a}, std::make_pair(El::IR(0,2), El::IR(0,3)));
+	auto       rc3 = (*select)(El::DistMatrix<double>{a}, std::make_pair(El::IR(1,3), El::IR(0,3)));
+	auto       rd3 = (*select)(El::DistMatrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(0,2)));
+	auto       re3 = (*select)(El::DistMatrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(1,3)));
 	
 	
 	HBRS_MPL_TEST_MMEQ(b, rb0, false);
@@ -1740,12 +1752,11 @@ BOOST_AUTO_TEST_CASE(matrix_fold1) {
 	using namespace hbrs::mpl;
 	namespace hana = boost::hana;
 	
-	El::Matrix<double> zero{2,2};
-	El::Zero(zero);
+	matrix<double> zero{2,2};
 	
 	mpl::zas<
 		mpl::smc<
-			El::Matrix<double>,
+			matrix<double>,
 			El::Int
 		>,
 		boost::integer_range<El::Int>
@@ -1755,7 +1766,7 @@ BOOST_AUTO_TEST_CASE(matrix_fold1) {
 		return { (*first)(i) + (*first)(j), (*second)(i) + (*second)(j) };
 	};
 	
-	hana::pair<El::Int,El::Int> p1 = elemental::detail::fold1_impl_zas_smc_Matrix_irange{}(z1, f1);
+	hana::pair<El::Int,El::Int> p1 = elemental::detail::fold1_impl_zas_smc_matrix_irange{}(z1, f1);
 	
 	hana::pair<El::Int,El::Int> p2 = (*fold1)(z1, f1);
 	BOOST_TEST((*equal)(p2,hana::make_pair(0,1)));
@@ -1782,12 +1793,12 @@ BOOST_AUTO_TEST_CASE(matrix_transform_zip_fold1) {
 	};
 	
 	std::vector<zas<
-		smc<El::Matrix<double> const&, El::Int>,
+		smc<matrix<double> const&, El::Int>,
 		boost::integer_range<El::Int>
 	>> zipped_cols_seq = (*transform)(mpl::columns(a), zip_with_idx);
 	
 	std::vector<zas<
-		smr<El::Matrix<double> const&, El::Int>,
+		smr<matrix<double> const&, El::Int>,
 		boost::integer_range<El::Int>
 	>> zipped_rows_seq = (*transform)(mpl::rows(a), zip_with_idx);
 	
@@ -1826,6 +1837,7 @@ BOOST_AUTO_TEST_CASE(matrix_transform_zip_fold1) {
 }
 
 BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
+	using namespace elemental;
 	using namespace hbrs::mpl;
 	namespace hana = boost::hana;
 	
@@ -1839,13 +1851,13 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 	static constexpr auto a_m = (*m)(a_sz);
 	static constexpr auto a_n = (*n)(a_sz);
 	
-	El::Matrix<double> b = elemental::make_matrix(a);
+	matrix<double> b = elemental::make_matrix(a);
 	
-	elemental::detail::pca_impl_Matrix{}(b, true);
+	elemental::detail::pca_impl_matrix{}(b, true);
 	
 	pca_result<
-		El::Matrix<double>,
-		El::Matrix<double>,
+		matrix<double>,
+		matrix<double>,
 		elemental::column_vector<double>,
 		elemental::row_vector<double>
 	> r = (*pca)(b, true);
@@ -1949,7 +1961,7 @@ BOOST_AUTO_TEST_CASE(matrix_diag) {
 		}
 	);
 	
-	elemental::detail::diag_impl_Matrix{}(a);
+	elemental::detail::diag_impl_matrix{}(a);
 	elemental::column_vector<double> rb0 = (*diag)(a);
 	
 	HBRS_MPL_TEST_VVEQ(b, rb0, false);
@@ -2040,7 +2052,7 @@ BOOST_AUTO_TEST_CASE(column_vector_divide) {
 		}
 	);
 	
-	elemental::detail::divide_impl_vector_Scalar{}(a, 2.);
+	elemental::detail::divide_impl_vector_scalar{}(a, 2.);
 	column_vector<double> rb0 = (*divide)(a, 2.);
 	
 	HBRS_MPL_TEST_VVEQ(b, rb0, false);
@@ -2080,8 +2092,8 @@ BOOST_AUTO_TEST_CASE(matrix_times) {
 		row_major_c
 	);
 	
-	elemental::detail::times_impl_Matrix_Matrix{}(a, b);
-	El::Matrix<double> rc0 = (*times)(a, b);
+	elemental::detail::times_impl_matrix_matrix{}(a, b);
+	matrix<double> rc0 = (*times)(a, b);
 	
 	HBRS_MPL_TEST_MMEQ(c, rc0, false);
 }
@@ -2146,10 +2158,10 @@ BOOST_AUTO_TEST_CASE(matrix_pca_filter, * utf::tolerance(_TOL)) {
 	auto const b = elemental::make_matrix(a);
 	std::vector<bool> const keep(std::min((std::size_t)a_m, (std::size_t)a_n), true);
 	
-	elemental::detail::pca_filter_impl_Matrix{}(b, keep);
+	elemental::detail::pca_filter_impl_matrix{}(b, keep);
 	
 	pca_filter_result<
-		El::Matrix<double>,
+		matrix<double>,
 		elemental::column_vector<double>
 	> rslt = (*pca_filter)(b, keep);
 	

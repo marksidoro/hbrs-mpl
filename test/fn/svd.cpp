@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(0.000000001)) {
 				
 				#ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
 				[](auto && a, auto mode) {
-					return elemental::detail::svd_impl_Matrix{}(elemental::make_matrix(HBRS_MPL_FWD(a)), mode);
+					return elemental::detail::svd_impl_matrix{}(elemental::make_matrix(HBRS_MPL_FWD(a)), mode);
 				},
 				[](auto && a, auto mode) {
 					auto sz_ = (*size)(a);

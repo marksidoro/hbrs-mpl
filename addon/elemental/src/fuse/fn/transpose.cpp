@@ -21,11 +21,11 @@ ELEMENTAL_NAMESPACE_BEGIN
 namespace detail {
 
 #define PROTO(type_spec_1, cv_qual_1, ref_decl_1)                                                                      \
-	template auto transpose_impl_Matrix::operator()(type_spec_1 cv_qual_1 ref_decl_1) const;
-HBRS_MPL_INST_FWDREFS(PROTO, El::Matrix<float>)
-HBRS_MPL_INST_FWDREFS(PROTO, El::Matrix<El::Complex<float>>)
-HBRS_MPL_INST_FWDREFS(PROTO, El::Matrix<double>)
-HBRS_MPL_INST_FWDREFS(PROTO, El::Matrix<El::Complex<double>>)
+	template auto transpose_impl_matrix::operator()(type_spec_1 cv_qual_1 ref_decl_1) const;
+HBRS_MPL_INST_FWDREFS(PROTO, matrix<float>)
+HBRS_MPL_INST_FWDREFS(PROTO, matrix<El::Complex<float>>)
+HBRS_MPL_INST_FWDREFS(PROTO, matrix<double>)
+HBRS_MPL_INST_FWDREFS(PROTO, matrix<El::Complex<double>>)
 #undef PROTO
 
 #define PROTO(type_spec_1, cv_qual_1, ref_decl_1)                                                                      \

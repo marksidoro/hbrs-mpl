@@ -80,7 +80,7 @@ struct transform_impl_dist_vector {
 		auto & v_lmat = v.data().Matrix();
 		
 		for(El::Int i=0; i < v_lmat.Height(); ++i) {
-			auto & e = (*at)(v_lmat, make_matrix_index(i, 0));
+			auto & e = v_lmat(i, 0);
 			e = mpl::evaluate(f(e));
 		}
 		
@@ -105,18 +105,18 @@ transform_Matrix(El::Matrix<Ring> const& from, El::Matrix<Ring> & to, F && f) {
 	}
 }
 
-struct transform_impl_Matrix {
+struct transform_impl_matrix {
 	template <
 		typename Ring,
 		typename F
 		//TODO: Add invokable check for F?
 	>
 	auto
-	operator()(El::Matrix<Ring> const& a, F && f) const {
+	operator()(matrix<Ring> const& a, F && f) const {
 		typedef std::decay_t<Ring> _Ring_;
-		El::Matrix<_Ring_> b{a.Height(), a.Width()};
-		transform_Matrix(a,b,HBRS_MPL_FWD(f));
-		return b;
+		El::Matrix<_Ring_> b{a.m(), a.n()};
+		transform_Matrix(a.data(), b, HBRS_MPL_FWD(f));
+		return make_matrix(std::move(b));
 	}
 };
 
@@ -137,19 +137,20 @@ struct transform_impl_DistMatrix {
 	}
 };
 
-struct transform_impl_smr_Matrix {
+struct transform_impl_smr_matrix {
 	template <
 		typename Matrix,
 		typename F,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
 			//TODO: Add invokable check for F?
 		>* = nullptr
 	>
 	auto
 	operator()(mpl::smr<Matrix, El::Int> const& a, F && f) const {
-		typedef std::decay_t<decltype( mpl::evaluate( f(a.at(0)) ) )>  Result;
-		std::vector<Result> b;
+		typedef decltype(mpl::evaluate( f(a.at(0)) )) Ring;
+		typedef std::decay_t<Ring> _Ring_;
+		std::vector<_Ring_> b;
 		b.reserve(a.length());
 		
 		for(El::Int i=0; i < a.length(); ++i) {
@@ -160,19 +161,20 @@ struct transform_impl_smr_Matrix {
 	}
 };
 
-struct transform_impl_smc_Matrix {
+struct transform_impl_smc_matrix {
 	template <
 		typename Matrix,
 		typename F,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
 			//TODO: Add invokable check for F?
 		>* = nullptr
 	>
 	auto
 	operator()(mpl::smc<Matrix, El::Int> const& a, F && f) const {
-		typedef std::decay_t<decltype( mpl::evaluate( f(a.at(0)) ) )>  Result;
-		std::vector<Result> b;
+		typedef decltype(mpl::evaluate( f(a.at(0)) )) Ring;
+		typedef std::decay_t<Ring> _Ring_;
+		std::vector<_Ring_> b;
 		b.reserve(a.length());
 		
 		for(El::Int j=0; j < a.length(); ++j) {
@@ -183,7 +185,7 @@ struct transform_impl_smc_Matrix {
 	}
 };
 
-struct transform_impl_smcs_smrs_Matrix {
+struct transform_impl_smcs_smrs_matrix {
 	template <typename Sequence, typename F>
 	static auto
 	impl(Sequence const& s, F && f) {
@@ -203,7 +205,7 @@ struct transform_impl_smcs_smrs_Matrix {
 		typename Matrix,
 		typename F,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
 			//TODO: Add invokable check for F?
 		>* = nullptr
 	>
@@ -216,7 +218,7 @@ struct transform_impl_smcs_smrs_Matrix {
 		typename Matrix,
 		typename F,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
 			//TODO: Add invokable check for F?
 		>* = nullptr
 	>
@@ -232,11 +234,11 @@ ELEMENTAL_NAMESPACE_END
 #define ELEMENTAL_FUSE_FN_TRANSFORM_IMPLS boost::hana::make_tuple(                                                     \
 		elemental::detail::transform_impl_vector{},                                                                    \
 		elemental::detail::transform_impl_dist_vector{},                                                               \
-		elemental::detail::transform_impl_Matrix{},                                                                    \
+		elemental::detail::transform_impl_matrix{},                                                                    \
 		elemental::detail::transform_impl_DistMatrix{},                                                                \
-		elemental::detail::transform_impl_smc_Matrix{},                                                                \
-		elemental::detail::transform_impl_smcs_smrs_Matrix{},                                                          \
-		elemental::detail::transform_impl_smr_Matrix{}                                                                 \
+		elemental::detail::transform_impl_smc_matrix{},                                                                \
+		elemental::detail::transform_impl_smcs_smrs_matrix{},                                                          \
+		elemental::detail::transform_impl_smr_matrix{}                                                                 \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_TRANSFORM_HPP

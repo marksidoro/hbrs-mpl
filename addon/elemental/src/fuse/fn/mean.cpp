@@ -21,20 +21,20 @@ namespace mpl = hbrs::mpl;
 
 namespace detail {
 
-template auto mean_impl_smcs_Matrix::operator()(mpl::smcs<El::Matrix<float>> const&) const;
-template auto mean_impl_smcs_Matrix::operator()(mpl::smcs<El::Matrix<El::Complex<float>>> const&) const;
-template auto mean_impl_smcs_Matrix::operator()(mpl::smcs<El::Matrix<double>> const&) const;
-template auto mean_impl_smcs_Matrix::operator()(mpl::smcs<El::Matrix<El::Complex<double>>> const&) const;
+template auto mean_impl_smcs_matrix::operator()(mpl::smcs<matrix<float>> const&) const;
+template auto mean_impl_smcs_matrix::operator()(mpl::smcs<matrix<El::Complex<float>>> const&) const;
+template auto mean_impl_smcs_matrix::operator()(mpl::smcs<matrix<double>> const&) const;
+template auto mean_impl_smcs_matrix::operator()(mpl::smcs<matrix<El::Complex<double>>> const&) const;
 
-template auto mean_impl_smrs_Matrix::operator()(mpl::smrs<El::Matrix<float>> const&) const;
-template auto mean_impl_smrs_Matrix::operator()(mpl::smrs<El::Matrix<El::Complex<float>>> const&) const;
-template auto mean_impl_smrs_Matrix::operator()(mpl::smrs<El::Matrix<double>> const&) const;
-template auto mean_impl_smrs_Matrix::operator()(mpl::smrs<El::Matrix<El::Complex<double>>> const&) const;
+template auto mean_impl_smrs_matrix::operator()(mpl::smrs<matrix<float>> const&) const;
+template auto mean_impl_smrs_matrix::operator()(mpl::smrs<matrix<El::Complex<float>>> const&) const;
+template auto mean_impl_smrs_matrix::operator()(mpl::smrs<matrix<double>> const&) const;
+template auto mean_impl_smrs_matrix::operator()(mpl::smrs<matrix<El::Complex<double>>> const&) const;
 
-template auto mean_impl_DistMatrix_columns::operator()(columns_expr<El::DistMatrix<float>> const&) const;
-template auto mean_impl_DistMatrix_columns::operator()(columns_expr<El::DistMatrix<El::Complex<float>>> const&) const;
-template auto mean_impl_DistMatrix_columns::operator()(columns_expr<El::DistMatrix<double>> const&) const;
-template auto mean_impl_DistMatrix_columns::operator()(columns_expr<El::DistMatrix<El::Complex<double>>> const&) const;
+template auto mean_impl_DistMatrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<El::DistMatrix<float>>> const&) const;
+template auto mean_impl_DistMatrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<El::DistMatrix<El::Complex<float>>>> const&) const;
+template auto mean_impl_DistMatrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<El::DistMatrix<double>>> const&) const;
+template auto mean_impl_DistMatrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<El::DistMatrix<El::Complex<double>>>> const&) const;
 
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END

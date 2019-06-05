@@ -43,8 +43,8 @@ struct vertcat_impl_smr_smr {
 		typename MatrixA,
 		typename MatrixB,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<MatrixA>, hana::ext::El::Matrix_tag >::value && 
-			std::is_same< hana::tag_of_t<MatrixB>, hana::ext::El::Matrix_tag >::value && 
+			std::is_same< hana::tag_of_t<MatrixA>, matrix_tag >::value && 
+			std::is_same< hana::tag_of_t<MatrixB>, matrix_tag >::value && 
 			std::is_same< std::decay_t<MatrixA>, std::decay_t<MatrixB> >::value
 		>* = nullptr
 	>
@@ -79,13 +79,13 @@ struct vertcat_impl_smr_smr {
 	}
 };
 
-struct vertcat_impl_Matrix_smr {
+struct vertcat_impl_matrix_smr {
 	template<
 		typename MatrixA,
 		typename MatrixB,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<MatrixA>, hana::ext::El::Matrix_tag >::value && 
-			std::is_same< hana::tag_of_t<MatrixB>, hana::ext::El::Matrix_tag >::value && 
+			std::is_same< hana::tag_of_t<MatrixA>, matrix_tag >::value && 
+			std::is_same< hana::tag_of_t<MatrixB>, matrix_tag >::value && 
 			std::is_same< std::decay_t<MatrixA>, std::decay_t<MatrixB> >::value
 		>* = nullptr
 	>
@@ -125,12 +125,12 @@ struct vertcat_impl_Matrix_smr {
 	}
 };
 
-struct vertcat_impl_Matrix_Matrix {
+struct vertcat_impl_matrix_matrix {
 	template<typename Ring>
 	auto
 	operator()(
-		El::Matrix<Ring> const& a,
-		El::Matrix<Ring> const& b
+		matrix<Ring> const& a,
+		matrix<Ring> const& b
 	) const {
 		using namespace hbrs::mpl;
 		
@@ -162,7 +162,7 @@ struct vertcat_impl_Matrix_Matrix {
 			}
 		}
 		
-		return c;
+		return make_matrix(std::move(c));
 	}
 };
 
@@ -171,8 +171,8 @@ ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_VERTCAT_IMPLS boost::hana::make_tuple(                                                       \
 		elemental::detail::vertcat_impl_smr_smr{},                                                                     \
-		elemental::detail::vertcat_impl_Matrix_smr{},                                                                  \
-		elemental::detail::vertcat_impl_Matrix_Matrix{}                                                                \
+		elemental::detail::vertcat_impl_matrix_smr{},                                                                  \
+		elemental::detail::vertcat_impl_matrix_matrix{}                                                                \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_VERTCAT_HPP

@@ -30,11 +30,11 @@ ELEMENTAL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 namespace detail {
 
-struct rows_impl_Matrix {
+struct rows_impl_matrix {
 	template <
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
 		>* = nullptr
 	>
 	constexpr auto
@@ -47,7 +47,7 @@ struct rows_impl_Matrix {
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_ROWS_IMPLS boost::hana::make_tuple(                                                          \
-		elemental::detail::rows_impl_Matrix{}                                                                          \
+		elemental::detail::rows_impl_matrix{}                                                                          \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_ROWS_HPP

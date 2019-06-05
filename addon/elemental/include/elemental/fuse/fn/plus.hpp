@@ -36,7 +36,7 @@ ELEMENTAL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct plus_impl_Matrix_Matrix {
+struct plus_impl_matrix_matrix {
 	template <
 		typename Ring,
 		typename std::enable_if_t<
@@ -44,8 +44,8 @@ struct plus_impl_Matrix_Matrix {
 		>* = nullptr
 	>
 	auto
-	operator()(El::Matrix<Ring> a, El::Matrix<Ring> const& b) const {
-		El::Axpy(Ring{1},b,a);
+	operator()(matrix<Ring> a, matrix<Ring> const& b) const {
+		El::Axpy(Ring{1},b.data(),a.data());
 		return a;
 	}
 };
@@ -95,7 +95,7 @@ struct plus_impl_DistMatrix_expand_expr_DistMatrix {
 	}
 };
 
-struct plus_impl_Matrix_Scalar {
+struct plus_impl_matrix_scalar {
 	template <
 		typename Ring,
 		typename std::enable_if_t< 
@@ -103,11 +103,11 @@ struct plus_impl_Matrix_Scalar {
 		>* = nullptr
 	>
 	auto
-	operator()(El::Matrix<Ring> a, Ring const& b) const {
-		auto ldim = a.LDim();
-		for(El::Int j=0; j < a.Width(); ++j) {
-			for(El::Int i=0; i < a.Height(); ++i) {
-				a.Buffer()[i+j*ldim] += b;
+	operator()(matrix<Ring> a, Ring const& b) const {
+		auto ldim = a.data().LDim();
+		for(El::Int j=0; j < a.n(); ++j) {
+			for(El::Int i=0; i < a.m(); ++i) {
+				a.data().Buffer()[i+j*ldim] += b;
 			}
 		}
 		return a;
@@ -118,9 +118,9 @@ struct plus_impl_Matrix_Scalar {
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_PLUS_IMPLS boost::hana::make_tuple(                                                          \
-		elemental::detail::plus_impl_Matrix_Matrix{},                                                                  \
+		elemental::detail::plus_impl_matrix_matrix{},                                                                  \
 		elemental::detail::plus_impl_DistMatrix_expand_expr_DistMatrix{},                                              \
-		elemental::detail::plus_impl_Matrix_Scalar{}                                                                   \
+		elemental::detail::plus_impl_matrix_scalar{}                                                                   \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_PLUS_HPP

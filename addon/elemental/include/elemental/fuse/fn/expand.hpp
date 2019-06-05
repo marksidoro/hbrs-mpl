@@ -47,7 +47,7 @@ struct expand_impl_smr {
 	template<
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
 		>* = nullptr
 	>
 	auto

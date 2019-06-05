@@ -20,6 +20,7 @@
 #define ELEMENTAL_FUSE_FN_SVD_HPP
 
 #include <elemental/config.hpp>
+#include <elemental/dt/matrix.hpp>
 #include <elemental/detail/Ring.hpp>
 #include <hbrs/mpl/preprocessor/core.hpp>
 #include <boost/hana/tuple.hpp>
@@ -100,17 +101,23 @@ svd_impl(A const& a, mpl::decompose_mode mode, U u, S s, S s_, V v) {
 	return mpl::make_svd_result(u, s_, v);
 }
 
-struct svd_impl_Matrix {
+struct svd_impl_matrix {
 	template <typename Field>
 	auto
-	operator()(El::Matrix<Field> const& a, mpl::decompose_mode mode) const {
+	operator()(matrix<Field> const& a, mpl::decompose_mode mode) const {
 		typedef std::decay_t<Field> _Field_;
-		return svd_impl(
-			a, mode,
+		auto usv = svd_impl(
+			a.data(), mode,
 			El::Matrix<_Field_>{} /*u*/,
 			El::Matrix<El::Base<_Field_>>{} /*s*/,
 			El::Matrix<El::Base<_Field_>>{} /*s_*/,
 			El::Matrix<_Field_>{} /*v*/
+		);
+		
+		return mpl::make_svd_result(
+			make_matrix(std::move(usv.u())),
+			make_matrix(std::move(usv.s())),
+			make_matrix(std::move(usv.v()))
 		);
 	}
 };
@@ -145,7 +152,7 @@ struct svd_impl_AbstractDistMatrix {
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_SVD_IMPLS boost::hana::make_tuple(                                                           \
-		elemental::detail::svd_impl_Matrix{},                                                                          \
+		elemental::detail::svd_impl_matrix{},                                                                          \
 		elemental::detail::svd_impl_AbstractDistMatrix{}                                                               \
 	)
 

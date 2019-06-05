@@ -91,11 +91,11 @@ struct select_impl_column_vector {
 	}
 };
 
-struct select_impl_Matrix {
+struct select_impl_matrix {
 	template<
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value ||
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value ||
 			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::DistMatrix_tag >::value
 		>* = nullptr
 	>
@@ -119,7 +119,7 @@ struct select_impl_Matrix {
 	template<
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value ||
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value ||
 			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::DistMatrix_tag >::value
 		>* = nullptr
 	>
@@ -146,11 +146,22 @@ struct select_impl_Matrix {
 		);
 	}
 	
+	template<typename Ring>
+	matrix<Ring>
+	operator()(matrix<Ring> & a, std::pair<El::IR, El::IR> const& rng) const {
+		return {El::View(a.data(), hana::first(rng), hana::second(rng))};
+	}
+	
+	template<typename Ring>
+	matrix<Ring const>
+	operator()(matrix<Ring> const& a, std::pair<El::IR, El::IR> const& rng) const {
+		return {El::LockedView(a.data(), hana::first(rng), hana::second(rng))};
+	}
+	
 	template<
 		typename Matrix,
 		typename std::enable_if_t< 
 			(
-				std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value ||
 				std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::DistMatrix_tag >::value
 			) &&
 			std::is_lvalue_reference<Matrix>::value
@@ -177,56 +188,33 @@ struct select_impl_Matrix {
 		}
 	}
 	
-	template<
-		typename Matrix,
-		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value
-		>* = nullptr
-	>
-	auto
-	make_like(Matrix && a) const {
-		typedef std::decay_t<Matrix> _Matrix_;
-		return _Matrix_{};
+	static bool
+	same_size(mpl::matrix_size<El::Int, El::Int> const& sz, std::pair<El::IR, El::IR> const& rng) {
+		return hana::first(rng).beg == 0 && hana::first(rng).end == sz.m() &&
+			hana::second(rng).beg == 0 && hana::second(rng).end == sz.n();
 	}
 	
-	template<
-		typename Matrix,
-		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::DistMatrix_tag >::value
-		>* = nullptr
-	>
+	template<typename Ring>
 	auto
-	make_like(Matrix && a) const {
-		typedef std::decay_t<Matrix> _Matrix_;
-		return _Matrix_{a.Grid()};
-	}
-	
-	template<
-		typename Matrix,
-		typename std::enable_if_t<
-			(
-				std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value ||
-				std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::DistMatrix_tag >::value
-			) &&
-			!std::is_lvalue_reference<Matrix>::value
-		>* = nullptr
-	>
-	auto
-	operator()(Matrix && a, std::pair<El::IR, El::IR> const& rng) const {
-		using namespace hbrs::mpl;
-		typedef std::decay_t<Matrix> _Matrix_;
-		typedef Ring_t<_Matrix_> Ring;
-		static_assert(!std::is_reference<Ring>::value && !std::is_const<Ring>::value, "");
-		
-		auto const a_sz = (*size)(a);
-		auto const a_m = (*m)(a_sz);
-		auto const a_n = (*n)(a_sz);
-		
-		if (hana::first(rng).beg == 0 && hana::first(rng).end == a_m &&
-			hana::second(rng).beg == 0 && hana::second(rng).end == a_n) {
+	operator()(matrix<Ring> && a, std::pair<El::IR, El::IR> const& rng) const {
+		if (same_size(mpl::size(a), rng)) {
 			return HBRS_MPL_FWD(a);
 		} else {
-			auto b = make_like(a);
+			typedef std::decay_t<Ring> _Ring_;
+			matrix<_Ring_> b{0,0};
+			El::GetSubmatrix(HBRS_MPL_FWD(a).data(), hana::first(rng), hana::second(rng), b.data());
+			return b;
+		}
+	}
+	
+	template<typename Ring, El::Dist U, El::Dist V, El::DistWrap W>
+	auto
+	operator()(El::DistMatrix<Ring, U, V, W> && a, std::pair<El::IR, El::IR> const& rng) const {
+		if (same_size(mpl::size(a), rng)) {
+			return HBRS_MPL_FWD(a);
+		} else {
+			typedef std::decay_t<Ring> _Ring_;
+			El::DistMatrix<_Ring_, U, V, W> b{a.Grid()};
 			El::GetSubmatrix(HBRS_MPL_FWD(a), hana::first(rng), hana::second(rng), b);
 			return b;
 		}
@@ -276,7 +264,7 @@ struct select_impl_dist_column_vector {
 	>
 	auto
 	operator()(dist_column_vector<Matrix> && v, El::IR const& rng) const {
-		auto m = select_impl_Matrix{}(v.data(), std::make_pair(rng, El::ALL));
+		auto m = select_impl_matrix{}(v.data(), std::make_pair(rng, El::ALL));
 		return dist_column_vector<decltype(m)>{m};
 	}
 	
@@ -299,7 +287,7 @@ ELEMENTAL_NAMESPACE_END
 #define ELEMENTAL_FUSE_FN_SELECT_IMPLS boost::hana::make_tuple(                                                        \
 		elemental::detail::select_impl_column_vector{},                                                                \
 		elemental::detail::select_impl_dist_column_vector{},                                                           \
-		elemental::detail::select_impl_Matrix{}                                                                        \
+		elemental::detail::select_impl_matrix{}                                                                        \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_SELECT_HPP

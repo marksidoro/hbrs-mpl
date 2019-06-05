@@ -111,7 +111,7 @@ copy_matrix_impl(
 
 template <typename From, typename To>
 constexpr decltype(auto)
-copy_matrix(From const& from, To to) {
+copy_matrix(From const& from, To && to) {
 	return copy_matrix_impl(from, to);
 }
 
@@ -171,7 +171,7 @@ copy_matrix_impl(
 
 template <typename From, storage_order Order, typename To>
 constexpr decltype(auto)
-copy_matrix(std::initializer_list<From> from, storage_order_<Order>, To to) {
+copy_matrix(std::initializer_list<From> from, storage_order_<Order>, To && to) {
 	return copy_matrix_impl(from, storage_order_c<Order>, to);
 }
 

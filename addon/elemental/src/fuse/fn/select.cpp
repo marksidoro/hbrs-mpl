@@ -48,20 +48,20 @@ namespace detail {
 // template decltype(auto) select_impl_Matrix::operator()(El::Matrix<El::Complex<double>> &,
 // 	mpl::range<mpl::matrix_index<El::Int, El::Int>, mpl::matrix_index<El::Int, El::Int>> const&) const;
 
-template auto select_impl_Matrix::operator()(El::Matrix<float>               const&, std::pair<El::IR, El::IR> const&) const;
-template auto select_impl_Matrix::operator()(El::Matrix<El::Complex<float>>  const&, std::pair<El::IR, El::IR> const&) const;
-template auto select_impl_Matrix::operator()(El::Matrix<double>              const&, std::pair<El::IR, El::IR> const&) const;
-template auto select_impl_Matrix::operator()(El::Matrix<El::Complex<double>> const&, std::pair<El::IR, El::IR> const&) const;
+template matrix<float               const> select_impl_matrix::operator()(matrix<float>               const&, std::pair<El::IR, El::IR> const&) const;
+template matrix<El::Complex<float>  const> select_impl_matrix::operator()(matrix<El::Complex<float>>  const&, std::pair<El::IR, El::IR> const&) const;
+template matrix<double              const> select_impl_matrix::operator()(matrix<double>              const&, std::pair<El::IR, El::IR> const&) const;
+template matrix<El::Complex<double> const> select_impl_matrix::operator()(matrix<El::Complex<double>> const&, std::pair<El::IR, El::IR> const&) const;
 
-template auto select_impl_Matrix::operator()(El::Matrix<float>               &&, std::pair<El::IR, El::IR> const&) const;
-template auto select_impl_Matrix::operator()(El::Matrix<El::Complex<float>>  &&, std::pair<El::IR, El::IR> const&) const;
-template auto select_impl_Matrix::operator()(El::Matrix<double>              &&, std::pair<El::IR, El::IR> const&) const;
-template auto select_impl_Matrix::operator()(El::Matrix<El::Complex<double>> &&, std::pair<El::IR, El::IR> const&) const;
+// template matrix<Ring> select_impl_matrix::operator()(matrix<float>               &&, std::pair<El::IR, El::IR> const&) const;
+// template matrix<Ring> select_impl_matrix::operator()(matrix<El::Complex<float>>  &&, std::pair<El::IR, El::IR> const&) const;
+// template matrix<Ring> select_impl_matrix::operator()(matrix<double>              &&, std::pair<El::IR, El::IR> const&) const;
+// template matrix<Ring> select_impl_matrix::operator()(matrix<El::Complex<double>> &&, std::pair<El::IR, El::IR> const&) const;
 
-template auto select_impl_Matrix::operator()(El::Matrix<float>               &, std::pair<El::IR, El::IR> const&) const;
-template auto select_impl_Matrix::operator()(El::Matrix<El::Complex<float>>  &, std::pair<El::IR, El::IR> const&) const;
-template auto select_impl_Matrix::operator()(El::Matrix<double>              &, std::pair<El::IR, El::IR> const&) const;
-template auto select_impl_Matrix::operator()(El::Matrix<El::Complex<double>> &, std::pair<El::IR, El::IR> const&) const;
+template matrix<float              > select_impl_matrix::operator()(matrix<float>               &, std::pair<El::IR, El::IR> const&) const;
+template matrix<El::Complex<float> > select_impl_matrix::operator()(matrix<El::Complex<float>>  &, std::pair<El::IR, El::IR> const&) const;
+template matrix<double             > select_impl_matrix::operator()(matrix<double>              &, std::pair<El::IR, El::IR> const&) const;
+template matrix<El::Complex<double>> select_impl_matrix::operator()(matrix<El::Complex<double>> &, std::pair<El::IR, El::IR> const&) const;
 
 //TODO: More!!
 //TODO: Add Dist* impls!

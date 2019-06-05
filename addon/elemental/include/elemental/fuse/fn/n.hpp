@@ -22,33 +22,20 @@
 #include <elemental/config.hpp>
 #include <hbrs/mpl/preprocessor/core.hpp>
 #include <elemental/dt/matrix.hpp>
-#include <El.hpp>
 #include <boost/hana/tuple.hpp>
-#include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
 
 ELEMENTAL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct n_impl_Matrix {
-	template<
-		typename Matrix,
-		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value 
-		>* = nullptr
-	>
-	auto
-	operator()(Matrix && m) const {
-		return HBRS_MPL_FWD(m).Width();
-	}
-};
+HBRS_MPL_DEF_FO_TRY_METHOD(n_impl_matrix, matrix_tag, n)
 
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_N_IMPLS boost::hana::make_tuple(                                                             \
-		elemental::detail::n_impl_Matrix{}                                                                             \
+		elemental::detail::n_impl_matrix{}                                                                             \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_N_HPP

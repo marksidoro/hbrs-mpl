@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 				
 				#ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
 				[](auto && a, auto keep) {
-					return elemental::detail::pca_filter_impl_Matrix{}(elemental::make_matrix(HBRS_MPL_FWD(a)), keep);
+					return elemental::detail::pca_filter_impl_matrix{}(elemental::make_matrix(HBRS_MPL_FWD(a)), keep);
 				},
 				[](auto && a, auto keep) {
 					static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>

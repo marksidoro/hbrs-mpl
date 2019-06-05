@@ -23,10 +23,10 @@ namespace detail {
 
 //TODO: Add non-dist impls
 
-template auto sum_impl_DistMatrix_columns::operator()(columns_expr<El::DistMatrix<float>> const&) const;
-template auto sum_impl_DistMatrix_columns::operator()(columns_expr<El::DistMatrix<El::Complex<float>>> const&) const;
-template auto sum_impl_DistMatrix_columns::operator()(columns_expr<El::DistMatrix<double>> const&) const;
-template auto sum_impl_DistMatrix_columns::operator()(columns_expr<El::DistMatrix<El::Complex<double>>> const&) const;
+template auto sum_impl_DistMatrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<El::DistMatrix<float>>> const&) const;
+template auto sum_impl_DistMatrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<El::DistMatrix<El::Complex<float>>>> const&) const;
+template auto sum_impl_DistMatrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<El::DistMatrix<double>>> const&) const;
+template auto sum_impl_DistMatrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<El::DistMatrix<El::Complex<double>>>> const&) const;
 
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END

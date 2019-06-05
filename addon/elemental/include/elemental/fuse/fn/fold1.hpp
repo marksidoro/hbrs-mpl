@@ -36,13 +36,13 @@ ELEMENTAL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 namespace detail {
 
-struct fold1_impl_zas_smc_Matrix_irange {
+struct fold1_impl_zas_smc_matrix_irange {
 	template <
 		typename Matrix,
 		typename Integer,
 		typename F,
 		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
 			//TODO: Add invokable check for F?
 		>* = nullptr
 	>
@@ -52,13 +52,13 @@ struct fold1_impl_zas_smc_Matrix_irange {
 	}
 };
 
-struct fold1_impl_zas_smr_Matrix_irange {
+struct fold1_impl_zas_smr_matrix_irange {
 	template <
 		typename Matrix,
 		typename Integer,
 		typename F,
 		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
 			//TODO: Add invokable check for F?
 		>* = nullptr
 	>
@@ -72,8 +72,8 @@ struct fold1_impl_zas_smr_Matrix_irange {
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_FOLD1_IMPLS boost::hana::make_tuple(                                                         \
-		elemental::detail::fold1_impl_zas_smc_Matrix_irange{},                                                         \
-		elemental::detail::fold1_impl_zas_smr_Matrix_irange{}                                                          \
+		elemental::detail::fold1_impl_zas_smc_matrix_irange{},                                                         \
+		elemental::detail::fold1_impl_zas_smr_matrix_irange{}                                                          \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_FOLD1_HPP

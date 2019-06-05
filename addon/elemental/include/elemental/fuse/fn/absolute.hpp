@@ -20,8 +20,8 @@
 #define ELEMENTAL_FUSE_FN_ABSOLUTE_HPP
 
 #include <elemental/config.hpp>
+#include <elemental/dt/matrix.hpp>
 #include <hbrs/mpl/fn/at.hpp>
-#include <El.hpp>
 #include <boost/hana/tuple.hpp>
 #include <type_traits>
 
@@ -29,7 +29,7 @@ ELEMENTAL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 namespace detail {
 
-struct absolute_impl_Matrix {
+struct absolute_impl_matrix {
 	template <
 		typename Ring,
 		typename std::enable_if_t<
@@ -37,13 +37,13 @@ struct absolute_impl_Matrix {
 		>* = nullptr
 	>
 	auto
-	operator()(El::Matrix<Ring> const& a) const {
+	operator()(matrix<Ring> const& a) const {
 		using namespace hbrs::mpl;
 		
-		El::Matrix<std::remove_const_t<Ring>> b{ a.Height(), a.Width() };
+		matrix<std::remove_const_t<Ring>> b{ a.m(), a.n() };
 		
-		for(El::Int j=0; j < a.Width(); ++j) {
-			for(El::Int i=0; i < a.Height(); ++i) {
+		for(El::Int j=0; j < a.n(); ++j) {
+			for(El::Int i=0; i < a.m(); ++i) {
 				auto ix = make_matrix_index(i,j);
 				(*at)(b, ix) = (*absolute)(at(a, ix));
 			}
@@ -57,7 +57,7 @@ struct absolute_impl_Matrix {
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_ABSOLUTE_IMPLS boost::hana::make_tuple(                                                      \
-		elemental::detail::absolute_impl_Matrix{}                                                                      \
+		elemental::detail::absolute_impl_matrix{}                                                                      \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_ABSOLUTE_HPP

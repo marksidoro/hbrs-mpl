@@ -22,12 +22,12 @@
 #include <elemental/config.hpp>
 #include <elemental/dt/matrix.hpp>
 #include <elemental/dt/dist_matrix.hpp>
-// #include <elemental/dt/vector.hpp>
-// #include <hbrs/mpl/fn/size.hpp>
-// #include <hbrs/mpl/fn/m.hpp>
-// #include <hbrs/mpl/fn/n.hpp>
+#include <elemental/dt/vector.hpp>
+#include <hbrs/mpl/fn/size.hpp>
+#include <hbrs/mpl/fn/m.hpp>
+#include <hbrs/mpl/fn/n.hpp>
 #include <hbrs/mpl/dt/smcs.hpp>
-#include <El.hpp>
+#include <hbrs/mpl/dt/expression.hpp>
 #include <boost/hana/tuple.hpp>
 #include <type_traits>
 #include <vector>
@@ -36,31 +36,11 @@ ELEMENTAL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 namespace detail {
 
-struct columns_impl_Matrix {
-// 	template <typename Ring>
-// 	constexpr auto
-// 	operator()(El::Matrix<Ring> const& a) const {
-// 		using namespace hbrs::mpl;
-// 		
-// 		typedef std::decay_t<Ring> _Ring_;
-// 		auto a_sz = (*size)(a);
-// 		auto a_m = (*m)(a_sz);
-// 		auto a_n = (*n)(a_sz);
-// 		
-// 		std::vector<row_vector<_Ring_>> v;
-// 		v.reserve(a_n);
-// 		for(El::Int i = 0; i < a_n; ++i) {
-// 			v.emplace_back( a(El::ALL, i) );
-// 		}
-// 		return v;
-// 		
-// 		return mpl::smcs<Matrix>{HBRS_MPL_FWD(a)};
-// 	}
-	
+struct columns_impl_matrix_1 {
 	template <
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
 		>* = nullptr
 	>
 	constexpr auto
@@ -69,10 +49,23 @@ struct columns_impl_Matrix {
 	}
 };
 
-//TODO: replace this hack!
-template<typename Matrix>
-struct columns_expr {
-	Matrix from;
+struct columns_impl_matrix_2 {
+	template <typename Ring>
+	constexpr auto
+	operator()(matrix<Ring> const& a) const {
+		using namespace hbrs::mpl;
+		
+		typedef std::decay_t<Ring> _Ring_;
+		auto a_sz = (*size)(a);
+		auto a_n = (*n)(a_sz);
+		
+		std::vector<row_vector<_Ring_>> v;
+		v.reserve(a_n);
+		for(El::Int i = 0; i < a_n; ++i) {
+			v.emplace_back( a.data()(El::ALL, i) );
+		}
+		return v;
+	}
 };
 
 struct columns_impl_DistMatrix {
@@ -82,9 +75,9 @@ struct columns_impl_DistMatrix {
 			std::is_same< hana::tag_of_t<DistMatrix>, hana::ext::El::DistMatrix_tag >::value
 		>* = nullptr
 	>
-	constexpr columns_expr<std::decay_t<DistMatrix>>
+	constexpr auto
 	operator()(DistMatrix && a) const {
-		return {HBRS_MPL_FWD(a)};
+		return mpl::make_expression(mpl::columns, std::tuple<decltype(a)>{HBRS_MPL_FWD(a)});
 	}
 };
 
@@ -92,7 +85,8 @@ struct columns_impl_DistMatrix {
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_COLUMNS_IMPLS boost::hana::make_tuple(                                                       \
-		elemental::detail::columns_impl_Matrix{},                                                                      \
+		elemental::detail::columns_impl_matrix_1{},                                                                    \
+		elemental::detail::columns_impl_matrix_2{},                                                                    \
 		elemental::detail::columns_impl_DistMatrix{}                                                                   \
 	)
 

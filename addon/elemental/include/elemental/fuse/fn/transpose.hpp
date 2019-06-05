@@ -33,19 +33,21 @@ ELEMENTAL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct transpose_impl_Matrix {
+struct transpose_impl_matrix {
 	template<
 		typename Matrix,
 		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value 
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value 
 		>* = nullptr
 	>
 	auto
 	operator()(Matrix && m) const {
-		typedef Ring_t<std::decay_t<Matrix>> Ring;
-		El::Matrix<Ring> b;
-		El::Transpose(HBRS_MPL_FWD(m), b);
-		return b;
+		typedef decltype(m.at({0,0})) Ring;
+		typedef std::decay_t<Ring> _Ring_;
+		
+		El::Matrix<_Ring_> b;
+		El::Transpose(HBRS_MPL_FWD(m).data(), b);
+		return make_matrix(std::move(b));
 	}
 };
 
@@ -69,7 +71,7 @@ struct transpose_impl_DistMatrix {
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_TRANSPOSE_IMPLS boost::hana::make_tuple(                                                     \
-		elemental::detail::transpose_impl_Matrix{},                                                                    \
+		elemental::detail::transpose_impl_matrix{},                                                                    \
 		elemental::detail::transpose_impl_DistMatrix{}                                                                 \
 	)
 

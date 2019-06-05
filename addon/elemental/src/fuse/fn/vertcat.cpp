@@ -20,43 +20,43 @@ ELEMENTAL_NAMESPACE_BEGIN
 namespace detail {
 
 template auto vertcat_impl_smr_smr::operator()(
-	mpl::smr<El::Matrix<float>, El::Int> const&,
-	mpl::smr<El::Matrix<float>, El::Int> const&
+	mpl::smr<matrix<float>, El::Int> const&,
+	mpl::smr<matrix<float>, El::Int> const&
 ) const;
 
 template auto vertcat_impl_smr_smr::operator()(
-	mpl::smr<El::Matrix<El::Complex<float>>, El::Int> const&,
-	mpl::smr<El::Matrix<El::Complex<float>>, El::Int> const&
+	mpl::smr<matrix<El::Complex<float>>, El::Int> const&,
+	mpl::smr<matrix<El::Complex<float>>, El::Int> const&
 ) const;
 
 template auto vertcat_impl_smr_smr::operator()(
-	mpl::smr<El::Matrix<double>, El::Int> const&,
-	mpl::smr<El::Matrix<double>, El::Int> const&
+	mpl::smr<matrix<double>, El::Int> const&,
+	mpl::smr<matrix<double>, El::Int> const&
 ) const;
 
 template auto vertcat_impl_smr_smr::operator()(
-	mpl::smr<El::Matrix<El::Complex<double>>, El::Int> const&,
-	mpl::smr<El::Matrix<El::Complex<double>>, El::Int> const&
+	mpl::smr<matrix<El::Complex<double>>, El::Int> const&,
+	mpl::smr<matrix<El::Complex<double>>, El::Int> const&
 ) const;
 
-template auto vertcat_impl_Matrix_smr::operator()(
-	El::Matrix<float> const&,
-	mpl::smr<El::Matrix<float>, El::Int> const&
+template auto vertcat_impl_matrix_smr::operator()(
+	matrix<float> const&,
+	mpl::smr<matrix<float>, El::Int> const&
 ) const;
 
-template auto vertcat_impl_Matrix_smr::operator()(
-	El::Matrix<El::Complex<float>> const&,
-	mpl::smr<El::Matrix<El::Complex<float>>, El::Int> const&
+template auto vertcat_impl_matrix_smr::operator()(
+	matrix<El::Complex<float>> const&,
+	mpl::smr<matrix<El::Complex<float>>, El::Int> const&
 ) const;
 
-template auto vertcat_impl_Matrix_smr::operator()(
-	El::Matrix<double> const&,
-	mpl::smr<El::Matrix<double>, El::Int> const&
+template auto vertcat_impl_matrix_smr::operator()(
+	matrix<double> const&,
+	mpl::smr<matrix<double>, El::Int> const&
 ) const;
 
-template auto vertcat_impl_Matrix_smr::operator()(
-	El::Matrix<El::Complex<double>> const&,
-	mpl::smr<El::Matrix<El::Complex<double>>, El::Int> const&
+template auto vertcat_impl_matrix_smr::operator()(
+	matrix<El::Complex<double>> const&,
+	mpl::smr<matrix<El::Complex<double>>, El::Int> const&
 ) const;
 
 /* namespace detail */ }

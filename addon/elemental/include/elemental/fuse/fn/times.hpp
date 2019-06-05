@@ -48,7 +48,7 @@ ELEMENTAL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 namespace detail {
 
-struct times_impl_Matrix_Matrix {
+struct times_impl_matrix_matrix {
 	template <
 		typename RingL,
 		typename RingR,
@@ -57,10 +57,10 @@ struct times_impl_Matrix_Matrix {
 		>* = nullptr
 	>
 	auto
-	operator()(El::Matrix<RingL> const& a, El::Matrix<RingR> const& b) const {
+	operator()(matrix<RingL> const& a, matrix<RingR> const& b) const {
 		using namespace hbrs::mpl;
 		
-		if ( (a.Height() != b.Height()) || (a.Width() != b.Width())) {
+		if ( (a.m() != b.m()) || (a.n() != b.n())) {
 			BOOST_THROW_EXCEPTION((
 				incompatible_matrices_exception{}
 				<< elemental::errinfo_matrix_sizes{{(*size)(a), (*size)(b)}}
@@ -69,11 +69,11 @@ struct times_impl_Matrix_Matrix {
 		
 		typedef std::common_type_t<RingL, RingR> Ring;
 		
-		El::Matrix<Ring> c{a.Height(), a.Width()};
+		matrix<Ring> c{a.m(), a.n()};
 		
 		//TODO: Replace with faster algorithm, e.g. use parallelization
-		for(El::Int j = 0; j < a.Width(); ++j) {
-			for(El::Int i = 0; i < a.Height(); ++i) {
+		for(El::Int j = 0; j < a.n(); ++j) {
+			for(El::Int i = 0; i < a.m(); ++i) {
 				(*at)(c, make_matrix_index(i,j)) = (*at)(a, make_matrix_index(i,j)) * (*at)(b, make_matrix_index(i,j));
 			}
 		}
@@ -152,7 +152,7 @@ struct times_impl_DistMatrix_expand_expr_DistMatrix {
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_TIMES_IMPLS boost::hana::make_tuple(                                                         \
-		elemental::detail::times_impl_Matrix_Matrix{},                                                                 \
+		elemental::detail::times_impl_matrix_matrix{},                                                                 \
 		elemental::detail::times_impl_DistMatrix_expand_expr_DistMatrix{}                                              \
 	)
 

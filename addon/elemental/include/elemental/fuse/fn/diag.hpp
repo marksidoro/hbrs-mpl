@@ -39,12 +39,12 @@ namespace mpl = hbrs::mpl;
 
 namespace detail {
 
-struct diag_impl_Matrix {
+struct diag_impl_matrix {
 	template <typename Ring>
 	auto
-	operator()(El::Matrix<Ring> const& m) const {
+	operator()(matrix<Ring> const& m) const {
 		using namespace hbrs::mpl;
-		return make_column_vector(El::GetDiagonal(m));
+		return make_column_vector(El::GetDiagonal(m.data()));
 	}
 };
 
@@ -76,7 +76,7 @@ struct diag_impl_DistMatrix {
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_DIAG_IMPLS boost::hana::make_tuple(                                                          \
-		elemental::detail::diag_impl_Matrix{},                                                                         \
+		elemental::detail::diag_impl_matrix{},                                                                         \
 		elemental::detail::diag_impl_DistMatrix{}                                                                      \
 	)
 

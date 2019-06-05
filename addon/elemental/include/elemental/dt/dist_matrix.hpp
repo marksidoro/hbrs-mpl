@@ -74,6 +74,15 @@ struct make_impl<ext::El::DistMatrix_tag> {
 		dmat.Matrix() = local;
 		return dmat;
 	}
+	
+	template <typename Ring>
+	static decltype(auto)
+	apply(
+		El::Grid const& grid,
+		elemental::matrix<Ring> local
+	) {
+		return apply(grid, std::move(local).data());
+	}
 };
 
 BOOST_HANA_NAMESPACE_END

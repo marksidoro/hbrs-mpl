@@ -63,10 +63,15 @@ pca_filter_impl(Matrix && a, std::function<bool(El::Int)> const& keep) {
 	auto & mean   =   (*at)(rslt, pca_mean{});
 	
 	// size(keep) == n(size(score))
-	for (El::Int i = 0; i < score.Width(); ++i) {
+	for (El::Int i = 0; i < n(size(score)); ++i) {
 		if (keep(i) == false) {
-			auto column = score(El::ALL, i);
-			El::Zero(column);
+			if constexpr(std::is_same_v<hana::tag_of_t<Matrix>, matrix_tag>) {
+				auto column = score.data()(El::ALL, i);
+				El::Zero(column);
+			} else {
+				auto column = score(El::ALL, i);
+				El::Zero(column);
+			}
 		}
 	}
 	
@@ -97,11 +102,11 @@ pca_filter_impl(Matrix && a, std::vector<bool> const& keep) {
 	);
 }
 
-struct pca_filter_impl_Matrix {
+struct pca_filter_impl_matrix {
 	template <
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
 		>* = nullptr
 	>
 	auto
@@ -112,7 +117,7 @@ struct pca_filter_impl_Matrix {
 	template <
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
 		>* = nullptr
 	>
 	auto
@@ -149,7 +154,7 @@ struct pca_filter_impl_DistMatrix {
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_PCA_FILTER_IMPLS boost::hana::make_tuple(                                                    \
-		elemental::detail::pca_filter_impl_Matrix{},                                                                   \
+		elemental::detail::pca_filter_impl_matrix{},                                                                   \
 		elemental::detail::pca_filter_impl_DistMatrix{}                                                                \
 	)
 

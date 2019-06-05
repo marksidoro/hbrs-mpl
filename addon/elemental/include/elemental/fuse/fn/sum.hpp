@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,16 +48,16 @@ namespace mpl = hbrs::mpl;
 
 namespace detail {
 
-struct sum_impl_smcs_Matrix {
+struct sum_impl_smcs_matrix {
 	template <
 		typename Matrix,
 		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value
+			std::is_same_v< hana::tag_of_t<Matrix>, matrix_tag >
 		>* = nullptr
 	>
 	auto
 	operator()(mpl::smcs<Matrix> const& a) const {
-		typedef Ring_t<std::decay_t<Matrix>> Ring;
+		typedef decltype(a.data().at({0,0})) Ring;
 		typedef std::decay_t<Ring> _Ring_;
 		using namespace hbrs::mpl;
 		auto a_sz = (*size)(a.data());
@@ -71,29 +71,28 @@ struct sum_impl_smcs_Matrix {
 		//TODO: optimize for column major vs row major storage order, possibly using BLAS/LAPACK functions
 		
 		// column sum
-		El::Matrix<_Ring_> b;
-		El::Zeros(b, 1, a_n);
+		row_vector<_Ring_> b{a_n};
 		
 		for(El::Int i = 0; i < a_m; ++i) {
 			for(El::Int j = 0; j < a_n; ++j) {
-				(*at)(b, make_matrix_index(0,j)) += (*at)(a.data(), make_matrix_index(i,j));
+				(*at)(b,j) += (*at)(a.data(), make_matrix_index(i,j));
 			}
 		}
 		
-		return make_row_vector(std::move(b));
+		return b;
 	}
 };
 
-struct sum_impl_smrs_Matrix {
+struct sum_impl_smrs_matrix {
 	template <
 		typename Matrix,
 		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
 		>* = nullptr
 	>
 	auto
 	operator()(mpl::smrs<Matrix> const& a) const {
-		typedef Ring_t<std::decay_t<Matrix>> Ring;
+		typedef decltype(a.data().at({0,0})) Ring;
 		typedef std::decay_t<Ring> _Ring_;
 		using namespace hbrs::mpl;
 		auto a_sz = (*size)(a.data());
@@ -107,16 +106,15 @@ struct sum_impl_smrs_Matrix {
 		//TODO: optimize for column major vs row major storage order, possibly using BLAS/LAPACK functions
 		
 		//row sum
-		El::Matrix<_Ring_> b;
-		El::Zeros(b, a_m, 1);
+		column_vector<_Ring_> b{a_m};
 		
 		for(El::Int i = 0; i < a_m; ++i) {
 			for(El::Int j = 0; j < a_n; ++j) {
-				(*at)(b, make_matrix_index(i,0)) += (*at)(a.data(), make_matrix_index(i,j));
+				(*at)(b, i) += (*at)(a.data(), make_matrix_index(i,j));
 			}
 		}
 		
-		return make_column_vector(std::move(b));
+		return b;
 	}
 };
 
@@ -129,13 +127,19 @@ struct sum_impl_DistMatrix_columns {
 		>* = nullptr
 	>
 	auto
-	operator()(columns_expr<DistMatrix> const& expr) const {
+	operator()(
+		mpl::expression<
+			mpl::columns_t,
+			std::tuple<DistMatrix>
+		> const& expr
+	) const {
 		using namespace hbrs::mpl;
+		auto const& from = hana::at_c<0>(expr.operands());
 		
 		typedef Ring_t<std::decay_t<DistMatrix>> Ring;
 		typedef std::decay_t<Ring> _Ring_;
 		
-		auto const& in_dmat = expr.from;
+		auto const& in_dmat = from;
 		auto in_dmat_sz = (*size)(in_dmat);
 		auto in_dmat_m = (*m)(in_dmat_sz);
 		auto in_dmat_n = (*n)(in_dmat_sz);
@@ -169,8 +173,8 @@ struct sum_impl_DistMatrix_columns {
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_SUM_IMPLS boost::hana::make_tuple(                                                           \
-		elemental::detail::sum_impl_smcs_Matrix{},                                                                     \
-		elemental::detail::sum_impl_smrs_Matrix{},                                                                     \
+		elemental::detail::sum_impl_smcs_matrix{},                                                                     \
+		elemental::detail::sum_impl_smrs_matrix{},                                                                     \
 		elemental::detail::sum_impl_DistMatrix_columns{}                                                               \
 	)
 

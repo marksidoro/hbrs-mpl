@@ -28,7 +28,6 @@
 #include <elemental/fwd/dt/dist_matrix.hpp>
 #include <elemental/fwd/dt/vector.hpp>
 #include <elemental/fwd/dt/dist_vector.hpp>
-#include <elemental/ext/boost/hana/ext/El/core/Matrix.hpp>
 
 #include <hbrs/mpl/dt/smr.hpp>
 #include <El.hpp>
@@ -44,44 +43,13 @@ namespace mpl = hbrs::mpl;
 
 namespace detail {
 
-struct at_impl_Matrix {
-	template <
-		typename Matrix,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value &&
-			!std::is_const< std::remove_reference_t<Matrix> >::value
-		>* = nullptr
-	>
-	decltype(auto)
-	operator()(Matrix && m, mpl::matrix_index<El::Int, El::Int> const& i) const {
-		BOOST_ASSERT(i.m() >= 0 && i.m() < m.Height());
-		BOOST_ASSERT(i.n() >= 0 && i.n() < m.Width());
-		
-		//NOTE: This assertion does not hold always, e.g. El::Matrix<double>{El::Matrix<double> const}.Locked() == true!
-		BOOST_ASSERT(m.Locked() == false);
-		return *HBRS_MPL_FWD(m).Buffer(i.m(), i.n());
-	}
-	
-	template <
-		typename Matrix,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value && 
-			std::is_const< std::remove_reference_t<Matrix> >::value
-		>* = nullptr
-	>
-	decltype(auto)
-	operator()(Matrix && m, mpl::matrix_index<El::Int, El::Int> const& i) const {
-		BOOST_ASSERT(i.m() >= 0 && i.m() < m.Height());
-		BOOST_ASSERT(i.n() >= 0 && i.n() < m.Width());
-		return *HBRS_MPL_FWD(m).LockedBuffer(i.m(), i.n());
-	}
-};
+HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_matrix, matrix_tag, at)
 
-struct at_impl_Matrix_smr {
+struct at_impl_matrix_smr {
 	template <
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::Matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
 		>* = nullptr
 	>
 	decltype(auto)
@@ -99,8 +67,8 @@ ELEMENTAL_NAMESPACE_END
 #define ELEMENTAL_FUSE_FN_AT_IMPLS boost::hana::make_tuple(                                                            \
 		elemental::detail::at_impl_column_vector{},                                                                    \
 		elemental::detail::at_impl_row_vector{},                                                                       \
-		elemental::detail::at_impl_Matrix{},                                                                           \
-		elemental::detail::at_impl_Matrix_smr{}                                                                        \
+		elemental::detail::at_impl_matrix{},                                                                           \
+		elemental::detail::at_impl_matrix_smr{}                                                                        \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_AT_HPP

@@ -64,11 +64,11 @@ namespace hana = boost::hana;
 namespace mpl = hbrs::mpl;
 namespace detail {
 
-struct pca_impl_Matrix {
+struct pca_impl_matrix {
 	/* C++ code is equivalent to MATLAB code in file hbrs-mpl/addon/matlab/cxn/pca_level2.m */
 	template <typename Ring>
 	auto
-	operator()(El::Matrix<Ring> const& a, bool economy) const {
+	operator()(matrix<Ring> const& a, bool economy) const {
 		typedef std::decay_t<Ring> _Ring_;
 		
 		using namespace hbrs::mpl;
@@ -90,12 +90,14 @@ struct pca_impl_Matrix {
 		
 		auto usv = (*svd)(b, economy ? mpl::decompose_mode::economy : mpl::decompose_mode::zero);
 		auto && U = (*at)(usv, svd_u{});
-		El::Matrix<_Ring_> S;
+		matrix<_Ring_> S{0,0};
 		{
 			auto && S_ = (*at)(usv, svd_s{});
-			typedef Ring_t<std::decay_t<decltype(S_)>> Ring_of_S_;
 			
-			if constexpr (std::is_same<Ring_of_S_, _Ring_>::value) {
+			typedef decltype(S_.at({0,0})) S__Ring;
+			typedef std::decay_t<S__Ring> _S__Ring_;
+			
+			if constexpr (std::is_same_v<_S__Ring_, _Ring_>) {
 				S = std::move(S_);
 			} else {
 				// if Ring := El::Complex<double>, then Ring_of_S_ is Base<El::Complex<double>> a.k.a. double
@@ -143,7 +145,7 @@ struct pca_impl_Matrix {
 				);
 			} else {
 				auto score_view = (*select)(score, std::make_pair(El::ALL, El::IR(DOF, a_n)));
-				El::Zero(score_view);
+				El::Zero(score_view.data());
 				
 				auto latent_view = (*select)(latent, El::IR(DOF, a_n));
 				El::Zero(latent_view.data());
@@ -210,8 +212,8 @@ struct pca_impl_Matrix {
 		//MATLAB>> [d1, d2] = size(coeff);
 		//MATLAB>> colsign = sign(coeff(maxind + (0:d1:(d2-1)*d1)));
 		
-		El::Matrix<_Ring_> coeff_sgn = (*times)(coeff, expand(colsign, size(coeff)));
-		El::Matrix<_Ring_> score_sgn = (*times)(score, expand(colsign, size(score)));
+		matrix<_Ring_> coeff_sgn = (*times)(coeff, expand(colsign, size(coeff)));
+		matrix<_Ring_> score_sgn = (*times)(score, expand(colsign, size(score)));
 		
 		//MATLAB>> coeff = bsxfun(@times, coeff, colsign);
 		//MATLAB>> score = bsxfun(@times, score, colsign);
@@ -367,7 +369,7 @@ struct pca_impl_DistMatrix {
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_PCA_IMPLS boost::hana::make_tuple(                                                           \
-		elemental::detail::pca_impl_Matrix{},                                                                          \
+		elemental::detail::pca_impl_matrix{},                                                                          \
 		elemental::detail::pca_impl_DistMatrix{}                                                                       \
 	)
 

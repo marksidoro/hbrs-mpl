@@ -55,6 +55,8 @@
 #include <hbrs/mpl/fwd/fn/and.hpp>
 #include <hbrs/mpl/fwd/fn/not.hpp>
 
+//TODO: Make a runtime integral type analogous to hana::integral_constant that encapsulates all this copy constructions
+
 #define HBRS_MPL_DEFINE_AXIS_2D(name, Name, name0, Name0, name1, Name1)                                                \
 	HBRS_MPL_NAMESPACE_BEGIN                                                                                           \
 	                                                                                                                   \
@@ -126,6 +128,32 @@
 		name(name<Name0 ## _, Name1 ## _> const& rhs)                                                                  \
 		: name0 ## _{boost::numeric_cast< Name0 >(rhs.name0 ## _)},                                                    \
 		  name1 ## _{boost::numeric_cast< Name1 >(rhs.name1 ## _)} {}                                                  \
+		                                                                                                               \
+		template<                                                                                                      \
+			typename Name0 ## _,                                                                                       \
+			typename Name1 ## _,                                                                                       \
+			Name0 ## _ Value0,                                                                                         \
+			Name1 ## _ Value1,                                                                                         \
+			typename std::enable_if_t<                                                                                 \
+				(                                                                                                      \
+					!hbrs::mpl::detail::is_braces_constructible< Name0, Name0 ## _>::value ||                          \
+					!hbrs::mpl::detail::is_braces_constructible< Name1, Name1 ## _>::value                             \
+				) &&                                                                                                   \
+				std::is_convertible<Name0 ## _, Name0>::value &&                                                       \
+				std::is_convertible<Name1 ## _, Name1>::value &&                                                       \
+				std::is_arithmetic<Name0 ## _>::value &&                                                               \
+				std::is_arithmetic<Name1 ## _>::value &&                                                               \
+				std::is_arithmetic<Name0>::value &&                                                                    \
+				std::is_arithmetic<Name1>::value                                                                       \
+			>* = nullptr                                                                                               \
+		>                                                                                                              \
+		name(                                                                                                          \
+			name<                                                                                                      \
+				hana::integral_constant<Name0 ## _, Value0>,                                                           \
+				hana::integral_constant<Name1 ## _, Value1>                                                            \
+			> const& rhs)                                                                                              \
+		: name0 ## _{boost::numeric_cast< Name0 >(Value0)},                                                            \
+		  name1 ## _{boost::numeric_cast< Name1 >(Value1)} {}                                                          \
 		                                                                                                               \
 		constexpr                                                                                                      \
 		name(name &&) = default;                                                                                       \

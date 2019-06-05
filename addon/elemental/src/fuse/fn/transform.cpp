@@ -21,89 +21,89 @@ namespace detail {
 
 //TODO: Add transform_impl_vector and transform_impl_dist_vector impls!
 
-template auto transform_impl_Matrix::operator()(El::Matrix<float>              const&, std::function<              float(float              )> const&) const;
-template auto transform_impl_Matrix::operator()(El::Matrix<El::Complex<float>> const&, std::function< El::Complex<float>(El::Complex<float> )> const&) const;
-template auto transform_impl_Matrix::operator()(El::Matrix<double>             const&, std::function<             double(double             )> const&) const;
-template auto transform_impl_Matrix::operator()(El::Matrix<El::Complex<double>>const&, std::function<El::Complex<double>(El::Complex<double>)> const&) const;
+template auto transform_impl_matrix::operator()(matrix<float>              const&, std::function<              float(float              )> const&) const;
+template auto transform_impl_matrix::operator()(matrix<El::Complex<float>> const&, std::function< El::Complex<float>(El::Complex<float> )> const&) const;
+template auto transform_impl_matrix::operator()(matrix<double>             const&, std::function<             double(double             )> const&) const;
+template auto transform_impl_matrix::operator()(matrix<El::Complex<double>>const&, std::function<El::Complex<double>(El::Complex<double>)> const&) const;
 
-template auto transform_impl_smr_Matrix::operator()(mpl::smr<El::Matrix<float>              , El::Int> const&, std::function<              float(float              )> const&) const;
-template auto transform_impl_smr_Matrix::operator()(mpl::smr<El::Matrix<El::Complex<float>> , El::Int> const&, std::function< El::Complex<float>(El::Complex<float> )> const&) const;
-template auto transform_impl_smr_Matrix::operator()(mpl::smr<El::Matrix<double>             , El::Int> const&, std::function<             double(double             )> const&) const;
-template auto transform_impl_smr_Matrix::operator()(mpl::smr<El::Matrix<El::Complex<double>>, El::Int> const&, std::function<El::Complex<double>(El::Complex<double>)> const&) const;
+template auto transform_impl_smr_matrix::operator()(mpl::smr<matrix<float>              , El::Int> const&, std::function<              float(float              )> const&) const;
+template auto transform_impl_smr_matrix::operator()(mpl::smr<matrix<El::Complex<float>> , El::Int> const&, std::function< El::Complex<float>(El::Complex<float> )> const&) const;
+template auto transform_impl_smr_matrix::operator()(mpl::smr<matrix<double>             , El::Int> const&, std::function<             double(double             )> const&) const;
+template auto transform_impl_smr_matrix::operator()(mpl::smr<matrix<El::Complex<double>>, El::Int> const&, std::function<El::Complex<double>(El::Complex<double>)> const&) const;
 
-template auto transform_impl_smc_Matrix::operator()(mpl::smc<El::Matrix<float>              , El::Int> const&, std::function<              float(float              )> const&) const;
-template auto transform_impl_smc_Matrix::operator()(mpl::smc<El::Matrix<El::Complex<float>> , El::Int> const&, std::function< El::Complex<float>(El::Complex<float> )> const&) const;
-template auto transform_impl_smc_Matrix::operator()(mpl::smc<El::Matrix<double>             , El::Int> const&, std::function<             double(double             )> const&) const;
-template auto transform_impl_smc_Matrix::operator()(mpl::smc<El::Matrix<El::Complex<double>>, El::Int> const&, std::function<El::Complex<double>(El::Complex<double>)> const&) const;
+template auto transform_impl_smc_matrix::operator()(mpl::smc<matrix<float>              , El::Int> const&, std::function<              float(float              )> const&) const;
+template auto transform_impl_smc_matrix::operator()(mpl::smc<matrix<El::Complex<float>> , El::Int> const&, std::function< El::Complex<float>(El::Complex<float> )> const&) const;
+template auto transform_impl_smc_matrix::operator()(mpl::smc<matrix<double>             , El::Int> const&, std::function<             double(double             )> const&) const;
+template auto transform_impl_smc_matrix::operator()(mpl::smc<matrix<El::Complex<double>>, El::Int> const&, std::function<El::Complex<double>(El::Complex<double>)> const&) const;
 
-template decltype(auto) transform_impl_smcs_smrs_Matrix::operator()(
-	mpl::smcs<El::Matrix<float>> const&, 
+template decltype(auto) transform_impl_smcs_smrs_matrix::operator()(
+	mpl::smcs<matrix<float>> const&, 
 	std::function<
 		float(
-			mpl::smc<El::Matrix<float> const&, El::Int> const&
+			mpl::smc<matrix<float> const&, El::Int> const&
 		)
 	> const&
 ) const;
 
-template decltype(auto) transform_impl_smcs_smrs_Matrix::operator()(
-	mpl::smcs<El::Matrix<El::Complex<float>>> const&, 
+template decltype(auto) transform_impl_smcs_smrs_matrix::operator()(
+	mpl::smcs<matrix<El::Complex<float>>> const&, 
 	std::function<
 		float(
-			mpl::smc<El::Matrix<El::Complex<float>> const&, El::Int> const&
+			mpl::smc<matrix<El::Complex<float>> const&, El::Int> const&
 		)
 	> const&
 ) const;
 
-template decltype(auto) transform_impl_smcs_smrs_Matrix::operator()(
-	mpl::smcs<El::Matrix<double>> const&, 
+template decltype(auto) transform_impl_smcs_smrs_matrix::operator()(
+	mpl::smcs<matrix<double>> const&, 
 	std::function<
 		double(
-			mpl::smc<El::Matrix<double> const&, El::Int> const&
+			mpl::smc<matrix<double> const&, El::Int> const&
 		)
 	> const&
 ) const;
 
-template decltype(auto) transform_impl_smcs_smrs_Matrix::operator()(
-	mpl::smcs<El::Matrix<El::Complex<double>>> const&, 
+template decltype(auto) transform_impl_smcs_smrs_matrix::operator()(
+	mpl::smcs<matrix<El::Complex<double>>> const&, 
 	std::function<
 		double(
-			mpl::smc<El::Matrix<El::Complex<double>> const&, El::Int> const&
+			mpl::smc<matrix<El::Complex<double>> const&, El::Int> const&
 		)
 	> const&
 ) const;
 
-template decltype(auto) transform_impl_smcs_smrs_Matrix::operator()(
-	mpl::smrs<El::Matrix<float>> const&, 
+template decltype(auto) transform_impl_smcs_smrs_matrix::operator()(
+	mpl::smrs<matrix<float>> const&, 
 	std::function<
 		float(
-			mpl::smr<El::Matrix<float> const&, El::Int> const&
+			mpl::smr<matrix<float> const&, El::Int> const&
 		)
 	> const&
 ) const;
 
-template decltype(auto) transform_impl_smcs_smrs_Matrix::operator()(
-	mpl::smrs<El::Matrix<El::Complex<float>>> const&, 
+template decltype(auto) transform_impl_smcs_smrs_matrix::operator()(
+	mpl::smrs<matrix<El::Complex<float>>> const&, 
 	std::function<
 		float(
-			mpl::smr<El::Matrix<El::Complex<float>> const&, El::Int> const&
+			mpl::smr<matrix<El::Complex<float>> const&, El::Int> const&
 		)
 	> const&
 ) const;
 
-template decltype(auto) transform_impl_smcs_smrs_Matrix::operator()(
-	mpl::smrs<El::Matrix<double>> const&, 
+template decltype(auto) transform_impl_smcs_smrs_matrix::operator()(
+	mpl::smrs<matrix<double>> const&, 
 	std::function<
 		double(
-			mpl::smr<El::Matrix<double> const&, El::Int> const&
+			mpl::smr<matrix<double> const&, El::Int> const&
 		)
 	> const&
 ) const;
 
-template decltype(auto) transform_impl_smcs_smrs_Matrix::operator()(
-	mpl::smrs<El::Matrix<El::Complex<double>>> const&, 
+template decltype(auto) transform_impl_smcs_smrs_matrix::operator()(
+	mpl::smrs<matrix<El::Complex<double>>> const&, 
 	std::function<
 		double(
-			mpl::smr<El::Matrix<El::Complex<double>> const&, El::Int> const&
+			mpl::smr<matrix<El::Complex<double>> const&, El::Int> const&
 		)
 	> const&
 ) const;

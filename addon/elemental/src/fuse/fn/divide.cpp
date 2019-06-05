@@ -21,10 +21,10 @@ namespace detail {
 
 //TODO: Add divide_impl_vector_Scalar and divide_impl_dist_vector_Scalar impls!
 
-template auto divide_impl_Matrix_Scalar::operator()(El::Matrix<float>              , float               const&) const;
-template auto divide_impl_Matrix_Scalar::operator()(El::Matrix<El::Complex<float>> , El::Complex<float>  const&) const;
-template auto divide_impl_Matrix_Scalar::operator()(El::Matrix<double>             , double              const&) const;
-template auto divide_impl_Matrix_Scalar::operator()(El::Matrix<El::Complex<double>>, El::Complex<double> const&) const;
+template auto divide_impl_matrix_scalar::operator()(matrix<float>              , float               const&) const;
+template auto divide_impl_matrix_scalar::operator()(matrix<El::Complex<float>> , El::Complex<float>  const&) const;
+template auto divide_impl_matrix_scalar::operator()(matrix<double>             , double              const&) const;
+template auto divide_impl_matrix_scalar::operator()(matrix<El::Complex<double>>, El::Complex<double> const&) const;
 
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END
