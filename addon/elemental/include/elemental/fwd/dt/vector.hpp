@@ -14,8 +14,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
 #ifndef ELEMENTAL_FWD_DT_VECTOR_HPP
 #define ELEMENTAL_FWD_DT_VECTOR_HPP
 

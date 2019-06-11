@@ -14,8 +14,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
 #ifndef MATLAB_FUSE_FN_MULTIPLY_HPP
 #define MATLAB_FUSE_FN_MULTIPLY_HPP
 

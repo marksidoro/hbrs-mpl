@@ -15,8 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
 #ifndef HBRS_MPL_FWD_DT_PCA_FILTER_RESULT_HPP
 #define HBRS_MPL_FWD_DT_PCA_FILTER_RESULT_HPP
 

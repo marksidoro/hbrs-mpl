@@ -14,8 +14,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
 #ifndef HBRS_MPL_DT_NO_CONTEXT_HPP
 #define HBRS_MPL_DT_NO_CONTEXT_HPP
 

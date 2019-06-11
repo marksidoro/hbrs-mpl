@@ -14,8 +14,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
 #ifndef ELEMENTAL_FWD_DT_MATRIX_INDEX_HPP
 #define ELEMENTAL_FWD_DT_MATRIX_INDEX_HPP
 

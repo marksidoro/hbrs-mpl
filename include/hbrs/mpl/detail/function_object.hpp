@@ -14,8 +14,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
 #ifndef HBRS_MPL_DETAIL_FUNCTION_OBJECT_HPP
 #define HBRS_MPL_DETAIL_FUNCTION_OBJECT_HPP
 

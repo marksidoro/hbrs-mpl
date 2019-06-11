@@ -14,8 +14,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
 #ifndef HBRS_MPL_DETAIL_IS_HOMOGENOUS_CONTAINER_HPP
 #define HBRS_MPL_DETAIL_IS_HOMOGENOUS_CONTAINER_HPP
 

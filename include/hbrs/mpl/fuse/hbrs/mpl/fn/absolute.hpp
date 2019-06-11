@@ -14,8 +14,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
 #ifndef HBRS_MPL_FUSE_HBRS_MPL_FN_ABSOLUTE_HPP
 #define HBRS_MPL_FUSE_HBRS_MPL_FN_ABSOLUTE_HPP
 
