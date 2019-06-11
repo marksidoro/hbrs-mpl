@@ -136,16 +136,13 @@ struct expand_impl_row_vector {
 };
 
 //TODO: Add expand_impl_column_vector
-
 struct expand_impl_dist_row_vector {
-	template <
-		typename DistMatrix,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<DistMatrix>, hana::ext::El::DistMatrix_tag >::value
-		>* = nullptr
-	>
+	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 	constexpr auto
-	operator()(dist_row_vector<DistMatrix> const& v, mpl::matrix_size<El::Int, El::Int> const& sz) const {
+	operator()(
+		dist_row_vector<Ring, Columnwise, Rowwise, Wrapping> const& v,
+		mpl::matrix_size<El::Int, El::Int> const& sz
+	) const {
 		using namespace hbrs::mpl;
 		
 		auto v_sz = v.length(); // TODO: Replace with (*size)(v);

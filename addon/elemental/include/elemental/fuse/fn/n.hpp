@@ -22,6 +22,7 @@
 #include <elemental/config.hpp>
 #include <hbrs/mpl/preprocessor/core.hpp>
 #include <elemental/dt/matrix.hpp>
+#include <elemental/dt/dist_matrix.hpp>
 #include <boost/hana/tuple.hpp>
 #include <type_traits>
 
@@ -30,12 +31,14 @@ namespace hana = boost::hana;
 namespace detail {
 
 HBRS_MPL_DEF_FO_TRY_METHOD(n_impl_matrix, matrix_tag, n)
+HBRS_MPL_DEF_FO_TRY_METHOD(n_impl_dist_matrix, dist_matrix_tag, n)
 
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_N_IMPLS boost::hana::make_tuple(                                                             \
-		elemental::detail::n_impl_matrix{}                                                                             \
+		elemental::detail::n_impl_matrix{},                                                                            \
+		elemental::detail::n_impl_dist_matrix{}                                                                        \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_N_HPP

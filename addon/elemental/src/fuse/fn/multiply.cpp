@@ -22,15 +22,15 @@ ELEMENTAL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 namespace detail {
 
-template auto multiply_impl_matrix_matrix::operator()(matrix<float>               const&, matrix<float>               const&) const;
-template auto multiply_impl_matrix_matrix::operator()(matrix<El::Complex<float>>  const&, matrix<El::Complex<float>>  const&) const;
-template auto multiply_impl_matrix_matrix::operator()(matrix<double>              const&, matrix<double>              const&) const;
-template auto multiply_impl_matrix_matrix::operator()(matrix<El::Complex<double>> const&, matrix<El::Complex<double>> const&) const;
+template decltype(auto) multiply_impl_matrix_matrix::operator()(matrix<float>               const&, matrix<float>               const&) const;
+template decltype(auto) multiply_impl_matrix_matrix::operator()(matrix<El::Complex<float>>  const&, matrix<El::Complex<float>>  const&) const;
+template decltype(auto) multiply_impl_matrix_matrix::operator()(matrix<double>              const&, matrix<double>              const&) const;
+template decltype(auto) multiply_impl_matrix_matrix::operator()(matrix<El::Complex<double>> const&, matrix<El::Complex<double>> const&) const;
 
-template auto multiply_impl_AbstractDistMatrix_AbstractDistMatrix::operator()(El::AbstractDistMatrix<float>               const&, El::AbstractDistMatrix<float>               const&) const;
-template auto multiply_impl_AbstractDistMatrix_AbstractDistMatrix::operator()(El::AbstractDistMatrix<El::Complex<float>>  const&, El::AbstractDistMatrix<El::Complex<float>>  const&) const;
-template auto multiply_impl_AbstractDistMatrix_AbstractDistMatrix::operator()(El::AbstractDistMatrix<double>              const&, El::AbstractDistMatrix<double>              const&) const;
-template auto multiply_impl_AbstractDistMatrix_AbstractDistMatrix::operator()(El::AbstractDistMatrix<El::Complex<double>> const&, El::AbstractDistMatrix<El::Complex<double>> const&) const;
+template decltype(auto) multiply_impl_dist_matrix_dist_matrix::operator()(dist_matrix<float>               const&, dist_matrix<float>               const&) const;
+template decltype(auto) multiply_impl_dist_matrix_dist_matrix::operator()(dist_matrix<El::Complex<float>>  const&, dist_matrix<El::Complex<float>>  const&) const;
+template decltype(auto) multiply_impl_dist_matrix_dist_matrix::operator()(dist_matrix<double>              const&, dist_matrix<double>              const&) const;
+template decltype(auto) multiply_impl_dist_matrix_dist_matrix::operator()(dist_matrix<El::Complex<double>> const&, dist_matrix<El::Complex<double>> const&) const;
 
 template auto multiply_impl_matrix_scv_vector::operator()(matrix<float>              const&, mpl::scv<std::vector<int>> const&) const;
 //TODO: Solve "error: call to 'operator*' is ambiguous" for El::Complex<...> types

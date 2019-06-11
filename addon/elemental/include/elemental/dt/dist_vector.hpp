@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,19 +20,38 @@
 #define ELEMENTAL_DT_DIST_VECTOR_HPP
 
 #include <elemental/fwd/dt/dist_vector.hpp>
+#include <elemental/dt/vector.hpp>
 #include <hbrs/mpl/preprocessor/core.hpp>
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
-#include <elemental/dt/matrix.hpp>
 #include <initializer_list>
-
-//TODO: replace this hack!
 
 #define _ELEMENTAL_DEF_DIST_VECTOR(vector_kind)                                                                        \
 	ELEMENTAL_NAMESPACE_BEGIN                                                                                          \
 	                                                                                                                   \
-	template<typename Matrix>                                                                                          \
-	struct dist_ ## vector_kind ## _vector {                                                                          \
+	template<                                                                                                          \
+		typename Ring = double,                                                                                        \
+		El::Dist Columnwise = El::MC,                                                                                  \
+		El::Dist Rowwise = El::MR,                                                                                     \
+		El::DistWrap Wrapping = El::ELEMENT                                                                            \
+	>                                                                                                                  \
+	struct dist_ ## vector_kind ## _vector {                                                                           \
+		template<                                                                                                      \
+			typename Ring_ = Ring,                                                                                     \
+			typename std::enable_if_t<                                                                                 \
+				std::is_same_v<std::remove_const_t<Ring>, Ring_>                                                       \
+			>* = nullptr                                                                                               \
+		>                                                                                                              \
+		dist_ ## vector_kind ## _vector(El::DistMatrix<Ring_, Columnwise, Rowwise, Wrapping> data);                    \
+		dist_ ## vector_kind ## _vector(El::Grid const& grid, El::Int sz);                                             \
+		                                                                                                               \
+		dist_ ## vector_kind ## _vector(dist_ ## vector_kind ## _vector const&) = default;                             \
+		dist_ ## vector_kind ## _vector(dist_ ## vector_kind ## _vector &&) = default;                                 \
+		                                                                                                               \
+		dist_ ## vector_kind ## _vector&                                                                               \
+		operator=(dist_ ## vector_kind ## _vector const&) = default;                                                   \
+		dist_ ## vector_kind ## _vector&                                                                               \
+		operator=(dist_ ## vector_kind ## _vector &&) = default;                                                       \
 		                                                                                                               \
 		constexpr decltype(auto)                                                                                       \
 		data() & { return (data_); };                                                                                  \
@@ -46,19 +65,45 @@
 		decltype(auto)                                                                                                 \
 		length() const;                                                                                                \
 		                                                                                                               \
-		Matrix data_;                                                                                                  \
+	private:                                                                                                           \
+		El::DistMatrix<                                                                                                \
+			std::remove_const_t<Ring>,                                                                                 \
+			Columnwise, Rowwise, Wrapping                                                                              \
+		> data_;                                                                                                       \
 	};                                                                                                                 \
 	                                                                                                                   \
 	ELEMENTAL_NAMESPACE_END                                                                                            \
 	                                                                                                                   \
-	namespace boost { namespace hana {                                                                                 \
+	BOOST_HANA_NAMESPACE_BEGIN                                                                                         \
                                                                                                                        \
-	template <typename Matrix>                                                                                         \
-	struct tag_of< elemental::dist_ ## vector_kind ## _vector<Matrix> > {                                              \
+	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>                             \
+	struct tag_of< elemental::dist_ ## vector_kind ## _vector<Ring, Columnwise, Rowwise, Wrapping> > {                 \
 		using type = elemental::dist_ ## vector_kind ## _vector_tag;                                                   \
 	};                                                                                                                 \
                                                                                                                        \
-	/* namespace hana */ } /* namespace boost */ }
+	template <>                                                                                                        \
+	struct make_impl<elemental::dist_ ## vector_kind ## _vector_tag> {                                                 \
+		template <typename Ring>                                                                                       \
+		static auto                                                                                                    \
+		apply(                                                                                                         \
+			El::Grid const& grid,                                                                                      \
+			std::initializer_list<Ring> data                                                                           \
+		) {                                                                                                            \
+			elemental::dist_ ## vector_kind ## _vector<                                                                \
+				Ring, El::STAR, El::STAR, El::ELEMENT                                                                  \
+			> m{grid, (El::Int)data.size()};                                                                           \
+			m.data().Matrix() = elemental::make_ ## vector_kind ## _vector(data).data();                               \
+			return m;                                                                                                  \
+		}                                                                                                              \
+		                                                                                                               \
+		template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>                         \
+		static elemental::dist_ ## vector_kind ## _vector<Ring, Columnwise, Rowwise, Wrapping>                         \
+		apply(El::DistMatrix<Ring, Columnwise, Rowwise, Wrapping> data) {                                              \
+			return { data };                                                                                           \
+		}                                                                                                              \
+	};                                                                                                                 \
+                                                                                                                       \
+	BOOST_HANA_NAMESPACE_END
 
 _ELEMENTAL_DEF_DIST_VECTOR(column)
 _ELEMENTAL_DEF_DIST_VECTOR(row)
@@ -67,68 +112,58 @@ _ELEMENTAL_DEF_DIST_VECTOR(row)
 
 ELEMENTAL_NAMESPACE_BEGIN
 
-template<typename Matrix>
+template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
+template<
+	typename Ring_,
+	typename std::enable_if_t<
+		std::is_same_v<std::remove_const_t<Ring>, Ring_>
+	>*
+>
+dist_column_vector<Ring, Columnwise, Rowwise, Wrapping>::
+dist_column_vector(El::DistMatrix<Ring_, Columnwise, Rowwise, Wrapping> data) : data_{data} {
+	BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
+	BOOST_ASSERT(data_.Width() == 1);
+}
+
+template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
+dist_column_vector<Ring, Columnwise, Rowwise, Wrapping>::
+dist_column_vector(El::Grid const& grid, El::Int sz) : data_{grid} {
+	data_.Resize(sz, 1);
+	El::Zero(data_);
+}
+
+template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
+template<
+	typename Ring_,
+	typename std::enable_if_t<
+		std::is_same_v<std::remove_const_t<Ring>, Ring_>
+	>*
+>
+dist_row_vector<Ring, Columnwise, Rowwise, Wrapping>::
+dist_row_vector(El::DistMatrix<Ring_, Columnwise, Rowwise, Wrapping> data) : data_{data} {
+	BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
+	BOOST_ASSERT(data_.Height() == 1);
+}
+
+template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
+dist_row_vector<Ring, Columnwise, Rowwise, Wrapping>::
+dist_row_vector(El::Grid const& grid, El::Int sz) : data_{grid} {
+	data_.Resize(1, sz);
+	El::Zero(data_);
+}
+
+template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 decltype(auto)
-dist_column_vector<Matrix>::length() const {
+dist_column_vector<Ring, Columnwise, Rowwise, Wrapping>::length() const {
 	return data_.Height();
 }
 
-template<typename Matrix>
+template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 decltype(auto)
-dist_row_vector<Matrix>::length() const {
+dist_row_vector<Ring, Columnwise, Rowwise, Wrapping>::length() const {
 	return data_.Width();
 }
 
 ELEMENTAL_NAMESPACE_END
-
-namespace boost { namespace hana {
-
-template <>
-struct make_impl<elemental::dist_column_vector_tag> {
-	//TODO: replace this hack!
-	template <typename Ring>
-	static auto
-	apply(
-		El::Grid const& grid,
-		std::initializer_list<Ring> data
-	) {
-		typedef El::DistMatrix<Ring, El::STAR, El::STAR, El::ELEMENT> Matrix;
-		
-		Matrix dmat{grid};
-		dmat.Resize((El::Int)data.size(), 1);
-		dmat.Matrix() = elemental::make_matrix(
-			data,
-			hbrs::mpl::matrix_size<El::Int, El::Int>{(El::Int)data.size(), 1},
-			hbrs::mpl::row_major_c
-		).data();
-		
-		return elemental::dist_column_vector<Matrix>{dmat};
-	}
-};
-
-template <>
-struct make_impl<elemental::dist_row_vector_tag> {
-	//TODO: replace this hack!
-	template <typename Ring>
-	static auto
-	apply(
-		El::Grid const& grid,
-		std::initializer_list<Ring> data
-	) {
-		typedef El::DistMatrix<Ring, El::STAR, El::STAR, El::ELEMENT> Matrix;
-		
-		Matrix dmat{grid};
-		dmat.Resize(1, (El::Int)data.size());
-		dmat.Matrix() = elemental::make_matrix(
-			data,
-			hbrs::mpl::matrix_size<El::Int, El::Int>{1, (El::Int)data.size()},
-			hbrs::mpl::row_major_c
-		).data();
-		
-		return elemental::dist_row_vector<Matrix>{dmat};
-	}
-};
-
-/* namespace hana */ } /* namespace boost */ }
 
 #endif // !ELEMENTAL_DT_DIST_VECTOR_HPP

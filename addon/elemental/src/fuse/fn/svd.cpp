@@ -24,10 +24,10 @@ template auto svd_impl_matrix::operator()(matrix<El::Complex<float>>  const&, mp
 template auto svd_impl_matrix::operator()(matrix<double>              const&, mpl::decompose_mode) const;
 template auto svd_impl_matrix::operator()(matrix<El::Complex<double>> const&, mpl::decompose_mode) const;
 
-template auto svd_impl_AbstractDistMatrix::operator()(El::AbstractDistMatrix<float>               const&, mpl::decompose_mode) const;
-template auto svd_impl_AbstractDistMatrix::operator()(El::AbstractDistMatrix<El::Complex<float>>  const&, mpl::decompose_mode) const;
-template auto svd_impl_AbstractDistMatrix::operator()(El::AbstractDistMatrix<double>              const&, mpl::decompose_mode) const;
-template auto svd_impl_AbstractDistMatrix::operator()(El::AbstractDistMatrix<El::Complex<double>> const&, mpl::decompose_mode) const;
+template auto svd_impl_dist_matrix::operator()(dist_matrix<float>               const&, mpl::decompose_mode) const;
+template auto svd_impl_dist_matrix::operator()(dist_matrix<El::Complex<float>>  const&, mpl::decompose_mode) const;
+template auto svd_impl_dist_matrix::operator()(dist_matrix<double>              const&, mpl::decompose_mode) const;
+template auto svd_impl_dist_matrix::operator()(dist_matrix<El::Complex<double>> const&, mpl::decompose_mode) const;
 
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END

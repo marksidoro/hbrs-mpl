@@ -21,7 +21,6 @@
 
 #include <elemental/config.hpp>
 #include <elemental/dt/matrix.hpp>
-#include <elemental/detail/Ring.hpp>
 #include <hbrs/mpl/preprocessor/core.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
@@ -40,7 +39,7 @@ namespace detail {
 template <typename A, typename U, typename S, typename V>
 auto
 svd_impl(A const& a, mpl::decompose_mode mode, U u, S s, S s_, V v) {
-	typedef Ring_t<std::decay_t<A>> Ring;
+	typedef decltype(a.data().Get(0,0)) Ring;
 	typedef std::decay_t<Ring> _Ring_;
 	
 	El::SVDCtrl<El::Base<_Ring_>> ctrl;
@@ -54,32 +53,32 @@ svd_impl(A const& a, mpl::decompose_mode mode, U u, S s, S s_, V v) {
 	} else if (mode == mpl::decompose_mode::economy) {
 		ctrl.bidiagSVDCtrl.approach = El::SVDApproach::THIN_SVD;
 	} else if (mode == mpl::decompose_mode::zero) {
-		if (a.Height() > a.Width()) {
+		if (a.m() > a.n()) {
 			ctrl.bidiagSVDCtrl.approach = El::SVDApproach::THIN_SVD;
 		} else {
 			ctrl.bidiagSVDCtrl.approach = El::SVDApproach::FULL_SVD;
 		}
 	}
 	
-	/* auto info = */El::SVD(a, u, s, v, ctrl);
+	/* auto info = */El::SVD(a.data(), u, s, v, ctrl);
 	BOOST_ASSERT(!u.Locked());
 	BOOST_ASSERT(!s.Locked());
 	BOOST_ASSERT(!v.Locked());
 	
 	if (mode == mpl::decompose_mode::complete) {
-		El::Zeros(s_, a.Height(), a.Width());
+		El::Zeros(s_, a.m(), a.n());
 	} else if (mode == mpl::decompose_mode::economy) {
 		// copy singular values from n*1 matrix to diagonal of n*n matrix
-		auto min_mn = std::min(a.Height(), a.Width());
+		auto min_mn = std::min(a.m(), a.n());
 		BOOST_ASSERT(min_mn >= s.Height());
 		El::Zeros(s_, min_mn, min_mn);
 	} else if (mode == mpl::decompose_mode::zero) {
-		if (a.Height() > a.Width()) {
-			auto min_mn = std::min(a.Height(), a.Width());
+		if (a.m() > a.n()) {
+			auto min_mn = std::min(a.m(), a.n());
 			BOOST_ASSERT(min_mn >= s.Height());
 			El::Zeros(s_, min_mn, min_mn);
 		} else {
-			El::Zeros(s_, a.Height(), a.Width());
+			El::Zeros(s_, a.m(), a.n());
 		}
 	}
 	
@@ -90,43 +89,41 @@ svd_impl(A const& a, mpl::decompose_mode mode, U u, S s, S s_, V v) {
 	
 	if (ctrl.bidiagSVDCtrl.approach == El::SVDApproach::THIN_SVD) {
 		// u is m x min(m,n)
-		BOOST_ASSERT(u.Height() == a.Height());
-		BOOST_ASSERT(u.Width() == std::min(a.Height(), a.Width()));
+		BOOST_ASSERT(u.Height() == a.m());
+		BOOST_ASSERT(u.Width() == std::min(a.m(), a.n()));
 		
 		// v is n x min(m,n)
-		BOOST_ASSERT(v.Height() == a.Width());
-		BOOST_ASSERT(v.Width() == std::min(a.Height(), a.Width()));
+		BOOST_ASSERT(v.Height() == a.n());
+		BOOST_ASSERT(v.Width() == std::min(a.m(), a.n()));
 	}
 	
-	return mpl::make_svd_result(u, s_, v);
+	return mpl::make_svd_result(
+		hana::make<hana::tag_of_t<A>>(std::move(u)),
+		hana::make<hana::tag_of_t<A>>(std::move(s_)),
+		hana::make<hana::tag_of_t<A>>(std::move(v))
+	);
 }
 
 struct svd_impl_matrix {
-	template <typename Field>
+	template <typename Ring>
 	auto
-	operator()(matrix<Field> const& a, mpl::decompose_mode mode) const {
-		typedef std::decay_t<Field> _Field_;
-		auto usv = svd_impl(
-			a.data(), mode,
-			El::Matrix<_Field_>{} /*u*/,
-			El::Matrix<El::Base<_Field_>>{} /*s*/,
-			El::Matrix<El::Base<_Field_>>{} /*s_*/,
-			El::Matrix<_Field_>{} /*v*/
-		);
-		
-		return mpl::make_svd_result(
-			make_matrix(std::move(usv.u())),
-			make_matrix(std::move(usv.s())),
-			make_matrix(std::move(usv.v()))
+	operator()(matrix<Ring> const& a, mpl::decompose_mode mode) const {
+		typedef std::decay_t<Ring> _Ring_;
+		return svd_impl(
+			a, mode,
+			El::Matrix<_Ring_>{} /*u*/,
+			El::Matrix<El::Base<_Ring_>>{} /*s*/,
+			El::Matrix<El::Base<_Ring_>>{} /*s_*/,
+			El::Matrix<_Ring_>{} /*v*/
 		);
 	}
 };
 
-struct svd_impl_AbstractDistMatrix {
-	template <typename Field>
+struct svd_impl_dist_matrix {
+	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 	auto
-	operator()(El::AbstractDistMatrix<Field> const& a, mpl::decompose_mode mode) const {
-		typedef std::decay_t<Field> _Field_;
+	operator()(dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& a, mpl::decompose_mode mode) const {
+		typedef std::decay_t<Ring> _Ring_;
 		/* Elemental uses Read-/Write-Proxies to map input matrix distributions (defined by user) to matrix distribution
 		 * types that are suitable for SVD. Elemental uses these distributions:
 		 *  - with ScaLAPACK: DistMatrix<Field,MC,MR,BLOCK> for A, U and V,
@@ -140,10 +137,10 @@ struct svd_impl_AbstractDistMatrix {
 		 */
 		return svd_impl(
 			a, mode,
-			El::DistMatrix<_Field_, El::MC, El::MR>{a.Grid()} /*u*/,
-			El::DistMatrix<El::Base<_Field_>, El::STAR, El::STAR>{a.Grid()} /*s*/,
-			El::DistMatrix<El::Base<_Field_>, El::STAR, El::STAR>{a.Grid()} /*s_*/,
-			El::DistMatrix<_Field_, El::MC, El::MR>{a.Grid()} /*v*/
+			El::DistMatrix<_Ring_, El::MC, El::MR>{a.data().Grid()} /*u*/,
+			El::DistMatrix<El::Base<_Ring_>, El::STAR, El::STAR>{a.data().Grid()} /*s*/,
+			El::DistMatrix<El::Base<_Ring_>, El::STAR, El::STAR>{a.data().Grid()} /*s_*/,
+			El::DistMatrix<_Ring_, El::MC, El::MR>{a.data().Grid()} /*v*/
 		);
 	}
 };
@@ -153,7 +150,7 @@ ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_SVD_IMPLS boost::hana::make_tuple(                                                           \
 		elemental::detail::svd_impl_matrix{},                                                                          \
-		elemental::detail::svd_impl_AbstractDistMatrix{}                                                               \
+		elemental::detail::svd_impl_dist_matrix{}                                                                      \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_SVD_HPP

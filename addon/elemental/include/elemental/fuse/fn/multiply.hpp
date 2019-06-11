@@ -20,7 +20,6 @@
 #define ELEMENTAL_FUSE_FN_MULTIPLY_HPP
 
 #include <elemental/config.hpp>
-#include <elemental/detail/Ring.hpp>
 #include <El.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/hana/tuple.hpp>
@@ -41,31 +40,31 @@ namespace mpl = hbrs::mpl;
 namespace detail {
 
 template <typename A, typename B, typename C>
-auto
+decltype(auto)
 multiply_impl(A const& a, B const& b, C c) {
-	typedef Ring_t<std::decay_t<A>> Ring;
+	typedef decltype(a.data().Get(0,0)) Ring;
 	typedef std::decay_t<Ring> _Ring_;
-	using namespace hbrs::mpl;
 	
-	if (a.Width() != b.Height()) {
+	if (a.n() != b.m()) {
 		BOOST_THROW_EXCEPTION((
-			incompatible_matrices_exception{}
-			<< elemental::errinfo_matrix_sizes{{ {a.Height(), a.Width()}, {b.Height(), b.Width()} }}
+			mpl::incompatible_matrices_exception{}
+			<< elemental::errinfo_matrix_sizes{{ {a.m(), a.n()}, {b.m(), b.n()} }}
 		));
 	}
 	
-	c.Resize(a.Height(), b.Width());
+	c.Resize(a.m(), b.n());
 	
 	El::Gemm(
 		El::Orientation::NORMAL,
 		El::Orientation::NORMAL,
 		_Ring_(1),
-		a,
-		b,
+		a.data(),
+		b.data(),
 		_Ring_(0), /* zero all entries in c because El::Matrix<> constructor does no zero initialisation */
 		c
 	);
-	return c;
+	
+	return hana::make<hana::tag_of_t<A>>(c);
 }
 
 struct multiply_impl_matrix_matrix {
@@ -77,7 +76,7 @@ struct multiply_impl_matrix_matrix {
 			boost::mpl::is_not_void_<std::common_type_t<RingL, RingR>>::value
 		>* = nullptr
 	>
-	auto
+	decltype(auto)
 	operator()(matrix<RingL> const& a, matrix<RingR> const& b) const {
 		using namespace hbrs::mpl;
 		typedef std::common_type_t<RingL, RingR> Ring;
@@ -98,25 +97,39 @@ struct multiply_impl_matrix_matrix {
 			}
 		}
 		
-		return make_matrix( multiply_impl(a_ct.data(), b_ct.data(), El::Matrix<Ring>{}) );
+		return multiply_impl(a_ct, b_ct, El::Matrix<Ring>{});
 	}
 	
 	template <typename Ring>
-	auto
+	decltype(auto)
 	operator()(matrix<Ring> const& a, matrix<Ring> const& b) const {
-		return make_matrix( multiply_impl(a.data(), b.data(), El::Matrix<Ring>{}) );
+		return multiply_impl(a, b, El::Matrix<Ring>{});
 	}
 };
 
-struct multiply_impl_AbstractDistMatrix_AbstractDistMatrix {
-	template <typename Ring>
-	auto
-	operator()(El::AbstractDistMatrix<Ring> const& a, El::AbstractDistMatrix<Ring> const& b) const {
-		using namespace hbrs::mpl;
-		
-		BOOST_ASSERT(a.Grid() == b.Grid());
+struct multiply_impl_dist_matrix_dist_matrix {
+	template <
+		typename RingL, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap Wrapping,
+		typename RingR, El::Dist ColumnwiseR, El::Dist RowwiseR,
+		typename std::enable_if_t<
+			std::is_same_v<RingL, RingR> ||
+			boost::mpl::is_not_void_<std::common_type_t<RingL, RingR>>::value
+		>* = nullptr
+	>
+	decltype(auto)
+	operator()(
+		dist_matrix<RingL, ColumnwiseL, RowwiseL, Wrapping> const& a,
+		dist_matrix<RingR, ColumnwiseR, RowwiseR, Wrapping> const& b
+	) const {
+		BOOST_ASSERT(a.data().Grid() == b.data().Grid());
 		// "El::MC, El::MR" as used by proxy in Elemental/src/blas_like/level3/Gemm/NN.hpp
-		return multiply_impl(a, b, El::DistMatrix<Ring, El::MC, El::MR>{a.Grid()});
+		
+		typedef std::common_type_t<RingL, RingR> Ring;
+		return multiply_impl(
+			a,
+			b,
+			El::DistMatrix<Ring, El::MC, El::MR, Wrapping>{a.data().Grid()}
+		);
 	}
 };
 
@@ -177,7 +190,7 @@ ELEMENTAL_NAMESPACE_END
 		elemental::detail::multiply_impl_matrix_matrix{},                                                              \
 		elemental::detail::multiply_impl_matrix_scv_vector{},                                                          \
 		elemental::detail::multiply_impl_matrix_scalar{},                                                              \
-		elemental::detail::multiply_impl_AbstractDistMatrix_AbstractDistMatrix{}                                       \
+		elemental::detail::multiply_impl_dist_matrix_dist_matrix{}                                                     \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_MULTIPLY_HPP

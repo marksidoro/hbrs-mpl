@@ -27,7 +27,7 @@ namespace detail {
 template auto pca_impl_matrix::operator()(matrix<double> const&, bool) const;
 // template auto pca_impl_matrix::operator()(matrix<El::Complex<double>> const&, bool) const;
 
-template auto pca_impl_DistMatrix::operator()(El::DistMatrix<double> const&, bool) const;
+template auto pca_impl_dist_matrix::operator()(dist_matrix<double> const&, bool) const;
 
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END

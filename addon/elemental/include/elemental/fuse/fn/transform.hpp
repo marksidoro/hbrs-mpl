@@ -39,55 +39,6 @@ ELEMENTAL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 namespace detail {
 
-struct transform_impl_vector {
-	template <
-		typename Vector,
-		typename F,
-		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Vector>, column_vector_tag >::value ||
-			std::is_same< hana::tag_of_t<Vector>, row_vector_tag >::value
-			//TODO: Add invokable check for F?
-		>* = nullptr
-	>
-	auto
-	operator()(Vector v, F && f) const {
-		using namespace hbrs::mpl;
-		
-		for(El::Int i=0; i < (*size)(v); ++i) {
-			v.at(i) = mpl::evaluate(f(v.at(i)));
-		}
-		
-		return v;
-	}
-};
-
-//TODO: replace this hack!
-struct transform_impl_dist_vector {
-	template <
-		typename DistMatrix,
-		typename F,
-		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<DistMatrix>, hana::ext::El::DistMatrix_tag >::value
-		>* = nullptr
-	>
-	auto
-	operator()(dist_column_vector<DistMatrix> && v, F && f) const {
-		using namespace hbrs::mpl;
-		
-		BOOST_ASSERT(!v.data().Locked());
-		BOOST_ASSERT(v.data().Width() == 1);
-		
-		auto & v_lmat = v.data().Matrix();
-		
-		for(El::Int i=0; i < v_lmat.Height(); ++i) {
-			auto & e = v_lmat(i, 0);
-			e = mpl::evaluate(f(e));
-		}
-		
-		return HBRS_MPL_FWD(v);
-	}
-};
-
 template<typename Ring, typename F>
 void
 transform_Matrix(El::Matrix<Ring> const& from, El::Matrix<Ring> & to, F && f) {
@@ -105,7 +56,59 @@ transform_Matrix(El::Matrix<Ring> const& from, El::Matrix<Ring> & to, F && f) {
 	}
 }
 
+struct transform_impl_vector {
+	template <
+		typename Vector,
+		typename F,
+		typename std::enable_if_t<
+			std::is_same< hana::tag_of_t<Vector>, column_vector_tag >::value ||
+			std::is_same< hana::tag_of_t<Vector>, row_vector_tag >::value
+			//TODO: Add invokable check for F?
+		>* = nullptr
+	>
+	auto
+	operator()(Vector v, F && f) const {
+		using namespace hbrs::mpl;
+		BOOST_ASSERT(!v.data().Locked());
+		transform_Matrix(v.data(), v.data(), HBRS_MPL_FWD(f));
+		return v;
+	}
+};
+
+struct transform_impl_dist_vector {
+	template <
+		typename Vector,
+		typename F,
+		typename std::enable_if_t<
+			std::is_same_v< hana::tag_of_t<Vector>, dist_column_vector_tag > ||
+			std::is_same_v< hana::tag_of_t<Vector>, dist_row_vector_tag >
+			//TODO: Add invokable check for F?
+		>* = nullptr
+	>
+	auto
+	operator()(Vector v, F && f) const {
+		using namespace hbrs::mpl;
+		BOOST_ASSERT(!v.data().Locked());
+		transform_Matrix(v.data().Matrix(), v.data().Matrix(), HBRS_MPL_FWD(f));
+		return v;
+	}
+};
+
 struct transform_impl_matrix {
+	template <
+		typename Ring,
+		typename F,
+		typename std::enable_if_t<
+			!std::is_const_v<Ring>
+			//TODO: Add invokable check for F?
+		>* = nullptr
+	>
+	auto
+	operator()(matrix<Ring> & a, F && f) const {
+		transform_Matrix(a.data(), a.data(), HBRS_MPL_FWD(f));
+		return a;
+	}
+	
 	template <
 		typename Ring,
 		typename F
@@ -114,26 +117,38 @@ struct transform_impl_matrix {
 	auto
 	operator()(matrix<Ring> const& a, F && f) const {
 		typedef std::decay_t<Ring> _Ring_;
-		El::Matrix<_Ring_> b{a.m(), a.n()};
-		transform_Matrix(a.data(), b, HBRS_MPL_FWD(f));
-		return make_matrix(std::move(b));
+		matrix<_Ring_> b{a.m(), a.n()};
+		transform_Matrix(a.data(), b.data(), HBRS_MPL_FWD(f));
+		return b;
 	}
 };
 
-struct transform_impl_DistMatrix {
+struct transform_impl_dist_matrix {
 	template <
-		typename DistMatrix,
+		typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping,
 		typename F,
 		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<DistMatrix>, hana::ext::El::DistMatrix_tag >::value &&
-			!std::is_lvalue_reference<DistMatrix>::value
+			!std::is_const_v<Ring>
 			//TODO: Add invokable check for F?
 		>* = nullptr
 	>
 	auto
-	operator()(DistMatrix && a, F && f) const {
-		transform_Matrix(a.Matrix(), a.Matrix(), HBRS_MPL_FWD(f));
-		return HBRS_MPL_FWD(a);
+	operator()(dist_matrix<Ring, Columnwise, Rowwise, Wrapping> & a, F && f) const {
+		transform_Matrix(a.data().Matrix(), a.data().Matrix(), HBRS_MPL_FWD(f));
+		return a;
+	}
+	
+	template <
+		typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping,
+		typename F
+		//TODO: Add invokable check for F?
+	>
+	auto
+	operator()(dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& a, F && f) const {
+		typedef std::decay_t<Ring> _Ring_;
+		dist_matrix<_Ring_, Columnwise, Rowwise, Wrapping> b{{a.data().Grid(), a.m(), a.n()}};
+		transform_Matrix(a.data().LockedMatrix(), b.data().Matrix(), HBRS_MPL_FWD(f));
+		return b;
 	}
 };
 
@@ -235,7 +250,7 @@ ELEMENTAL_NAMESPACE_END
 		elemental::detail::transform_impl_vector{},                                                                    \
 		elemental::detail::transform_impl_dist_vector{},                                                               \
 		elemental::detail::transform_impl_matrix{},                                                                    \
-		elemental::detail::transform_impl_DistMatrix{},                                                                \
+		elemental::detail::transform_impl_dist_matrix{},                                                               \
 		elemental::detail::transform_impl_smc_matrix{},                                                                \
 		elemental::detail::transform_impl_smcs_smrs_matrix{},                                                          \
 		elemental::detail::transform_impl_smr_matrix{}                                                                 \

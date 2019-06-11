@@ -31,10 +31,10 @@ template auto mean_impl_smrs_matrix::operator()(mpl::smrs<matrix<El::Complex<flo
 template auto mean_impl_smrs_matrix::operator()(mpl::smrs<matrix<double>> const&) const;
 template auto mean_impl_smrs_matrix::operator()(mpl::smrs<matrix<El::Complex<double>>> const&) const;
 
-template auto mean_impl_DistMatrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<El::DistMatrix<float>>> const&) const;
-template auto mean_impl_DistMatrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<El::DistMatrix<El::Complex<float>>>> const&) const;
-template auto mean_impl_DistMatrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<El::DistMatrix<double>>> const&) const;
-template auto mean_impl_DistMatrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<El::DistMatrix<El::Complex<double>>>> const&) const;
+template auto mean_impl_dist_matrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<dist_matrix<float>>> const&) const;
+template auto mean_impl_dist_matrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<dist_matrix<El::Complex<float>>>> const&) const;
+template auto mean_impl_dist_matrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<dist_matrix<double>>> const&) const;
+template auto mean_impl_dist_matrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<dist_matrix<El::Complex<double>>>> const&) const;
 
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END

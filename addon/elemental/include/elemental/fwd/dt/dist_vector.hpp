@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +26,13 @@
 ELEMENTAL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 
-template<typename Matrix /* TODO: replace this hack! */>
+template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 struct dist_column_vector;
 struct dist_column_vector_tag;
 constexpr auto make_dist_column_vector = hana::make<dist_column_vector_tag>;
 constexpr auto to_dist_column_vector = hana::to<dist_column_vector_tag>;
 
-template<typename Matrix /* TODO: replace this hack! */>
+template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 struct dist_row_vector;
 struct dist_row_vector_tag;
 constexpr auto make_dist_row_vector = hana::make<dist_row_vector_tag>;

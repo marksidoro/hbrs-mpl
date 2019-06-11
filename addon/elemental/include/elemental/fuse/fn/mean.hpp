@@ -92,12 +92,11 @@ struct mean_impl_smrs_matrix {
 	}
 };
 
-//TODO: Replace this hack!
-struct mean_impl_DistMatrix_columns {
+struct mean_impl_dist_matrix_columns {
 	template <
 		typename DistMatrix,
 		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<DistMatrix>, hana::ext::El::DistMatrix_tag >::value
+			std::is_same< hana::tag_of_t<DistMatrix>, dist_matrix_tag >::value
 		>* = nullptr
 	>
 	auto
@@ -107,22 +106,14 @@ struct mean_impl_DistMatrix_columns {
 			std::tuple<DistMatrix>
 		> const& expr
 	) const {
-		using namespace hbrs::mpl;
 		auto const& from = hana::at_c<0>(expr.operands());
+		dist_row_vector sums = mpl::sum(expr);
+		BOOST_ASSERT(sums.length() == from.n());
 		
-		typedef Ring_t<std::decay_t<DistMatrix>> Ring;
-		typedef std::decay_t<Ring> _Ring_;
+		//TODO: Once sums is converted from "El::STAR, El::STAR" to "El::CIRC, El::CIRC" do only on sums_dmat.Grid().Rank() == 0!
 		
-		auto sums_dmat = sum(expr).data();
-		BOOST_ASSERT(sums_dmat.Height() == 1);
-		BOOST_ASSERT(sums_dmat.Width() == from.Width());
-		
-		//TODO: Once sums_dmat is converted from "El::STAR, El::STAR" to "El::CIRC, El::CIRC" do only on sums_dmat.Grid().Rank() == 0!
-		
-		El::Scale(1.0/from.Height(), sums_dmat);
-		
-		//TODO: Adapt El::ELEMENT changed.
-		return dist_row_vector<El::DistMatrix<_Ring_, El::STAR, El::STAR, El::ELEMENT>>{sums_dmat};
+		El::Scale(1.0/from.m(), sums.data());
+		return sums;
 	}
 };
 
@@ -132,7 +123,7 @@ ELEMENTAL_NAMESPACE_END
 #define ELEMENTAL_FUSE_FN_MEAN_IMPLS boost::hana::make_tuple(                                                          \
 		elemental::detail::mean_impl_smcs_matrix{},                                                                    \
 		elemental::detail::mean_impl_smrs_matrix{},                                                                    \
-		elemental::detail::mean_impl_DistMatrix_columns{}                                                              \
+		elemental::detail::mean_impl_dist_matrix_columns{}                                                             \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_MEAN_HPP

@@ -352,7 +352,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	El::Grid grid{El::mpi::COMM_WORLD};
 	
 	// generate and distribute test matrix
-	El::DistMatrix<Real, El::VC, El::STAR, El::ELEMENT> b{
+	dist_matrix<Real, El::VC, El::STAR, El::ELEMENT> const b{
 		elemental::make_dist_matrix(
 			grid,
 			elemental::make_matrix(
@@ -375,7 +375,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	mpl::expression<
 		mpl::columns_t,
 		std::tuple<
-			El::DistMatrix<Real, El::VC, El::STAR, El::ELEMENT> &
+			dist_matrix<Real, El::VC, El::STAR, El::ELEMENT> const &
 		>
 	> columns_expr0 = (*columns)(b);
 	
@@ -395,7 +395,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 		HBRS_MPL_TEST_VVEQ(expected, sums_dmat, false);
 	}
 	
-	El::Print(b, "original");
+	El::Print(b.data(), "original");
 	El::Print(sums_dmat.data(), "column sums");
 	
 	El::mpi::Barrier();
@@ -427,7 +427,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 		HBRS_MPL_TEST_VVEQ(expected, column_mean_dmat, false);
 	}
 	
-	El::Print(b, "original");
+	El::Print(b.data(), "original");
 	El::Print(column_mean_dmat.data(), "column mean");
 	
 	El::mpi::Barrier();
@@ -437,7 +437,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	mpl::expression<
 		mpl::expand_t,
 		std::tuple<
-			dist_row_vector<El::DistMatrix<Real, El::STAR, El::STAR, El::ELEMENT>> const&,
+			dist_row_vector<Real, El::STAR, El::STAR, El::ELEMENT> const&,
 			mpl::matrix_size<El::Int, El::Int> const&
 		>
 	> expand_expr0 = (*expand)(column_mean_dmat, make_matrix_size(3,3));
@@ -465,8 +465,8 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 		HBRS_MPL_TEST_MMEQ(expected, minus_dmat, false);
 	}
 	
-	El::Print(b, "original");
-	El::Print(minus_dmat, "minus");
+	El::Print(b.data(), "original");
+	El::Print(minus_dmat.data(), "minus");
 	
 	El::mpi::Barrier();
 	BOOST_TEST_PASSPOINT();
@@ -478,8 +478,8 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 		HBRS_MPL_TEST_MMEQ(b, plus_dmat, false);
 	}
 	
-	El::Print(b, "original");
-	El::Print(plus_dmat, "plus");
+	El::Print(b.data(), "original");
+	El::Print(plus_dmat.data(), "plus");
 	
 	El::mpi::Barrier();
 	BOOST_TEST_PASSPOINT();
@@ -487,9 +487,9 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	/////////////////////////// svd ///////////////////////////
 	
 	struct svd_result {
-		El::DistMatrix<Real, El::MC, El::MR> u;
-		El::DistMatrix<Real, El::STAR, El::STAR> s;
-		El::DistMatrix<Real, El::MC, El::MR> v;
+		dist_matrix<Real, El::MC, El::MR> u;
+		dist_matrix<Real, El::STAR, El::STAR> s;
+		dist_matrix<Real, El::MC, El::MR> v;
 	};
 	
 	auto usv = (*svd)(minus_dmat, mpl::decompose_mode::economy);
@@ -500,7 +500,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	};
 	
 	{
-		El::DistMatrix<Real, El::MC, El::MR> rec_dmat /* reconstructed */ = (*multiply)((*multiply)(usv_.u, usv_.s), (*transpose)(usv_.v));
+		dist_matrix<Real, El::MC, El::MR> rec_dmat /* reconstructed */ = (*multiply)((*multiply)(usv_.u, usv_.s), (*transpose)(usv_.v));
 		HBRS_MPL_TEST_MMEQ(minus_dmat, rec_dmat, false);
 	}
 	
@@ -530,23 +530,14 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	BOOST_TEST_PASSPOINT();
 	/////////////////////////// diag ///////////////////////////
 	
-	auto diag_dmat = (*diag)(b).data();
+	auto diag_dmat = (*diag)(b);
 	{
-		auto const expected = elemental::make_matrix(
-			std::initializer_list<double>{
-				1.,
-				5.,
-				9.
-			},
-			make_matrix_size(3,1),
-			row_major_c
-		);
-		
-		HBRS_MPL_TEST_MMEQ(expected, diag_dmat, false);
+		auto const expected = elemental::make_column_vector(std::initializer_list<double>{1., 5., 9.});
+		HBRS_MPL_TEST_VVEQ(expected, diag_dmat, false);
 	}
 	
-	El::Print(b, "original");
-	El::Print(diag_dmat, "diag");
+	El::Print(b.data(), "original");
+	El::Print(diag_dmat.data(), "diag");
 	
 	El::mpi::Barrier();
 	BOOST_TEST_PASSPOINT();
@@ -566,51 +557,34 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 		HBRS_MPL_TEST_MMEQ(expected, transform_dmat, false);
 	}
 	
-	El::Print(b, "original");
-	El::Print(transform_dmat, "transform: x*2");
+	El::Print(b.data(), "original");
+	El::Print(transform_dmat.data(), "transform: x*2");
 	
 	El::mpi::Barrier();
 	BOOST_TEST_PASSPOINT();
 	
 	auto transform_dist_cv = (*transform)(diag(b), [](auto a) { return a * 3; });
 	{
-		auto const expected = elemental::make_matrix(
-			std::initializer_list<double>{
-				3.,
-				15.,
-				27.
-			},
-			make_matrix_size(3,1),
-			row_major_c
-		);
+		auto const expected = elemental::make_column_vector(std::initializer_list<double>{3., 15., 27.});
 		
-		auto got = transform_dist_cv.data();
-		HBRS_MPL_TEST_MMEQ(expected, got, false);
+		HBRS_MPL_TEST_VVEQ(expected, transform_dist_cv, false);
 	}
 	
-	El::Print(diag_dmat, "original");
+	El::Print(diag_dmat.data(), "original");
 	El::Print(transform_dist_cv.data(), "transform: x*3");
 	
 	El::mpi::Barrier();
 	BOOST_TEST_PASSPOINT();
 	/////////////////////////// divide ///////////////////////////
-	auto divide_dmat = (*divide)( copy(transform_dist_cv), 3).data();
+	auto divide_dist_cv = (*divide)( copy(transform_dist_cv), 3);
 	{
-		auto const expected = elemental::make_matrix(
-			std::initializer_list<double>{
-				1.,
-				5.,
-				9.
-			},
-			make_matrix_size(3,1),
-			row_major_c
-		);
+		auto const expected = elemental::make_column_vector(std::initializer_list<double>{1.,5.,9.});
 		
-		HBRS_MPL_TEST_MMEQ(expected, divide_dmat, false);
+		HBRS_MPL_TEST_VVEQ(expected, divide_dist_cv, false);
 	}
 	
 	El::Print(transform_dist_cv.data(), "original");
-	El::Print(divide_dmat, "divide: x/3");
+	El::Print(divide_dist_cv.data(), "divide: x/3");
 	
 	El::mpi::Barrier();
 	BOOST_TEST_PASSPOINT();
@@ -623,7 +597,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	/////////////////////////// - ///////////////////////////
 	//TODO
 	
-	El::Output( boost::format("ColStride: %d, RowStride %d, DistSize %d, CrossSize %d, RedundantSize %d") % b.ColStride() % b.RowStride() % b.DistSize() % b.CrossSize() % b.RedundantSize() );
+	El::Output( boost::format("ColStride: %d, RowStride %d, DistSize %d, CrossSize %d, RedundantSize %d") % b.data().ColStride() % b.data().RowStride() % b.data().DistSize() % b.data().CrossSize() % b.data().RedundantSize() );
 }
 
 BOOST_AUTO_TEST_CASE(matrix_multiply_2, * utf::tolerance(_TOL)) {
@@ -1534,10 +1508,10 @@ BOOST_AUTO_TEST_CASE(dist_matrix_select) {
 	auto const rc2 = (*select)(a, std::make_pair(make_matrix_index(1,0), make_matrix_size(2,3)));
 	auto const rd2 = (*select)(a, std::make_pair(make_matrix_index(0,0), make_matrix_size(3,2)));
 	auto const re2 = (*select)(a, std::make_pair(make_matrix_index(0,1), make_matrix_size(3,2)));
-	auto       rb3 = (*select)(El::DistMatrix<double>{a}, std::make_pair(El::IR(0,2), El::IR(0,3)));
-	auto       rc3 = (*select)(El::DistMatrix<double>{a}, std::make_pair(El::IR(1,3), El::IR(0,3)));
-	auto       rd3 = (*select)(El::DistMatrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(0,2)));
-	auto       re3 = (*select)(El::DistMatrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(1,3)));
+	auto       rb3 = (*select)(dist_matrix<double>{a}, std::make_pair(El::IR(0,2), El::IR(0,3)));
+	auto       rc3 = (*select)(dist_matrix<double>{a}, std::make_pair(El::IR(1,3), El::IR(0,3)));
+	auto       rd3 = (*select)(dist_matrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(0,2)));
+	auto       re3 = (*select)(dist_matrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(1,3)));
 	
 	
 	HBRS_MPL_TEST_MMEQ(b, rb0, false);
@@ -1623,7 +1597,7 @@ BOOST_AUTO_TEST_CASE(dist_column_vector_select) {
 		}
 	);
 	
-	elemental::detail::select_impl_dist_column_vector{}(a, make_range(0,5));
+	elemental::detail::select_impl_dist_vector{}(a, make_range(0,5));
 	auto const rb0 = (*select)(a, make_range(0,5));
 	auto const rc0 = (*select)(a, make_range(3,8));
 	auto const rb1 = (*select)(a, El::IR(0,6));

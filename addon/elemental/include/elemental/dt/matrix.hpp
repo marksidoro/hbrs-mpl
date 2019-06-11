@@ -55,7 +55,7 @@ struct matrix {
 	>
 	matrix(El::Matrix<Ring_> data) : data_{data} {
 		//NOTE: This assertion does not hold always, e.g. El::Matrix<double>{El::Matrix<double> const}.Locked() == true!
-		BOOST_ASSERT(data_.Locked() == std::is_const_v<Ring>);
+		BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
 	}
 	
 	matrix(El::Int m, El::Int n) : data_{m,n} {

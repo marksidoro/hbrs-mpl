@@ -29,11 +29,11 @@ HBRS_MPL_INST_FWDREFS(PROTO, matrix<El::Complex<double>>)
 #undef PROTO
 
 #define PROTO(type_spec_1, cv_qual_1, ref_decl_1)                                                                      \
-	template auto transpose_impl_DistMatrix::operator()(type_spec_1 cv_qual_1 ref_decl_1) const;
-HBRS_MPL_INST_FWDREFS(PROTO, El::DistMatrix<float>)
-HBRS_MPL_INST_FWDREFS(PROTO, El::DistMatrix<El::Complex<float>>)
-HBRS_MPL_INST_FWDREFS(PROTO, El::DistMatrix<double>)
-HBRS_MPL_INST_FWDREFS(PROTO, El::DistMatrix<El::Complex<double>>)
+	template auto transpose_impl_dist_matrix::operator()(type_spec_1 cv_qual_1 ref_decl_1) const;
+HBRS_MPL_INST_FWDREFS(PROTO, dist_matrix<float>)
+HBRS_MPL_INST_FWDREFS(PROTO, dist_matrix<El::Complex<float>>)
+HBRS_MPL_INST_FWDREFS(PROTO, dist_matrix<double>)
+HBRS_MPL_INST_FWDREFS(PROTO, dist_matrix<El::Complex<double>>)
 #undef PROTO
 
 /* namespace detail */ }

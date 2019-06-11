@@ -27,39 +27,39 @@ template auto minus_impl_matrix_matrix::operator()(matrix<El::Complex<float>>,  
 template auto minus_impl_matrix_matrix::operator()(matrix<double>,              matrix<double>              const&) const;
 template auto minus_impl_matrix_matrix::operator()(matrix<El::Complex<double>>, matrix<El::Complex<double>> const&) const;
 
-template auto minus_impl_DistMatrix_expand_expr_DistMatrix::operator()(
-	El::DistMatrix<float>,
+template decltype(auto) minus_impl_dist_matrix_expand_expr_dist_matrix::operator()(
+	dist_matrix<float> &,
 	mpl::expression<
 		mpl::expand_t,
 		std::tuple<
-			dist_row_vector<El::DistMatrix<float>> const&,
+			dist_row_vector<float> const&,
 			mpl::matrix_size<El::Int, El::Int> const&
 		>
 	>) const;
-template auto minus_impl_DistMatrix_expand_expr_DistMatrix::operator()(
-	El::DistMatrix<El::Complex<float>>,
+template decltype(auto) minus_impl_dist_matrix_expand_expr_dist_matrix::operator()(
+	dist_matrix<El::Complex<float>> &,
 	mpl::expression<
 		mpl::expand_t,
 		std::tuple<
-			dist_row_vector<El::DistMatrix<El::Complex<float>>> const&,
+			dist_row_vector<El::Complex<float>> const&,
 			mpl::matrix_size<El::Int, El::Int> const&
 		>
 	>) const;
-template auto minus_impl_DistMatrix_expand_expr_DistMatrix::operator()(
-	El::DistMatrix<double>,
+template decltype(auto) minus_impl_dist_matrix_expand_expr_dist_matrix::operator()(
+	dist_matrix<double> &,
 	mpl::expression<
 		mpl::expand_t,
 		std::tuple<
-			dist_row_vector<El::DistMatrix<double>> const&,
+			dist_row_vector<double> const&,
 			mpl::matrix_size<El::Int, El::Int> const&
 		>
 	>) const;
-template auto minus_impl_DistMatrix_expand_expr_DistMatrix::operator()(
-	El::DistMatrix<El::Complex<double>>,
+template decltype(auto) minus_impl_dist_matrix_expand_expr_dist_matrix::operator()(
+	dist_matrix<El::Complex<double>> &,
 	mpl::expression<
 		mpl::expand_t,
 		std::tuple<
-			dist_row_vector<El::DistMatrix<El::Complex<double>>> const&,
+			dist_row_vector<El::Complex<double>> const&,
 			mpl::matrix_size<El::Int, El::Int> const&
 		>
 	>) const;

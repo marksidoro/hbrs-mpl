@@ -27,10 +27,10 @@ template decltype(auto) size_impl_matrix::operator()(matrix<El::Complex<float>> 
 template decltype(auto) size_impl_matrix::operator()(matrix<double> const&) const;
 template decltype(auto) size_impl_matrix::operator()(matrix<El::Complex<double>> const&) const;
 
-template auto size_impl_AbstractDistMatrix::operator()(El::AbstractDistMatrix<float> const&) const;
-template auto size_impl_AbstractDistMatrix::operator()(El::AbstractDistMatrix<El::Complex<float>> const&) const;
-template auto size_impl_AbstractDistMatrix::operator()(El::AbstractDistMatrix<double> const&) const;
-template auto size_impl_AbstractDistMatrix::operator()(El::AbstractDistMatrix<El::Complex<double>> const&) const;
+template decltype(auto) size_impl_dist_matrix::operator()(dist_matrix<float> const&) const;
+template decltype(auto) size_impl_dist_matrix::operator()(dist_matrix<El::Complex<float>> const&) const;
+template decltype(auto) size_impl_dist_matrix::operator()(dist_matrix<double> const&) const;
+template decltype(auto) size_impl_dist_matrix::operator()(dist_matrix<El::Complex<double>> const&) const;
 
 template decltype(auto) length_impl_row_vector::operator()(row_vector<float> const&) const;
 template decltype(auto) length_impl_row_vector::operator()(row_vector<El::Complex<float>> const&) const;

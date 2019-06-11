@@ -21,7 +21,6 @@
 
 #include <elemental/config.hpp>
 #include <El.hpp>
-#include <elemental/detail/Ring.hpp>
 #include <elemental/fwd/dt/vector.hpp>
 #include <elemental/fwd/dt/dist_vector.hpp>
 #include <elemental/dt/dist_matrix.hpp> // TODO: Remove once dist_column_vector is correctly implemented
@@ -52,22 +51,20 @@ struct divide_impl_vector_scalar {
 	}
 };
 
-//TODO: replace this hack!
 struct divide_impl_dist_vector_scalar {
 	template <
-		typename DistMatrix,
+		typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping,
 		typename Scalar,
-		typename std::enable_if_t< 
-			(
-				std::is_same< hana::tag_of_t<DistMatrix>, hana::ext::El::DistMatrix_tag >::value
-			) &&
-			std::is_arithmetic<Scalar>::value
+		typename std::enable_if_t<
+			std::is_arithmetic_v<Scalar>
 		>* = nullptr
 	>
 	auto
-	operator()(dist_column_vector<DistMatrix> && v, Scalar const& b) const {
+	operator()(
+		dist_column_vector<Ring, Columnwise, Rowwise, Wrapping> && v,
+		Scalar const& b
+	) const {
 		//TODO: Move to member function? Or replace with transform call?
-		typedef Ring_t<std::decay_t<DistMatrix>> Ring;
 		typedef std::decay_t<Ring> _Ring_;
 		El::Scale(_Ring_(1)/b, v.data());
 		return HBRS_MPL_FWD(v);

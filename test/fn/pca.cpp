@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 						return hbrs::mpl::detail::not_supported{};
 					} else {
 						static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
-						return elemental::detail::pca_impl_DistMatrix{}(
+						return elemental::detail::pca_impl_dist_matrix{}(
 							elemental::make_dist_matrix(
 								grid,
 								elemental::make_matrix(HBRS_MPL_FWD(a))

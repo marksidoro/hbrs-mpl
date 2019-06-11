@@ -27,8 +27,6 @@
 #include <elemental/fwd/dt/dist_vector.hpp>
 #include <hbrs/mpl/fwd/fn/expand.hpp>
 #include <hbrs/mpl/dt/expression.hpp>
-
-#include <elemental/detail/Ring.hpp>
 #include <elemental/dt/exception.hpp>
 
 #include <boost/hana/tuple.hpp>
@@ -82,28 +80,21 @@ struct times_impl_matrix_matrix {
 	}
 };
 
-//TODO: replace this hack! (like plus_impl_DistMatrix_expand_expr_DistMatrix)
-struct times_impl_DistMatrix_expand_expr_DistMatrix {
+struct times_impl_dist_matrix_expand_expr_dist_matrix {
 	template <
-		typename DistMatrixL,
-		typename DistMatrixR,
+		typename RingL, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap WrappingL,
+		typename RingR, El::Dist ColumnwiseR, El::Dist RowwiseR, El::DistWrap WrappingR,
 		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<DistMatrixL>, hana::ext::El::DistMatrix_tag >::value &&
-			std::is_same< hana::tag_of_t<DistMatrixR>, hana::ext::El::DistMatrix_tag >::value &&
-			std::is_same<
-				Ring_t<std::decay_t<DistMatrixL>>,
-				Ring_t<std::decay_t<DistMatrixR>>
-			>::value &&
-			!std::is_const< Ring_t<std::decay_t<DistMatrixL>> >::value
+			std::is_convertible_v<RingR, RingL>
 		>* = nullptr
 	>
-	auto
+	decltype(auto)
 	operator()(
-		DistMatrixL const& lhs,
+		dist_matrix<RingL, ColumnwiseL, RowwiseL, WrappingL> & lhs,
 		mpl::expression<
 			mpl::expand_t,
 			std::tuple<
-				dist_row_vector<DistMatrixR> const&,
+				dist_row_vector<RingR, ColumnwiseR, RowwiseR, WrappingR> const&,
 				mpl::matrix_size<El::Int, El::Int> const&
 			>
 		> rhs
@@ -126,25 +117,62 @@ struct times_impl_DistMatrix_expand_expr_DistMatrix {
 			));
 		}
 		
-		typedef Ring_t<std::decay_t<DistMatrixL>> RingL;
-		typedef Ring_t<std::decay_t<DistMatrixR>> RingR;
-		typedef std::decay_t<RingL> _RingL_;
-		typedef std::decay_t<RingR> _RingR_;
-		
-		typedef std::common_type_t<_RingL_, _RingR_> _Ring_;
-		El::DistMatrix<_Ring_> c{lhs.Grid()};
-		c.Resize(lhs_m, lhs_n);
-		
 		//TODO: Replace with faster alg
-		BOOST_ASSERT(from.data().Height() == 1);
-		BOOST_ASSERT(from.data().Width() == lhs.Width());
+		BOOST_ASSERT(from.length() == lhs.n());
+		
 		for(El::Int j = 0; j < lhs_n; ++j) {
 			for(El::Int i = 0; i < lhs_m; ++i) {
-				c.Set(i,j, lhs.Get(i,j) * from.data().Get(0,j));
+				lhs.data().Set(i,j, lhs.data().Get(i,j) * from.data().Get(0,j));
 			}
 		}
 		
-		return c;
+		return lhs;
+	}
+	
+	
+	template <
+		typename RingL, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap WrappingL,
+		typename RingR, El::Dist ColumnwiseR, El::Dist RowwiseR, El::DistWrap WrappingR,
+		typename std::enable_if_t<
+			boost::mpl::is_not_void_<std::common_type_t<RingL, RingR>>::value
+		>* = nullptr
+	>
+	auto
+	operator()(
+		dist_matrix<RingL, ColumnwiseL, RowwiseL, WrappingL> const& lhs,
+		mpl::expression<
+			mpl::expand_t,
+			std::tuple<
+				dist_row_vector<RingR, ColumnwiseR, RowwiseR, WrappingR> const&,
+				mpl::matrix_size<El::Int, El::Int> const&
+			>
+		> rhs
+	) const {
+		//TODO: Implement more efficiently: no double assignment, first for copying and second for assignment above.
+		return (*this)(dist_matrix<RingL, ColumnwiseL, RowwiseL, WrappingL>{lhs}, rhs);
+	}
+	
+	
+	template <
+		typename RingL, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap WrappingL,
+		typename RingR, El::Dist ColumnwiseR, El::Dist RowwiseR, El::DistWrap WrappingR,
+		typename std::enable_if_t<
+			boost::mpl::is_not_void_<std::common_type_t<RingL, RingR>>::value
+		>* = nullptr
+	>
+	auto
+	operator()(
+		dist_matrix<RingL, ColumnwiseL, RowwiseL, WrappingL> && lhs,
+		mpl::expression<
+			mpl::expand_t,
+			std::tuple<
+				dist_row_vector<RingR, ColumnwiseR, RowwiseR, WrappingR> const&,
+				mpl::matrix_size<El::Int, El::Int> const&
+			>
+		> rhs
+	) const {
+		(*this)(lhs, rhs);
+		return HBRS_MPL_FWD(lhs);
 	}
 };
 
@@ -153,7 +181,7 @@ ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_TIMES_IMPLS boost::hana::make_tuple(                                                         \
 		elemental::detail::times_impl_matrix_matrix{},                                                                 \
-		elemental::detail::times_impl_DistMatrix_expand_expr_DistMatrix{}                                              \
+		elemental::detail::times_impl_dist_matrix_expand_expr_dist_matrix{}                                            \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_TIMES_HPP

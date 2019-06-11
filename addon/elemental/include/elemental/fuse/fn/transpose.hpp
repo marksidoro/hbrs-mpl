@@ -23,7 +23,6 @@
 #include <hbrs/mpl/preprocessor/core.hpp>
 #include <elemental/dt/matrix.hpp>
 #include <elemental/dt/dist_matrix.hpp>
-#include <elemental/detail/Ring.hpp>
 #include <El.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
@@ -51,19 +50,22 @@ struct transpose_impl_matrix {
 	}
 };
 
-struct transpose_impl_DistMatrix {
+struct transpose_impl_dist_matrix {
 	template<
 		typename DistMatrix,
 		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<DistMatrix>, hana::ext::El::DistMatrix_tag >::value 
+			std::is_same< hana::tag_of_t<DistMatrix>, dist_matrix_tag >::value 
 		>* = nullptr
 	>
 	auto
 	operator()(DistMatrix && m) const {
-		typedef typename std::decay_t<DistMatrix>::transType Transposed;
-		Transposed b{m.Grid()};
-		El::Transpose(HBRS_MPL_FWD(m), b);
-		return b;
+		typedef decltype(m.data()) ElDistMatrix;
+		typedef std::decay_t<ElDistMatrix> _ElDistMatrix_;
+		typedef typename _ElDistMatrix_::transType Transposed;
+		
+		Transposed b{m.data().Grid()};
+		El::Transpose(HBRS_MPL_FWD(m).data(), b);
+		return make_dist_matrix(std::move(b));
 	}
 };
 
@@ -72,7 +74,7 @@ ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_TRANSPOSE_IMPLS boost::hana::make_tuple(                                                     \
 		elemental::detail::transpose_impl_matrix{},                                                                    \
-		elemental::detail::transpose_impl_DistMatrix{}                                                                 \
+		elemental::detail::transpose_impl_dist_matrix{}                                                                \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_TRANSPOSE_HPP

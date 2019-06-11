@@ -21,7 +21,6 @@
 
 #include <elemental/config.hpp>
 #include <elemental/dt/matrix.hpp>
-#include <elemental/detail/Ring.hpp>
 #include <hbrs/mpl/dt/smc.hpp>
 #include <hbrs/mpl/dt/smr.hpp>
 #include <hbrs/mpl/dt/zas.hpp>

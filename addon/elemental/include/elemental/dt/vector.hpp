@@ -148,13 +148,13 @@ ELEMENTAL_NAMESPACE_BEGIN
 
 template<typename Ring>
 column_vector<Ring>::column_vector(El::Matrix<Ring> data) : data_{data} {
-	BOOST_ASSERT(data_.Locked() == std::is_const_v<Ring>);
+	BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
 	BOOST_ASSERT(data_.Width() == 1);
 }
 
 template<typename Ring>
 row_vector<Ring>::row_vector(El::Matrix<Ring> data) : data_{data} {
-	BOOST_ASSERT(data_.Locked() == std::is_const_v<Ring>);
+	BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
 	BOOST_ASSERT(data_.Height() == 1);
 }
 

@@ -36,7 +36,6 @@
 #include <hbrs/mpl/fn/columns.hpp>
 
 #include <elemental/dt/exception.hpp>
-#include <elemental/detail/Ring.hpp>
 #include <El.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
@@ -118,29 +117,16 @@ struct sum_impl_smrs_matrix {
 	}
 };
 
-struct sum_impl_DistMatrix_columns {
-	template <
-		typename DistMatrix,
-		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<DistMatrix>, hana::ext::El::DistMatrix_tag >::value ||
-			std::is_same< hana::tag_of_t<DistMatrix>, hana::ext::El::AbstractDistMatrix_tag >::value
-		>* = nullptr
-	>
+struct sum_impl_dist_matrix_columns {
+private:
+	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 	auto
-	operator()(
-		mpl::expression<
-			mpl::columns_t,
-			std::tuple<DistMatrix>
-		> const& expr
-	) const {
+	impl(dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& from) const {
 		using namespace hbrs::mpl;
-		auto const& from = hana::at_c<0>(expr.operands());
-		
-		typedef Ring_t<std::decay_t<DistMatrix>> Ring;
 		typedef std::decay_t<Ring> _Ring_;
 		
-		auto const& in_dmat = from;
-		auto in_dmat_sz = (*size)(in_dmat);
+		auto const& in_dmat = from.data();
+		auto in_dmat_sz = (*size)(from);
 		auto in_dmat_m = (*m)(in_dmat_sz);
 		auto in_dmat_n = (*n)(in_dmat_sz);
 		
@@ -148,8 +134,7 @@ struct sum_impl_DistMatrix_columns {
 			BOOST_THROW_EXCEPTION(incompatible_matrix_exception{} << elemental::errinfo_matrix_size{in_dmat_sz});
 		}
 		
-		//TODO: Add decision routine to choose between El::ELEMENT and El::BLOCK!
-		El::DistMatrix<_Ring_> ones_dmat{in_dmat.Grid()};
+		El::DistMatrix<_Ring_, Columnwise, Rowwise, Wrapping> ones_dmat{in_dmat.Grid()};
 		El::Ones(ones_dmat, in_dmat.Height(), 1);
 
 		//TODO: Maybe "El::STAR, El::STAR" with "El::CIRC, El::CIRC"?
@@ -165,7 +150,24 @@ struct sum_impl_DistMatrix_columns {
 			sums_dmat
 		);
 		
-		return dist_row_vector<std::decay_t<decltype(sums_dmat)>>{sums_dmat};
+		return make_dist_row_vector(sums_dmat);
+	}
+
+public:
+	template <
+		typename DistMatrix,
+		typename std::enable_if_t<
+			std::is_same_v< hana::tag_of_t<DistMatrix>, dist_matrix_tag >
+		>* = nullptr
+	>
+	auto
+	operator()(
+		mpl::expression<
+			mpl::columns_t,
+			std::tuple<DistMatrix>
+		> const& expr
+	) const {
+		return impl(hana::at_c<0>(expr.operands()));
 	}
 };
 
@@ -175,7 +177,7 @@ ELEMENTAL_NAMESPACE_END
 #define ELEMENTAL_FUSE_FN_SUM_IMPLS boost::hana::make_tuple(                                                           \
 		elemental::detail::sum_impl_smcs_matrix{},                                                                     \
 		elemental::detail::sum_impl_smrs_matrix{},                                                                     \
-		elemental::detail::sum_impl_DistMatrix_columns{}                                                               \
+		elemental::detail::sum_impl_dist_matrix_columns{}                                                              \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_SUM_HPP

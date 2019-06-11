@@ -54,7 +54,6 @@
 #include <hbrs/mpl/fn/select.hpp>
 #include <hbrs/mpl/fn/diag.hpp>
 
-#include <elemental/detail/Ring.hpp>
 #include <elemental/dt/matrix.hpp>
 #include <elemental/dt/vector.hpp>
 #include <El.hpp>
@@ -223,18 +222,11 @@ struct pca_impl_matrix {
 };
 
 //TODO: Join with pca_impl_Matrix!
-struct pca_impl_DistMatrix {
-	template<
-		typename Matrix,
-		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::DistMatrix_tag >::value
-		>* = nullptr
-	>
+struct pca_impl_dist_matrix {
+	template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 	auto
-	operator()(Matrix const& a, bool economy) const {
-		typedef Ring_t<Matrix> Ring;
+	operator()(dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& a, bool economy) const {
 		typedef std::decay_t<Ring> _Ring_;
-		
 		static_assert(!std::is_reference<Ring>::value && !std::is_const<Ring>::value, "");
 		static_assert(std::is_same<_Ring_, El::Base<_Ring_>>::value, "because S is returned as El::Base<_Ring_>");
 		
@@ -300,7 +292,7 @@ struct pca_impl_DistMatrix {
 				);
 			} else {
 				auto score_view = (*select)(score, std::make_pair(El::ALL, El::IR(DOF, a_n)));
-				El::Zero(score_view);
+				El::Zero(score_view.data());
 				
 				auto latent_view = (*select)(latent, El::IR(DOF, a_n));
 				El::Zero(latent_view.data());
@@ -338,23 +330,21 @@ struct pca_impl_DistMatrix {
 		auto coeff_n = (*n)(coeff_sz);
 		
 		//TODO: Replace this hack!
-		dist_row_vector<
-			El::DistMatrix<_Ring_, El::STAR, El::STAR, El::ELEMENT>
-		> colsign{ {a.Grid()} };
-		colsign.data().Resize(1, coeff_n);
+		dist_row_vector<Ring, El::STAR, El::STAR, El::ELEMENT> colsign{ a.data().Grid(), coeff_n };
+		
 		for(El::Int j = 0; j < coeff_n; ++j) {
 			El::Int max_idx = 0;
-			_Ring_ max_abs = (*absolute)(coeff.Get(max_idx, j));
+			_Ring_ max_abs = (*absolute)(coeff.data().Get(max_idx, j));
 			
 			for(El::Int i = 1; i < coeff_m; ++i) {
-				_Ring_ pot_abs = (*absolute)(coeff.Get(i, j));
+				_Ring_ pot_abs = (*absolute)(coeff.data().Get(i, j));
 				
 				if ( (*less)( max_abs, pot_abs) ) {
 					max_idx = i;
 					max_abs = pot_abs;
 				}
 			}
-			auto sign = (*signum)(coeff.Get(max_idx, j));
+			auto sign = (*signum)(coeff.data().Get(max_idx, j));
 			colsign.data().Set(0, j, sign);
 		}
 		
@@ -370,7 +360,7 @@ ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_PCA_IMPLS boost::hana::make_tuple(                                                           \
 		elemental::detail::pca_impl_matrix{},                                                                          \
-		elemental::detail::pca_impl_DistMatrix{}                                                                       \
+		elemental::detail::pca_impl_dist_matrix{}                                                                       \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_PCA_HPP

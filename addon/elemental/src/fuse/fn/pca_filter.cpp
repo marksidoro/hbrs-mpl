@@ -29,20 +29,20 @@ template auto pca_filter_impl_matrix::operator()(matrix<float>               con
 template auto pca_filter_impl_matrix::operator()(matrix<double>              const&,  std::function<bool(int)> const&) const;
 // template auto pca_filter_impl_matrix::operator()(matrix<El::Complex<double>> const&,  std::function<bool(int)>const& ) const;
 
-template auto pca_filter_impl_DistMatrix::operator()(El::DistMatrix<float>               const&,  std::function<bool(int)> const&) const;
-// template auto pca_filter_impl_DistMatrix::operator()(El::DistMatrix<El::Complex<float>>  const&,  std::function<bool(int)> const&) const;
-template auto pca_filter_impl_DistMatrix::operator()(El::DistMatrix<double>              const&,  std::function<bool(int)> const&) const;
-// template auto pca_filter_impl_DistMatrix::operator()(El::DistMatrix<El::Complex<double>> const&,  std::function<bool(int)> const&) const;
+template auto pca_filter_impl_matrix::operator()(dist_matrix<float>               const&,  std::function<bool(int)> const&) const;
+// template auto pca_filter_impl_matrix::operator()(dist_matrix<El::Complex<float>>  const&,  std::function<bool(int)> const&) const;
+template auto pca_filter_impl_matrix::operator()(dist_matrix<double>              const&,  std::function<bool(int)> const&) const;
+// template auto pca_filter_impl_matrix::operator()(dist_matrix<El::Complex<double>> const&,  std::function<bool(int)> const&) const;
 
 template auto pca_filter_impl_matrix::operator()(matrix<float>               const&,  std::vector<bool> const&) const;
 // template auto pca_filter_impl_matrix::operator()(matrix<El::Complex<float>>  const&,  std::vector<bool> const&) const;
 template auto pca_filter_impl_matrix::operator()(matrix<double>              const&,  std::vector<bool> const&) const;
 // template auto pca_filter_impl_matrix::operator()(matrix<El::Complex<double>> const&,  std::vector<bool> const&) const;
 
-template auto pca_filter_impl_DistMatrix::operator()(El::DistMatrix<float>               const&,  std::vector<bool> const&) const;
-// template auto pca_filter_impl_DistMatrix::operator()(El::DistMatrix<El::Complex<float>>  const&,  std::vector<bool> const&) const;
-template auto pca_filter_impl_DistMatrix::operator()(El::DistMatrix<double>              const&,  std::vector<bool> const&) const;
-// template auto pca_filter_impl_DistMatrix::operator()(El::DistMatrix<El::Complex<double>> const&,  std::vector<bool> const&) const;
+template auto pca_filter_impl_matrix::operator()(dist_matrix<float>               const&,  std::vector<bool> const&) const;
+// template auto pca_filter_impl_matrix::operator()(dist_matrix<El::Complex<float>>  const&,  std::vector<bool> const&) const;
+template auto pca_filter_impl_matrix::operator()(dist_matrix<double>              const&,  std::vector<bool> const&) const;
+// template auto pca_filter_impl_matrix::operator()(dist_matrix<El::Complex<double>> const&,  std::vector<bool> const&) const;
 
 /* namespace detail */ }
 ELEMENTAL_NAMESPACE_END

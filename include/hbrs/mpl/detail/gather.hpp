@@ -32,7 +32,6 @@
 	#include <elemental/dt/dist_matrix.hpp>
 	#include <elemental/dt/vector.hpp>
 	#include <elemental/dt/dist_vector.hpp>
-	#include <elemental/detail/Ring.hpp>
 	#include <El.hpp>
 #endif
 
@@ -82,46 +81,25 @@ gather(T && t) {
 }
 
 #ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
-	template <
-		typename T,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<T>, hana::ext::El::AbstractDistMatrix_tag >::value ||
-			std::is_same< hana::tag_of_t<T>, hana::ext::El::DistMatrix_tag >::value
-		>* = nullptr
-	>
-	constexpr auto
-	gather(T && t) {
-		typedef elemental::detail::Ring_t<std::decay_t<T>> Ring;
-		El::DistMatrix<Ring, El::CIRC, El::CIRC, El::ELEMENT> dmat{HBRS_MPL_FWD(t)};
-		El::Matrix<Ring> lmat;
-		if (dmat.Grid().Rank() == 0) {
-			El::Copy(dmat.Matrix(), lmat);
-		}
-		return elemental::make_matrix(lmat);
-	}
-	#define _DEF_GATHER_DIST_VECTOR(vector_kind)                                                                       \
-		template <                                                                                                     \
-			typename Matrix,                                                                                           \
-			typename std::enable_if_t<                                                                                 \
-				std::is_same< hana::tag_of_t<Matrix>, hana::ext::El::DistMatrix_tag >::value                           \
-			>* = nullptr                                                                                               \
-		>                                                                                                              \
+	#define _DEF_GATHER_DIST(kind)                                                                                     \
+		template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>                         \
 		constexpr auto                                                                                                 \
-		gather(elemental::dist_ ## vector_kind ## _vector<Matrix> const& t) {                                          \
-			typedef elemental::detail::Ring_t<std::decay_t<Matrix>> Ring;                                              \
-			El::DistMatrix<Ring, El::CIRC, El::CIRC, El::ELEMENT> dmat{t.data()};                                      \
+		gather(elemental::dist_ ## kind<Ring, Columnwise, Rowwise, Wrapping> const& t) {                               \
+			typedef std::decay_t<Ring> _Ring_;                                                                         \
+			El::DistMatrix<_Ring_, El::CIRC, El::CIRC, Wrapping> dmat{t.data()};                                       \
 			                                                                                                           \
 			if (dmat.Grid().Rank() == 0) {                                                                             \
-				return elemental::make_ ## vector_kind ## _vector(dmat.Matrix());                                      \
+				return elemental::make_ ## kind(dmat.Matrix());                                                        \
 			} else {                                                                                                   \
-				return elemental::make_ ## vector_kind ## _vector(El::Matrix<Ring>{dmat.Height(), dmat.Width()});      \
+				return elemental::make_ ## kind(El::Matrix<_Ring_>{dmat.Height(), dmat.Width()});                      \
 			}                                                                                                          \
 		}
 	
-	_DEF_GATHER_DIST_VECTOR(column)
-	_DEF_GATHER_DIST_VECTOR(row)
+	_DEF_GATHER_DIST(column_vector)
+	_DEF_GATHER_DIST(row_vector)
+	_DEF_GATHER_DIST(matrix)
 	
-	#undef _DEF_GATHER_DIST_VECTOR
+	#undef _DEF_GATHER_DIST
 #endif
 
 /* namespace detail */ }

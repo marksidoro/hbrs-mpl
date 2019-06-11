@@ -48,27 +48,26 @@ struct diag_impl_matrix {
 	}
 };
 
-//TODO: replace this hack!
-struct diag_impl_DistMatrix {
-	template <
-		typename DistMatrix,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<DistMatrix>, hana::ext::El::DistMatrix_tag >::value
-		>* = nullptr
-	>
+//TODO: replace with a wrapper struct?!
+struct diag_impl_dist_matrix {
+	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 	auto
-	operator()(DistMatrix const& m) const {
+	operator()(dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& m) const {
 		using namespace hbrs::mpl;
-		El::Int v_sz = El::Min(m.Height(), m.Width());
-		typedef typename std::decay_t<DistMatrix>::diagType Diag;
-		Diag v{m.Grid()};
+		
+		typedef decltype(m.data()) ElDistMatrix;
+		typedef std::decay_t<ElDistMatrix> _ElDistMatrix_;
+		typedef typename _ElDistMatrix_::diagType Diag;
+		Diag v{m.data().Grid()};
+		
+		El::Int v_sz = El::Min(m.m(), m.n());
 		v.Resize(v_sz, 1);
 		
 		for(El::Int i = 0; i < v_sz; ++i) {
-			v.Set(i,0, m.Get(i,i)); //TODO: Replace global with local accesses?!
+			v.Set(i,0, m.data().Get(i,i)); //TODO: Replace global with local accesses?!
 		}
 		
-		return dist_column_vector<Diag>{v};
+		return make_dist_column_vector(std::move(v));
 	}
 };
 
@@ -77,7 +76,7 @@ ELEMENTAL_NAMESPACE_END
 
 #define ELEMENTAL_FUSE_FN_DIAG_IMPLS boost::hana::make_tuple(                                                          \
 		elemental::detail::diag_impl_matrix{},                                                                         \
-		elemental::detail::diag_impl_DistMatrix{}                                                                      \
+		elemental::detail::diag_impl_dist_matrix{}                                                                     \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_DIAG_HPP

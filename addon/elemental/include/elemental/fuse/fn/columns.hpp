@@ -68,11 +68,11 @@ struct columns_impl_matrix_2 {
 	}
 };
 
-struct columns_impl_DistMatrix {
+struct columns_impl_dist_matrix {
 	template <
 		typename DistMatrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<DistMatrix>, hana::ext::El::DistMatrix_tag >::value
+			std::is_same< hana::tag_of_t<DistMatrix>, dist_matrix_tag >::value
 		>* = nullptr
 	>
 	constexpr auto
@@ -87,7 +87,7 @@ ELEMENTAL_NAMESPACE_END
 #define ELEMENTAL_FUSE_FN_COLUMNS_IMPLS boost::hana::make_tuple(                                                       \
 		elemental::detail::columns_impl_matrix_1{},                                                                    \
 		elemental::detail::columns_impl_matrix_2{},                                                                    \
-		elemental::detail::columns_impl_DistMatrix{}                                                                   \
+		elemental::detail::columns_impl_dist_matrix{}                                                                   \
 	)
 
 #endif // !ELEMENTAL_FUSE_FN_COLUMNS_HPP

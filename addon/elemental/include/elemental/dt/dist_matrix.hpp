@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,46 +33,130 @@
 #include <type_traits>
 #include <initializer_list>
 
-BOOST_HANA_NAMESPACE_BEGIN
+ELEMENTAL_NAMESPACE_BEGIN
+namespace mpl = hbrs::mpl;
 
-template <typename Ring>
-struct tag_of<El::AbstractDistMatrix<Ring>> {
-	using type = ext::El::AbstractDistMatrix_tag;
+template<
+	typename Ring = double,
+	El::Dist Columnwise = El::MC,
+	El::Dist Rowwise = El::MR,
+	El::DistWrap Wrapping = El::ELEMENT
+>
+struct dist_matrix {
+	template<typename Ring_, El::Dist Columnwise_, El::Dist Rowwise_, El::DistWrap Wrapping_>
+	friend struct dist_matrix;
+	
+	template<
+		typename Ring_ = Ring,
+		El::Dist Columnwise_ = Columnwise,
+		El::Dist Rowwise_ = Rowwise,
+		El::DistWrap Wrapping_ = Wrapping,
+		typename std::enable_if_t<
+			std::is_same_v<std::remove_const_t<Ring>, Ring_>
+		>* = nullptr
+	>
+	dist_matrix(El::DistMatrix<Ring_, Columnwise_, Rowwise_, Wrapping_> data) : data_{data} {
+		BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
+	}
+	
+	dist_matrix(El::Grid const& grid, El::Int m, El::Int n) : data_{grid} {
+		data_.Resize(m, n);
+		El::Zero(data_);
+	}
+	
+	template<
+		typename Ring_ = Ring,
+		El::Dist Columnwise_ = Columnwise,
+		El::Dist Rowwise_ = Rowwise,
+		El::DistWrap Wrapping_ = Wrapping,
+		typename std::enable_if_t<
+			std::is_same_v<std::remove_const_t<Ring>, Ring_>
+		>* = nullptr
+	>
+	dist_matrix(dist_matrix<Ring_, Columnwise_, Rowwise_, Wrapping_> const& o) : data_{o.data_} {}
+	
+	dist_matrix(dist_matrix const&) = default;
+	dist_matrix(dist_matrix &&) = default;
+	
+	dist_matrix&
+	operator=(dist_matrix const&) = default;
+	dist_matrix&
+	operator=(dist_matrix &&) = default;
+	
+	auto
+	m() const {
+		return data_.Height();
+	}
+	
+	auto
+	n() const {
+		return data_.Width();
+	}
+
+	mpl::matrix_size<El::Int, El::Int>
+	size() const {
+		return { m(), n() };
+	}
+	
+	decltype(auto)
+	data() & { return (data_); };
+
+	decltype(auto)
+	data() const& { return (data_); }; 
+
+	decltype(auto)
+	data() && { return HBRS_MPL_FWD(data_); }; 
+
+private:
+	El::DistMatrix<
+		std::remove_const_t<Ring> /* elemental handles constness using a boolean El::Matrix<>.Locked() */,
+		Columnwise, Rowwise, Wrapping
+	> data_;
 };
 
-// See Elemental/include/El/core.hpp
-template<typename T, El::Dist U, El::Dist V, El::DistWrap W>
-struct tag_of<El::DistMatrix<T, U, V, W>> {
-	using type = ext::El::DistMatrix_tag;
+ELEMENTAL_NAMESPACE_END
+
+BOOST_HANA_NAMESPACE_BEGIN
+
+/* Ref.: Elemental/include/El/core.hpp */
+template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
+struct tag_of<elemental::dist_matrix<Ring, Columnwise, Rowwise, Wrapping>> {
+	using type = elemental::dist_matrix_tag;
 };
 
 template <>
-struct make_impl<ext::El::DistMatrix_tag> {
-	template <typename Ring, El::Dist U, El::Dist V, El::DistWrap W>
-	static auto
+struct make_impl<elemental::dist_matrix_tag> {
+	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
+	static elemental::dist_matrix<Ring, Columnwise, Rowwise, Wrapping>
 	apply(
 		El::Grid const& grid,
 		basic_type<Ring>,
 		hbrs::mpl::matrix_distribution<
-			integral_constant<El::Dist, U>, integral_constant<El::Dist, V>, integral_constant<El::DistWrap, W>
+			integral_constant<El::Dist, Columnwise>,
+			integral_constant<El::Dist, Rowwise>,
+			integral_constant<El::DistWrap, Wrapping>
 		>,
 		hbrs::mpl::matrix_size<El::Int, El::Int> sz
 	) {
-		El::DistMatrix<Ring, U, V, W> dmat{grid};
-		dmat.Resize(sz.m(), sz.n());
-		return dmat;
+		return { grid, sz.m(), sz.n() };
+	}
+	
+	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
+	static elemental::dist_matrix<Ring, Columnwise, Rowwise, Wrapping>
+	apply(El::DistMatrix<Ring, Columnwise, Rowwise, Wrapping> dmat) {
+		return { dmat };
 	}
 	
 	template <typename Ring>
-	static auto
+	static elemental::dist_matrix<Ring, El::STAR, El::STAR, El::ELEMENT>
 	apply(
 		El::Grid const& grid,
 		El::Matrix<Ring> local
 	) {
-		El::DistMatrix<std::remove_const_t<Ring>, El::STAR, El::STAR, El::ELEMENT> dmat{grid};
+		El::DistMatrix<Ring, El::STAR, El::STAR, El::ELEMENT> dmat{grid};
 		dmat.Resize(local.Height(), local.Width());
 		dmat.Matrix() = local;
-		return dmat;
+		return { dmat };
 	}
 	
 	template <typename Ring>
