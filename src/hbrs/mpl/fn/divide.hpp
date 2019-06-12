@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_DIVIDE_HPP
 #define HBRS_MPL_FN_DIVIDE_HPP
 
-#include <hbrs/mpl/fwd/fn/divide.hpp>
+#include <hbrs/mpl/fn/divide/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

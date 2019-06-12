@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_MINUS_HPP
 #define HBRS_MPL_FN_MINUS_HPP
 
-#include <hbrs/mpl/fwd/fn/minus.hpp>
+#include <hbrs/mpl/fn/minus/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

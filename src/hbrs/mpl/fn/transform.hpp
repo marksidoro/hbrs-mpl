@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_TRANSFORM_HPP
 #define HBRS_MPL_FN_TRANSFORM_HPP
 
-#include <hbrs/mpl/fwd/fn/transform.hpp>
+#include <hbrs/mpl/fn/transform/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

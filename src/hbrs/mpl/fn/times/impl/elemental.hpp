@@ -23,7 +23,7 @@
 #include <elemental/fwd/dt/dist_matrix.hpp>
 #include <elemental/fwd/dt/vector.hpp>
 #include <elemental/fwd/dt/dist_vector.hpp>
-#include <hbrs/mpl/fwd/fn/expand.hpp>
+#include <hbrs/mpl/fn/expand/fwd.hpp>
 #include <hbrs/mpl/dt/expression.hpp>
 #include <elemental/dt/exception.hpp>
 

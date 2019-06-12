@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_GREATER_HPP
 #define HBRS_MPL_FN_GREATER_HPP
 
-#include <hbrs/mpl/fwd/fn/greater.hpp>
+#include <hbrs/mpl/fn/greater/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

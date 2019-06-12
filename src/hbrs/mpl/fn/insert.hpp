@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_INSERT_HPP
 #define HBRS_MPL_FN_INSERT_HPP
 
-#include <hbrs/mpl/fwd/fn/insert.hpp>
+#include <hbrs/mpl/fn/insert/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

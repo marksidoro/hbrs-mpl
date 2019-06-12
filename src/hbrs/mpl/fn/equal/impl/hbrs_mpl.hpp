@@ -18,7 +18,7 @@
 #define HBRS_MPL_FUSE_HBRS_MPL_FN_EQUAL_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/fwd/fn/equal.hpp>
+#include <hbrs/mpl/fn/equal/fwd.hpp>
 #include <hbrs/mpl/detail/function_object.hpp>
 #include <hbrs/mpl/fwd/dt/matrix_size.hpp>
 #include <hbrs/mpl/fwd/dt/matrix_index.hpp>

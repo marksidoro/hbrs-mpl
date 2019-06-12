@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_MAXIMUM_HPP
 #define HBRS_MPL_FN_MAXIMUM_HPP
 
-#include <hbrs/mpl/fwd/fn/maximum.hpp>
+#include <hbrs/mpl/fn/maximum/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

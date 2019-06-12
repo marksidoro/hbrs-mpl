@@ -35,7 +35,7 @@
 
 #include <hbrs/mpl/dt/smcs.hpp>
 #include <hbrs/mpl/dt/smrs.hpp>
-#include <hbrs/mpl/fwd/fn/columns.hpp>
+#include <hbrs/mpl/fn/columns/fwd.hpp>
 #include <hbrs/mpl/dt/expression.hpp>
 
 #include <elemental/dt/exception.hpp>

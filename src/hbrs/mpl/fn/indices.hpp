@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_INDICES_HPP
 #define HBRS_MPL_FN_INDICES_HPP
 
-#include <hbrs/mpl/fwd/fn/indices.hpp>
+#include <hbrs/mpl/fn/indices/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

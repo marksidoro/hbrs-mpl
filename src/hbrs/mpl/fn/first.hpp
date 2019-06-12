@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_FIRST_HPP
 #define HBRS_MPL_FN_FIRST_HPP
 
-#include <hbrs/mpl/fwd/fn/first.hpp>
+#include <hbrs/mpl/fn/first/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

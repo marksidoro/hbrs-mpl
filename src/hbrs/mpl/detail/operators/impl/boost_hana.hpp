@@ -17,20 +17,20 @@
 #ifndef HBRS_MPL_FUSE_BOOST_HANA_DETAIL_OPERATORS_HPP
 #define HBRS_MPL_FUSE_BOOST_HANA_DETAIL_OPERATORS_HPP
 
-#include <hbrs/mpl/fwd/fn/plus.hpp>
-#include <hbrs/mpl/fwd/fn/minus.hpp>
-#include <hbrs/mpl/fwd/fn/multiply.hpp>
-#include <hbrs/mpl/fwd/fn/divide.hpp>
-#include <hbrs/mpl/fwd/fn/modulo.hpp>
-#include <hbrs/mpl/fwd/fn/equal.hpp>
-#include <hbrs/mpl/fwd/fn/not_equal.hpp>
-#include <hbrs/mpl/fwd/fn/less.hpp>
-#include <hbrs/mpl/fwd/fn/greater.hpp>
-#include <hbrs/mpl/fwd/fn/less_equal.hpp>
-#include <hbrs/mpl/fwd/fn/greater_equal.hpp>
-#include <hbrs/mpl/fwd/fn/not.hpp>
-#include <hbrs/mpl/fwd/fn/and.hpp>
-#include <hbrs/mpl/fwd/fn/or.hpp>
+#include <hbrs/mpl/fn/plus/fwd.hpp>
+#include <hbrs/mpl/fn/minus/fwd.hpp>
+#include <hbrs/mpl/fn/multiply/fwd.hpp>
+#include <hbrs/mpl/fn/divide/fwd.hpp>
+#include <hbrs/mpl/fn/modulo/fwd.hpp>
+#include <hbrs/mpl/fn/equal/fwd.hpp>
+#include <hbrs/mpl/fn/not_equal/fwd.hpp>
+#include <hbrs/mpl/fn/less/fwd.hpp>
+#include <hbrs/mpl/fn/greater/fwd.hpp>
+#include <hbrs/mpl/fn/less_equal/fwd.hpp>
+#include <hbrs/mpl/fn/greater_equal/fwd.hpp>
+#include <hbrs/mpl/fn/not/fwd.hpp>
+#include <hbrs/mpl/fn/and/fwd.hpp>
+#include <hbrs/mpl/fn/or/fwd.hpp>
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/tuple.hpp>

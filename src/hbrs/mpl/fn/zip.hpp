@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_ZIP_HPP
 #define HBRS_MPL_FN_ZIP_HPP
 
-#include <hbrs/mpl/fwd/fn/zip.hpp>
+#include <hbrs/mpl/fn/zip/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

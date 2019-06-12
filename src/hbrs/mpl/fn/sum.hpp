@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_SUM_HPP
 #define HBRS_MPL_FN_SUM_HPP
 
-#include <hbrs/mpl/fwd/fn/sum.hpp>
+#include <hbrs/mpl/fn/sum/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

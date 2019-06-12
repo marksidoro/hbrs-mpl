@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_FOLD_LEFT_HPP
 #define HBRS_MPL_FN_FOLD_LEFT_HPP
 
-#include <hbrs/mpl/fwd/fn/fold_left.hpp>
+#include <hbrs/mpl/fn/fold_left/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

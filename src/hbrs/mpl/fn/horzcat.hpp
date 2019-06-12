@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_HORZCAT_HPP
 #define HBRS_MPL_FN_HORZCAT_HPP
 
-#include <hbrs/mpl/fwd/fn/horzcat.hpp>
+#include <hbrs/mpl/fn/horzcat/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

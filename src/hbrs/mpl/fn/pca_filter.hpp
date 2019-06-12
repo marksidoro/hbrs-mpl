@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_PCA_FILTER_HPP
 #define HBRS_MPL_FN_PCA_FILTER_HPP
 
-#include <hbrs/mpl/fwd/fn/pca_filter.hpp>
+#include <hbrs/mpl/fn/pca_filter/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

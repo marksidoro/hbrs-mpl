@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_EXPAND_HPP
 #define HBRS_MPL_FN_EXPAND_HPP
 
-#include <hbrs/mpl/fwd/fn/expand.hpp>
+#include <hbrs/mpl/fn/expand/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

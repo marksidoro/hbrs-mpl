@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_DIAG_HPP
 #define HBRS_MPL_FN_DIAG_HPP
 
-#include <hbrs/mpl/fwd/fn/diag.hpp>
+#include <hbrs/mpl/fn/diag/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

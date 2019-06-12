@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_COLUMNS_HPP
 #define HBRS_MPL_FN_COLUMNS_HPP
 
-#include <hbrs/mpl/fwd/fn/columns.hpp>
+#include <hbrs/mpl/fn/columns/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

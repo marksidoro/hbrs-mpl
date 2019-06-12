@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_BIDIAG_HPP
 #define HBRS_MPL_FN_BIDIAG_HPP
 
-#include <hbrs/mpl/fwd/fn/bidiag.hpp>
+#include <hbrs/mpl/fn/bidiag/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

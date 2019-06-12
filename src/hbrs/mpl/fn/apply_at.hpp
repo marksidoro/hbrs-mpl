@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_APPLY_AT_HPP
 #define HBRS_MPL_FN_APPLY_AT_HPP
 
-#include <hbrs/mpl/fwd/fn/apply_at.hpp>
+#include <hbrs/mpl/fn/apply_at/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

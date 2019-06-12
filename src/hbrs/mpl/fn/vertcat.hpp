@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_VERTCAT_HPP
 #define HBRS_MPL_FN_VERTCAT_HPP
 
-#include <hbrs/mpl/fwd/fn/vertcat.hpp>
+#include <hbrs/mpl/fn/vertcat/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

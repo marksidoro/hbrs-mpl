@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_POSTINCREMENT_HPP
 #define HBRS_MPL_FN_POSTINCREMENT_HPP
 
-#include <hbrs/mpl/fwd/fn/postincrement.hpp>
+#include <hbrs/mpl/fn/postincrement/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

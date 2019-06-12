@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_CONTAINS_HPP
 #define HBRS_MPL_FN_CONTAINS_HPP
 
-#include <hbrs/mpl/fwd/fn/contains.hpp>
+#include <hbrs/mpl/fn/contains/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

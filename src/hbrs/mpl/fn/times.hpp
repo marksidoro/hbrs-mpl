@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_TIMES_HPP
 #define HBRS_MPL_FN_TIMES_HPP
 
-#include <hbrs/mpl/fwd/fn/times.hpp>
+#include <hbrs/mpl/fn/times/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

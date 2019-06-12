@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_EQUAL_HPP
 #define HBRS_MPL_FN_EQUAL_HPP
 
-#include <hbrs/mpl/fwd/fn/equal.hpp>
+#include <hbrs/mpl/fn/equal/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

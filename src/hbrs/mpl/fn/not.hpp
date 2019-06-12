@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_NOT_HPP
 #define HBRS_MPL_FN_NOT_HPP
 
-#include <hbrs/mpl/fwd/fn/not.hpp>
+#include <hbrs/mpl/fn/not/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_ID_HPP
 #define HBRS_MPL_FN_ID_HPP
 
-#include <hbrs/mpl/fwd/fn/id.hpp>
+#include <hbrs/mpl/fn/id/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

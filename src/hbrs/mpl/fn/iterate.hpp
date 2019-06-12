@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_ITERATE_HPP
 #define HBRS_MPL_FN_ITERATE_HPP
 
-#include <hbrs/mpl/fwd/fn/iterate.hpp>
+#include <hbrs/mpl/fn/iterate/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_SIGNUM_HPP
 #define HBRS_MPL_FN_SIGNUM_HPP
 
-#include <hbrs/mpl/fwd/fn/signum.hpp>
+#include <hbrs/mpl/fn/signum/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

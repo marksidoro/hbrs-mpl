@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_MEAN_HPP
 #define HBRS_MPL_FN_MEAN_HPP
 
-#include <hbrs/mpl/fwd/fn/mean.hpp>
+#include <hbrs/mpl/fn/mean/fwd.hpp>
 #include <hbrs/mpl/dt/function.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

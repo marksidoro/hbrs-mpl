@@ -20,7 +20,7 @@
 #include <elemental/config.hpp>
 #include <hbrs/mpl/dt/el_dist_matrix.hpp>
 #include <hbrs/mpl/dt/el_dist_vector.hpp>
-#include <hbrs/mpl/fwd/fn/expand.hpp>
+#include <hbrs/mpl/fn/expand/fwd.hpp>
 #include <hbrs/mpl/dt/expression.hpp>
 
 #include <El.hpp>

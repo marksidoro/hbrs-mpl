@@ -27,7 +27,7 @@
 #include <ostream>
 
 /* NOTE: 
- * Before we define our new types we can only include the forward declarations <hbrs/mpl/fwd/fn/equal.hpp>... .
+ * Before we define our new types we can only include the forward declarations <hbrs/mpl/fn/equal/fwd.hpp>... .
  * Once all types have been defined we can include the function definitions <hbrs/mpl/fn/equal.hpp>... .
  * Practically this means that your header must look like this:
  * 
@@ -40,7 +40,7 @@
  * 
  * Reason:
  * For example, matrix_index.hpp includes axis.hpp. If axis.hpp would include <hbrs/mpl/fn/equal.hpp>... instead of only
- * its fwd decls <hbrs/mpl/fwd/fn/equal.hpp>..., then all their implementations would be included, too. 
+ * its fwd decls <hbrs/mpl/fn/equal/fwd.hpp>..., then all their implementations would be included, too. 
  * 
  * (a) They might include matrix_size.hpp which again includes axis.hpp. But as axis.hpp is not yet parsed completely 
  *     (preprocessor is still parsing its includes), the pp macros HBRS_MPL_DEFINE_AXIS_2D... are not yet defined and 
@@ -49,9 +49,9 @@
  *     might silently cause unwanted behaviour if e.g. types are defined but equality operators are not.
  */
 
-#include <hbrs/mpl/fwd/fn/equal.hpp>
-#include <hbrs/mpl/fwd/fn/and.hpp>
-#include <hbrs/mpl/fwd/fn/not.hpp>
+#include <hbrs/mpl/fn/equal/fwd.hpp>
+#include <hbrs/mpl/fn/and/fwd.hpp>
+#include <hbrs/mpl/fn/not/fwd.hpp>
 
 //TODO: Make a runtime integral type analogous to hana::integral_constant that encapsulates all this copy constructions
 
