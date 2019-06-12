@@ -18,7 +18,7 @@
 #define ELEMENTAL_FUSE_FN_PCA_HPP
 
 #include <elemental/config.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
@@ -52,8 +52,8 @@
 #include <hbrs/mpl/fn/select.hpp>
 #include <hbrs/mpl/fn/diag.hpp>
 
-#include <elemental/dt/matrix.hpp>
-#include <elemental/dt/vector.hpp>
+#include <hbrs/mpl/dt/el_matrix.hpp>
+#include <hbrs/mpl/dt/el_vector.hpp>
 #include <El.hpp>
 
 ELEMENTAL_NAMESPACE_BEGIN

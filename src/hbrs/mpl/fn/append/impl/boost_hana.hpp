@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FUSE_BOOST_HANA_FN_APPEND_HPP
 #define HBRS_MPL_FUSE_BOOST_HANA_FN_APPEND_HPP
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/concat.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>

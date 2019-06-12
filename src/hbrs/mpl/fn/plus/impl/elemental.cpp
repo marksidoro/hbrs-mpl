@@ -16,8 +16,8 @@
 
 #include <hbrs/mpl/fn/plus.hpp>
 
-#include <elemental/dt/dist_matrix.hpp>
-#include <elemental/dt/dist_vector.hpp>
+#include <hbrs/mpl/dt/el_dist_matrix.hpp>
+#include <hbrs/mpl/dt/el_dist_vector.hpp>
 
 ELEMENTAL_NAMESPACE_BEGIN
 namespace detail {

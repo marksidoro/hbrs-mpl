@@ -124,7 +124,7 @@ script:
     (
       cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} "-DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX}" \
         -DMPI_C_COMPILER=/usr/bin/mpicc.mpich -DMPI_CXX_COMPILER=/usr/bin/mpicxx.mpich \
-        -DHBRS_MPL_ENABLE_TESTS=ON -DHBRS_MPL_ENABLE_ADDON_ELEMENTAL=OFF -DHBRS_MPL_ENABLE_ADDON_MATLAB=OFF .. ||
+        -DHBRS_MPL_ENABLE_TESTS=ON -DHBRS_MPL_ENABLE_ELEMENTAL=OFF -DHBRS_MPL_ENABLE_MATLAB=OFF .. ||
           (cat CMakeFiles/CMakeError.log; travis_terminate 1)
     ) &&
     make -j$(nproc) &&

@@ -18,9 +18,9 @@
 #define ELEMENTAL_FUSE_FN_TRANSPOSE_HPP
 
 #include <elemental/config.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
-#include <elemental/dt/matrix.hpp>
-#include <elemental/dt/dist_matrix.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
+#include <hbrs/mpl/dt/el_matrix.hpp>
+#include <hbrs/mpl/dt/el_dist_matrix.hpp>
 #include <El.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>

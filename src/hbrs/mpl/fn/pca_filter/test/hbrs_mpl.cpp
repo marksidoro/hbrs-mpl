@@ -31,12 +31,12 @@
 #include <hbrs/mpl/fn/columns.hpp>
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/mean.hpp>
-#ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
-	#include <elemental/dt/matrix.hpp>
-	#include <elemental/dt/dist_matrix.hpp>
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+	#include <hbrs/mpl/dt/el_matrix.hpp>
+	#include <hbrs/mpl/dt/el_dist_matrix.hpp>
 #endif
-#ifdef HBRS_MPL_ENABLE_ADDON_MATLAB
-	#include <matlab/dt/matrix.hpp>
+#ifdef HBRS_MPL_ENABLE_MATLAB
+	#include <hbrs/mpl/dt/ml_matrix.hpp>
 #endif
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/transform.hpp>
@@ -85,13 +85,13 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 			auto n_ = (*n)(sz_);
 			
 			auto funs = hana::drop_back(hana::make_tuple(
-				#ifdef HBRS_MPL_ENABLE_ADDON_MATLAB
+				#ifdef HBRS_MPL_ENABLE_MATLAB
 				[](auto && a, auto keep) {
 					return matlab::detail::pca_filter_impl{}(matlab::make_matrix(HBRS_MPL_FWD(a)), keep);
 				},
 				#endif
 				
-				#ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
+				#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 				[](auto && a, auto keep) {
 					return elemental::detail::pca_filter_impl_matrix{}(elemental::make_matrix(HBRS_MPL_FWD(a)), keep);
 				},

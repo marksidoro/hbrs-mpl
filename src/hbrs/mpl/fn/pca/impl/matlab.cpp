@@ -17,8 +17,8 @@
 #include <hbrs/mpl/fn/pca.hpp>
 #include <hbrs/mpl/dt/smr.hpp>
 #include <hbrs/mpl/dt/pca_result.hpp>
-#include <matlab/dt/matrix.hpp>
-#include <matlab/dt/vector.hpp>
+#include <hbrs/mpl/dt/ml_matrix.hpp>
+#include <hbrs/mpl/dt/ml_vector.hpp>
 
 extern "C" {
 	#include <matlab/cxn/pca_level0.h>

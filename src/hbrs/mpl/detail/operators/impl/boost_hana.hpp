@@ -32,7 +32,7 @@
 #include <hbrs/mpl/fwd/fn/and.hpp>
 #include <hbrs/mpl/fwd/fn/or.hpp>
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <hbrs/mpl/detail/has_operator.hpp>

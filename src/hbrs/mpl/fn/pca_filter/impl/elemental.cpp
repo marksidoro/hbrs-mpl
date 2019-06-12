@@ -16,8 +16,8 @@
 
 #include <hbrs/mpl/fn/pca_filter.hpp>
 
-#include <elemental/dt/matrix.hpp>
-#include <elemental/dt/dist_matrix.hpp>
+#include <hbrs/mpl/dt/el_matrix.hpp>
+#include <hbrs/mpl/dt/el_dist_matrix.hpp>
 
 ELEMENTAL_NAMESPACE_BEGIN
 namespace detail {

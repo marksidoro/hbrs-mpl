@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FUSE_STD_FN_INSERT_HPP
 #define HBRS_MPL_FUSE_STD_FN_INSERT_HPP
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 
 #include <hbrs/mpl/ext/boost/hana/ext/std/map.hpp>
 #include <boost/hana/ext/std/pair.hpp>

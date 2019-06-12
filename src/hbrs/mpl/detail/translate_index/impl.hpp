@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DETAIL_TRANSLATE_INDEX_HPP
-#define HBRS_MPL_DETAIL_TRANSLATE_INDEX_HPP
+#ifndef HBRS_MPL_DETAIL_TRANSLATE_INDEX_IMPL_HPP
+#define HBRS_MPL_DETAIL_TRANSLATE_INDEX_IMPL_HPP
 
-#include <hbrs/mpl/fwd/detail/translate_index.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include "fwd.hpp"
+
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/fn/m.hpp>
 #include <hbrs/mpl/fn/n.hpp>
 #include <hbrs/mpl/fn/multiply.hpp>
@@ -155,4 +156,4 @@ translate_index(Size && sz, Index && ix, StorageOrder && so) {
 HBRS_MPL_NAMESPACE_END
 
 
-#endif // !HBRS_MPL_DETAIL_TRANSLATE_INDEX_HPP
+#endif // !HBRS_MPL_DETAIL_TRANSLATE_INDEX_IMPL_HPP

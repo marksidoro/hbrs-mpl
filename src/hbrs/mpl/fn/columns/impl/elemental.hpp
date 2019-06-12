@@ -18,9 +18,9 @@
 #define ELEMENTAL_FUSE_FN_COLUMNS_HPP
 
 #include <elemental/config.hpp>
-#include <elemental/dt/matrix.hpp>
-#include <elemental/dt/dist_matrix.hpp>
-#include <elemental/dt/vector.hpp>
+#include <hbrs/mpl/dt/el_matrix.hpp>
+#include <hbrs/mpl/dt/el_dist_matrix.hpp>
+#include <hbrs/mpl/dt/el_vector.hpp>
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/m.hpp>
 #include <hbrs/mpl/fn/n.hpp>

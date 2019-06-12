@@ -18,7 +18,7 @@
 #define HBRS_MPL_FUSE_STD_FN_TRANSFORM_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/core/evaluate.hpp>
 #include <hbrs/mpl/detail/transform_sequence.hpp>
 #include <boost/hana/tuple.hpp>

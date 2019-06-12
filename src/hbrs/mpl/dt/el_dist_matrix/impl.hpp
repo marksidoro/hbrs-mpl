@@ -19,7 +19,7 @@
 
 #include <elemental/config.hpp>
 #include <elemental/fwd/dt/dist_matrix.hpp>
-#include <elemental/dt/matrix.hpp>
+#include <hbrs/mpl/dt/el_matrix.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>
 #include <hbrs/mpl/dt/storage_order.hpp>

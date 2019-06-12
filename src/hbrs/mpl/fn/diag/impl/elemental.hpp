@@ -18,12 +18,12 @@
 #define ELEMENTAL_FUSE_FN_DIAG_HPP
 
 #include <elemental/config.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 
 #include <elemental/fwd/dt/matrix.hpp>
 #include <elemental/fwd/dt/dist_matrix.hpp>
-#include <elemental/dt/vector.hpp>
-#include <elemental/dt/dist_vector.hpp>
+#include <hbrs/mpl/dt/el_vector.hpp>
+#include <hbrs/mpl/dt/el_dist_vector.hpp>
 #include <hbrs/mpl/fn/at.hpp>
 #include <El.hpp>
 

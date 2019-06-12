@@ -15,7 +15,7 @@
  */
 
 #include <hbrs/mpl/fn/multiply.hpp>
-#include <matlab/dt/matrix.hpp>
+#include <hbrs/mpl/dt/ml_matrix.hpp>
 
 extern "C" {
 	#include <matlab/cxn/multiply_mm.h>

@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FUSE_STD_FN_APPLY_HPP
 #define HBRS_MPL_FUSE_STD_FN_APPLY_HPP
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/is_applicable.hpp>
 #include <boost/hana/unpack.hpp>
 #include <boost/hana/ext/std/tuple.hpp>

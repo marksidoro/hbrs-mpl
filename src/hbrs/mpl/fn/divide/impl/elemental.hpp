@@ -21,7 +21,7 @@
 #include <El.hpp>
 #include <elemental/fwd/dt/vector.hpp>
 #include <elemental/fwd/dt/dist_vector.hpp>
-#include <elemental/dt/dist_matrix.hpp> // TODO: Remove once dist_column_vector is correctly implemented
+#include <hbrs/mpl/dt/el_dist_matrix.hpp> // TODO: Remove once dist_column_vector is correctly implemented
 #include <boost/hana/tuple.hpp>
 #include <type_traits>
 

@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FUSE_HBRS_MPL_FN_COLUMNS_HPP
 #define HBRS_MPL_FUSE_HBRS_MPL_FN_COLUMNS_HPP
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/fwd/dt/sm.hpp>
 #include <hbrs/mpl/fwd/dt/rtsam.hpp>
 #include <hbrs/mpl/fwd/dt/ctsam.hpp>

@@ -36,7 +36,7 @@
 #include <hbrs/mpl/fwd/fn/and.hpp>
 #include <hbrs/mpl/fwd/fn/or.hpp>
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/is_braces_constructible.hpp>
 #include <hbrs/mpl/core/evaluate.hpp>
 #include <boost/mpl/if.hpp>

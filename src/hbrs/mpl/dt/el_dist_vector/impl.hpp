@@ -18,8 +18,8 @@
 #define ELEMENTAL_DT_DIST_VECTOR_HPP
 
 #include <elemental/fwd/dt/dist_vector.hpp>
-#include <elemental/dt/vector.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/dt/el_vector.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 #include <initializer_list>

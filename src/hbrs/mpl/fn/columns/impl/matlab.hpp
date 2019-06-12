@@ -17,7 +17,7 @@
 #ifndef MATLAB_FUSE_FN_COLUMNS_HPP
 #define MATLAB_FUSE_FN_COLUMNS_HPP
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <matlab/fwd/dt/matrix.hpp>
 #include <hbrs/mpl/dt/smcs.hpp>
 #include <boost/hana/tuple.hpp>

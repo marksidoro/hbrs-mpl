@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FUSE_HBRS_MPL_FN_EXPAND_HPP
 #define HBRS_MPL_FUSE_HBRS_MPL_FN_EXPAND_HPP
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 
 #include <hbrs/mpl/fwd/dt/srv.hpp>
 #include <hbrs/mpl/fwd/dt/matrix_size.hpp>

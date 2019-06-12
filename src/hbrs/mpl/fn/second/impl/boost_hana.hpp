@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FUSE_BOOST_HANA_FN_SECOND_HPP
 #define HBRS_MPL_FUSE_BOOST_HANA_FN_SECOND_HPP
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/pair.hpp>
 #include <boost/hana/second.hpp>
 #include <boost/hana/tuple.hpp>

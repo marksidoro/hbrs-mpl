@@ -22,7 +22,7 @@
 #include <elemental/fwd/dt/dist_matrix.hpp>
 #include <elemental/fwd/dt/vector.hpp>
 #include <elemental/fwd/dt/dist_vector.hpp>
-#include <elemental/dt/matrix_range.hpp>
+#include <hbrs/mpl/dt/el_matrix_range.hpp>
 
 #include <hbrs/mpl/detail/add_const.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>

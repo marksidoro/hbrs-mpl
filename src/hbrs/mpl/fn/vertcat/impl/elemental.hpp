@@ -18,8 +18,8 @@
 #define ELEMENTAL_FUSE_FN_VERTCAT_HPP
 
 #include <elemental/config.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
-#include <elemental/dt/matrix.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
+#include <hbrs/mpl/dt/el_matrix.hpp>
 #include <hbrs/mpl/dt/smr.hpp>
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/m.hpp>

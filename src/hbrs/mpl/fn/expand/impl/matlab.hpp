@@ -18,7 +18,7 @@
 #define MATLAB_FUSE_FN_EXPAND_HPP
 
 #include <matlab/config.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <matlab/dt/exception.hpp>
 #include <hbrs/mpl/dt/smr.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>
@@ -27,8 +27,8 @@
 #include <hbrs/mpl/fn/m.hpp>
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
-#include <matlab/dt/matrix.hpp>
-#include <matlab/dt/vector.hpp>
+#include <hbrs/mpl/dt/ml_matrix.hpp>
+#include <hbrs/mpl/dt/ml_vector.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>

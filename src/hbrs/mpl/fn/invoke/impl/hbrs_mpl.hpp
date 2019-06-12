@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FUSE_HBRS_MPL_FN_INVOKE_HPP
 #define HBRS_MPL_FUSE_HBRS_MPL_FN_INVOKE_HPP
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>

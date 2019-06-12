@@ -17,7 +17,7 @@
 #ifndef MATLAB_FUSE_FN_AT_HPP
 #define MATLAB_FUSE_FN_AT_HPP
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <matlab/fwd/dt/matrix.hpp>
 #include <matlab/fwd/dt/vector.hpp>
 #include <hbrs/mpl/detail/function_object.hpp>

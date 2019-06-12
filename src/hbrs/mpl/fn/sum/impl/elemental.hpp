@@ -18,12 +18,12 @@
 #define ELEMENTAL_FUSE_FN_SUM_HPP
 
 #include <elemental/config.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 
-#include <elemental/dt/matrix.hpp>
-#include <elemental/dt/vector.hpp>
-#include <elemental/dt/dist_matrix.hpp>
-#include <elemental/dt/dist_vector.hpp>
+#include <hbrs/mpl/dt/el_matrix.hpp>
+#include <hbrs/mpl/dt/el_vector.hpp>
+#include <hbrs/mpl/dt/el_dist_matrix.hpp>
+#include <hbrs/mpl/dt/el_dist_vector.hpp>
 #include <hbrs/mpl/dt/smr.hpp>
 #include <hbrs/mpl/dt/smc.hpp>
 

@@ -18,8 +18,8 @@
 #define ELEMENTAL_FUSE_FN_SVD_HPP
 
 #include <elemental/config.hpp>
-#include <elemental/dt/matrix.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/dt/el_matrix.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>

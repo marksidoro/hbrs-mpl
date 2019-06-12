@@ -18,7 +18,7 @@
 #define HBRS_MPL_DT_SUBSEQUENCE_HPP
 
 #include <hbrs/mpl/fwd/dt/subsequence.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/fn/size.hpp>

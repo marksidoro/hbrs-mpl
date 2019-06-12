@@ -14,8 +14,8 @@ include(FeatureSummary)
 
 #################### options ####################
 
-option(HBRS_MPL_ENABLE_ADDON_ELEMENTAL        "Build elemental adapter." ON)
-option(HBRS_MPL_ENABLE_ADDON_MATLAB           "Build matlab adapter." ON)
+option(HBRS_MPL_ENABLE_ELEMENTAL              "Build elemental adapter." ON)
+option(HBRS_MPL_ENABLE_MATLAB                 "Build matlab adapter." ON)
 
 option(HBRS_MPL_ENABLE_OBJDUMP                "Disassemble executables." OFF)
 option(HBRS_MPL_ENABLE_MEMCHECK               "Run tests and examples with valgrind." OFF)
@@ -192,8 +192,8 @@ configure_package_config_file(
         HBRS_MPL_INSTALL_LIBDIR
         HBRS_MPL_INSTALL_INCLUDEDIR
         HBRS_MPL_INSTALL_CMAKEDIR
-        HBRS_MPL_ENABLE_ADDON_ELEMENTAL
-        HBRS_MPL_ENABLE_ADDON_MATLAB)
+        HBRS_MPL_ENABLE_ELEMENTAL
+        HBRS_MPL_ENABLE_MATLAB)
 
 write_basic_package_version_file(
     "${CMAKE_CURRENT_BINARY_DIR}/hbrs-mpl-config-version.cmake"

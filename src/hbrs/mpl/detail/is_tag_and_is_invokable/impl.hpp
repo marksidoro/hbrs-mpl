@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DETAIL_IS_TAG_AND_IS_INVOKABLE_HPP
-#define HBRS_MPL_DETAIL_IS_TAG_AND_IS_INVOKABLE_HPP
+#ifndef HBRS_MPL_DETAIL_IS_TAG_AND_IS_INVOKABLE_IMPL_HPP
+#define HBRS_MPL_DETAIL_IS_TAG_AND_IS_INVOKABLE_IMPL_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <boost/hana/type.hpp>
@@ -41,4 +41,4 @@ struct is_tag_and_is_invokable_trait {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_DETAIL_IS_TAG_AND_IS_INVOKABLE_HPP
+#endif // !HBRS_MPL_DETAIL_IS_TAG_AND_IS_INVOKABLE_IMPL_HPP

@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,13 +14,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FWD_DETAIL_TRANSLATE_INDEX_HPP
-#define HBRS_MPL_FWD_DETAIL_TRANSLATE_INDEX_HPP
+#ifndef HBRS_MPL_DETAIL_TRANSLATE_INDEX_FWD_HPP
+#define HBRS_MPL_DETAIL_TRANSLATE_INDEX_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/fwd/dt/storage_order.hpp>
-#include <hbrs/mpl/fwd/dt/matrix_index.hpp>
-#include <hbrs/mpl/fwd/dt/matrix_size.hpp>
+
+#include <hbrs/mpl/dt/storage_order/fwd.hpp>
+#include <hbrs/mpl/dt/matrix_index/fwd.hpp>
+#include <hbrs/mpl/dt/matrix_size/fwd.hpp>
+
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
 
@@ -87,4 +89,4 @@ translate_index(Size && sz, Index && ix, StorageOrder && so);
 HBRS_MPL_NAMESPACE_END
 
 
-#endif // !HBRS_MPL_FWD_DETAIL_TRANSLATE_INDEX_HPP
+#endif // !HBRS_MPL_DETAIL_TRANSLATE_INDEX_FWD_HPP

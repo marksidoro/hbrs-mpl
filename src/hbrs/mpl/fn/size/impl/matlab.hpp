@@ -17,7 +17,7 @@
 #ifndef MATLAB_FUSE_FN_SIZE_HPP
 #define MATLAB_FUSE_FN_SIZE_HPP
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/function_object.hpp>
 
 #include <matlab/fwd/dt/matrix.hpp>

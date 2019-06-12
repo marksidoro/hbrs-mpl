@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FUSE_HBRS_MPL_FN_RECURSE_HPP
 #define HBRS_MPL_FUSE_HBRS_MPL_FN_RECURSE_HPP
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/integral_constant.hpp>
 #include <boost/hana/unpack.hpp>
 #include <boost/hana/tuple.hpp>

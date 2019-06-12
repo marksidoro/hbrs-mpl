@@ -15,7 +15,7 @@
  */
 
 #include <hbrs/mpl/fn/rows.hpp>
-#include <matlab/dt/matrix.hpp>
+#include <hbrs/mpl/dt/ml_matrix.hpp>
 
 MATLAB_NAMESPACE_BEGIN
 namespace detail {

@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,14 +14,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DETAIL_TRANSFORM_SEQUENCE_HPP
-#define HBRS_MPL_DETAIL_TRANSFORM_SEQUENCE_HPP
+#ifndef HBRS_MPL_DETAIL_TRANSFORM_SEQUENCE_IMPL_HPP
+#define HBRS_MPL_DETAIL_TRANSFORM_SEQUENCE_IMPL_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/core/evaluate.hpp>
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/fn/append.hpp>
+
 #include <boost/hana/integral_constant.hpp>
 #include <type_traits>
 #include <array>
@@ -125,4 +127,4 @@ transform_homogenous_sequence(S && s, F && f, std::size_t sz) {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_DETAIL_TRANSFORM_SEQUENCE_HPP
+#endif // !HBRS_MPL_DETAIL_TRANSFORM_SEQUENCE_IMPL_HPP

@@ -15,7 +15,7 @@
  */
 
 #include <hbrs/mpl/fn/iterate.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/integral_constant.hpp>
 #include <boost/hana/plus.hpp>
 #include <boost/hana/equal.hpp>

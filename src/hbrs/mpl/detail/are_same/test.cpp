@@ -1,4 +1,4 @@
-/* Copyright (c) 2016 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,10 +14,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #define BOOST_TEST_MODULE are_same_test
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
+
 #include <boost/test/unit_test.hpp>
 #include <hbrs/mpl/detail/are_same.hpp>
 

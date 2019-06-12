@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,22 +14,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DETAIL_GATHER_HPP
-#define HBRS_MPL_DETAIL_GATHER_HPP
+#ifndef HBRS_MPL_DETAIL_GATHER_IMPL_HPP
+#define HBRS_MPL_DETAIL_GATHER_IMPL_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 
-#ifdef HBRS_MPL_ENABLE_ADDON_MATLAB
-	#include <matlab/dt/matrix.hpp>
-	#include <matlab/dt/vector.hpp>
+#ifdef HBRS_MPL_ENABLE_MATLAB
+	#include <hbrs/mpl/dt/ml_matrix.hpp>
+	#include <hbrs/mpl/dt/ml_vector.hpp>
 #endif
 
-#ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
-	#include <elemental/dt/matrix.hpp>
-	#include <elemental/dt/dist_matrix.hpp>
-	#include <elemental/dt/vector.hpp>
-	#include <elemental/dt/dist_vector.hpp>
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+	#include <hbrs/mpl/dt/el_matrix.hpp>
+	#include <hbrs/mpl/dt/el_dist_matrix.hpp>
+	#include <hbrs/mpl/dt/el_vector.hpp>
+	#include <hbrs/mpl/dt/el_dist_vector.hpp>
 	#include <El.hpp>
 #endif
 
@@ -51,12 +51,12 @@ namespace detail {
 template <
 	typename T,
 	typename std::enable_if_t< 
-		#ifdef HBRS_MPL_ENABLE_ADDON_MATLAB
+		#ifdef HBRS_MPL_ENABLE_MATLAB
 			std::is_same< hana::tag_of_t<T>, matlab::matrix_tag >::value ||
 			std::is_same< hana::tag_of_t<T>, matlab::column_vector_tag >::value ||
 			std::is_same< hana::tag_of_t<T>, matlab::row_vector_tag >::value ||
 		#endif
-		#ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
+		#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 			std::is_same< hana::tag_of_t<T>, elemental::matrix_tag >::value ||
 			std::is_same< hana::tag_of_t<T>, elemental::column_vector_tag >::value ||
 			std::is_same< hana::tag_of_t<T>, elemental::row_vector_tag >::value ||
@@ -78,7 +78,7 @@ gather(T && t) {
 	return HBRS_MPL_FWD(t);
 }
 
-#ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 	#define _DEF_GATHER_DIST(kind)                                                                                     \
 		template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>                         \
 		constexpr auto                                                                                                 \
@@ -103,4 +103,4 @@ gather(T && t) {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_DETAIL_GATHER_HPP
+#endif // !HBRS_MPL_DETAIL_GATHER_IMPL_HPP

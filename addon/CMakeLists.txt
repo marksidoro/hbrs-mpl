@@ -4,10 +4,10 @@
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 #
 
-if (HBRS_MPL_ENABLE_ADDON_ELEMENTAL)
+if (HBRS_MPL_ENABLE_ELEMENTAL)
     add_subdirectory(elemental)
 endif()
 
-if (HBRS_MPL_ENABLE_ADDON_MATLAB)
+if (HBRS_MPL_ENABLE_MATLAB)
     add_subdirectory(matlab)
 endif()

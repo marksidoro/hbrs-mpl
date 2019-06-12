@@ -15,7 +15,7 @@
  */
 
 #include <hbrs/mpl/fn/bidiag.hpp>
-#include <matlab/dt/matrix.hpp>
+#include <hbrs/mpl/dt/ml_matrix.hpp>
 #include <hbrs/mpl/dt/bidiag_result.hpp>
 
 extern "C" {

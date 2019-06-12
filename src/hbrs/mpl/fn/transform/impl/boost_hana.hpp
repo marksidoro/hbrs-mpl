@@ -18,7 +18,7 @@
 #define HBRS_MPL_FUSE_BOOST_HANA_FN_TRANSFORM_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/transform.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>

@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FUSE_STD_FN_SIZE_HPP
 #define HBRS_MPL_FUSE_STD_FN_SIZE_HPP
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/function_object.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/ext/std/array.hpp>

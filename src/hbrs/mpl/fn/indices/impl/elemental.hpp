@@ -18,7 +18,7 @@
 #define ELEMENTAL_FUSE_FN_INDICES_HPP
 
 #include <elemental/config.hpp>
-#include <elemental/dt/matrix.hpp>
+#include <hbrs/mpl/dt/el_matrix.hpp>
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/dt/smc.hpp>
 #include <hbrs/mpl/dt/smr.hpp>

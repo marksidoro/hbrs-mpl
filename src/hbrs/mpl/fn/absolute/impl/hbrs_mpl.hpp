@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FUSE_HBRS_MPL_FN_ABSOLUTE_HPP
 #define HBRS_MPL_FUSE_HBRS_MPL_FN_ABSOLUTE_HPP
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/fwd/dt/smc.hpp>
 #include <hbrs/mpl/fwd/dt/smr.hpp>
 #include <hbrs/mpl/fn/transform.hpp>

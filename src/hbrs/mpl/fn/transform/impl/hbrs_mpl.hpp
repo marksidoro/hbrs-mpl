@@ -18,7 +18,7 @@
 #define HBRS_MPL_FUSE_HBRS_MPL_FN_TRANSFORM_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/gat.hpp>
 #include <hbrs/mpl/detail/transform_sequence.hpp>
 #include <hbrs/mpl/dt/zas.hpp>

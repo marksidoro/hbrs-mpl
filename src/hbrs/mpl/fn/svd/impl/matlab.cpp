@@ -15,7 +15,7 @@
  */
 
 #include <hbrs/mpl/fn/svd.hpp>
-#include <matlab/dt/matrix.hpp>
+#include <hbrs/mpl/dt/ml_matrix.hpp>
 #include <hbrs/mpl/dt/svd_result.hpp>
 
 extern "C" {

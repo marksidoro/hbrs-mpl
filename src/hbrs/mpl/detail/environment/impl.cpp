@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,13 +15,13 @@
  */
 
 #include <hbrs/mpl/detail/environment.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/dt/exception.hpp>
 #include <boost/throw_exception.hpp>
 #include <algorithm>
 #include <iostream>
 
-#ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 	#include <El.hpp>
 #endif
 
@@ -45,7 +45,7 @@ struct mpi {
 	
 	void
 	setup(int * argc, char*** argv) {
-		#if defined(HBRS_MPL_ENABLE_ADDON_ELEMENTAL) && defined(EL_HYBRID)
+		#if defined(HBRS_MPL_ENABLE_ELEMENTAL) && defined(EL_HYBRID)
 			/* Ref.: 
 			 *  https://github.com/elemental/Elemental/blob/master/src/core/environment.cpp#L150
 			 *  https://github.com/elemental/Elemental/blob/master/src/core/imports/mpi.cpp#L69
@@ -69,21 +69,21 @@ struct mpi {
 struct environment::pimpl {
 	pimpl()
 		: mpi_{}
-	#ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
+	#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 		, elemental_{}
 	#endif
 	{};
 	
 	pimpl(int & argc, char ** &argv)
 		: mpi_{argc, argv}
-	#ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
+	#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 		, elemental_{argc, argv}
 	#endif
 	{}
 	
 private:
 	mpi mpi_;
-#ifdef HBRS_MPL_ENABLE_ADDON_ELEMENTAL
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 	El::Environment elemental_;
 #endif
 };

@@ -18,8 +18,8 @@
 #define ELEMENTAL_FUSE_FN_PLUS_HPP
 
 #include <elemental/config.hpp>
-#include <elemental/dt/dist_matrix.hpp>
-#include <elemental/dt/dist_vector.hpp>
+#include <hbrs/mpl/dt/el_dist_matrix.hpp>
+#include <hbrs/mpl/dt/el_dist_vector.hpp>
 #include <hbrs/mpl/fwd/fn/expand.hpp>
 #include <hbrs/mpl/dt/expression.hpp>
 

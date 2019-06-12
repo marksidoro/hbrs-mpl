@@ -17,7 +17,7 @@
 #ifndef MATLAB_FUSE_FN_MULTIPLY_HPP
 #define MATLAB_FUSE_FN_MULTIPLY_HPP
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <matlab/fwd/dt/matrix.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>

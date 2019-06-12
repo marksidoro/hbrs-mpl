@@ -15,7 +15,7 @@
  */
 
 #include <hbrs/mpl/fn/diag.hpp>
-#include <elemental/dt/matrix.hpp>
+#include <hbrs/mpl/dt/el_matrix.hpp>
 
 ELEMENTAL_NAMESPACE_BEGIN
 namespace detail {

@@ -20,7 +20,7 @@
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/integral_constant.hpp>
 #include <boost/hana/plus.hpp>
 #include <boost/hana/minus.hpp>

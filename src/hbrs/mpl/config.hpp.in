@@ -33,8 +33,8 @@
 #include <hbrs/mpl/export.hpp>
 #define HBRS_MPL_API HBRS_MPL_EXPORT
 
-#cmakedefine HBRS_MPL_ENABLE_ADDON_ELEMENTAL
-#cmakedefine HBRS_MPL_ENABLE_ADDON_MATLAB
+#cmakedefine HBRS_MPL_ENABLE_ELEMENTAL
+#cmakedefine HBRS_MPL_ENABLE_MATLAB
 
 #define HBRS_MPL_NAMESPACE_BEGIN namespace hbrs { namespace mpl {
 #define HBRS_MPL_NAMESPACE_END   /* namespace mpl */ } /* namespace hbrs */ }

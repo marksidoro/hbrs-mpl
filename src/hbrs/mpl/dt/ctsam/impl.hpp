@@ -18,7 +18,7 @@
 #define HBRS_MPL_DT_CTSAM_HPP
 
 #include <hbrs/mpl/fwd/dt/ctsam.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 
 #include <hbrs/mpl/dt/storage_order.hpp>
 #include <hbrs/mpl/detail/translate_index.hpp>

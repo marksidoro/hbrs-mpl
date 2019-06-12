@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DETAIL_MPI_HPP
-#define HBRS_MPL_DETAIL_MPI_HPP
+#ifndef HBRS_MPL_DETAIL_MPI_IMPL_HPP
+#define HBRS_MPL_DETAIL_MPI_IMPL_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <mpi.h>
 #include <cstdlib>
 #include <boost/hana/type.hpp>
@@ -92,4 +92,4 @@ irecv(T *buffer, int count, int source, int tag, MPI_Comm comm) {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_DETAIL_MPI_HPP
+#endif // !HBRS_MPL_DETAIL_MPI_IMPL_HPP

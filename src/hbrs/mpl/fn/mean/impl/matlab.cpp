@@ -15,7 +15,7 @@
  */
 
 #include <hbrs/mpl/fn/mean.hpp>
-#include <matlab/dt/matrix.hpp>
+#include <hbrs/mpl/dt/ml_matrix.hpp>
 
 extern "C" {
 	#include <matlab/cxn/mean_m.h>

@@ -18,7 +18,7 @@
 #define ELEMENTAL_FUSE_FN_ABSOLUTE_HPP
 
 #include <elemental/config.hpp>
-#include <elemental/dt/matrix.hpp>
+#include <hbrs/mpl/dt/el_matrix.hpp>
 #include <hbrs/mpl/fn/at.hpp>
 #include <boost/hana/tuple.hpp>
 #include <type_traits>

@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_PP_CORE_HPP
-#define HBRS_MPL_PP_CORE_HPP
+#ifndef HBRS_MPL_CORE_PP_IMPL_HPP
+#define HBRS_MPL_CORE_PP_IMPL_HPP
 
 /* Ref.: https://stackoverflow.com/a/11763277/6490710 */
 #define HBRS_MPL_MACRO_2ARGS(_1,_2,NAME /*, ... */) NAME
@@ -384,4 +384,4 @@
  */
 
 
-#endif // !HBRS_MPL_PP_CORE_HPP
+#endif // !HBRS_MPL_CORE_PP_IMPL_HPP

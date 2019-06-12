@@ -19,7 +19,7 @@
 
 #include <hbrs/mpl/fwd/dt/smc.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/fn/m.hpp>

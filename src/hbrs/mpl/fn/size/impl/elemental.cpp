@@ -16,8 +16,8 @@
 
 #include <hbrs/mpl/fn/size.hpp>
 
-#include <elemental/dt/vector.hpp>
-#include <elemental/dt/dist_vector.hpp>
+#include <hbrs/mpl/dt/el_vector.hpp>
+#include <hbrs/mpl/dt/el_dist_vector.hpp>
 
 ELEMENTAL_NAMESPACE_BEGIN
 namespace detail {

@@ -15,7 +15,7 @@
  */
 
 #include <hbrs/mpl/detail/mpi.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/dt/exception.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/assert.hpp>

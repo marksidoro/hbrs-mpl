@@ -15,7 +15,7 @@
  */
 
 #include <hbrs/mpl/fn/transpose.hpp>
-#include <matlab/dt/matrix.hpp>
+#include <hbrs/mpl/dt/ml_matrix.hpp>
 
 extern "C" {
 	#include <matlab/cxn/transpose_m.h>

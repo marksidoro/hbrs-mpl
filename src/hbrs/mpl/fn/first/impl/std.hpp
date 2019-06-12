@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FUSE_STD_FN_FIRST_HPP
 #define HBRS_MPL_FUSE_STD_FN_FIRST_HPP
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/ext/std/pair.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>

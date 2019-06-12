@@ -17,9 +17,9 @@
 #ifndef MATLAB_FUSE_FN_SELECT_HPP
 #define MATLAB_FUSE_FN_SELECT_HPP
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 
-#include <matlab/dt/matrix.hpp>
+#include <hbrs/mpl/dt/ml_matrix.hpp>
 #include <hbrs/mpl/dt/submatrix.hpp>
 #include <hbrs/mpl/dt/range.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>

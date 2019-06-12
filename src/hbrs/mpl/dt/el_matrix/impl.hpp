@@ -23,7 +23,7 @@
 #include <boost/hana/core/make.hpp>
 
 #include <elemental/dt/exception.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/translate_index.hpp>
 #include <hbrs/mpl/detail/copy_matrix.hpp>
 #include <hbrs/mpl/dt/sm.hpp>

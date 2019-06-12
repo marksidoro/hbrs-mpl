@@ -17,10 +17,10 @@
 #ifndef MATLAB_FUSE_FN_SVD_HPP
 #define MATLAB_FUSE_FN_SVD_HPP
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/dt/decompose_mode.hpp>
 #include <hbrs/mpl/dt/svd_result.hpp>
-#include <matlab/dt/matrix.hpp>
+#include <hbrs/mpl/dt/ml_matrix.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>

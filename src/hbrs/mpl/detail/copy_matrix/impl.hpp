@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,12 +14,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DETAIL_COPY_MATRIX_HPP
-#define HBRS_MPL_DETAIL_COPY_MATRIX_HPP
+#ifndef HBRS_MPL_DETAIL_COPY_MATRIX_IMPL_HPP
+#define HBRS_MPL_DETAIL_COPY_MATRIX_IMPL_HPP
 
-#include <hbrs/mpl/fwd/detail/copy_matrix.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include "fwd.hpp"
 
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/translate_index.hpp>
 
 #include <hbrs/mpl/fn/at.hpp>
@@ -183,4 +183,4 @@ copy_matrix(std::initializer_list<From> from, storage_order_<Order>, To & to) {
 HBRS_MPL_NAMESPACE_END
 
 
-#endif // !HBRS_MPL_DETAIL_COPY_MATRIX_HPP
+#endif // !HBRS_MPL_DETAIL_COPY_MATRIX_IMPL_HPP

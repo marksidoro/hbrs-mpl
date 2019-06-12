@@ -17,11 +17,11 @@
 #ifndef MATLAB_FUSE_FN_PCA_HPP
 #define MATLAB_FUSE_FN_PCA_HPP
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/dt/pca_result.hpp>
 #include <hbrs/mpl/dt/smr.hpp>
-#include <matlab/dt/matrix.hpp>
-#include <matlab/dt/vector.hpp>
+#include <hbrs/mpl/dt/ml_matrix.hpp>
+#include <hbrs/mpl/dt/ml_vector.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>

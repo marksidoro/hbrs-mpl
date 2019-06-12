@@ -1,4 +1,4 @@
-/* Copyright (c) 2016 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DETAIL_FUNCTION_OBJECT_HPP
-#define HBRS_MPL_DETAIL_FUNCTION_OBJECT_HPP
+#ifndef HBRS_MPL_DETAIL_FUNCTION_OBJECT_IMPL_HPP
+#define HBRS_MPL_DETAIL_FUNCTION_OBJECT_IMPL_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <boost/hana/if.hpp>
 #include <hbrs/mpl/detail/is_tag_and_is_invokable.hpp>
@@ -77,4 +77,4 @@
 #define HBRS_MPL_DEF_FO_TRY_OPERATOR(...)                                                                              \
 	HBRS_MPL_DEFINE_FUNCTION_OBJECT_FOR_TAG_TRY_OPERATOR(__VA_ARGS__)
 
-#endif // !HBRS_MPL_DETAIL_FUNCTION_OBJECT_HPP
+#endif // !HBRS_MPL_DETAIL_FUNCTION_OBJECT_IMPL_HPP

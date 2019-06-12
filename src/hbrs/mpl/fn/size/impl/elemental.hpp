@@ -18,7 +18,7 @@
 #define ELEMENTAL_FUSE_FN_SIZE_HPP
 
 #include <elemental/config.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/function_object.hpp>
 
 #include <elemental/fwd/dt/matrix.hpp>

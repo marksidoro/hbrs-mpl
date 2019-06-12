@@ -35,10 +35,10 @@
 
 #include <hbrs/mpl/detail/test.hpp>
 #include <hbrs/mpl/detail/gather.hpp>
-#include <elemental/dt/matrix.hpp>
-#include <elemental/dt/vector.hpp>
-#include <elemental/dt/dist_matrix.hpp>
-#include <elemental/dt/dist_vector.hpp>
+#include <hbrs/mpl/dt/el_matrix.hpp>
+#include <hbrs/mpl/dt/el_vector.hpp>
+#include <hbrs/mpl/dt/el_dist_matrix.hpp>
+#include <hbrs/mpl/dt/el_dist_vector.hpp>
 #include <hbrs/mpl/dt/ctsav.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>
 #include <hbrs/mpl/dt/sm.hpp>

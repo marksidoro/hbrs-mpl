@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FUSE_BOOST_HANA_FN_INSERT_HPP
 #define HBRS_MPL_FUSE_BOOST_HANA_FN_INSERT_HPP
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/is_core_applicable.hpp>
 #include <boost/hana/map.hpp>
 #include <boost/hana/insert.hpp>

@@ -18,7 +18,7 @@
 #define HBRS_MPL_DT_FUNCTION_HPP
 
 #include <hbrs/mpl/fwd/dt/function.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/core/call.hpp>
 
 #define HBRS_MPL_DEFINE_FUNCTION_ARITY1(f_name, f_type)                                                                \

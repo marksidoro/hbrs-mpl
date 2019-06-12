@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DETAIL_HAS_OPERATOR_HPP
-#define HBRS_MPL_DETAIL_HAS_OPERATOR_HPP
+#ifndef HBRS_MPL_DETAIL_HAS_OPERATOR_IMPL_HPP
+#define HBRS_MPL_DETAIL_HAS_OPERATOR_IMPL_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/type.hpp>
 
 #include <hbrs/mpl/fwd/fn/preincrement.hpp>
@@ -119,4 +119,4 @@ HBRS_MPL_NAMESPACE_END
 #undef _HAS_OPERATOR_IMPL_ARITY1_POST
 #undef _HAS_OPERATOR_IMPL_ARITY2
 
-#endif // !HBRS_MPL_DETAIL_HAS_OPERATOR_HPP
+#endif // !HBRS_MPL_DETAIL_HAS_OPERATOR_IMPL_HPP

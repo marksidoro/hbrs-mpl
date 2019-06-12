@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,10 +14,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_CORE_IMPLEMENTATIONS_OF_HPP
-#define HBRS_MPL_CORE_IMPLEMENTATIONS_OF_HPP
+#ifndef HBRS_MPL_CORE_IMPLEMENTATIONS_OF_IMPL_HPP
+#define HBRS_MPL_CORE_IMPLEMENTATIONS_OF_IMPL_HPP
 
-#include <hbrs/mpl/fwd/core/implementations_of.hpp>
+#include "fwd.hpp"
+
 #include <boost/hana/basic_tuple.hpp>
 #include <boost/hana/type.hpp>
 
@@ -51,4 +52,4 @@ struct implementations_of_impl<OperationTag, hana::when<Condition>> : hana::defa
 
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_CORE_IMPLEMENTATIONS_OF_HPP
+#endif // !HBRS_MPL_CORE_IMPLEMENTATIONS_OF_IMPL_HPP
