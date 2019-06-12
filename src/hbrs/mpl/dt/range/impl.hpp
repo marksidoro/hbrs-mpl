@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_DT_RANGE_HPP
 #define HBRS_MPL_DT_RANGE_HPP
 
-#include <hbrs/mpl/fwd/dt/range.hpp>
+#include <hbrs/mpl/dt/range/fwd.hpp>
 #include <hbrs/mpl/detail/axis.hpp>
 
 HBRS_MPL_DEFINE_AXIS_2D(range, Range, first, First, last, Last)

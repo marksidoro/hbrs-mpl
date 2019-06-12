@@ -21,7 +21,7 @@
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/function_object.hpp>
 
-#include <hbrs/mpl/fwd/dt/matrix_index.hpp>
+#include <hbrs/mpl/dt/matrix_index/fwd.hpp>
 #include <elemental/fwd/dt/matrix.hpp>
 #include <elemental/fwd/dt/dist_matrix.hpp>
 #include <elemental/fwd/dt/vector.hpp>

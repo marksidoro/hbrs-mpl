@@ -19,7 +19,7 @@
 
 #include <matlab/config.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
-#include <hbrs/mpl/fwd/dt/smr.hpp>
+#include <hbrs/mpl/dt/smr/fwd.hpp>
 #include <matlab/fwd/dt/matrix.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>

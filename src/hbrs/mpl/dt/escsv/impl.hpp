@@ -18,7 +18,7 @@
 #define HBRS_MPL_DT_ESCSV_HPP
 /* equal-sized concatenated-sequences view */
 
-#include <hbrs/mpl/fwd/dt/escsv.hpp>
+#include <hbrs/mpl/dt/escsv/fwd.hpp>
 #include <hbrs/mpl/core/evaluate.hpp>
 #include <hbrs/mpl/detail/is_applicable.hpp>
 #include <hbrs/mpl/detail/is_braces_constructible.hpp>

@@ -20,7 +20,7 @@
 #include <hbrs/mpl/config.hpp>
 #include <boost/hana/fwd/core/make.hpp>
 #include <boost/hana/fwd/core/to.hpp>
-#include <hbrs/mpl/fwd/dt/storage_order.hpp>
+#include <hbrs/mpl/dt/storage_order/fwd.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;

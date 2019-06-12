@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_DT_MATRIX_DISTRIBUTION_HPP
 #define HBRS_MPL_DT_MATRIX_DISTRIBUTION_HPP
 
-#include <hbrs/mpl/fwd/dt/matrix_distribution.hpp>
+#include <hbrs/mpl/dt/matrix_distribution/fwd.hpp>
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/is_braces_constructible.hpp>

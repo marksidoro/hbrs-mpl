@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_DT_FUNCTION_HPP
 #define HBRS_MPL_DT_FUNCTION_HPP
 
-#include <hbrs/mpl/fwd/dt/function.hpp>
+#include <hbrs/mpl/dt/function/fwd.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/core/call.hpp>
 

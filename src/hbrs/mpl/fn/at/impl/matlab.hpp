@@ -21,7 +21,7 @@
 #include <matlab/fwd/dt/matrix.hpp>
 #include <matlab/fwd/dt/vector.hpp>
 #include <hbrs/mpl/detail/function_object.hpp>
-#include <hbrs/mpl/fwd/dt/matrix_index.hpp>
+#include <hbrs/mpl/dt/matrix_index/fwd.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>

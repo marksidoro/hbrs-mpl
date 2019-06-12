@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_DT_FUNCTOR_HPP
 #define HBRS_MPL_DT_FUNCTOR_HPP
 
-#include <hbrs/mpl/fwd/dt/functor.hpp>
+#include <hbrs/mpl/dt/functor/fwd.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>

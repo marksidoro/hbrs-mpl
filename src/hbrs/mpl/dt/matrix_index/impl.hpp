@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_DT_MATRIX_INDEX_HPP
 #define HBRS_MPL_DT_MATRIX_INDEX_HPP
 
-#include <hbrs/mpl/fwd/dt/matrix_index.hpp>
+#include <hbrs/mpl/dt/matrix_index/fwd.hpp>
 #include <hbrs/mpl/detail/axis.hpp>
 
 HBRS_MPL_DEFINE_AXIS_2D(matrix_index, Index, m, RowIndex, n, ColumnIndex)

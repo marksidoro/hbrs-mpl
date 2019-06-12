@@ -19,7 +19,7 @@
 
 #include <elemental/config.hpp>
 #include <El.hpp>
-#include <hbrs/mpl/fwd/dt/matrix_index.hpp>
+#include <hbrs/mpl/dt/matrix_index/fwd.hpp>
 
 ELEMENTAL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;

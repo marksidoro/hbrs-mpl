@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_DT_SM_HPP
 #define HBRS_MPL_DT_SM_HPP
 
-#include <hbrs/mpl/fwd/dt/sm.hpp>
+#include <hbrs/mpl/dt/sm/fwd.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 
 #include <hbrs/mpl/dt/storage_order.hpp>

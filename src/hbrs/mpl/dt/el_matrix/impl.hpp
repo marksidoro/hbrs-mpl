@@ -30,7 +30,7 @@
 #include <hbrs/mpl/dt/ctsav.hpp>
 #include <hbrs/mpl/dt/rtsav.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
-#include <hbrs/mpl/fwd/dt/matrix_size.hpp>
+#include <hbrs/mpl/dt/matrix_size/fwd.hpp>
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/m.hpp>
 #include <hbrs/mpl/fn/n.hpp>

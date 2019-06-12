@@ -20,8 +20,8 @@
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/fn/equal/fwd.hpp>
 #include <hbrs/mpl/detail/function_object.hpp>
-#include <hbrs/mpl/fwd/dt/matrix_size.hpp>
-#include <hbrs/mpl/fwd/dt/matrix_index.hpp>
+#include <hbrs/mpl/dt/matrix_size/fwd.hpp>
+#include <hbrs/mpl/dt/matrix_index/fwd.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <boost/hana/tuple.hpp>
 #include <type_traits>

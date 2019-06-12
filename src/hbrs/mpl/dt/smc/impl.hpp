@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_DT_SMC_HPP
 #define HBRS_MPL_DT_SMC_HPP
 
-#include <hbrs/mpl/fwd/dt/smc.hpp>
+#include <hbrs/mpl/dt/smc/fwd.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 

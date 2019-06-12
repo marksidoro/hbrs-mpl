@@ -18,7 +18,7 @@
 #define HBRS_MPL_DT_USCSV_HPP
 /* unequal-sized concatenated-sequences view */
 
-#include <hbrs/mpl/fwd/dt/uscsv.hpp>
+#include <hbrs/mpl/dt/uscsv/fwd.hpp>
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/fn/apply_at.hpp>
 #include <hbrs/mpl/fn/size.hpp>

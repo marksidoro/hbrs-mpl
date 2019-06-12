@@ -18,7 +18,7 @@
 #define HBRS_MPL_FWD_FN_SELECT_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/fwd/dt/function.hpp>
+#include <hbrs/mpl/dt/function/fwd.hpp>
 
 /* select() is like view or submatrix or subsequence but does not imply a specific memory mgmt strategy.
  * select() can return a view that references an collection but does not manage its lifetime.

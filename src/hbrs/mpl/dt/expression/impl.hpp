@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_DT_EXPRESSION_HPP
 #define HBRS_MPL_DT_EXPRESSION_HPP
 
-#include <hbrs/mpl/fwd/dt/expression.hpp>
+#include <hbrs/mpl/dt/expression/fwd.hpp>
 
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>

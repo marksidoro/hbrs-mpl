@@ -18,8 +18,8 @@
 #define HBRS_MPL_FUSE_HBRS_MPL_FN_ABSOLUTE_HPP
 
 #include <hbrs/mpl/core/preprocessor.hpp>
-#include <hbrs/mpl/fwd/dt/smc.hpp>
-#include <hbrs/mpl/fwd/dt/smr.hpp>
+#include <hbrs/mpl/dt/smc/fwd.hpp>
+#include <hbrs/mpl/dt/smr/fwd.hpp>
 #include <hbrs/mpl/fn/transform.hpp>
 #include <hbrs/mpl/fn/absolute.hpp>
 #include <boost/hana/tuple.hpp>

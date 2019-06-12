@@ -19,8 +19,8 @@
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 
-#include <hbrs/mpl/fwd/dt/srv.hpp>
-#include <hbrs/mpl/fwd/dt/matrix_size.hpp>
+#include <hbrs/mpl/dt/srv/fwd.hpp>
+#include <hbrs/mpl/dt/matrix_size/fwd.hpp>
 #include <hbrs/mpl/dt/rtsam.hpp>
 #include <hbrs/mpl/dt/exception.hpp>
 

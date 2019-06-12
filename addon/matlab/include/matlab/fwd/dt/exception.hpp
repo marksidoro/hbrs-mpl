@@ -18,8 +18,8 @@
 #define MATLAB_FWD_DT_EXCEPTION_HPP
 
 #include <matlab/config.hpp>
-#include <hbrs/mpl/fwd/dt/exception.hpp>
-#include <hbrs/mpl/fwd/dt/matrix_size.hpp>
+#include <hbrs/mpl/dt/exception/fwd.hpp>
+#include <hbrs/mpl/dt/matrix_size/fwd.hpp>
 #include <boost/exception/error_info.hpp>
 #include <tuple>
 

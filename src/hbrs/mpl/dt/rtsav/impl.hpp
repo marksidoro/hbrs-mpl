@@ -18,7 +18,7 @@
 #define HBRS_MPL_DT_RTSAV_HPP
 /* runtime-size array view */
 
-#include <hbrs/mpl/fwd/dt/rtsav.hpp>
+#include <hbrs/mpl/dt/rtsav/fwd.hpp>
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 #include <boost/assert.hpp>

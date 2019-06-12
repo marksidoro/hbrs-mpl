@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_DT_SMCS_HPP
 #define HBRS_MPL_DT_SMCS_HPP
 
-#include <hbrs/mpl/fwd/dt/smcs.hpp>
+#include <hbrs/mpl/dt/smcs/fwd.hpp>
 #include <hbrs/mpl/detail/is_braces_constructible.hpp>
 
 #include <hbrs/mpl/dt/smc.hpp>

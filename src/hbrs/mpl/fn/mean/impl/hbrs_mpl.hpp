@@ -19,12 +19,12 @@
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 
-#include <hbrs/mpl/fwd/dt/smcs.hpp>
-#include <hbrs/mpl/fwd/dt/rtsam.hpp>
-#include <hbrs/mpl/fwd/dt/sm.hpp>
-#include <hbrs/mpl/fwd/dt/ctsav.hpp>
-#include <hbrs/mpl/fwd/dt/matrix_size.hpp>
-#include <hbrs/mpl/fwd/dt/storage_order.hpp>
+#include <hbrs/mpl/dt/smcs/fwd.hpp>
+#include <hbrs/mpl/dt/rtsam/fwd.hpp>
+#include <hbrs/mpl/dt/sm/fwd.hpp>
+#include <hbrs/mpl/dt/ctsav/fwd.hpp>
+#include <hbrs/mpl/dt/matrix_size/fwd.hpp>
+#include <hbrs/mpl/dt/storage_order/fwd.hpp>
 
 #include <hbrs/mpl/dt/matrix_index.hpp>
 #include <hbrs/mpl/dt/srv.hpp>

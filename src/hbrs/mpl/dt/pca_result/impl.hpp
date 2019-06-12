@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_DT_PCA_RESULT_HPP
 #define HBRS_MPL_DT_PCA_RESULT_HPP
 
-#include <hbrs/mpl/fwd/dt/pca_result.hpp>
+#include <hbrs/mpl/dt/pca_result/fwd.hpp>
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>

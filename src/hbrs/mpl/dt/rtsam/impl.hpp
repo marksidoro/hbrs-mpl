@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_DT_RTSAM_HPP
 #define HBRS_MPL_DT_RTSAM_HPP
 
-#include <hbrs/mpl/fwd/dt/rtsam.hpp>
+#include <hbrs/mpl/dt/rtsam/fwd.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>

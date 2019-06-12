@@ -17,6 +17,6 @@
 #ifndef HBRS_MPL_DT_STORAGE_ORDER_HPP
 #define HBRS_MPL_DT_STORAGE_ORDER_HPP
 
-#include <hbrs/mpl/fwd/dt/storage_order.hpp>
+#include <hbrs/mpl/dt/storage_order/fwd.hpp>
 
 #endif // !HBRS_MPL_DT_STORAGE_ORDER_HPP

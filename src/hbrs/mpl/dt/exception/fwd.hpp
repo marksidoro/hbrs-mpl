@@ -18,7 +18,7 @@
 #define HBRS_MPL_FWD_DT_EXCEPTION_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/fwd/dt/matrix_size.hpp>
+#include <hbrs/mpl/dt/matrix_size/fwd.hpp>
 #include <boost/exception/error_info.hpp>
 #include <boost/system/error_code.hpp>
 #include <tuple>

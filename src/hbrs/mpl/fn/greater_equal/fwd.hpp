@@ -18,7 +18,7 @@
 #define HBRS_MPL_FWD_FN_GREATER_EQUAL_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/fwd/dt/function.hpp>
+#include <hbrs/mpl/dt/function/fwd.hpp>
 
 #define HBRS_MPL_OPERATOR_GREATER_EQUAL >=
 

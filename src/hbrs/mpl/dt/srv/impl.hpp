@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_DT_SRV_HPP
 #define HBRS_MPL_DT_SRV_HPP
 
-#include <hbrs/mpl/fwd/dt/srv.hpp>
+#include <hbrs/mpl/dt/srv/fwd.hpp>
 #include <hbrs/mpl/detail/vector.hpp>
 
 HBRS_MPL_DEF_SV(srv)

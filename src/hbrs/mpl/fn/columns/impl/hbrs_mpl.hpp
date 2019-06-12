@@ -18,9 +18,9 @@
 #define HBRS_MPL_FUSE_HBRS_MPL_FN_COLUMNS_HPP
 
 #include <hbrs/mpl/core/preprocessor.hpp>
-#include <hbrs/mpl/fwd/dt/sm.hpp>
-#include <hbrs/mpl/fwd/dt/rtsam.hpp>
-#include <hbrs/mpl/fwd/dt/ctsam.hpp>
+#include <hbrs/mpl/dt/sm/fwd.hpp>
+#include <hbrs/mpl/dt/rtsam/fwd.hpp>
+#include <hbrs/mpl/dt/ctsam/fwd.hpp>
 #include <hbrs/mpl/dt/smcs.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>

@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_DT_SMS_HPP
 #define HBRS_MPL_DT_SMS_HPP
 
-#include <hbrs/mpl/fwd/dt/sms.hpp>
+#include <hbrs/mpl/dt/sms/fwd.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 
 #include <hbrs/mpl/dt/matrix_index.hpp>

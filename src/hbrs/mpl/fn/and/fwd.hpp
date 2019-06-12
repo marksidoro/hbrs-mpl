@@ -18,7 +18,7 @@
 #define HBRS_MPL_FWD_FN_AND_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/fwd/dt/function.hpp>
+#include <hbrs/mpl/dt/function/fwd.hpp>
 
 #define HBRS_MPL_OPERATOR_AND &&
 

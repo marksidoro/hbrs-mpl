@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_DT_CTSAM_HPP
 #define HBRS_MPL_DT_CTSAM_HPP
 
-#include <hbrs/mpl/fwd/dt/ctsam.hpp>
+#include <hbrs/mpl/dt/ctsam/fwd.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 
 #include <hbrs/mpl/dt/storage_order.hpp>
