@@ -17,7 +17,7 @@
 #ifndef MATLAB_FUSE_FN_EXPAND_HPP
 #define MATLAB_FUSE_FN_EXPAND_HPP
 
-#include <matlab/config.hpp>
+#include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <matlab/dt/exception.hpp>
 #include <hbrs/mpl/dt/smr.hpp>

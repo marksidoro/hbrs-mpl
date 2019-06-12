@@ -17,7 +17,7 @@
 #ifndef ELEMENTAL_FUSE_FN_MULTIPLY_HPP
 #define ELEMENTAL_FUSE_FN_MULTIPLY_HPP
 
-#include <elemental/config.hpp>
+#include <hbrs/mpl/config.hpp>
 #include <El.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/hana/tuple.hpp>

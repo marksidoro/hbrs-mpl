@@ -17,8 +17,8 @@
 #ifndef ELEMENTAL_DT_MATRIX_HPP
 #define ELEMENTAL_DT_MATRIX_HPP
 
-#include <elemental/config.hpp>
-#include <elemental/fwd/dt/matrix.hpp>
+#include <hbrs/mpl/config.hpp>
+#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <boost/hana/core/make.hpp>
 

@@ -17,7 +17,7 @@
 #ifndef ELEMENTAL_FUSE_FN_ZIP_HPP
 #define ELEMENTAL_FUSE_FN_ZIP_HPP
 
-#include <elemental/config.hpp>
+#include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/dt/el_matrix.hpp>
 #include <hbrs/mpl/dt/smc.hpp>
 #include <hbrs/mpl/dt/smr.hpp>

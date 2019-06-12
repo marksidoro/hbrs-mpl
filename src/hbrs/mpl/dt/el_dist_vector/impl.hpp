@@ -17,7 +17,7 @@
 #ifndef ELEMENTAL_DT_DIST_VECTOR_HPP
 #define ELEMENTAL_DT_DIST_VECTOR_HPP
 
-#include <elemental/fwd/dt/dist_vector.hpp>
+#include <hbrs/mpl/dt/el_dist_vector/fwd.hpp>
 #include <hbrs/mpl/dt/el_vector.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/core/make.hpp>

@@ -17,7 +17,7 @@
 #ifndef MATLAB_DT_EXCEPTION_HPP
 #define MATLAB_DT_EXCEPTION_HPP
 
-#include <matlab/config.hpp>
+#include <hbrs/mpl/config.hpp>
 #include <matlab/fwd/dt/exception.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>
 #include <hbrs/mpl/dt/exception.hpp>

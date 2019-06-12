@@ -17,7 +17,7 @@
 #ifndef ELEMENTAL_FUSE_FN_PCA_HPP
 #define ELEMENTAL_FUSE_FN_PCA_HPP
 
-#include <elemental/config.hpp>
+#include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>

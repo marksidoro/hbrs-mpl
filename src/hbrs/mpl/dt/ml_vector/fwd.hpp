@@ -17,7 +17,7 @@
 #ifndef MATLAB_FWD_DT_VECTOR_HPP
 #define MATLAB_FWD_DT_VECTOR_HPP
 
-#include <matlab/config.hpp>
+#include <hbrs/mpl/config.hpp>
 #include <boost/hana/fwd/core/make.hpp>
 #include <boost/hana/fwd/core/to.hpp>
 

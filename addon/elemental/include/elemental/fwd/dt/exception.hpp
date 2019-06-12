@@ -17,7 +17,7 @@
 #ifndef ELEMENTAL_FWD_DT_EXCEPTION_HPP
 #define ELEMENTAL_FWD_DT_EXCEPTION_HPP
 
-#include <elemental/config.hpp>
+#include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/dt/exception/fwd.hpp>
 #include <hbrs/mpl/dt/matrix_size/fwd.hpp>
 #include <boost/exception/error_info.hpp>

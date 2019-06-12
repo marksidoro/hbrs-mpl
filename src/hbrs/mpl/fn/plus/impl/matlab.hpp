@@ -17,7 +17,7 @@
 #ifndef MATLAB_FUSE_FN_PLUS_HPP
 #define MATLAB_FUSE_FN_PLUS_HPP
 
-#include <matlab/config.hpp>
+#include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/dt/smr/fwd.hpp>
 #include <matlab/fwd/dt/matrix.hpp>

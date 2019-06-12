@@ -17,7 +17,7 @@
 #ifndef ELEMENTAL_DT_MATRIX_INDEX_HPP
 #define ELEMENTAL_DT_MATRIX_INDEX_HPP
 
-#include <elemental/config.hpp>
+#include <hbrs/mpl/config.hpp>
 #include <elemental/fwd/dt/matrix_index.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
 

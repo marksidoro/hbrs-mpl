@@ -17,12 +17,12 @@
 #ifndef ELEMENTAL_FUSE_FN_TIMES_HPP
 #define ELEMENTAL_FUSE_FN_TIMES_HPP
 
-#include <elemental/config.hpp>
+#include <hbrs/mpl/config.hpp>
 
-#include <elemental/fwd/dt/matrix.hpp>
-#include <elemental/fwd/dt/dist_matrix.hpp>
-#include <elemental/fwd/dt/vector.hpp>
-#include <elemental/fwd/dt/dist_vector.hpp>
+#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
+#include <hbrs/mpl/dt/el_dist_matrix/fwd.hpp>
+#include <hbrs/mpl/dt/el_vector/fwd.hpp>
+#include <hbrs/mpl/dt/el_dist_vector/fwd.hpp>
 #include <hbrs/mpl/fn/expand/fwd.hpp>
 #include <hbrs/mpl/dt/expression.hpp>
 #include <elemental/dt/exception.hpp>

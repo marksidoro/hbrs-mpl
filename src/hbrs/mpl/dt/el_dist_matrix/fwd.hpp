@@ -17,7 +17,7 @@
 #ifndef ELEMENTAL_FWD_DT_DIST_MATRIX_HPP
 #define ELEMENTAL_FWD_DT_DIST_MATRIX_HPP
 
-#include <elemental/config.hpp>
+#include <hbrs/mpl/config.hpp>
 #include <boost/hana/fwd/core/make.hpp>
 #include <boost/hana/fwd/core/to.hpp>
 #include <El.hpp>

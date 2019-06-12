@@ -17,10 +17,10 @@
 #ifndef ELEMENTAL_FUSE_FN_DIVIDE_HPP
 #define ELEMENTAL_FUSE_FN_DIVIDE_HPP
 
-#include <elemental/config.hpp>
+#include <hbrs/mpl/config.hpp>
 #include <El.hpp>
-#include <elemental/fwd/dt/vector.hpp>
-#include <elemental/fwd/dt/dist_vector.hpp>
+#include <hbrs/mpl/dt/el_vector/fwd.hpp>
+#include <hbrs/mpl/dt/el_dist_vector/fwd.hpp>
 #include <hbrs/mpl/dt/el_dist_matrix.hpp> // TODO: Remove once dist_column_vector is correctly implemented
 #include <boost/hana/tuple.hpp>
 #include <type_traits>

@@ -17,7 +17,7 @@
 #ifndef ELEMENTAL_FWD_DT_MATRIX_RANGE_HPP
 #define ELEMENTAL_FWD_DT_MATRIX_RANGE_HPP
 
-#include <elemental/config.hpp>
+#include <hbrs/mpl/config.hpp>
 #include <elemental/fwd/dt/matrix_index.hpp>
 #include <hbrs/mpl/dt/range/fwd.hpp>
 

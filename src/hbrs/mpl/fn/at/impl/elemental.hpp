@@ -17,15 +17,15 @@
 #ifndef ELEMENTAL_FUSE_FN_AT_HPP
 #define ELEMENTAL_FUSE_FN_AT_HPP
 
-#include <elemental/config.hpp>
+#include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/function_object.hpp>
 
 #include <hbrs/mpl/dt/matrix_index/fwd.hpp>
-#include <elemental/fwd/dt/matrix.hpp>
-#include <elemental/fwd/dt/dist_matrix.hpp>
-#include <elemental/fwd/dt/vector.hpp>
-#include <elemental/fwd/dt/dist_vector.hpp>
+#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
+#include <hbrs/mpl/dt/el_dist_matrix/fwd.hpp>
+#include <hbrs/mpl/dt/el_vector/fwd.hpp>
+#include <hbrs/mpl/dt/el_dist_vector/fwd.hpp>
 
 #include <hbrs/mpl/dt/smr.hpp>
 #include <El.hpp>

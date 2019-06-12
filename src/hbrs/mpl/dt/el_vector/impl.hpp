@@ -17,7 +17,7 @@
 #ifndef ELEMENTAL_DT_VECTOR_HPP
 #define ELEMENTAL_DT_VECTOR_HPP
 
-#include <elemental/fwd/dt/vector.hpp>
+#include <hbrs/mpl/dt/el_vector/fwd.hpp>
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 

@@ -17,7 +17,7 @@
 #ifndef ELEMENTAL_FUSE_FN_POWER_HPP
 #define ELEMENTAL_FUSE_FN_POWER_HPP
 
-#include <elemental/config.hpp>
+#include <hbrs/mpl/config.hpp>
 #include <El.hpp>
 #include <boost/hana/tuple.hpp>
 #include <type_traits>

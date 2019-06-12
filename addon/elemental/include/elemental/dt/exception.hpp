@@ -17,7 +17,7 @@
 #ifndef ELEMENTAL_DT_EXCEPTION_HPP
 #define ELEMENTAL_DT_EXCEPTION_HPP
 
-#include <elemental/config.hpp>
+#include <hbrs/mpl/config.hpp>
 #include <elemental/fwd/dt/exception.hpp>
 #include <hbrs/mpl/dt/exception.hpp>
 

@@ -17,8 +17,8 @@
 #ifndef ELEMENTAL_DT_DIST_MATRIX_HPP
 #define ELEMENTAL_DT_DIST_MATRIX_HPP
 
-#include <elemental/config.hpp>
-#include <elemental/fwd/dt/dist_matrix.hpp>
+#include <hbrs/mpl/config.hpp>
+#include <hbrs/mpl/dt/el_dist_matrix/fwd.hpp>
 #include <hbrs/mpl/dt/el_matrix.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>

@@ -17,14 +17,14 @@
 #ifndef ELEMENTAL_FUSE_FN_PCA_FILTER_HPP
 #define ELEMENTAL_FUSE_FN_PCA_FILTER_HPP
 
-#include <elemental/config.hpp>
+#include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
 
-#include <elemental/fwd/dt/matrix.hpp>
-#include <elemental/fwd/dt/dist_matrix.hpp>
+#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
+#include <hbrs/mpl/dt/el_dist_matrix/fwd.hpp>
 #include <hbrs/mpl/fn/pca.hpp>
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/fn/size.hpp>

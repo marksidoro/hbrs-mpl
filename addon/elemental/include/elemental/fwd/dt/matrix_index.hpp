@@ -17,7 +17,7 @@
 #ifndef ELEMENTAL_FWD_DT_MATRIX_INDEX_HPP
 #define ELEMENTAL_FWD_DT_MATRIX_INDEX_HPP
 
-#include <elemental/config.hpp>
+#include <hbrs/mpl/config.hpp>
 #include <El.hpp>
 #include <hbrs/mpl/dt/matrix_index/fwd.hpp>
 

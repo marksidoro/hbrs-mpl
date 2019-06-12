@@ -17,7 +17,7 @@
 #ifndef ELEMENTAL_DT_MATRIX_RANGE_HPP
 #define ELEMENTAL_DT_MATRIX_RANGE_HPP
 
-#include <elemental/config.hpp>
+#include <hbrs/mpl/config.hpp>
 #include <elemental/fwd/dt/matrix_range.hpp>
 #include <hbrs/mpl/dt/range.hpp>
 

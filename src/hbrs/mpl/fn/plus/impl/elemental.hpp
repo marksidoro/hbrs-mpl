@@ -17,7 +17,7 @@
 #ifndef ELEMENTAL_FUSE_FN_PLUS_HPP
 #define ELEMENTAL_FUSE_FN_PLUS_HPP
 
-#include <elemental/config.hpp>
+#include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/dt/el_dist_matrix.hpp>
 #include <hbrs/mpl/dt/el_dist_vector.hpp>
 #include <hbrs/mpl/fn/expand/fwd.hpp>
