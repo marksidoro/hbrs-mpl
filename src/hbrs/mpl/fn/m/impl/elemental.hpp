@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ELEMENTAL_FUSE_FN_M_HPP
-#define ELEMENTAL_FUSE_FN_M_HPP
+#ifndef HBRS_MPL_FN_M_IMPL_ELEMENTAL_HPP
+#define HBRS_MPL_FN_M_IMPL_ELEMENTAL_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
@@ -24,7 +24,7 @@
 #include <boost/hana/tuple.hpp>
 #include <type_traits>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
@@ -32,11 +32,11 @@ HBRS_MPL_DEF_FO_TRY_METHOD(m_impl_matrix, matrix_tag, m)
 HBRS_MPL_DEF_FO_TRY_METHOD(m_impl_dist_matrix, dist_matrix_tag, m)
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define ELEMENTAL_FUSE_FN_M_IMPLS boost::hana::make_tuple(                                                             \
+#define HBRS_MPL_FN_M_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                             \
 		elemental::detail::m_impl_matrix{},                                                                            \
 		elemental::detail::m_impl_dist_matrix{}                                                                        \
 	)
 
-#endif // !ELEMENTAL_FUSE_FN_M_HPP
+#endif // !HBRS_MPL_FN_M_IMPL_ELEMENTAL_HPP

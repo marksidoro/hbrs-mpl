@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(0.000000001)) {
 				
 				#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 				[](auto && a, auto mode) {
-					return elemental::detail::svd_impl_matrix{}(elemental::make_matrix(HBRS_MPL_FWD(a)), mode);
+					return elemental::detail::svd_impl_matrix{}(hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a)), mode);
 				},
 				[](auto && a, auto mode) {
 					auto sz_ = (*size)(a);
@@ -128,9 +128,9 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(0.000000001)) {
 					} else {
 						static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
 						return elemental::detail::svd_impl_dist_matrix{}(
-							elemental::make_dist_matrix(
+							hbrs::mpl::make_el_dist_matrix(
 								grid,
-								elemental::make_matrix(HBRS_MPL_FWD(a))
+								hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a))
 							),
 							mode
 						);

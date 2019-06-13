@@ -18,7 +18,7 @@
 #include <hbrs/mpl/dt/scv.hpp>
 #include <vector>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 namespace detail {
 
@@ -44,4 +44,4 @@ template auto multiply_impl_matrix_scalar::operator()(matrix<double>            
 template auto multiply_impl_matrix_scalar::operator()(matrix<El::Complex<double>>, El::Complex<double> const&) const;
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

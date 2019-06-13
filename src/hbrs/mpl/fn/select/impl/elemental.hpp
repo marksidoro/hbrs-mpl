@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ELEMENTAL_FUSE_FN_SELECT_HPP
-#define ELEMENTAL_FUSE_FN_SELECT_HPP
+#ifndef HBRS_MPL_FN_SELECT_IMPL_ELEMENTAL_HPP
+#define HBRS_MPL_FN_SELECT_IMPL_ELEMENTAL_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/dt/el_matrix/fwd.hpp>
@@ -40,7 +40,7 @@
 #include <El.hpp>
 #include <type_traits>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace mpl = hbrs::mpl;
 
@@ -237,12 +237,12 @@ struct select_impl_dist_vector {
 };
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define ELEMENTAL_FUSE_FN_SELECT_IMPLS boost::hana::make_tuple(                                                        \
+#define HBRS_MPL_FN_SELECT_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                        \
 		elemental::detail::select_impl_column_vector{},                                                                \
 		elemental::detail::select_impl_dist_vector{},                                                                  \
 		elemental::detail::select_impl_matrix{}                                                                        \
 	)
 
-#endif // !ELEMENTAL_FUSE_FN_SELECT_HPP
+#endif // !HBRS_MPL_FN_SELECT_IMPL_ELEMENTAL_HPP

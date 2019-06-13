@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ELEMENTAL_FUSE_FN_MULTIPLY_HPP
-#define ELEMENTAL_FUSE_FN_MULTIPLY_HPP
+#ifndef HBRS_MPL_FN_MULTIPLY_IMPL_ELEMENTAL_HPP
+#define HBRS_MPL_FN_MULTIPLY_IMPL_ELEMENTAL_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <El.hpp>
@@ -33,7 +33,7 @@
 #include <type_traits>
 
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 namespace detail {
 
@@ -182,13 +182,13 @@ struct multiply_impl_matrix_scalar {
 };
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define ELEMENTAL_FUSE_FN_MULTIPLY_IMPLS boost::hana::make_tuple(                                                      \
+#define HBRS_MPL_FN_MULTIPLY_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                      \
 		elemental::detail::multiply_impl_matrix_matrix{},                                                              \
 		elemental::detail::multiply_impl_matrix_scv_vector{},                                                          \
 		elemental::detail::multiply_impl_matrix_scalar{},                                                              \
 		elemental::detail::multiply_impl_dist_matrix_dist_matrix{}                                                     \
 	)
 
-#endif // !ELEMENTAL_FUSE_FN_MULTIPLY_HPP
+#endif // !HBRS_MPL_FN_MULTIPLY_IMPL_ELEMENTAL_HPP

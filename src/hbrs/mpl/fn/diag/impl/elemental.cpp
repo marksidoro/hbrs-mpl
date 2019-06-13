@@ -17,7 +17,7 @@
 #include <hbrs/mpl/fn/diag.hpp>
 #include <hbrs/mpl/dt/el_matrix.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 template auto diag_impl_matrix::operator()(matrix<float> const&) const;
@@ -28,4 +28,4 @@ template auto diag_impl_matrix::operator()(matrix<El::Complex<double>> const&) c
 //TODO Add diag_impl_DistMatrix impl!
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

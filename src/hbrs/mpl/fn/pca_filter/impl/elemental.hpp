@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ELEMENTAL_FUSE_FN_PCA_FILTER_HPP
-#define ELEMENTAL_FUSE_FN_PCA_FILTER_HPP
+#ifndef HBRS_MPL_FN_PCA_FILTER_IMPL_ELEMENTAL_HPP
+#define HBRS_MPL_FN_PCA_FILTER_IMPL_ELEMENTAL_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
@@ -43,7 +43,7 @@
 #include <boost/assert.hpp>
 #include <algorithm>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace mpl = hbrs::mpl;
 namespace detail {
@@ -110,10 +110,10 @@ struct pca_filter_impl_matrix {
 };
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define ELEMENTAL_FUSE_FN_PCA_FILTER_IMPLS boost::hana::make_tuple(                                                    \
+#define HBRS_MPL_FN_PCA_FILTER_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                    \
 		elemental::detail::pca_filter_impl_matrix{}                                                                    \
 	)
 
-#endif // !ELEMENTAL_FUSE_FN_PCA_FILTER_HPP
+#endif // !HBRS_MPL_FN_PCA_FILTER_IMPL_ELEMENTAL_HPP

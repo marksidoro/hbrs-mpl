@@ -16,7 +16,7 @@
 
 #include <hbrs/mpl/fn/n.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 template decltype(auto) n_impl_matrix::operator()(matrix<float> const&) const;
@@ -25,4 +25,4 @@ template decltype(auto) n_impl_matrix::operator()(matrix<double> const&) const;
 template decltype(auto) n_impl_matrix::operator()(matrix<El::Complex<double>> const&) const;
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

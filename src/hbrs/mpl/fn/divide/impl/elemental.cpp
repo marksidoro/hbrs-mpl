@@ -16,7 +16,7 @@
 
 #include <hbrs/mpl/fn/divide.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 //TODO: Add divide_impl_vector_Scalar and divide_impl_dist_vector_Scalar impls!
@@ -27,4 +27,4 @@ template auto divide_impl_matrix_scalar::operator()(matrix<double>             ,
 template auto divide_impl_matrix_scalar::operator()(matrix<El::Complex<double>>, El::Complex<double> const&) const;
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

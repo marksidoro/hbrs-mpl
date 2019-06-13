@@ -17,7 +17,7 @@
 #include <hbrs/mpl/fn/transpose.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 #define PROTO(type_spec_1, cv_qual_1, ref_decl_1)                                                                      \
@@ -37,4 +37,4 @@ HBRS_MPL_INST_FWDREFS(PROTO, dist_matrix<El::Complex<double>>)
 #undef PROTO
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

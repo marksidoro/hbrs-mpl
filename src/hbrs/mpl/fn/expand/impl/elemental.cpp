@@ -16,7 +16,7 @@
 
 #include <hbrs/mpl/fn/expand.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 template auto expand_impl_smr::operator()(
@@ -38,4 +38,4 @@ template auto expand_impl_smr::operator()(
 //TODO: Add (dist-)row_vector and (dist-)column_vector impls!
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

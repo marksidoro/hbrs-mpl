@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ELEMENTAL_FUSE_FN_PCA_HPP
-#define ELEMENTAL_FUSE_FN_PCA_HPP
+#ifndef HBRS_MPL_FN_PCA_IMPL_ELEMENTAL_HPP
+#define HBRS_MPL_FN_PCA_IMPL_ELEMENTAL_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
@@ -56,7 +56,7 @@
 #include <hbrs/mpl/dt/el_vector.hpp>
 #include <El.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace mpl = hbrs::mpl;
 namespace detail {
@@ -354,11 +354,11 @@ struct pca_impl_dist_matrix {
 };
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define ELEMENTAL_FUSE_FN_PCA_IMPLS boost::hana::make_tuple(                                                           \
+#define HBRS_MPL_FN_PCA_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                           \
 		elemental::detail::pca_impl_matrix{},                                                                          \
 		elemental::detail::pca_impl_dist_matrix{}                                                                       \
 	)
 
-#endif // !ELEMENTAL_FUSE_FN_PCA_HPP
+#endif // !HBRS_MPL_FN_PCA_IMPL_ELEMENTAL_HPP

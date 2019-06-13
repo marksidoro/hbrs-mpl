@@ -16,7 +16,7 @@
 
 #include <hbrs/mpl/fn/svd.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 template auto svd_impl_matrix::operator()(matrix<float>               const&, mpl::decompose_mode) const;
@@ -30,4 +30,4 @@ template auto svd_impl_dist_matrix::operator()(dist_matrix<double>              
 template auto svd_impl_dist_matrix::operator()(dist_matrix<El::Complex<double>> const&, mpl::decompose_mode) const;
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

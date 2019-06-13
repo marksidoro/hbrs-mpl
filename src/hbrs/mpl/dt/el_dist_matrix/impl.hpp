@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ELEMENTAL_DT_DIST_MATRIX_HPP
-#define ELEMENTAL_DT_DIST_MATRIX_HPP
+#ifndef HBRS_MPL_DT_EL_DIST_MATRIX_IMPL_HPP
+#define HBRS_MPL_DT_EL_DIST_MATRIX_IMPL_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/dt/el_dist_matrix/fwd.hpp>
@@ -31,7 +31,7 @@
 #include <type_traits>
 #include <initializer_list>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 
 template<
@@ -112,20 +112,20 @@ private:
 	> data_;
 };
 
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
 BOOST_HANA_NAMESPACE_BEGIN
 
 /* Ref.: Elemental/include/El/core.hpp */
 template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
-struct tag_of<elemental::dist_matrix<Ring, Columnwise, Rowwise, Wrapping>> {
-	using type = elemental::dist_matrix_tag;
+struct tag_of<hbrs::mpl::el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping>> {
+	using type = hbrs::mpl::el_dist_matrix_tag;
 };
 
 template <>
-struct make_impl<elemental::dist_matrix_tag> {
+struct make_impl<hbrs::mpl::el_dist_matrix_tag> {
 	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
-	static elemental::dist_matrix<Ring, Columnwise, Rowwise, Wrapping>
+	static hbrs::mpl::el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping>
 	apply(
 		El::Grid const& grid,
 		basic_type<Ring>,
@@ -140,13 +140,13 @@ struct make_impl<elemental::dist_matrix_tag> {
 	}
 	
 	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
-	static elemental::dist_matrix<Ring, Columnwise, Rowwise, Wrapping>
+	static hbrs::mpl::el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping>
 	apply(El::DistMatrix<Ring, Columnwise, Rowwise, Wrapping> dmat) {
 		return { dmat };
 	}
 	
 	template <typename Ring>
-	static elemental::dist_matrix<Ring, El::STAR, El::STAR, El::ELEMENT>
+	static hbrs::mpl::el_dist_matrix<Ring, El::STAR, El::STAR, El::ELEMENT>
 	apply(
 		El::Grid const& grid,
 		El::Matrix<Ring> local
@@ -161,7 +161,7 @@ struct make_impl<elemental::dist_matrix_tag> {
 	static decltype(auto)
 	apply(
 		El::Grid const& grid,
-		elemental::matrix<Ring> local
+		hbrs::mpl::el_matrix<Ring> local
 	) {
 		return apply(grid, std::move(local).data());
 	}
@@ -169,4 +169,4 @@ struct make_impl<elemental::dist_matrix_tag> {
 
 BOOST_HANA_NAMESPACE_END
 
-#endif // !ELEMENTAL_DT_DIST_MATRIX_HPP
+#endif // !HBRS_MPL_DT_EL_DIST_MATRIX_IMPL_HPP

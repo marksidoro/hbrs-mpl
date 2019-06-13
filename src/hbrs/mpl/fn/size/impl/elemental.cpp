@@ -19,7 +19,7 @@
 #include <hbrs/mpl/dt/el_vector.hpp>
 #include <hbrs/mpl/dt/el_dist_vector.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 template decltype(auto) size_impl_matrix::operator()(matrix<float> const&) const;
@@ -54,4 +54,4 @@ template decltype(auto) length_impl_column_vector::operator()(column_vector<El::
 // template decltype(auto) length_impl_dist_column_vector::operator()(dist_column_vector<El::Complex<double>> const&) const;
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

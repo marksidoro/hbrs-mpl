@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ELEMENTAL_FUSE_FN_MEAN_HPP
-#define ELEMENTAL_FUSE_FN_MEAN_HPP
+#ifndef HBRS_MPL_FN_MEAN_IMPL_ELEMENTAL_HPP
+#define HBRS_MPL_FN_MEAN_IMPL_ELEMENTAL_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
@@ -44,7 +44,7 @@
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace mpl = hbrs::mpl;
 
@@ -116,12 +116,12 @@ struct mean_impl_dist_matrix_columns {
 };
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define ELEMENTAL_FUSE_FN_MEAN_IMPLS boost::hana::make_tuple(                                                          \
+#define HBRS_MPL_FN_MEAN_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                          \
 		elemental::detail::mean_impl_smcs_matrix{},                                                                    \
 		elemental::detail::mean_impl_smrs_matrix{},                                                                    \
 		elemental::detail::mean_impl_dist_matrix_columns{}                                                             \
 	)
 
-#endif // !ELEMENTAL_FUSE_FN_MEAN_HPP
+#endif // !HBRS_MPL_FN_MEAN_IMPL_ELEMENTAL_HPP

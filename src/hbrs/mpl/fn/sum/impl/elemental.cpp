@@ -16,7 +16,7 @@
 
 #include <hbrs/mpl/fn/sum.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 
 namespace detail {
@@ -29,4 +29,4 @@ template auto sum_impl_dist_matrix_columns::operator()(mpl::expression<mpl::colu
 template auto sum_impl_dist_matrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<dist_matrix<El::Complex<double>>>> const&) const;
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

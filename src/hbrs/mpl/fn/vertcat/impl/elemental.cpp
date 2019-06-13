@@ -16,7 +16,7 @@
 
 #include <hbrs/mpl/fn/vertcat.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 template auto vertcat_impl_smr_smr::operator()(
@@ -60,4 +60,4 @@ template auto vertcat_impl_matrix_smr::operator()(
 ) const;
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

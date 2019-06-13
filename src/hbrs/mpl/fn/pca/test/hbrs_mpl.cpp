@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 				#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 				[](auto && a, auto economy) {
 					BOOST_TEST_PASSPOINT();
-					return elemental::detail::pca_impl_matrix{}(elemental::make_matrix(HBRS_MPL_FWD(a)), economy); 
+					return elemental::detail::pca_impl_matrix{}(hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a)), economy); 
 				},
 				[](auto && a, auto economy) {
 					BOOST_TEST_PASSPOINT();
@@ -115,9 +115,9 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 					} else {
 						static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
 						return elemental::detail::pca_impl_dist_matrix{}(
-							elemental::make_dist_matrix(
+							hbrs::mpl::make_el_dist_matrix(
 								grid,
-								elemental::make_matrix(HBRS_MPL_FWD(a))
+								hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a))
 							),
 							economy
 						);

@@ -16,7 +16,7 @@
 
 #include <hbrs/mpl/fn/columns.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 template auto columns_impl_matrix_1::operator()(matrix<float>               const&) const;
@@ -32,4 +32,4 @@ template auto columns_impl_matrix_2::operator()(matrix<El::Complex<double>> cons
 //TODO: Add columns_impl_DistMatrix impl!
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

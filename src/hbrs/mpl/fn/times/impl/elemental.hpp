@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ELEMENTAL_FUSE_FN_TIMES_HPP
-#define ELEMENTAL_FUSE_FN_TIMES_HPP
+#ifndef HBRS_MPL_FN_TIMES_IMPL_ELEMENTAL_HPP
+#define HBRS_MPL_FN_TIMES_IMPL_ELEMENTAL_HPP
 
 #include <hbrs/mpl/config.hpp>
 
@@ -40,7 +40,7 @@
 
 #include <type_traits>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 namespace detail {
 
@@ -175,11 +175,11 @@ struct times_impl_dist_matrix_expand_expr_dist_matrix {
 };
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define ELEMENTAL_FUSE_FN_TIMES_IMPLS boost::hana::make_tuple(                                                         \
+#define HBRS_MPL_FN_TIMES_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                         \
 		elemental::detail::times_impl_matrix_matrix{},                                                                 \
 		elemental::detail::times_impl_dist_matrix_expand_expr_dist_matrix{}                                            \
 	)
 
-#endif // !ELEMENTAL_FUSE_FN_TIMES_HPP
+#endif // !HBRS_MPL_FN_TIMES_IMPL_ELEMENTAL_HPP

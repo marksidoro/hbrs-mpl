@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ELEMENTAL_FUSE_FN_ZIP_HPP
-#define ELEMENTAL_FUSE_FN_ZIP_HPP
+#ifndef HBRS_MPL_FN_ZIP_IMPL_ELEMENTAL_HPP
+#define HBRS_MPL_FN_ZIP_IMPL_ELEMENTAL_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/dt/el_matrix.hpp>
@@ -27,7 +27,7 @@
 #include <boost/range/irange.hpp>
 #include <type_traits>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 namespace detail {
 
@@ -104,11 +104,11 @@ struct zip_impl_smr_matrix_integer_range {
 };
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define ELEMENTAL_FUSE_FN_ZIP_IMPLS boost::hana::make_tuple(                                                           \
+#define HBRS_MPL_FN_ZIP_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                           \
 		elemental::detail::zip_impl_smc_matrix_integer_range{},                                                        \
 		elemental::detail::zip_impl_smr_matrix_integer_range{}                                                         \
 	)
 
-#endif // !ELEMENTAL_FUSE_FN_ZIP_HPP
+#endif // !HBRS_MPL_FN_ZIP_IMPL_ELEMENTAL_HPP

@@ -16,7 +16,7 @@
 
 #include <hbrs/mpl/fn/zip.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 template auto zip_impl_smc_matrix_integer_range::operator()(mpl::smc<matrix<float>               , El::Int>, boost::integer_range<El::Int>) const;
@@ -40,4 +40,4 @@ template auto zip_impl_smr_matrix_integer_range::operator()(mpl::smr<matrix<doub
 template auto zip_impl_smr_matrix_integer_range::operator()(mpl::smr<matrix<El::Complex<double>>const& , El::Int>, boost::integer_range<El::Int>) const;
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

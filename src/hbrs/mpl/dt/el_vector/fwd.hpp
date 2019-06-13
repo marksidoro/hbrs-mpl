@@ -14,14 +14,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ELEMENTAL_FWD_DT_VECTOR_HPP
-#define ELEMENTAL_FWD_DT_VECTOR_HPP
+#ifndef HBRS_MPL_DT_EL_VECTOR_FWD_HPP
+#define HBRS_MPL_DT_EL_VECTOR_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <boost/hana/fwd/core/make.hpp>
 #include <boost/hana/fwd/core/to.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 
 template<typename Ring>
@@ -36,6 +36,6 @@ struct row_vector_tag;
 constexpr auto make_row_vector = hana::make<row_vector_tag>;
 constexpr auto to_row_vector = hana::to<row_vector_tag>;
 
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#endif // !ELEMENTAL_FWD_DT_VECTOR_HPP
+#endif // !HBRS_MPL_DT_EL_VECTOR_FWD_HPP

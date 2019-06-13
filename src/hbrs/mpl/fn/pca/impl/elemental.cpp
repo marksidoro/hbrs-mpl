@@ -16,7 +16,7 @@
 
 #include <hbrs/mpl/fn/pca.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 //TODO: Add impls!
@@ -30,4 +30,4 @@ template auto pca_impl_matrix::operator()(matrix<double> const&, bool) const;
 template auto pca_impl_dist_matrix::operator()(dist_matrix<double> const&, bool) const;
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

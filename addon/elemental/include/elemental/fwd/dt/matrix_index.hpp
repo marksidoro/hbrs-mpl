@@ -21,11 +21,11 @@
 #include <El.hpp>
 #include <hbrs/mpl/dt/matrix_index/fwd.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 
 using matrix_index = mpl::matrix_index<El::Int, El::Int>;
 
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
 #endif // !ELEMENTAL_FWD_DT_MATRIX_INDEX_HPP

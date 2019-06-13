@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ELEMENTAL_DT_VECTOR_HPP
-#define ELEMENTAL_DT_VECTOR_HPP
+#ifndef HBRS_MPL_DT_EL_VECTOR_IMPL_HPP
+#define HBRS_MPL_DT_EL_VECTOR_IMPL_HPP
 
 #include <hbrs/mpl/dt/el_vector/fwd.hpp>
 #include <boost/hana/core/make.hpp>
@@ -30,8 +30,8 @@
 #include <boost/assert.hpp>
 #include <El.hpp>
 
-#define _ELEMENTAL_DEF_VECTOR(vector_kind)                                                                             \
-	ELEMENTAL_NAMESPACE_BEGIN                                                                                          \
+#define _HBRS_MPL_DEF_EL_VECTOR(vector_kind)                                                                             \
+	HBRS_MPL_NAMESPACE_BEGIN                                                                                          \
 	namespace mpl = hbrs::mpl;                                                                                         \
                                                                                                                        \
 	template<typename Ring>                                                                                            \
@@ -99,37 +99,37 @@
 		El::Matrix<std::remove_const_t<Ring>> data_;                                                                   \
 	};                                                                                                                 \
 	                                                                                                                   \
-	ELEMENTAL_NAMESPACE_END                                                                                            \
+	HBRS_MPL_NAMESPACE_END                                                                                            \
                                                                                                                        \
 	namespace boost { namespace hana {                                                                                 \
                                                                                                                        \
 	template <typename Ring>                                                                                           \
-	struct tag_of< elemental::vector_kind ## _vector<Ring> > {                                                         \
-		using type = elemental::vector_kind ## _vector_tag;                                                            \
+	struct tag_of< hbrs::mpl::el_ ## vector_kind< ## _vector<Ring> > {                                                         \
+		using type = hbrs::mpl::el_ ## vector_kind< ## _vector_tag;                                                            \
 	};                                                                                                                 \
                                                                                                                        \
 	template <>                                                                                                        \
-	struct make_impl<elemental::vector_kind ## _vector_tag> {                                                          \
+	struct make_impl<hbrs::mpl::el_ ## vector_kind< ## _vector_tag> {                                                          \
 		template <typename Ring>                                                                                       \
-		static elemental::vector_kind ## _vector<Ring>                                                                 \
+		static hbrs::mpl::el_ ## vector_kind< ## _vector<Ring>                                                                 \
 		apply(basic_type<Ring>, El::Int sz) {                                                                          \
 			return {sz};                                                                                               \
 		}                                                                                                              \
 	                                                                                                                   \
 		template <typename Ring>                                                                                       \
-		static elemental::vector_kind ## _vector<std::decay_t<Ring>>                                                   \
+		static hbrs::mpl::el_ ## vector_kind< ## _vector<std::decay_t<Ring>>                                                   \
 		apply(El::Matrix<Ring> data) {                                                                                 \
 			return {data};                                                                                             \
 		}                                                                                                              \
 		                                                                                                               \
 		template <typename Ring>                                                                                       \
-		static elemental::vector_kind ## _vector<std::decay_t<Ring>>                                                   \
+		static hbrs::mpl::el_ ## vector_kind< ## _vector<std::decay_t<Ring>>                                                   \
 		apply(Ring const* data, El::Int sz) {                                                                          \
 			return {data, sz};                                                                                         \
 		}                                                                                                              \
 		                                                                                                               \
 		template <typename Ring>                                                                                       \
-		static elemental::vector_kind ## _vector<std::decay_t<Ring>>                                                   \
+		static hbrs::mpl::el_ ## vector_kind< ## _vector<std::decay_t<Ring>>                                                   \
 		apply(std::initializer_list<Ring> data) {                                                                      \
 			return { data.begin(), boost::numeric_cast<El::Int>(data.size()) };                                        \
 		}                                                                                                              \
@@ -137,12 +137,12 @@
                                                                                                                        \
 	/* namespace hana */ } /* namespace boost */ }
 
-_ELEMENTAL_DEF_VECTOR(column)
-_ELEMENTAL_DEF_VECTOR(row)
+_HBRS_MPL_DEF_EL_VECTOR(column)
+_HBRS_MPL_DEF_EL_VECTOR(row)
 
-#undef _ELEMENTAL_DEF_VECTOR
+#undef _HBRS_MPL_DEF_EL_VECTOR
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 
 template<typename Ring>
 column_vector<Ring>::column_vector(El::Matrix<Ring> data) : data_{data} {
@@ -202,6 +202,6 @@ row_vector<Ring>::at(El::Int i) const {
 	return at_(data_, mpl::make_matrix_index(0, i));
 }
 
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#endif // !ELEMENTAL_DT_VECTOR_HPP
+#endif // !HBRS_MPL_DT_EL_VECTOR_IMPL_HPP

@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ELEMENTAL_DT_MATRIX_HPP
-#define ELEMENTAL_DT_MATRIX_HPP
+#ifndef HBRS_MPL_DT_EL_MATRIX_IMPL_HPP
+#define HBRS_MPL_DT_EL_MATRIX_IMPL_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/dt/el_matrix/fwd.hpp>
@@ -40,7 +40,7 @@
 #include <type_traits>
 #include <initializer_list>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 
 template<typename Ring>
@@ -119,25 +119,25 @@ private:
 	El::Matrix<std::remove_const_t<Ring>> data_; /* elemental handles constness using a boolean El::Matrix<>.Locked() */
 };
 
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
 BOOST_HANA_NAMESPACE_BEGIN
 
 template <typename Ring> 
-struct tag_of< elemental::matrix<Ring> > { 
-	using type = elemental::matrix_tag;
+struct tag_of< hbrs::mpl::el_matrix<Ring> > { 
+	using type = hbrs::mpl::el_matrix_tag;
 }; 
 
 template <>
-struct make_impl<elemental::matrix_tag> {
+struct make_impl<hbrs::mpl::el_matrix_tag> {
 	template <typename Ring>
-	static elemental::matrix<Ring> 
+	static hbrs::mpl::el_matrix<Ring> 
 	apply(basic_type<Ring>, hbrs::mpl::matrix_size<El::Int, El::Int> sz) {
 		return {sz.m(), sz.n()};
 	}
 	
 	template <typename Ring> 
-	static elemental::matrix<Ring>
+	static hbrs::mpl::el_matrix<Ring>
 	apply(El::Matrix<Ring> data) {
 		return {data}; 
 	}
@@ -157,7 +157,7 @@ struct make_impl<elemental::matrix_tag> {
 	) {
 		typedef std::remove_cv_t<Ring> _Ring_;
 		hbrs::mpl::matrix_size<El::Int, El::Int> sz{b.size()};
-		elemental::matrix<_Ring_> m{sz.m(), sz.n()};
+		hbrs::mpl::el_matrix<_Ring_> m{sz.m(), sz.n()};
 		return hbrs::mpl::detail::copy_matrix(b, m);
 	}
 	
@@ -177,7 +177,7 @@ struct make_impl<elemental::matrix_tag> {
 	) {
 		typedef std::remove_cv_t<Ring> _Ring_;
 		hbrs::mpl::matrix_size<El::Int, El::Int> sz{b.size()};
-		elemental::matrix<_Ring_> m{sz.m(), sz.n()};
+		hbrs::mpl::el_matrix<_Ring_> m{sz.m(), sz.n()};
 		return hbrs::mpl::detail::copy_matrix(b, m);
 	}
 	
@@ -192,11 +192,11 @@ struct make_impl<elemental::matrix_tag> {
 		hbrs::mpl::storage_order_<Order>
 	) {
 		typedef std::remove_cv_t<Ring> _Ring_;
-		elemental::matrix<_Ring_> m{sz.m(), sz.n()};
+		hbrs::mpl::el_matrix<_Ring_> m{sz.m(), sz.n()};
 		return hbrs::mpl::detail::copy_matrix(data, hbrs::mpl::storage_order_c<Order>, m);
 	}
 }; 
 
 BOOST_HANA_NAMESPACE_END
 
-#endif // !ELEMENTAL_DT_MATRIX_HPP
+#endif // !HBRS_MPL_DT_EL_MATRIX_IMPL_HPP

@@ -57,9 +57,9 @@ template <
 			std::is_same< hana::tag_of_t<T>, matlab::row_vector_tag >::value ||
 		#endif
 		#ifdef HBRS_MPL_ENABLE_ELEMENTAL
-			std::is_same< hana::tag_of_t<T>, elemental::matrix_tag >::value ||
-			std::is_same< hana::tag_of_t<T>, elemental::column_vector_tag >::value ||
-			std::is_same< hana::tag_of_t<T>, elemental::row_vector_tag >::value ||
+			std::is_same< hana::tag_of_t<T>, hbrs::mpl::el_matrix_tag >::value ||
+			std::is_same< hana::tag_of_t<T>, hbrs::mpl::el_column_vector_tag >::value ||
+			std::is_same< hana::tag_of_t<T>, hbrs::mpl::el_row_vector_tag >::value ||
 		#endif
 		std::is_same< hana::tag_of_t<T>, sm_tag >::value ||
 		std::is_same< hana::tag_of_t<T>, smr_tag >::value ||
@@ -82,7 +82,7 @@ gather(T && t) {
 	#define _DEF_GATHER_DIST(kind)                                                                                     \
 		template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>                         \
 		constexpr auto                                                                                                 \
-		gather(elemental::dist_ ## kind<Ring, Columnwise, Rowwise, Wrapping> const& t) {                               \
+		gather(hbrs::mpl::el_dist_ ## kind<Ring, Columnwise, Rowwise, Wrapping> const& t) {                               \
 			typedef std::decay_t<Ring> _Ring_;                                                                         \
 			El::DistMatrix<_Ring_, El::CIRC, El::CIRC, Wrapping> dmat{t.data()};                                       \
 			                                                                                                           \

@@ -16,7 +16,7 @@
 
 #include <hbrs/mpl/fn/select.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 namespace detail {
 
@@ -67,4 +67,4 @@ template matrix<El::Complex<double>> select_impl_matrix::operator()(matrix<El::C
 //TODO: Add Dist* impls!
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

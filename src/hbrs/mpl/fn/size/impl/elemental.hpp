@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ELEMENTAL_FUSE_FN_SIZE_HPP
-#define ELEMENTAL_FUSE_FN_SIZE_HPP
+#ifndef HBRS_MPL_FN_SIZE_IMPL_ELEMENTAL_HPP
+#define HBRS_MPL_FN_SIZE_IMPL_ELEMENTAL_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
@@ -28,7 +28,7 @@
 
 #include <boost/hana/tuple.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 
 namespace detail {
@@ -43,9 +43,9 @@ HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_dist_column_vector, dist_column_vector_ta
 HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_dist_row_vector, dist_row_vector_tag, length)
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define ELEMENTAL_FUSE_FN_SIZE_IMPLS boost::hana::make_tuple(                                                          \
+#define HBRS_MPL_FN_SIZE_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                          \
 		elemental::detail::length_impl_column_vector{},                                                                \
 		elemental::detail::length_impl_row_vector{},                                                                   \
 		elemental::detail::length_impl_dist_column_vector{},                                                           \
@@ -54,4 +54,4 @@ ELEMENTAL_NAMESPACE_END
 		elemental::detail::size_impl_dist_matrix{}                                                                     \
 	)
 
-#endif // !ELEMENTAL_FUSE_FN_SIZE_HPP
+#endif // !HBRS_MPL_FN_SIZE_IMPL_ELEMENTAL_HPP

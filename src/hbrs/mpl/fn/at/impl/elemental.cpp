@@ -17,7 +17,7 @@
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 template decltype(auto) at_impl_matrix::operator()(matrix<float> &,      mpl::matrix_index<El::Int, El::Int> const&) const;
@@ -55,4 +55,4 @@ template decltype(auto) at_impl_matrix_smr::operator()(matrix<El::Complex<double
 //TODO: Add row_vector and column_vector impls!
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

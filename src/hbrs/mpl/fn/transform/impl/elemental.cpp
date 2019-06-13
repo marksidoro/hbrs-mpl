@@ -16,7 +16,7 @@
 
 #include <hbrs/mpl/fn/transform.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 //TODO: Add transform_impl_vector and transform_impl_dist_vector impls!
@@ -109,4 +109,4 @@ template decltype(auto) transform_impl_smcs_smrs_matrix::operator()(
 ) const;
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

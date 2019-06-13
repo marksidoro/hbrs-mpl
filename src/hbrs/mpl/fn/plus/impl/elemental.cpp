@@ -19,7 +19,7 @@
 #include <hbrs/mpl/dt/el_dist_matrix.hpp>
 #include <hbrs/mpl/dt/el_dist_vector.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 template auto plus_impl_matrix_matrix::operator()(matrix<float>,               matrix<float>               const&) const;
@@ -35,4 +35,4 @@ template auto plus_impl_matrix_scalar::operator()(matrix<El::Complex<double>>, E
 //TODO: Add dist_*_vector impls!
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

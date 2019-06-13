@@ -14,14 +14,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ELEMENTAL_FWD_DT_MATRIX_HPP
-#define ELEMENTAL_FWD_DT_MATRIX_HPP
+#ifndef HBRS_MPL_DT_EL_MATRIX_FWD_HPP
+#define HBRS_MPL_DT_EL_MATRIX_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <boost/hana/fwd/core/make.hpp>
 #include <boost/hana/fwd/core/to.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 
 template<typename Ring>
@@ -30,6 +30,6 @@ struct matrix_tag;
 constexpr auto make_matrix = hana::make<matrix_tag>;
 constexpr auto to_matrix = hana::to<matrix_tag>;
 
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#endif // !ELEMENTAL_FWD_DT_MATRIX_HPP
+#endif // !HBRS_MPL_DT_EL_MATRIX_FWD_HPP

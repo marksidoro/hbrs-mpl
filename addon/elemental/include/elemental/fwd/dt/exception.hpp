@@ -24,7 +24,7 @@
 #include <tuple>
 #include <El.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 
 typedef boost::error_info<struct errinfo_sequence_size_, El::Int >
@@ -43,6 +43,6 @@ typedef boost::error_info<
 	>
 > errinfo_matrix_sizes;
 
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
 #endif // !ELEMENTAL_FWD_DT_EXCEPTION_HPP

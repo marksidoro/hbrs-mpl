@@ -14,15 +14,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ELEMENTAL_FUSE_FN_POWER_HPP
-#define ELEMENTAL_FUSE_FN_POWER_HPP
+#ifndef HBRS_MPL_FN_POWER_IMPL_ELEMENTAL_HPP
+#define HBRS_MPL_FN_POWER_IMPL_ELEMENTAL_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <El.hpp>
 #include <boost/hana/tuple.hpp>
 #include <type_traits>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 namespace detail {
 
@@ -55,10 +55,10 @@ struct power_impl {
 };
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define ELEMENTAL_FUSE_FN_POWER_IMPLS boost::hana::make_tuple(                                                         \
+#define HBRS_MPL_FN_POWER_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                         \
 		elemental::detail::power_impl{}                                                                                \
 	)
 
-#endif // !ELEMENTAL_FUSE_FN_POWER_HPP
+#endif // !HBRS_MPL_FN_POWER_IMPL_ELEMENTAL_HPP

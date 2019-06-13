@@ -16,7 +16,7 @@
 
 #include <hbrs/mpl/fn/absolute.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 template auto absolute_impl_matrix::operator()(matrix<float>               const&) const;
@@ -25,4 +25,4 @@ template auto absolute_impl_matrix::operator()(matrix<double>              const
 // template auto absolute_impl_matrix::operator()(matrix<El::Complex<double>> const&) const;
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

@@ -16,7 +16,7 @@
 
 #include <hbrs/mpl/fn/times.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 template auto times_impl_matrix_matrix::operator()(matrix<float>               const&, matrix<float>               const&) const;
@@ -27,4 +27,4 @@ template auto times_impl_matrix_matrix::operator()(matrix<El::Complex<double>> c
 //TODO: Add dist impls
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

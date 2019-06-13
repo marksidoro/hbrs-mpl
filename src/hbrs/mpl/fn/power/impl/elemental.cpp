@@ -16,7 +16,7 @@
 
 #include <hbrs/mpl/fn/power.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 template auto power_impl::operator()(float               const&, float               const&) const;
@@ -25,4 +25,4 @@ template auto power_impl::operator()(double              const&, double         
 template auto power_impl::operator()(El::Complex<double> const&, El::Complex<double> const&) const;
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

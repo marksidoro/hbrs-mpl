@@ -19,7 +19,7 @@
 #include <hbrs/mpl/dt/el_matrix.hpp>
 #include <hbrs/mpl/dt/el_dist_matrix.hpp>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 //TODO: Why does El::Complex<...> fail?
@@ -45,4 +45,4 @@ template auto pca_filter_impl_matrix::operator()(dist_matrix<double>            
 // template auto pca_filter_impl_matrix::operator()(dist_matrix<El::Complex<double>> const&,  std::vector<bool> const&) const;
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ELEMENTAL_DT_DIST_VECTOR_HPP
-#define ELEMENTAL_DT_DIST_VECTOR_HPP
+#ifndef HBRS_MPL_DT_EL_DIST_VECTOR_IMPL_HPP
+#define HBRS_MPL_DT_EL_DIST_VECTOR_IMPL_HPP
 
 #include <hbrs/mpl/dt/el_dist_vector/fwd.hpp>
 #include <hbrs/mpl/dt/el_vector.hpp>
@@ -24,8 +24,8 @@
 #include <boost/hana/core/to.hpp>
 #include <initializer_list>
 
-#define _ELEMENTAL_DEF_DIST_VECTOR(vector_kind)                                                                        \
-	ELEMENTAL_NAMESPACE_BEGIN                                                                                          \
+#define _HBRS_MPL_DEF_EL_DIST_VECTOR(vector_kind)                                                                        \
+	HBRS_MPL_NAMESPACE_BEGIN                                                                                          \
 	                                                                                                                   \
 	template<                                                                                                          \
 		typename Ring = double,                                                                                        \
@@ -70,24 +70,24 @@
 		> data_;                                                                                                       \
 	};                                                                                                                 \
 	                                                                                                                   \
-	ELEMENTAL_NAMESPACE_END                                                                                            \
+	HBRS_MPL_NAMESPACE_END                                                                                            \
 	                                                                                                                   \
 	BOOST_HANA_NAMESPACE_BEGIN                                                                                         \
                                                                                                                        \
 	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>                             \
-	struct tag_of< elemental::dist_ ## vector_kind ## _vector<Ring, Columnwise, Rowwise, Wrapping> > {                 \
-		using type = elemental::dist_ ## vector_kind ## _vector_tag;                                                   \
+	struct tag_of< hbrs::mpl::el_dist_ ## vector_kind ## _vector<Ring, Columnwise, Rowwise, Wrapping> > {                 \
+		using type = hbrs::mpl::el_dist_ ## vector_kind ## _vector_tag;                                                   \
 	};                                                                                                                 \
                                                                                                                        \
 	template <>                                                                                                        \
-	struct make_impl<elemental::dist_ ## vector_kind ## _vector_tag> {                                                 \
+	struct make_impl<hbrs::mpl::el_dist_ ## vector_kind ## _vector_tag> {                                                 \
 		template <typename Ring>                                                                                       \
 		static auto                                                                                                    \
 		apply(                                                                                                         \
 			El::Grid const& grid,                                                                                      \
 			std::initializer_list<Ring> data                                                                           \
 		) {                                                                                                            \
-			elemental::dist_ ## vector_kind ## _vector<                                                                \
+			hbrs::mpl::el_dist_ ## vector_kind ## _vector<                                                                \
 				Ring, El::STAR, El::STAR, El::ELEMENT                                                                  \
 			> m{grid, (El::Int)data.size()};                                                                           \
 			m.data().Matrix() = elemental::make_ ## vector_kind ## _vector(data).data();                               \
@@ -95,7 +95,7 @@
 		}                                                                                                              \
 		                                                                                                               \
 		template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>                         \
-		static elemental::dist_ ## vector_kind ## _vector<Ring, Columnwise, Rowwise, Wrapping>                         \
+		static hbrs::mpl::el_dist_ ## vector_kind ## _vector<Ring, Columnwise, Rowwise, Wrapping>                         \
 		apply(El::DistMatrix<Ring, Columnwise, Rowwise, Wrapping> data) {                                              \
 			return { data };                                                                                           \
 		}                                                                                                              \
@@ -103,12 +103,12 @@
                                                                                                                        \
 	BOOST_HANA_NAMESPACE_END
 
-_ELEMENTAL_DEF_DIST_VECTOR(column)
-_ELEMENTAL_DEF_DIST_VECTOR(row)
+_HBRS_MPL_DEF_EL_DIST_VECTOR(column)
+_HBRS_MPL_DEF_EL_DIST_VECTOR(row)
 
-#undef _ELEMENTAL_DEF_DIST_VECTOR
+#undef _HBRS_MPL_DEF_EL_DIST_VECTOR
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 
 template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 template<
@@ -162,6 +162,6 @@ dist_row_vector<Ring, Columnwise, Rowwise, Wrapping>::length() const {
 	return data_.Width();
 }
 
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#endif // !ELEMENTAL_DT_DIST_VECTOR_HPP
+#endif // !HBRS_MPL_DT_EL_DIST_VECTOR_IMPL_HPP

@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ELEMENTAL_FUSE_FN_DIAG_HPP
-#define ELEMENTAL_FUSE_FN_DIAG_HPP
+#ifndef HBRS_MPL_FN_DIAG_IMPL_ELEMENTAL_HPP
+#define HBRS_MPL_FN_DIAG_IMPL_ELEMENTAL_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
@@ -31,7 +31,7 @@
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
 
-ELEMENTAL_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace mpl = hbrs::mpl;
 
@@ -70,11 +70,11 @@ struct diag_impl_dist_matrix {
 };
 
 /* namespace detail */ }
-ELEMENTAL_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define ELEMENTAL_FUSE_FN_DIAG_IMPLS boost::hana::make_tuple(                                                          \
+#define HBRS_MPL_FN_DIAG_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                          \
 		elemental::detail::diag_impl_matrix{},                                                                         \
 		elemental::detail::diag_impl_dist_matrix{}                                                                     \
 	)
 
-#endif // !ELEMENTAL_FUSE_FN_DIAG_HPP
+#endif // !HBRS_MPL_FN_DIAG_IMPL_ELEMENTAL_HPP
