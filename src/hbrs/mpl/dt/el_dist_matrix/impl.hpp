@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_EL_DIST_MATRIX_IMPL_HPP
-#define HBRS_MPL_DT_EL_DIST_MATRIX_IMPL_HPP
+#ifndef HBRS_MPL_DT_EL_DIST_MATRIX_IMPL_IMPL_HPP
+#define HBRS_MPL_DT_EL_DIST_MATRIX_IMPL_IMPL_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/dt/el_dist_matrix/fwd.hpp>
@@ -169,4 +169,4 @@ struct make_impl<hbrs::mpl::el_dist_matrix_tag> {
 
 BOOST_HANA_NAMESPACE_END
 
-#endif // !HBRS_MPL_DT_EL_DIST_MATRIX_IMPL_HPP
+#endif // !HBRS_MPL_DT_EL_DIST_MATRIX_IMPL_IMPL_HPP

@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_MATRIX_DISTRIBUTION_HPP
-#define HBRS_MPL_DT_MATRIX_DISTRIBUTION_HPP
+#ifndef HBRS_MPL_DT_MATRIX_DISTRIBUTION_IMPL_HPP
+#define HBRS_MPL_DT_MATRIX_DISTRIBUTION_IMPL_HPP
 
 #include <hbrs/mpl/dt/matrix_distribution/fwd.hpp>
 #include <hbrs/mpl/config.hpp>
@@ -147,4 +147,4 @@ struct make_impl<hbrs::mpl::matrix_distribution_tag> {
 
 /* namespace hana */ } /* namespace boost */ }
 
-#endif // !HBRS_MPL_DT_MATRIX_DISTRIBUTION_HPP
+#endif // !HBRS_MPL_DT_MATRIX_DISTRIBUTION_IMPL_HPP

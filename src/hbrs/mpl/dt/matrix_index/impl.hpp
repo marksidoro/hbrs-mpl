@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_MATRIX_INDEX_HPP
-#define HBRS_MPL_DT_MATRIX_INDEX_HPP
+#ifndef HBRS_MPL_DT_MATRIX_INDEX_IMPL_HPP
+#define HBRS_MPL_DT_MATRIX_INDEX_IMPL_HPP
 
 #include <hbrs/mpl/dt/matrix_index/fwd.hpp>
 #include <hbrs/mpl/detail/axis.hpp>
@@ -27,4 +27,4 @@ HBRS_MPL_DEFINE_AXIS_2D(matrix_index, Index, m, RowIndex, n, ColumnIndex)
 #include <hbrs/mpl/fn/not.hpp>
 HBRS_MPL_DEFINE_AXIS_2D_EQUALITY_OPERATORS(matrix_index, Index, m, RowIndex, n, ColumnIndex)
 
-#endif // !HBRS_MPL_DT_MATRIX_INDEX_HPP
+#endif // !HBRS_MPL_DT_MATRIX_INDEX_IMPL_HPP

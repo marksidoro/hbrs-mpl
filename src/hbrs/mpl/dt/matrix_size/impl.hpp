@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_MATRIX_SIZE_HPP
-#define HBRS_MPL_DT_MATRIX_SIZE_HPP
+#ifndef HBRS_MPL_DT_MATRIX_SIZE_IMPL_HPP
+#define HBRS_MPL_DT_MATRIX_SIZE_IMPL_HPP
 
 #include <hbrs/mpl/dt/matrix_size/fwd.hpp>
 #include <hbrs/mpl/detail/axis.hpp>
@@ -27,4 +27,4 @@ HBRS_MPL_DEFINE_AXIS_2D(matrix_size, Size, m, Rows, n, Columns)
 #include <hbrs/mpl/fn/not.hpp>
 HBRS_MPL_DEFINE_AXIS_2D_EQUALITY_OPERATORS(matrix_size, Size, m, Rows, n, Columns)
 
-#endif // !HBRS_MPL_DT_MATRIX_SIZE_HPP
+#endif // !HBRS_MPL_DT_MATRIX_SIZE_IMPL_HPP

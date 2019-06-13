@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FWD_DT_STORAGE_ORDER_HPP
-#define HBRS_MPL_FWD_DT_STORAGE_ORDER_HPP
+#ifndef HBRS_MPL_DT_STORAGE_ORDER_FWD_HPP
+#define HBRS_MPL_DT_STORAGE_ORDER_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <boost/hana/fwd/core/make.hpp>
@@ -37,4 +37,4 @@ constexpr auto row_major_c = storage_order_c<storage_order::row_major>;
 
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_FWD_DT_STORAGE_ORDER_HPP
+#endif // !HBRS_MPL_DT_STORAGE_ORDER_FWD_HPP

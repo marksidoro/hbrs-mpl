@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_RANGE_HPP
-#define HBRS_MPL_DT_RANGE_HPP
+#ifndef HBRS_MPL_DT_RANGE_IMPL_HPP
+#define HBRS_MPL_DT_RANGE_IMPL_HPP
 
 #include <hbrs/mpl/dt/range/fwd.hpp>
 #include <hbrs/mpl/detail/axis.hpp>
@@ -27,4 +27,4 @@ HBRS_MPL_DEFINE_AXIS_2D(range, Range, first, First, last, Last)
 #include <hbrs/mpl/fn/not.hpp>
 HBRS_MPL_DEFINE_AXIS_2D_EQUALITY_OPERATORS(range, Range, first, First, last, Last)
 
-#endif // !HBRS_MPL_DT_RANGE_HPP
+#endif // !HBRS_MPL_DT_RANGE_IMPL_HPP

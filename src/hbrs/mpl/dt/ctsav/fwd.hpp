@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FWD_DT_CTSAV_HPP
-#define HBRS_MPL_FWD_DT_CTSAV_HPP
+#ifndef HBRS_MPL_DT_CTSAV_FWD_HPP
+#define HBRS_MPL_DT_CTSAV_FWD_HPP
 /* compile-time-size array view */
 
 #include <hbrs/mpl/config.hpp>
@@ -33,4 +33,4 @@ constexpr auto to_ctsav = hana::to<ctsav_tag>;
 
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_FWD_DT_CTSAV_HPP
+#endif // !HBRS_MPL_DT_CTSAV_FWD_HPP

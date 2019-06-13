@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_SMS_HPP
-#define HBRS_MPL_DT_SMS_HPP
+#ifndef HBRS_MPL_DT_SMS_IMPL_HPP
+#define HBRS_MPL_DT_SMS_IMPL_HPP
 
 #include <hbrs/mpl/dt/sms/fwd.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
@@ -191,4 +191,4 @@ private:
 
 /* namespace hana */ } /* namespace boost */ }
 
-#endif // !HBRS_MPL_DT_SMS_HPP
+#endif // !HBRS_MPL_DT_SMS_IMPL_HPP

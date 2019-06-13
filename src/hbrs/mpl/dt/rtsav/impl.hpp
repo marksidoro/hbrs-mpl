@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_RTSAV_HPP
-#define HBRS_MPL_DT_RTSAV_HPP
+#ifndef HBRS_MPL_DT_RTSAV_IMPL_HPP
+#define HBRS_MPL_DT_RTSAV_IMPL_HPP
 /* runtime-size array view */
 
 #include <hbrs/mpl/dt/rtsav/fwd.hpp>
@@ -143,4 +143,4 @@ struct make_impl<hbrs::mpl::rtsav_tag> {
 
 /* namespace hana */ } /* namespace boost */ }
 
-#endif // !HBRS_MPL_DT_RTSAV_HPP
+#endif // !HBRS_MPL_DT_RTSAV_IMPL_HPP

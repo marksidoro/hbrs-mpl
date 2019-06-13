@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_USCSV_HPP
-#define HBRS_MPL_DT_USCSV_HPP
+#ifndef HBRS_MPL_DT_USCSV_IMPL_HPP
+#define HBRS_MPL_DT_USCSV_IMPL_HPP
 /* unequal-sized concatenated-sequences view */
 
 #include <hbrs/mpl/dt/uscsv/fwd.hpp>
@@ -186,4 +186,4 @@ struct make_impl<hbrs::mpl::uscsv_tag> {
 
 /* namespace hana */ } /* namespace boost */ }
 
-#endif // !HBRS_MPL_DT_USCSV_HPP
+#endif // !HBRS_MPL_DT_USCSV_IMPL_HPP

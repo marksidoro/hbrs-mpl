@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FWD_DT_FUNCTION_HPP
-#define HBRS_MPL_FWD_DT_FUNCTION_HPP
+#ifndef HBRS_MPL_DT_FUNCTION_FWD_HPP
+#define HBRS_MPL_DT_FUNCTION_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
 
@@ -79,4 +79,4 @@
 #define HBRS_MPL_DEC_F1N(...)                                                                                          \
 	HBRS_MPL_DECLARE_FUNCTION_ARITY1N(__VA_ARGS__)
 
-#endif // !HBRS_MPL_FWD_DT_FUNCTION_HPP
+#endif // !HBRS_MPL_DT_FUNCTION_FWD_HPP

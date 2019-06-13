@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FWD_DT_SMCS_HPP
-#define HBRS_MPL_FWD_DT_SMCS_HPP
+#ifndef HBRS_MPL_DT_SMCS_FWD_HPP
+#define HBRS_MPL_DT_SMCS_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <boost/hana/fwd/core/make.hpp>
@@ -34,4 +34,4 @@ constexpr auto to_smcs = hana::to<smcs_tag>;
 
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_FWD_DT_SMCS_HPP
+#endif // !HBRS_MPL_DT_SMCS_FWD_HPP

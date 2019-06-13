@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FWD_DT_SUBSEQUENCE_HPP
-#define HBRS_MPL_FWD_DT_SUBSEQUENCE_HPP
+#ifndef HBRS_MPL_DT_SUBSEQUENCE_FWD_HPP
+#define HBRS_MPL_DT_SUBSEQUENCE_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <boost/hana/fwd/core/make.hpp>
@@ -32,4 +32,4 @@ constexpr auto to_subsequence = hana::to<subsequence_tag>;
 
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_FWD_DT_SUBSEQUENCE_HPP
+#endif // !HBRS_MPL_DT_SUBSEQUENCE_FWD_HPP

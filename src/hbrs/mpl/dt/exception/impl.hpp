@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_EXCEPTION_HPP
-#define HBRS_MPL_DT_EXCEPTION_HPP
+#ifndef HBRS_MPL_DT_EXCEPTION_IMPL_HPP
+#define HBRS_MPL_DT_EXCEPTION_IMPL_HPP
 
 #include <hbrs/mpl/dt/exception/fwd.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>
@@ -86,4 +86,4 @@ private:
 
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_DT_EXCEPTION_HPP
+#endif // !HBRS_MPL_DT_EXCEPTION_IMPL_HPP

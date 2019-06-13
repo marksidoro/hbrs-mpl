@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FWD_DT_PCA_RESULT_HPP
-#define HBRS_MPL_FWD_DT_PCA_RESULT_HPP
+#ifndef HBRS_MPL_DT_PCA_RESULT_FWD_HPP
+#define HBRS_MPL_DT_PCA_RESULT_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <boost/hana/fwd/core/make.hpp>
@@ -38,4 +38,4 @@ struct pca_mean;
 
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_FWD_DT_PCA_RESULT_HPP
+#endif // !HBRS_MPL_DT_PCA_RESULT_FWD_HPP

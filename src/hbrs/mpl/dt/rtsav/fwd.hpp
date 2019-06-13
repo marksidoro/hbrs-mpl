@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FWD_DT_RTSAV_HPP
-#define HBRS_MPL_FWD_DT_RTSAV_HPP
+#ifndef HBRS_MPL_DT_RTSAV_FWD_HPP
+#define HBRS_MPL_DT_RTSAV_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <boost/hana/fwd/core/make.hpp>
@@ -33,4 +33,4 @@ constexpr auto to_rtsav = hana::to<rtsav_tag>;
 
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_FWD_DT_RTSAV_HPP
+#endif // !HBRS_MPL_DT_RTSAV_FWD_HPP

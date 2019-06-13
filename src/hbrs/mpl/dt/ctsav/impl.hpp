@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_CTSAV_HPP
-#define HBRS_MPL_DT_CTSAV_HPP
+#ifndef HBRS_MPL_DT_CTSAV_IMPL_HPP
+#define HBRS_MPL_DT_CTSAV_IMPL_HPP
 /* compile-time-size array view */
 
 #include <hbrs/mpl/dt/ctsav/fwd.hpp>
@@ -116,4 +116,4 @@ extern template struct ctsav<int, 2>;
 extern template struct ctsav<int, 3>;
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_DT_CTSAV_HPP
+#endif // !HBRS_MPL_DT_CTSAV_IMPL_HPP

@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FWD_DT_ESCSV_HPP
-#define HBRS_MPL_FWD_DT_ESCSV_HPP
+#ifndef HBRS_MPL_DT_ESCSV_FWD_HPP
+#define HBRS_MPL_DT_ESCSV_FWD_HPP
 /* equal-sized concatenated-sequences view */
 
 #include <hbrs/mpl/config.hpp>
@@ -33,4 +33,4 @@ constexpr auto to_escsv = hana::to<escsv_tag>;
 
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_FWD_DT_ESCSV_HPP
+#endif // !HBRS_MPL_DT_ESCSV_FWD_HPP

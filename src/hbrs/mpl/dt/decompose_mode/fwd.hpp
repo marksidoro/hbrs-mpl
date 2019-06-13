@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FWD_DT_DECOMPOSE_MODE_HPP
-#define HBRS_MPL_FWD_DT_DECOMPOSE_MODE_HPP
+#ifndef HBRS_MPL_DT_DECOMPOSE_MODE_FWD_HPP
+#define HBRS_MPL_DT_DECOMPOSE_MODE_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <boost/hana/fwd/core/make.hpp>
@@ -39,4 +39,4 @@ constexpr auto zero_decompose_c = decompose_mode_c<decompose_mode::zero>;
 
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_FWD_DT_DECOMPOSE_MODE_HPP
+#endif // !HBRS_MPL_DT_DECOMPOSE_MODE_FWD_HPP

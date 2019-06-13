@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_SUBSEQUENCE_HPP
-#define HBRS_MPL_DT_SUBSEQUENCE_HPP
+#ifndef HBRS_MPL_DT_SUBSEQUENCE_IMPL_HPP
+#define HBRS_MPL_DT_SUBSEQUENCE_IMPL_HPP
 
 #include <hbrs/mpl/dt/subsequence/fwd.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
@@ -108,4 +108,4 @@ struct make_impl<hbrs::mpl::subsequence_tag> {
 /* namespace hana */ } /* namespace boost */ }
 
 
-#endif // !HBRS_MPL_DT_CTSSRV_HPP
+#endif // !HBRS_MPL_DT_CTSSRV_IMPL_HPP

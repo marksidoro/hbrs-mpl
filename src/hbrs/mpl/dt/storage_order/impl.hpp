@@ -14,9 +14,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_STORAGE_ORDER_HPP
-#define HBRS_MPL_DT_STORAGE_ORDER_HPP
+#ifndef HBRS_MPL_DT_STORAGE_ORDER_IMPL_HPP
+#define HBRS_MPL_DT_STORAGE_ORDER_IMPL_HPP
 
 #include <hbrs/mpl/dt/storage_order/fwd.hpp>
 
-#endif // !HBRS_MPL_DT_STORAGE_ORDER_HPP
+#endif // !HBRS_MPL_DT_STORAGE_ORDER_IMPL_HPP

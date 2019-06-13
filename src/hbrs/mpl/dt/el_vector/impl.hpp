@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_EL_VECTOR_IMPL_HPP
-#define HBRS_MPL_DT_EL_VECTOR_IMPL_HPP
+#ifndef HBRS_MPL_DT_EL_VECTOR_IMPL_IMPL_HPP
+#define HBRS_MPL_DT_EL_VECTOR_IMPL_IMPL_HPP
 
 #include <hbrs/mpl/dt/el_vector/fwd.hpp>
 #include <boost/hana/core/make.hpp>
@@ -204,4 +204,4 @@ row_vector<Ring>::at(El::Int i) const {
 
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_DT_EL_VECTOR_IMPL_HPP
+#endif // !HBRS_MPL_DT_EL_VECTOR_IMPL_IMPL_HPP

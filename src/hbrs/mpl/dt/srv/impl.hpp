@@ -14,12 +14,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_SRV_HPP
-#define HBRS_MPL_DT_SRV_HPP
+#ifndef HBRS_MPL_DT_SRV_IMPL_HPP
+#define HBRS_MPL_DT_SRV_IMPL_HPP
 
 #include <hbrs/mpl/dt/srv/fwd.hpp>
 #include <hbrs/mpl/detail/vector.hpp>
 
 HBRS_MPL_DEF_SV(srv)
 
-#endif // !HBRS_MPL_DT_SRV_HPP
+#endif // !HBRS_MPL_DT_SRV_IMPL_HPP

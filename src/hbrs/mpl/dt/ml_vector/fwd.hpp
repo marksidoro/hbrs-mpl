@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_ML_VECTOR_FWD_HPP
-#define HBRS_MPL_DT_ML_VECTOR_FWD_HPP
+#ifndef HBRS_MPL_DT_ML_VECTOR_FWD_IMPL_HPP
+#define HBRS_MPL_DT_ML_VECTOR_FWD_IMPL_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <boost/hana/fwd/core/make.hpp>
@@ -45,4 +45,4 @@ HBRS_MPL_NAMESPACE_END
 
 
 
-#endif // !HBRS_MPL_DT_ML_VECTOR_FWD_HPP
+#endif // !HBRS_MPL_DT_ML_VECTOR_FWD_IMPL_HPP

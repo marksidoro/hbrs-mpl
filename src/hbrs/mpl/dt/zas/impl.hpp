@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_ZAS_HPP
-#define HBRS_MPL_DT_ZAS_HPP
+#ifndef HBRS_MPL_DT_ZAS_IMPL_HPP
+#define HBRS_MPL_DT_ZAS_IMPL_HPP
 
 #include <hbrs/mpl/dt/zas/fwd.hpp>
 
@@ -129,4 +129,4 @@ struct make_impl<hbrs::mpl::zas_tag> {
 
 /* namespace hana */ } /* namespace boost */ }
 
-#endif // !HBRS_MPL_DT_ZAS_HPP
+#endif // !HBRS_MPL_DT_ZAS_IMPL_HPP

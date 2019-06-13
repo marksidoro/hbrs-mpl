@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_SVD_RESULT_HPP
-#define HBRS_MPL_DT_SVD_RESULT_HPP
+#ifndef HBRS_MPL_DT_SVD_RESULT_IMPL_HPP
+#define HBRS_MPL_DT_SVD_RESULT_IMPL_HPP
 
 #include <hbrs/mpl/dt/svd_result/fwd.hpp>
 #include <boost/hana/core/make.hpp>
@@ -121,4 +121,4 @@ struct make_impl<hbrs::mpl::svd_result_tag> {
 
 /* namespace hana */ } /* namespace boost */ }
 
-#endif // !HBRS_MPL_DT_SVD_RESULT_HPP
+#endif // !HBRS_MPL_DT_SVD_RESULT_IMPL_HPP

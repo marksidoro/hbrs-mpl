@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_SMCS_HPP
-#define HBRS_MPL_DT_SMCS_HPP
+#ifndef HBRS_MPL_DT_SMCS_IMPL_HPP
+#define HBRS_MPL_DT_SMCS_IMPL_HPP
 
 #include <hbrs/mpl/dt/smcs/fwd.hpp>
 #include <hbrs/mpl/detail/is_braces_constructible.hpp>
@@ -134,4 +134,4 @@ struct make_impl<hbrs::mpl::smcs_tag> {
 
 /* namespace hana */ } /* namespace boost */ }
 
-#endif // !HBRS_MPL_DT_SMCS_HPP
+#endif // !HBRS_MPL_DT_SMCS_IMPL_HPP

@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_EL_DIST_VECTOR_IMPL_HPP
-#define HBRS_MPL_DT_EL_DIST_VECTOR_IMPL_HPP
+#ifndef HBRS_MPL_DT_EL_DIST_VECTOR_IMPL_IMPL_HPP
+#define HBRS_MPL_DT_EL_DIST_VECTOR_IMPL_IMPL_HPP
 
 #include <hbrs/mpl/dt/el_dist_vector/fwd.hpp>
 #include <hbrs/mpl/dt/el_vector.hpp>
@@ -164,4 +164,4 @@ dist_row_vector<Ring, Columnwise, Rowwise, Wrapping>::length() const {
 
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_DT_EL_DIST_VECTOR_IMPL_HPP
+#endif // !HBRS_MPL_DT_EL_DIST_VECTOR_IMPL_IMPL_HPP

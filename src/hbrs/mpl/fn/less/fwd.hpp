@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FWD_FN_LESS_HPP
-#define HBRS_MPL_FWD_FN_LESS_HPP
+#ifndef HBRS_MPL_FN_LESS_FWD_HPP
+#define HBRS_MPL_FN_LESS_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/dt/function/fwd.hpp>
@@ -26,4 +26,4 @@ HBRS_MPL_NAMESPACE_BEGIN
 HBRS_MPL_DEC_F2(less, less_t)
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_FWD_FN_LESS_HPP
+#endif // !HBRS_MPL_FN_LESS_FWD_HPP

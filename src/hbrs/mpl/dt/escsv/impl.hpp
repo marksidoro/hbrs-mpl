@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_ESCSV_HPP
-#define HBRS_MPL_DT_ESCSV_HPP
+#ifndef HBRS_MPL_DT_ESCSV_IMPL_HPP
+#define HBRS_MPL_DT_ESCSV_IMPL_HPP
 /* equal-sized concatenated-sequences view */
 
 #include <hbrs/mpl/dt/escsv/fwd.hpp>
@@ -160,4 +160,4 @@ struct make_impl<hbrs::mpl::escsv_tag> {
 
 /* namespace hana */ } /* namespace boost */ }
 
-#endif // !HBRS_MPL_DT_ESCSV_HPP
+#endif // !HBRS_MPL_DT_ESCSV_IMPL_HPP

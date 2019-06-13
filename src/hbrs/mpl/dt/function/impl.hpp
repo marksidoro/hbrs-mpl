@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_FUNCTION_HPP
-#define HBRS_MPL_DT_FUNCTION_HPP
+#ifndef HBRS_MPL_DT_FUNCTION_IMPL_HPP
+#define HBRS_MPL_DT_FUNCTION_IMPL_HPP
 
 #include <hbrs/mpl/dt/function/fwd.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
@@ -88,4 +88,4 @@
 #define HBRS_MPL_DEF_MIMPL(...)                                                                                        \
 	HBRS_DEFINE_METHOD_IMPL(__VA_ARGS__)
 
-#endif // !HBRS_MPL_DT_FUNCTION_HPP
+#endif // !HBRS_MPL_DT_FUNCTION_IMPL_HPP

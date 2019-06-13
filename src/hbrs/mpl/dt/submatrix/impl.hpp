@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_SUBMATRIX_HPP
-#define HBRS_MPL_DT_SUBMATRIX_HPP
+#ifndef HBRS_MPL_DT_SUBMATRIX_IMPL_HPP
+#define HBRS_MPL_DT_SUBMATRIX_IMPL_HPP
 
 #include <hbrs/mpl/dt/submatrix/fwd.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
@@ -157,4 +157,4 @@ struct make_impl<hbrs::mpl::submatrix_tag> {
 /* namespace hana */ } /* namespace boost */ }
 
 
-#endif // !HBRS_MPL_DT_CTSSRV_HPP
+#endif // !HBRS_MPL_DT_CTSSRV_IMPL_HPP

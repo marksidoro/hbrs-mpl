@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FWD_FN_HORZCAT_HPP
-#define HBRS_MPL_FWD_FN_HORZCAT_HPP
+#ifndef HBRS_MPL_FN_HORZCAT_FWD_HPP
+#define HBRS_MPL_FN_HORZCAT_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/dt/function/fwd.hpp>
@@ -24,4 +24,4 @@ HBRS_MPL_NAMESPACE_BEGIN
 HBRS_MPL_DEC_F2(horzcat, horzcat_t)
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_FWD_FN_HORZCAT_HPP
+#endif // !HBRS_MPL_FN_HORZCAT_FWD_HPP
