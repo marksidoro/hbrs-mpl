@@ -30,10 +30,10 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 
 template<typename BaseType>
-struct matrix;
-struct matrix_tag {};
-constexpr auto make_matrix = hana::make<matrix_tag>;
-constexpr auto to_matrix = hana::to<matrix_tag>;
+struct ml_matrix;
+struct ml_matrix_tag {};
+constexpr auto make_ml_matrix = hana::make<ml_matrix_tag>;
+constexpr auto to_ml_matrix = hana::to<ml_matrix_tag>;
 
 HBRS_MPL_NAMESPACE_END
 

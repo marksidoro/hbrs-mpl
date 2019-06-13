@@ -17,7 +17,8 @@
 #ifndef HBRS_MPL_DT_MATRIX_SIZE_IMPL_HPP
 #define HBRS_MPL_DT_MATRIX_SIZE_IMPL_HPP
 
-#include <hbrs/mpl/dt/matrix_size/fwd.hpp>
+#include "fwd.hpp"
+
 #include <hbrs/mpl/detail/axis.hpp>
 
 HBRS_MPL_DEFINE_AXIS_2D(matrix_size, Size, m, Rows, n, Columns)

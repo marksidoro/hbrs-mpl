@@ -17,15 +17,16 @@
 #ifndef HBRS_MPL_DT_EL_DIST_VECTOR_IMPL_IMPL_HPP
 #define HBRS_MPL_DT_EL_DIST_VECTOR_IMPL_IMPL_HPP
 
-#include <hbrs/mpl/dt/el_dist_vector/fwd.hpp>
+#include "fwd.hpp"
+
 #include <hbrs/mpl/dt/el_vector.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 #include <initializer_list>
 
-#define _HBRS_MPL_DEF_EL_DIST_VECTOR(vector_kind)                                                                        \
-	HBRS_MPL_NAMESPACE_BEGIN                                                                                          \
+#define _HBRS_MPL_DEF_EL_DIST_VECTOR(vector_kind)                                                                      \
+	HBRS_MPL_NAMESPACE_BEGIN                                                                                           \
 	                                                                                                                   \
 	template<                                                                                                          \
 		typename Ring = double,                                                                                        \
@@ -33,23 +34,23 @@
 		El::Dist Rowwise = El::MR,                                                                                     \
 		El::DistWrap Wrapping = El::ELEMENT                                                                            \
 	>                                                                                                                  \
-	struct dist_ ## vector_kind ## _vector {                                                                           \
+	struct el_dist_ ## vector_kind ## _vector {                                                                        \
 		template<                                                                                                      \
 			typename Ring_ = Ring,                                                                                     \
 			typename std::enable_if_t<                                                                                 \
 				std::is_same_v<std::remove_const_t<Ring>, Ring_>                                                       \
 			>* = nullptr                                                                                               \
 		>                                                                                                              \
-		dist_ ## vector_kind ## _vector(El::DistMatrix<Ring_, Columnwise, Rowwise, Wrapping> data);                    \
-		dist_ ## vector_kind ## _vector(El::Grid const& grid, El::Int sz);                                             \
+		el_dist_ ## vector_kind ## _vector(El::DistMatrix<Ring_, Columnwise, Rowwise, Wrapping> data);                 \
+		el_dist_ ## vector_kind ## _vector(El::Grid const& grid, El::Int sz);                                          \
 		                                                                                                               \
-		dist_ ## vector_kind ## _vector(dist_ ## vector_kind ## _vector const&) = default;                             \
-		dist_ ## vector_kind ## _vector(dist_ ## vector_kind ## _vector &&) = default;                                 \
+		el_dist_ ## vector_kind ## _vector(el_dist_ ## vector_kind ## _vector const&) = default;                       \
+		el_dist_ ## vector_kind ## _vector(el_dist_ ## vector_kind ## _vector &&) = default;                           \
 		                                                                                                               \
-		dist_ ## vector_kind ## _vector&                                                                               \
-		operator=(dist_ ## vector_kind ## _vector const&) = default;                                                   \
-		dist_ ## vector_kind ## _vector&                                                                               \
-		operator=(dist_ ## vector_kind ## _vector &&) = default;                                                       \
+		el_dist_ ## vector_kind ## _vector&                                                                            \
+		operator=(el_dist_ ## vector_kind ## _vector const&) = default;                                                \
+		el_dist_ ## vector_kind ## _vector&                                                                            \
+		operator=(el_dist_ ## vector_kind ## _vector &&) = default;                                                    \
 		                                                                                                               \
 		constexpr decltype(auto)                                                                                       \
 		data() & { return (data_); };                                                                                  \
@@ -70,24 +71,24 @@
 		> data_;                                                                                                       \
 	};                                                                                                                 \
 	                                                                                                                   \
-	HBRS_MPL_NAMESPACE_END                                                                                            \
+	HBRS_MPL_NAMESPACE_END                                                                                             \
 	                                                                                                                   \
 	BOOST_HANA_NAMESPACE_BEGIN                                                                                         \
                                                                                                                        \
 	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>                             \
-	struct tag_of< hbrs::mpl::el_dist_ ## vector_kind ## _vector<Ring, Columnwise, Rowwise, Wrapping> > {                 \
-		using type = hbrs::mpl::el_dist_ ## vector_kind ## _vector_tag;                                                   \
+	struct tag_of< hbrs::mpl::el_dist_ ## vector_kind ## _vector<Ring, Columnwise, Rowwise, Wrapping> > {              \
+		using type = hbrs::mpl::el_dist_ ## vector_kind ## _vector_tag;                                                \
 	};                                                                                                                 \
                                                                                                                        \
 	template <>                                                                                                        \
-	struct make_impl<hbrs::mpl::el_dist_ ## vector_kind ## _vector_tag> {                                                 \
+	struct make_impl<hbrs::mpl::el_dist_ ## vector_kind ## _vector_tag> {                                              \
 		template <typename Ring>                                                                                       \
 		static auto                                                                                                    \
 		apply(                                                                                                         \
 			El::Grid const& grid,                                                                                      \
 			std::initializer_list<Ring> data                                                                           \
 		) {                                                                                                            \
-			hbrs::mpl::el_dist_ ## vector_kind ## _vector<                                                                \
+			hbrs::mpl::el_dist_ ## vector_kind ## _vector<                                                             \
 				Ring, El::STAR, El::STAR, El::ELEMENT                                                                  \
 			> m{grid, (El::Int)data.size()};                                                                           \
 			m.data().Matrix() = elemental::make_ ## vector_kind ## _vector(data).data();                               \
@@ -95,7 +96,7 @@
 		}                                                                                                              \
 		                                                                                                               \
 		template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>                         \
-		static hbrs::mpl::el_dist_ ## vector_kind ## _vector<Ring, Columnwise, Rowwise, Wrapping>                         \
+		static hbrs::mpl::el_dist_ ## vector_kind ## _vector<Ring, Columnwise, Rowwise, Wrapping>                      \
 		apply(El::DistMatrix<Ring, Columnwise, Rowwise, Wrapping> data) {                                              \
 			return { data };                                                                                           \
 		}                                                                                                              \
@@ -117,15 +118,15 @@ template<
 		std::is_same_v<std::remove_const_t<Ring>, Ring_>
 	>*
 >
-dist_column_vector<Ring, Columnwise, Rowwise, Wrapping>::
-dist_column_vector(El::DistMatrix<Ring_, Columnwise, Rowwise, Wrapping> data) : data_{data} {
+el_dist_column_vector<Ring, Columnwise, Rowwise, Wrapping>::
+el_dist_column_vector(El::DistMatrix<Ring_, Columnwise, Rowwise, Wrapping> data) : data_{data} {
 	BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
 	BOOST_ASSERT(data_.Width() == 1);
 }
 
 template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
-dist_column_vector<Ring, Columnwise, Rowwise, Wrapping>::
-dist_column_vector(El::Grid const& grid, El::Int sz) : data_{grid} {
+el_dist_column_vector<Ring, Columnwise, Rowwise, Wrapping>::
+el_dist_column_vector(El::Grid const& grid, El::Int sz) : data_{grid} {
 	data_.Resize(sz, 1);
 	El::Zero(data_);
 }
@@ -137,28 +138,28 @@ template<
 		std::is_same_v<std::remove_const_t<Ring>, Ring_>
 	>*
 >
-dist_row_vector<Ring, Columnwise, Rowwise, Wrapping>::
-dist_row_vector(El::DistMatrix<Ring_, Columnwise, Rowwise, Wrapping> data) : data_{data} {
+el_dist_row_vector<Ring, Columnwise, Rowwise, Wrapping>::
+el_dist_row_vector(El::DistMatrix<Ring_, Columnwise, Rowwise, Wrapping> data) : data_{data} {
 	BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
 	BOOST_ASSERT(data_.Height() == 1);
 }
 
 template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
-dist_row_vector<Ring, Columnwise, Rowwise, Wrapping>::
-dist_row_vector(El::Grid const& grid, El::Int sz) : data_{grid} {
+el_dist_row_vector<Ring, Columnwise, Rowwise, Wrapping>::
+el_dist_row_vector(El::Grid const& grid, El::Int sz) : data_{grid} {
 	data_.Resize(1, sz);
 	El::Zero(data_);
 }
 
 template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 decltype(auto)
-dist_column_vector<Ring, Columnwise, Rowwise, Wrapping>::length() const {
+el_dist_column_vector<Ring, Columnwise, Rowwise, Wrapping>::length() const {
 	return data_.Height();
 }
 
 template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 decltype(auto)
-dist_row_vector<Ring, Columnwise, Rowwise, Wrapping>::length() const {
+el_dist_row_vector<Ring, Columnwise, Rowwise, Wrapping>::length() const {
 	return data_.Width();
 }
 

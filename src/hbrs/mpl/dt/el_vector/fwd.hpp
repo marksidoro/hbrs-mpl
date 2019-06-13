@@ -25,16 +25,16 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 
 template<typename Ring>
-struct column_vector;
-struct column_vector_tag;
-constexpr auto make_column_vector = hana::make<column_vector_tag>;
-constexpr auto to_column_vector = hana::to<column_vector_tag>;
+struct el_column_vector;
+struct el_column_vector_tag;
+constexpr auto make_el_column_vector = hana::make<el_column_vector_tag>;
+constexpr auto to_el_column_vector = hana::to<el_column_vector_tag>;
 
 template<typename Ring>
-struct row_vector;
-struct row_vector_tag;
-constexpr auto make_row_vector = hana::make<row_vector_tag>;
-constexpr auto to_row_vector = hana::to<row_vector_tag>;
+struct el_row_vector;
+struct el_row_vector_tag;
+constexpr auto make_el_row_vector = hana::make<el_row_vector_tag>;
+constexpr auto to_el_row_vector = hana::to<el_row_vector_tag>;
 
 HBRS_MPL_NAMESPACE_END
 

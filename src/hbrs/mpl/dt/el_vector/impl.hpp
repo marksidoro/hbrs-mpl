@@ -17,7 +17,8 @@
 #ifndef HBRS_MPL_DT_EL_VECTOR_IMPL_IMPL_HPP
 #define HBRS_MPL_DT_EL_VECTOR_IMPL_IMPL_HPP
 
-#include <hbrs/mpl/dt/el_vector/fwd.hpp>
+#include "fwd.hpp"
+
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 
@@ -30,29 +31,28 @@
 #include <boost/assert.hpp>
 #include <El.hpp>
 
-#define _HBRS_MPL_DEF_EL_VECTOR(vector_kind)                                                                             \
-	HBRS_MPL_NAMESPACE_BEGIN                                                                                          \
-	namespace mpl = hbrs::mpl;                                                                                         \
+#define _HBRS_MPL_DEF_EL_VECTOR(vector_kind)                                                                           \
+	HBRS_MPL_NAMESPACE_BEGIN                                                                                           \
                                                                                                                        \
 	template<typename Ring>                                                                                            \
-	struct vector_kind ## _vector {                                                                                    \
-		vector_kind ## _vector(El::Matrix<Ring> data);                                                                 \
-		vector_kind ## _vector(El::Int sz);                                                                            \
+	struct el_ ## vector_kind ## _vector {                                                                             \
+		el_ ## vector_kind ## _vector(El::Matrix<Ring> data);                                                          \
+		el_ ## vector_kind ## _vector(El::Int sz);                                                                     \
 		                                                                                                               \
-		vector_kind ## _vector(Ring const* data, El::Int sz)                                                           \
-		: vector_kind ## _vector{sz} {                                                                                 \
+		el_ ## vector_kind ## _vector(Ring const* data, El::Int sz)                                                    \
+		: el_ ## vector_kind ## _vector{sz} {                                                                          \
 			for(El::Int i = 0; i < sz; ++i) {                                                                          \
 				at(i) = data[i];                                                                                       \
 			}                                                                                                          \
 		}                                                                                                              \
 		                                                                                                               \
-		vector_kind ## _vector(vector_kind ## _vector const&) = default;                                               \
-		vector_kind ## _vector(vector_kind ## _vector &&) = default;                                                   \
+		el_ ## vector_kind ## _vector(el_ ## vector_kind ## _vector const&) = default;                                 \
+		el_ ## vector_kind ## _vector(el_ ## vector_kind ## _vector &&) = default;                                     \
 		                                                                                                               \
-		vector_kind ## _vector&                                                                                        \
-		operator=(vector_kind ## _vector const&) = default;                                                            \
-		vector_kind ## _vector&                                                                                        \
-		operator=(vector_kind ## _vector &&) = default;                                                                \
+		el_ ## vector_kind ## _vector&                                                                                 \
+		operator=(el_ ## vector_kind ## _vector const&) = default;                                                     \
+		el_ ## vector_kind ## _vector&                                                                                 \
+		operator=(el_ ## vector_kind ## _vector &&) = default;                                                         \
 		                                                                                                               \
 		decltype(auto)                                                                                                 \
 		length() const;                                                                                                \
@@ -85,7 +85,7 @@
 	private:                                                                                                           \
 		template<typename Matrix>                                                                                      \
 		decltype(auto)                                                                                                 \
-		static at_(Matrix && m, mpl::matrix_index<El::Int, El::Int> const& i) {                                        \
+		static at_(Matrix && m, matrix_index<El::Int, El::Int> const& i) {                                        \
 			BOOST_ASSERT(i.m() >= 0 && i.m() < HBRS_MPL_FWD(m).Height());                                              \
 			BOOST_ASSERT(i.n() >= 0 && i.n() < HBRS_MPL_FWD(m).Width());                                               \
 			                                                                                                           \
@@ -99,37 +99,37 @@
 		El::Matrix<std::remove_const_t<Ring>> data_;                                                                   \
 	};                                                                                                                 \
 	                                                                                                                   \
-	HBRS_MPL_NAMESPACE_END                                                                                            \
+	HBRS_MPL_NAMESPACE_END                                                                                             \
                                                                                                                        \
 	namespace boost { namespace hana {                                                                                 \
                                                                                                                        \
 	template <typename Ring>                                                                                           \
-	struct tag_of< hbrs::mpl::el_ ## vector_kind< ## _vector<Ring> > {                                                         \
-		using type = hbrs::mpl::el_ ## vector_kind< ## _vector_tag;                                                            \
+	struct tag_of< hbrs::mpl::el_ ## vector_kind< ## _vector<Ring> > {                                                 \
+		using type = hbrs::mpl::el_ ## vector_kind< ## _vector_tag;                                                    \
 	};                                                                                                                 \
                                                                                                                        \
 	template <>                                                                                                        \
-	struct make_impl<hbrs::mpl::el_ ## vector_kind< ## _vector_tag> {                                                          \
+	struct make_impl<hbrs::mpl::el_ ## vector_kind< ## _vector_tag> {                                                  \
 		template <typename Ring>                                                                                       \
-		static hbrs::mpl::el_ ## vector_kind< ## _vector<Ring>                                                                 \
+		static hbrs::mpl::el_ ## vector_kind< ## _vector<Ring>                                                         \
 		apply(basic_type<Ring>, El::Int sz) {                                                                          \
 			return {sz};                                                                                               \
 		}                                                                                                              \
 	                                                                                                                   \
 		template <typename Ring>                                                                                       \
-		static hbrs::mpl::el_ ## vector_kind< ## _vector<std::decay_t<Ring>>                                                   \
+		static hbrs::mpl::el_ ## vector_kind< ## _vector<std::decay_t<Ring>>                                           \
 		apply(El::Matrix<Ring> data) {                                                                                 \
 			return {data};                                                                                             \
 		}                                                                                                              \
 		                                                                                                               \
 		template <typename Ring>                                                                                       \
-		static hbrs::mpl::el_ ## vector_kind< ## _vector<std::decay_t<Ring>>                                                   \
+		static hbrs::mpl::el_ ## vector_kind< ## _vector<std::decay_t<Ring>>                                           \
 		apply(Ring const* data, El::Int sz) {                                                                          \
 			return {data, sz};                                                                                         \
 		}                                                                                                              \
 		                                                                                                               \
 		template <typename Ring>                                                                                       \
-		static hbrs::mpl::el_ ## vector_kind< ## _vector<std::decay_t<Ring>>                                                   \
+		static hbrs::mpl::el_ ## vector_kind< ## _vector<std::decay_t<Ring>>                                           \
 		apply(std::initializer_list<Ring> data) {                                                                      \
 			return { data.begin(), boost::numeric_cast<El::Int>(data.size()) };                                        \
 		}                                                                                                              \
@@ -181,25 +181,25 @@ row_vector<Ring>::length() const {
 template<typename Ring>
 decltype(auto)
 column_vector<Ring>::at(El::Int i) {
-	return at_(data_, mpl::make_matrix_index(i, 0));
+	return at_(data_, make_matrix_index(i, 0));
 }
 
 template<typename Ring>
 decltype(auto)
 column_vector<Ring>::at(El::Int i) const {
-	return at_(data_, mpl::make_matrix_index(i, 0));
+	return at_(data_, make_matrix_index(i, 0));
 }
 
 template<typename Ring>
 decltype(auto)
 row_vector<Ring>::at(El::Int i) {
-	return at_(data_, mpl::make_matrix_index(0, i));
+	return at_(data_, make_matrix_index(0, i));
 }
 
 template<typename Ring>
 decltype(auto)
 row_vector<Ring>::at(El::Int i) const {
-	return at_(data_, mpl::make_matrix_index(0, i));
+	return at_(data_, make_matrix_index(0, i));
 }
 
 HBRS_MPL_NAMESPACE_END

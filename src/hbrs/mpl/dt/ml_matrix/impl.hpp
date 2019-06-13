@@ -17,7 +17,8 @@
 #ifndef HBRS_MPL_DT_ML_MATRIX_IMPL_IMPL_HPP
 #define HBRS_MPL_DT_ML_MATRIX_IMPL_IMPL_HPP
 
-#include <hbrs/mpl/dt/ml_matrix/fwd.hpp>
+#include "fwd.hpp"
+
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 
@@ -39,32 +40,31 @@
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
-namespace mpl = hbrs::mpl;
 
-#define _HBRS_MPL_DEF_ML_MAT1(base_type)                                                                                    \
+#define _HBRS_MPL_DEF_ML_MAT1(base_type)                                                                               \
 	template<>                                                                                                         \
-	struct matrix<base_type> {                                                                                         \
+	struct ml_matrix<base_type> {                                                                                      \
 		                                                                                                               \
-		matrix()                                                                                                       \
+		ml_matrix()                                                                                                    \
 		: ptr_{nullptr, nullptr} {                                                                                     \
 			emxArray_ ## base_type * emxArray{nullptr};                                                                \
 			emxInitArray_ ## base_type(&emxArray, 2);                                                                  \
 			ptr_ = {emxArray, emxDestroyArray_ ## base_type};                                                          \
 		}                                                                                                              \
 		                                                                                                               \
-		matrix(int rows, int cols)                                                                                     \
+		ml_matrix(int rows, int cols)                                                                                  \
 		: ptr_{emxCreate_ ## base_type(rows, cols), emxDestroyArray_ ## base_type} {}                                  \
 		                                                                                                               \
 		/* This is a reference to a pointer to clarify that matrix's lifetime depends on lifetime of array! */         \
-		matrix(base_type*& a, int rows, int cols)                                                                      \
+		ml_matrix(base_type*& a, int rows, int cols)                                                                   \
 		: ptr_{emxCreateWrapper_ ## base_type(a, rows, cols), emxDestroyArray_ ## base_type} {}                        \
 		                                                                                                               \
-		matrix(matrix const& rhs) : matrix() {                                                                         \
+		ml_matrix(ml_matrix const& rhs) : ml_matrix() {                                                                \
 			if (rhs.ptr_ == nullptr) { return; }                                                                       \
 			                                                                                                           \
 			auto && a = (*rhs.ptr_);                                                                                   \
-			auto && m_ = (*mpl::m)(a);                                                                                 \
-			auto && n_ = (*mpl::n)(a);                                                                                 \
+			auto && m_ = (*hbrs::mpl::m)(a);                                                                           \
+			auto && n_ = (*hbrs::mpl::n)(a);                                                                           \
 			if (a.data != nullptr && m_ > 0 && n_ > 0) {                                                               \
 				ptr_ = {                                                                                               \
 					emxCreate_ ## base_type(m_, n_),                                                                   \
@@ -75,39 +75,39 @@ namespace mpl = hbrs::mpl;
 			}                                                                                                          \
 		}                                                                                                              \
 		                                                                                                               \
-		matrix(matrix && rhs) : matrix() {                                                                             \
+		ml_matrix(ml_matrix && rhs) : ml_matrix() {                                                                    \
 			swap(*this, rhs);                                                                                          \
 		}                                                                                                              \
 		                                                                                                               \
-		matrix&                                                                                                        \
-		operator=(matrix rhs) {                                                                                        \
+		ml_matrix&                                                                                                     \
+		operator=(ml_matrix rhs) {                                                                                     \
 			swap(*this, rhs);                                                                                          \
 			return *this;                                                                                              \
 		}                                                                                                              \
 		                                                                                                               \
-		friend void swap(matrix& lhs, matrix& rhs) noexcept {                                                          \
+		friend void swap(ml_matrix& lhs, ml_matrix& rhs) noexcept {                                                    \
 			using std::swap;                                                                                           \
 			swap(lhs.ptr_, rhs.ptr_);                                                                                  \
 		}                                                                                                              \
                                                                                                                        \
 		decltype(auto)                                                                                                 \
 		m() const {                                                                                                    \
-			return (*mpl::m)(*ptr_);                                                                                   \
+			return (*hbrs::mpl::m)(*ptr_);                                                                             \
 		}                                                                                                              \
 		                                                                                                               \
 		decltype(auto)                                                                                                 \
 		n() const {                                                                                                    \
-			return (*mpl::n)(*ptr_);                                                                                   \
+			return (*hbrs::mpl::n)(*ptr_);                                                                             \
 		}                                                                                                              \
 		                                                                                                               \
 		auto                                                                                                           \
 		size() const {                                                                                                 \
-			return mpl::make_matrix_size(m(), n());                                                                    \
+			return make_matrix_size(m(), n());                                                                         \
 		}                                                                                                              \
 		                                                                                                               \
 		base_type &                                                                                                    \
-		at(mpl::matrix_index<int,int> i) {                                                                             \
-			return (*mpl::at)(*ptr_, i);                                                                               \
+		at(matrix_index<int,int> i) {                                                                                  \
+			return (*hbrs::mpl::at)(*ptr_, i);                                                                         \
 		}                                                                                                              \
 		                                                                                                               \
 		template<                                                                                                      \
@@ -121,19 +121,15 @@ namespace mpl = hbrs::mpl;
 			>* = nullptr                                                                                               \
 		>                                                                                                              \
 		base_type &                                                                                                    \
-		at(mpl::matrix_index<M, N> const& i) {                                                                         \
-			using mpl::m;                                                                                              \
-			using mpl::n;                                                                                              \
-			using mpl::at;                                                                                             \
-			auto && m_ = (*m)(i);                                                                                      \
-			auto && n_ = (*n)(i);                                                                                      \
-			return (*at)(*ptr_, mpl::matrix_index<int,int>{(int)m_, (int)n_});                                         \
+		at(matrix_index<M, N> const& i) {                                                                              \
+			auto && m_ = (*hbrs::mpl::m)(i);                                                                           \
+			auto && n_ = (*hbrs::mpl::n)(i);                                                                           \
+			return (*hbrs::mpl::at)(*ptr_, matrix_index<int,int>{(int)m_, (int)n_});                                   \
 		}                                                                                                              \
                                                                                                                        \
 		base_type const&                                                                                               \
-		at(mpl::matrix_index<int,int> i) const {                                                                       \
-			using mpl::at;                                                                                             \
-			return (*at)(*ptr_, i);                                                                                    \
+		at(matrix_index<int,int> i) const {                                                                            \
+			return (*hbrs::mpl::at)(*ptr_, i);                                                                         \
 		}                                                                                                              \
 		                                                                                                               \
 		template<                                                                                                      \
@@ -147,28 +143,25 @@ namespace mpl = hbrs::mpl;
 			>* = nullptr                                                                                               \
 		>                                                                                                              \
 		base_type &                                                                                                    \
-		at(mpl::matrix_index<M, N> const& i) const {                                                                   \
-			using mpl::m;                                                                                              \
-			using mpl::n;                                                                                              \
-			using mpl::at;                                                                                             \
-			auto && m_ = (*m)(i);                                                                                      \
-			auto && n_ = (*n)(i);                                                                                      \
-			return (*at)(*ptr_, mpl::matrix_index<int,int>{(int)m_, (int)n_});                                         \
+		at(matrix_index<M, N> const& i) const {                                                                        \
+			auto && m_ = (*hbrs::mpl::m)(i);                                                                           \
+			auto && n_ = (*hbrs::mpl::n)(i);                                                                           \
+			return (*hbrs::mpl::at)(*ptr_, matrix_index<int,int>{(int)m_, (int)n_});                                   \
 		}                                                                                                              \
 		                                                                                                               \
 		auto                                                                                                           \
 		operator[](int row) & {                                                                                        \
-			return mpl::smr<matrix &, int>{*this, row};                                                                \
+			return smr<ml_matrix &, int>{*this, row};                                                                  \
 		}                                                                                                              \
 		                                                                                                               \
 		auto                                                                                                           \
 		operator[](int row) const& {                                                                                   \
-			return mpl::smr<matrix const&, int>{*this, row};                                                           \
+			return smr<ml_matrix const&, int>{*this, row};                                                             \
 		}                                                                                                              \
 		                                                                                                               \
 		auto                                                                                                           \
 		operator[](int row) && {                                                                                       \
-			return mpl::make_smr(std::move(*this), row);                                                               \
+			return make_smr(std::move(*this), row);                                                                    \
 		}                                                                                                              \
 		                                                                                                               \
 		emxArray_ ## base_type &                                                                                       \

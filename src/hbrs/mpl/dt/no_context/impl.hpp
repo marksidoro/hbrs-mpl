@@ -17,7 +17,8 @@
 #ifndef HBRS_MPL_DT_NO_CONTEXT_IMPL_HPP
 #define HBRS_MPL_DT_NO_CONTEXT_IMPL_HPP
 
-#include <hbrs/mpl/dt/no_context/fwd.hpp>
+#include "fwd.hpp"
+
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 

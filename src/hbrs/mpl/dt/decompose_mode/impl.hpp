@@ -17,6 +17,6 @@
 #ifndef HBRS_MPL_DT_DECOMPOSE_MODE_IMPL_HPP
 #define HBRS_MPL_DT_DECOMPOSE_MODE_IMPL_HPP
 
-#include <hbrs/mpl/dt/decompose_mode/fwd.hpp>
+#include "fwd.hpp"
 
 #endif // !HBRS_MPL_DT_DECOMPOSE_MODE_IMPL_HPP

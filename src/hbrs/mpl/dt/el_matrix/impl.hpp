@@ -17,8 +17,9 @@
 #ifndef HBRS_MPL_DT_EL_MATRIX_IMPL_IMPL_HPP
 #define HBRS_MPL_DT_EL_MATRIX_IMPL_IMPL_HPP
 
+#include "fwd.hpp"
+
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <boost/hana/core/make.hpp>
 
@@ -41,32 +42,31 @@
 #include <initializer_list>
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace mpl = hbrs::mpl;
 
 template<typename Ring>
-struct matrix {
+struct el_matrix {
 	template<
 		typename Ring_ = Ring,
 		typename std::enable_if_t<
 			std::is_same_v<std::remove_const_t<Ring>, Ring_>
 		>* = nullptr
 	>
-	matrix(El::Matrix<Ring_> data) : data_{data} {
+	el_matrix(El::Matrix<Ring_> data) : data_{data} {
 		//NOTE: This assertion does not hold always, e.g. El::Matrix<double>{El::Matrix<double> const}.Locked() == true!
 		BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
 	}
 	
-	matrix(El::Int m, El::Int n) : data_{m,n} {
+	el_matrix(El::Int m, El::Int n) : data_{m,n} {
 		El::Zero(data_);
 	}
 	
-	matrix(matrix const&) = default;
-	matrix(matrix &&) = default;
+	el_matrix(el_matrix const&) = default;
+	el_matrix(el_matrix &&) = default;
 		
-	matrix&
-	operator=(matrix const&) = default;
-	matrix&
-	operator=(matrix &&) = default;
+	el_matrix&
+	operator=(el_matrix const&) = default;
+	el_matrix&
+	operator=(el_matrix &&) = default;
 	
 	auto
 	m() const {
@@ -78,18 +78,18 @@ struct matrix {
 		return data_.Width();
 	}
 
-	mpl::matrix_size<El::Int, El::Int>
+	matrix_size<El::Int, El::Int>
 	size() const {
 		return { m(), n() };
 	}
 	
 	decltype(auto)
-	at(mpl::matrix_index<El::Int, El::Int> const& i) {
+	at(matrix_index<El::Int, El::Int> const& i) {
 		return at_(data_, i);
 	}
 	
 	decltype(auto)
-	at(mpl::matrix_index<El::Int, El::Int> const& i) const {
+	at(matrix_index<El::Int, El::Int> const& i) const {
 		return at_(data_, i);
 	}
 	
@@ -105,7 +105,7 @@ struct matrix {
 private:
 	template<typename Matrix>
 	decltype(auto)
-	static at_(Matrix && m, mpl::matrix_index<El::Int, El::Int> const& i) {
+	static at_(Matrix && m, matrix_index<El::Int, El::Int> const& i) {
 		BOOST_ASSERT(i.m() >= 0 && i.m() < HBRS_MPL_FWD(m).Height());
 		BOOST_ASSERT(i.n() >= 0 && i.n() < HBRS_MPL_FWD(m).Width());
 		

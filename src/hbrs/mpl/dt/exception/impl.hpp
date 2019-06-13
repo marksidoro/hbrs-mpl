@@ -17,7 +17,8 @@
 #ifndef HBRS_MPL_DT_EXCEPTION_IMPL_HPP
 #define HBRS_MPL_DT_EXCEPTION_IMPL_HPP
 
-#include <hbrs/mpl/dt/exception/fwd.hpp>
+#include "fwd.hpp"
+
 #include <hbrs/mpl/dt/matrix_size.hpp>
 #include <boost/exception/all.hpp>
 #include <stdexcept>

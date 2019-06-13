@@ -17,7 +17,8 @@
 #ifndef HBRS_MPL_DT_PCA_FILTER_RESULT_IMPL_HPP
 #define HBRS_MPL_DT_PCA_FILTER_RESULT_IMPL_HPP
 
-#include <hbrs/mpl/dt/pca_filter_result/fwd.hpp>
+#include "fwd.hpp"
+
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>

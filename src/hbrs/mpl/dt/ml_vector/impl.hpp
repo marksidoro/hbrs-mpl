@@ -17,31 +17,31 @@
 #ifndef HBRS_MPL_DT_ML_VECTOR_IMPL_IMPL_HPP
 #define HBRS_MPL_DT_ML_VECTOR_IMPL_IMPL_HPP
 
-#include <hbrs/mpl/dt/ml_vector/fwd.hpp>
+#include "fwd.hpp"
+
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 #include <hbrs/mpl/fn/at.hpp>
 #include <algorithm>
 
-#define _HBRS_MPL_DEF_ML_VEC1(vector_kind, base_type)                                                                     \
-	HBRS_MPL_NAMESPACE_BEGIN                                                                                             \
-	namespace mpl = hbrs::mpl;                                                                                         \
+#define _HBRS_MPL_DEF_ML_VEC1(vector_kind, base_type)                                                                  \
+	HBRS_MPL_NAMESPACE_BEGIN                                                                                           \
                                                                                                                        \
 	template<>                                                                                                         \
-	struct vector_kind ## _vector<base_type> {                                                                         \
+	struct ml_ ## vector_kind ## _vector<base_type> {                                                                  \
 		                                                                                                               \
 		                                                                                                               \
-		vector_kind ## _vector()                                                                                       \
+		ml_ ## vector_kind ## _vector()                                                                                \
 		: ptr_{nullptr, nullptr} {                                                                                     \
 			emxArray_ ## base_type * emxArray{nullptr};                                                                \
 			emxInitArray_ ## base_type(&emxArray, 1);                                                                  \
 			ptr_ = {emxArray, emxDestroyArray_ ## base_type};                                                          \
 		}                                                                                                              \
 		                                                                                                               \
-		vector_kind ## _vector(int size)                                                                               \
+		ml_ ## vector_kind ## _vector(int size)                                                                        \
 		: ptr_{emxCreateND_ ## base_type(1, &size), emxDestroyArray_ ## base_type} {}                                  \
 		                                                                                                               \
-		vector_kind ## _vector(vector_kind ## _vector const& rhs) : vector_kind ## _vector() {                         \
+		ml_ ## vector_kind ## _vector(ml_ ## vector_kind ## _vector const& rhs) : ml_ ## vector_kind ## _vector() {    \
 			if (rhs.ptr_ == nullptr) { return; }                                                                       \
 			                                                                                                           \
 			auto && v = (*rhs.ptr_);                                                                                   \
@@ -57,17 +57,17 @@
 			}                                                                                                          \
 		}                                                                                                              \
 		                                                                                                               \
-		vector_kind ## _vector(vector_kind ## _vector && rhs) : vector_kind ## _vector() {                             \
+		ml_ ## vector_kind ## _vector(ml_ ## vector_kind ## _vector && rhs) : ml_ ## vector_kind ## _vector() {        \
 			swap(*this, rhs);                                                                                          \
 		}                                                                                                              \
 		                                                                                                               \
-		vector_kind ## _vector&                                                                                        \
-		operator=(vector_kind ## _vector rhs) {                                                                        \
+		ml_ ## vector_kind ## _vector&                                                                                 \
+		operator=(ml_ ## vector_kind ## _vector rhs) {                                                                 \
 			swap(*this, rhs);                                                                                          \
 			return *this;                                                                                              \
 		}                                                                                                              \
 		                                                                                                               \
-		friend void swap(vector_kind ## _vector& lhs, vector_kind ## _vector& rhs) noexcept {                          \
+		friend void swap(ml_ ## vector_kind ## _vector& lhs, ml_ ## vector_kind ## _vector& rhs) noexcept {            \
 			using std::swap;                                                                                           \
 			swap(lhs.ptr_, rhs.ptr_);                                                                                  \
 		}                                                                                                              \
@@ -118,13 +118,13 @@
 		> ptr_;                                                                                                        \
 	};                                                                                                                 \
 	                                                                                                                   \
-	HBRS_MPL_NAMESPACE_END                                                                                               \
+	HBRS_MPL_NAMESPACE_END                                                                                             \
                                                                                                                        \
 	namespace boost { namespace hana {                                                                                 \
                                                                                                                        \
 	template <>                                                                                                        \
-	struct tag_of< hbrs::mpl::ml_ ## vector_kind< ## _vector<base_type> > {                                       \
-		using type = hbrs::mpl::ml_ ## vector_kind< ## _vector_tag;                                               \
+	struct tag_of< hbrs::mpl::ml_ ## vector_kind< ## _vector<base_type> > {                                            \
+		using type = hbrs::mpl::ml_ ## vector_kind< ## _vector_tag;                                                    \
 	};                                                                                                                 \
                                                                                                                        \
 	/* namespace hana */ } /* namespace boost */ }

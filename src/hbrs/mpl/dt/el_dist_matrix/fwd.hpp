@@ -26,10 +26,10 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 
 template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
-struct dist_matrix;
-struct dist_matrix_tag;
-constexpr auto make_dist_matrix = hana::make<dist_matrix_tag>;
-constexpr auto to_dist_matrix = hana::to<dist_matrix_tag>;
+struct el_dist_matrix;
+struct el_dist_matrix_tag;
+constexpr auto make_el_dist_matrix = hana::make<el_dist_matrix_tag>;
+constexpr auto to_el_dist_matrix = hana::to<el_dist_matrix_tag>;
 
 HBRS_MPL_NAMESPACE_END
 

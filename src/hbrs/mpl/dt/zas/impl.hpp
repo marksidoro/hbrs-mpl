@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_DT_ZAS_IMPL_HPP
 #define HBRS_MPL_DT_ZAS_IMPL_HPP
 
-#include <hbrs/mpl/dt/zas/fwd.hpp>
+#include "fwd.hpp"
 
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/fn/size.hpp>

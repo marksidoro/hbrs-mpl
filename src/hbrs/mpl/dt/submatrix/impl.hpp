@@ -17,7 +17,8 @@
 #ifndef HBRS_MPL_DT_SUBMATRIX_IMPL_HPP
 #define HBRS_MPL_DT_SUBMATRIX_IMPL_HPP
 
-#include <hbrs/mpl/dt/submatrix/fwd.hpp>
+#include "fwd.hpp"
+
 #include <hbrs/mpl/core/preprocessor.hpp>
 
 #include <hbrs/mpl/dt/subsequence.hpp>

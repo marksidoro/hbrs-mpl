@@ -18,7 +18,7 @@
 #define HBRS_MPL_DT_CTSAV_IMPL_HPP
 /* compile-time-size array view */
 
-#include <hbrs/mpl/dt/ctsav/fwd.hpp>
+#include "fwd.hpp"
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>

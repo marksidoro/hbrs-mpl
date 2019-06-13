@@ -25,16 +25,16 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 
 template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
-struct dist_column_vector;
-struct dist_column_vector_tag;
-constexpr auto make_dist_column_vector = hana::make<dist_column_vector_tag>;
-constexpr auto to_dist_column_vector = hana::to<dist_column_vector_tag>;
+struct el_dist_column_vector;
+struct el_dist_column_vector_tag;
+constexpr auto make_el_dist_column_vector = hana::make<el_dist_column_vector_tag>;
+constexpr auto to_el_dist_column_vector = hana::to<el_dist_column_vector_tag>;
 
 template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
-struct dist_row_vector;
-struct dist_row_vector_tag;
-constexpr auto make_dist_row_vector = hana::make<dist_row_vector_tag>;
-constexpr auto to_dist_row_vector = hana::to<dist_row_vector_tag>;
+struct el_dist_row_vector;
+struct el_dist_row_vector_tag;
+constexpr auto make_el_dist_row_vector = hana::make<el_dist_row_vector_tag>;
+constexpr auto to_el_dist_row_vector = hana::to<el_dist_row_vector_tag>;
 
 HBRS_MPL_NAMESPACE_END
 

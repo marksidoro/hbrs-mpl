@@ -17,8 +17,9 @@
 #ifndef HBRS_MPL_DT_EL_DIST_MATRIX_IMPL_IMPL_HPP
 #define HBRS_MPL_DT_EL_DIST_MATRIX_IMPL_IMPL_HPP
 
+#include "fwd.hpp"
+
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/dt/el_dist_matrix/fwd.hpp>
 #include <hbrs/mpl/dt/el_matrix.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>
@@ -32,7 +33,6 @@
 #include <initializer_list>
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace mpl = hbrs::mpl;
 
 template<
 	typename Ring = double,
@@ -40,9 +40,9 @@ template<
 	El::Dist Rowwise = El::MR,
 	El::DistWrap Wrapping = El::ELEMENT
 >
-struct dist_matrix {
+struct el_dist_matrix {
 	template<typename Ring_, El::Dist Columnwise_, El::Dist Rowwise_, El::DistWrap Wrapping_>
-	friend struct dist_matrix;
+	friend struct el_dist_matrix;
 	
 	template<
 		typename Ring_ = Ring,
@@ -53,11 +53,11 @@ struct dist_matrix {
 			std::is_same_v<std::remove_const_t<Ring>, Ring_>
 		>* = nullptr
 	>
-	dist_matrix(El::DistMatrix<Ring_, Columnwise_, Rowwise_, Wrapping_> data) : data_{data} {
+	el_dist_matrix(El::DistMatrix<Ring_, Columnwise_, Rowwise_, Wrapping_> data) : data_{data} {
 		BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
 	}
 	
-	dist_matrix(El::Grid const& grid, El::Int m, El::Int n) : data_{grid} {
+	el_dist_matrix(El::Grid const& grid, El::Int m, El::Int n) : data_{grid} {
 		data_.Resize(m, n);
 		El::Zero(data_);
 	}
@@ -71,15 +71,15 @@ struct dist_matrix {
 			std::is_same_v<std::remove_const_t<Ring>, Ring_>
 		>* = nullptr
 	>
-	dist_matrix(dist_matrix<Ring_, Columnwise_, Rowwise_, Wrapping_> const& o) : data_{o.data_} {}
+	el_dist_matrix(el_dist_matrix<Ring_, Columnwise_, Rowwise_, Wrapping_> const& o) : data_{o.data_} {}
 	
-	dist_matrix(dist_matrix const&) = default;
-	dist_matrix(dist_matrix &&) = default;
+	el_dist_matrix(el_dist_matrix const&) = default;
+	el_dist_matrix(el_dist_matrix &&) = default;
 	
-	dist_matrix&
-	operator=(dist_matrix const&) = default;
-	dist_matrix&
-	operator=(dist_matrix &&) = default;
+	el_dist_matrix&
+	operator=(el_dist_matrix const&) = default;
+	el_dist_matrix&
+	operator=(el_dist_matrix &&) = default;
 	
 	auto
 	m() const {
@@ -91,7 +91,7 @@ struct dist_matrix {
 		return data_.Width();
 	}
 
-	mpl::matrix_size<El::Int, El::Int>
+	matrix_size<El::Int, El::Int>
 	size() const {
 		return { m(), n() };
 	}
