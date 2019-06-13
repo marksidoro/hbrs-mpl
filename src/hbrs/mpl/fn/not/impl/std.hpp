@@ -21,7 +21,7 @@
 #include <hbrs/mpl/fuse/std/detail/operators.hpp>
 #include <boost/hana/tuple.hpp>
 
-#define HBRS_MPL_FUSE_STD_FN_NOT_IMPLS boost::hana::make_tuple(                                                        \
+#define HBRS_MPL_FN_NOT_IMPLS_STD boost::hana::make_tuple(                                                        \
 		hbrs::mpl::detail::not__impl_std_ic{},                                                                         \
 		hbrs::mpl::detail::not__impl_std_op{},                                                                         \
 		hbrs::mpl::detail::not__impl_op{}                                                                              \

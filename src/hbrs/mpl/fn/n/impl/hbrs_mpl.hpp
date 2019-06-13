@@ -32,7 +32,7 @@ HBRS_MPL_DEF_FO_TRY_METHOD(n_impl_matrix_index,       matrix_index_tag,       n)
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_N_IMPLS boost::hana::make_tuple(                                                     \
+#define HBRS_MPL_FN_N_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                     \
 		hbrs::mpl::detail::n_impl_matrix_size{},                                                                       \
 		hbrs::mpl::detail::n_impl_matrix_index{}                                                                       \
 	)

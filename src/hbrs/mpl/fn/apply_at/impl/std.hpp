@@ -91,7 +91,7 @@ struct apply_at_impl_std_tuple_integral {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_STD_FN_APPLY_AT_IMPLS boost::hana::make_tuple(                                                   \
+#define HBRS_MPL_FN_APPLY_AT_IMPLS_STD boost::hana::make_tuple(                                                   \
 		hbrs::mpl::detail::apply_at_impl_std_array_integral{},                                                         \
 		hbrs::mpl::detail::apply_at_impl_std_tuple_ic{},                                                               \
 		hbrs::mpl::detail::apply_at_impl_std_tuple_integral{}                                                          \

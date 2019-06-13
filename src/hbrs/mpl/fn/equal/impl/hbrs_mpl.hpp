@@ -36,7 +36,7 @@ HBRS_MPL_DEF_FO_TRY_OPERATOR(equal_impl_matrix_index, matrix_index_tag, HBRS_MPL
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_EQUAL_IMPLS boost::hana::make_tuple(                                                 \
+#define HBRS_MPL_FN_EQUAL_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                 \
 		hbrs::mpl::detail::equal_impl_matrix_size{},                                                                   \
 		hbrs::mpl::detail::equal_impl_matrix_index{}                                                                   \
 	)

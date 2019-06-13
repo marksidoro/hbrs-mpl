@@ -45,7 +45,7 @@ struct fold_left_impl_hana_tuple {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_BOOST_HANA_FN_FOLD_LEFT_IMPLS boost::hana::make_tuple(                                           \
+#define HBRS_MPL_FN_FOLD_LEFT_IMPLS_BOOST_HANA boost::hana::make_tuple(                                           \
 		hbrs::mpl::detail::fold_left_impl_hana_tuple{}                                                                 \
 	)
 

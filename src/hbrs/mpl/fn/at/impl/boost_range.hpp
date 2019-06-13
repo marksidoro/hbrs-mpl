@@ -58,7 +58,7 @@ struct at_impl_range_integer_range {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_BOOST_RANGE_FN_AT_IMPLS boost::hana::make_tuple(                                                 \
+#define HBRS_MPL_FN_AT_IMPLS_BOOST_RANGE boost::hana::make_tuple(                                                 \
 		hbrs::mpl::detail::at_impl_range_integer_range{}                                                               \
 	)
 

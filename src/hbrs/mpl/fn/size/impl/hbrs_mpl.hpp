@@ -60,7 +60,7 @@ HBRS_MPL_DEF_FO_TRY_METHOD(size_impl_zas,      zas_tag,      length)
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_SIZE_IMPLS boost::hana::make_tuple(                                                  \
+#define HBRS_MPL_FN_SIZE_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                  \
 		hbrs::mpl::detail::size_impl_ctsav{},                                                                          \
 		hbrs::mpl::detail::size_impl_rtsav{},                                                                          \
 		hbrs::mpl::detail::size_impl_submatrix{},                                                                      \

@@ -47,7 +47,7 @@ struct absolute_impl_smr {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_ABSOLUTE_IMPLS boost::hana::make_tuple(                                              \
+#define HBRS_MPL_FN_ABSOLUTE_IMPLS_HBRS_MPL boost::hana::make_tuple(                                              \
 		hbrs::mpl::detail::absolute_impl_smc{},                                                                        \
 		hbrs::mpl::detail::absolute_impl_smr{}                                                                         \
 	)

@@ -50,7 +50,7 @@ struct absolute_impl_std_complex {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_STD_FN_ABSOLUTE_IMPLS boost::hana::make_tuple(                                                   \
+#define HBRS_MPL_FN_ABSOLUTE_IMPLS_STD boost::hana::make_tuple(                                                   \
 		hbrs::mpl::detail::absolute_impl_std_arithmetic{},                                                             \
 		hbrs::mpl::detail::absolute_impl_std_complex{}                                                                 \
 	)

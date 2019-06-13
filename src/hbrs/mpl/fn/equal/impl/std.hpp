@@ -58,7 +58,7 @@ struct equal_impl_std_array {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_STD_FN_EQUAL_IMPLS boost::hana::make_tuple(                                                      \
+#define HBRS_MPL_FN_EQUAL_IMPLS_STD boost::hana::make_tuple(                                                      \
 		hbrs::mpl::detail::equal_impl_std_array{},                                                                     \
 		hbrs::mpl::detail::equal_impl_std_ic{},                                                                        \
 		hbrs::mpl::detail::equal_impl_std_op{},                                                                        \

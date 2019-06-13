@@ -90,7 +90,7 @@ _HBRS_MPL_DEF_FO_NAMED_AT(at_impl_pca_filter_latent, pca_filter_result_tag, pca_
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_AT_IMPLS boost::hana::make_tuple(                                                    \
+#define HBRS_MPL_FN_AT_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                    \
 		hbrs::mpl::detail::at_impl_ctsav{},                                                                            \
 		hbrs::mpl::detail::at_impl_rtsav{},                                                                            \
 		hbrs::mpl::detail::at_impl_submatrix{},                                                                        \

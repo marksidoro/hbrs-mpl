@@ -41,7 +41,7 @@ struct size_impl_hana_tuple {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_BOOST_HANA_FN_SIZE_IMPLS boost::hana::make_tuple(                                                \
+#define HBRS_MPL_FN_SIZE_IMPLS_BOOST_HANA boost::hana::make_tuple(                                                \
 		hbrs::mpl::detail::size_impl_hana_tuple{}                                                                      \
 	)
 

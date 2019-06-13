@@ -46,7 +46,7 @@ struct not_equal_impl_hana_pair {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_BOOST_HANA_FN_NOT_EQUAL_IMPLS boost::hana::make_tuple(                                  \
+#define HBRS_MPL_FN_NOT_EQUAL_IMPLS_BOOST_HANA boost::hana::make_tuple(                                  \
 		hbrs::mpl::detail::not_equal_impl_hana_pair{},                                                                 \
 		hbrs::mpl::detail::not_equal_impl_hana_ic{}                                                                    \
 	)

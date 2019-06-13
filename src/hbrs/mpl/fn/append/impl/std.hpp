@@ -85,7 +85,7 @@ struct append_impl_std_tuple {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_STD_FN_APPEND_IMPLS boost::hana::make_tuple(                                                     \
+#define HBRS_MPL_FN_APPEND_IMPLS_STD boost::hana::make_tuple(                                                     \
 		hbrs::mpl::detail::append_impl_std_vector{},                                                                   \
 		hbrs::mpl::detail::append_impl_std_tuple{}                                                                     \
 	)

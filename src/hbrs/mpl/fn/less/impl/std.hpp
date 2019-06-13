@@ -61,7 +61,7 @@ struct less_impl_std_array {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_STD_FN_LESS_IMPLS boost::hana::make_tuple(                                                       \
+#define HBRS_MPL_FN_LESS_IMPLS_STD boost::hana::make_tuple(                                                       \
 		hbrs::mpl::detail::less_impl_std_array{},                                                                      \
 		hbrs::mpl::detail::less_impl_std_ic{},                                                                         \
 		hbrs::mpl::detail::less_impl_std_op{},                                                                         \

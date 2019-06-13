@@ -50,7 +50,7 @@ struct if_impl_hana_bool {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_BOOST_HANA_FN_IF_IMPLS boost::hana::make_tuple(                                                  \
+#define HBRS_MPL_FN_IF_IMPLS_BOOST_HANA boost::hana::make_tuple(                                                  \
 		hbrs::mpl::detail::if_impl_hana_bool{}                                                                         \
 	)
 

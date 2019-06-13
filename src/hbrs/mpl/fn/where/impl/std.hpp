@@ -50,7 +50,7 @@ struct where_impl_std_map {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_STD_FN_WHERE_IMPLS boost::hana::make_tuple(                                                      \
+#define HBRS_MPL_FN_WHERE_IMPLS_STD boost::hana::make_tuple(                                                      \
 		hbrs::mpl::detail::where_impl_std_map{}                                                                        \
 	)
 

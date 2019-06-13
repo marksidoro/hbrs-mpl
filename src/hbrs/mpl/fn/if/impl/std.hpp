@@ -58,7 +58,7 @@ struct if_impl_std_types {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_STD_FN_IF_IMPLS boost::hana::make_tuple(                                                         \
+#define HBRS_MPL_FN_IF_IMPLS_STD boost::hana::make_tuple(                                                         \
 		hbrs::mpl::detail::if_impl_std_types{}                                                                         \
 	)
 

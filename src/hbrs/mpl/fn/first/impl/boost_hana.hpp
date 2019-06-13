@@ -42,7 +42,7 @@ struct first_impl_hana_pair {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_BOOST_HANA_FN_FIRST_IMPLS boost::hana::make_tuple(                                               \
+#define HBRS_MPL_FN_FIRST_IMPLS_BOOST_HANA boost::hana::make_tuple(                                               \
 		hbrs::mpl::detail::first_impl_hana_pair{}                                                                      \
 	)
 

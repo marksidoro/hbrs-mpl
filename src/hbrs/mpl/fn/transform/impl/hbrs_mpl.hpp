@@ -70,7 +70,7 @@ struct transform_impl_zas_std_array_vector_irange {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_TRANSFORM_IMPLS boost::hana::make_tuple(                                             \
+#define HBRS_MPL_FN_TRANSFORM_IMPLS_HBRS_MPL boost::hana::make_tuple(                                             \
 		hbrs::mpl::detail::transform_impl_zas_std_array_vector_irange{}                                                \
 	)
 

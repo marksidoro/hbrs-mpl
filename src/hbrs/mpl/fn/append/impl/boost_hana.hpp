@@ -43,7 +43,7 @@ struct append_impl_hana_tuple {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_BOOST_HANA_FN_APPEND_IMPLS boost::hana::make_tuple(                                              \
+#define HBRS_MPL_FN_APPEND_IMPLS_BOOST_HANA boost::hana::make_tuple(                                              \
 		hbrs::mpl::detail::append_impl_hana_tuple{}                                                                    \
 	)
 

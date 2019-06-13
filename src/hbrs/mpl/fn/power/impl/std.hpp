@@ -63,7 +63,7 @@ struct power_impl_std_complex {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_STD_FN_POWER_IMPLS boost::hana::make_tuple(                                                      \
+#define HBRS_MPL_FN_POWER_IMPLS_STD boost::hana::make_tuple(                                                      \
 		hbrs::mpl::detail::power_impl_std_arithmetic{},                                                                \
 		hbrs::mpl::detail::power_impl_std_complex{}                                                                        \
 	)

@@ -41,7 +41,7 @@ struct greater_impl_std_array {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_STD_FN_GREATER_IMPLS boost::hana::make_tuple(                                                    \
+#define HBRS_MPL_FN_GREATER_IMPLS_STD boost::hana::make_tuple(                                                    \
 		hbrs::mpl::detail::greater_impl_std_array{},                                                                   \
 		hbrs::mpl::detail::greater_impl_std_ic{},                                                                      \
 		hbrs::mpl::detail::greater_impl_std_op{},                                                                      \

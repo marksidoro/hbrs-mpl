@@ -49,7 +49,7 @@ struct fold1_impl_std {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_STD_FN_FOLD1_IMPLS boost::hana::make_tuple(                                                      \
+#define HBRS_MPL_FN_FOLD1_IMPLS_STD boost::hana::make_tuple(                                                      \
 		hbrs::mpl::detail::fold1_impl_std{}                                                                            \
 	)
 

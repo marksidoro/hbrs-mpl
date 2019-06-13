@@ -120,7 +120,7 @@ struct signum_impl_std_tuple {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_STD_FN_SIGNUM_IMPLS boost::hana::make_tuple(                                                     \
+#define HBRS_MPL_FN_SIGNUM_IMPLS_STD boost::hana::make_tuple(                                                     \
 		hbrs::mpl::detail::signum_impl_std_arithmetic{},                                                               \
 		hbrs::mpl::detail::signum_impl_std_ic{},                                                                       \
 		hbrs::mpl::detail::signum_impl_std_array_vector{},                                                             \

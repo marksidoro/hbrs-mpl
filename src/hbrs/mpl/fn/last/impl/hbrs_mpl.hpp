@@ -41,7 +41,7 @@ struct last_impl_range {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_LAST_IMPLS boost::hana::make_tuple(                                                  \
+#define HBRS_MPL_FN_LAST_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                  \
 		hbrs::mpl::detail::last_impl_range{}                                                                           \
 	)
 

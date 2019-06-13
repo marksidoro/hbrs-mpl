@@ -56,7 +56,7 @@ struct transpose_impl_scv {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_TRANSPOSE_IMPLS boost::hana::make_tuple(                                             \
+#define HBRS_MPL_FN_TRANSPOSE_IMPLS_HBRS_MPL boost::hana::make_tuple(                                             \
 		hbrs::mpl::detail::transpose_impl_srv{},                                                                       \
 		hbrs::mpl::detail::transpose_impl_scv{}                                                                        \
 	)

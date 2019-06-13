@@ -101,7 +101,7 @@ struct fold_left_impl_std_tuple {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_STD_FN_FOLD_LEFT_IMPLS boost::hana::make_tuple(                                                  \
+#define HBRS_MPL_FN_FOLD_LEFT_IMPLS_STD boost::hana::make_tuple(                                                  \
 		hbrs::mpl::detail::fold_left_impl_std_array{},                                                                 \
 		hbrs::mpl::detail::fold_left_impl_std_vector{},                                                                \
 		hbrs::mpl::detail::fold_left_impl_std_tuple{}                                                                  \

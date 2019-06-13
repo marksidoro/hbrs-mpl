@@ -127,7 +127,7 @@ struct zip_impl_std_tuple {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_STD_FN_ZIP_IMPLS boost::hana::make_tuple(                                                        \
+#define HBRS_MPL_FN_ZIP_IMPLS_STD boost::hana::make_tuple(                                                        \
 		hbrs::mpl::detail::zip_impl_std_array_vector_irange{},                                                         \
 		hbrs::mpl::detail::zip_impl_std_tuple_vector{},                                                                \
 		hbrs::mpl::detail::zip_impl_std_tuple{}                                                                        \

@@ -84,7 +84,7 @@ struct iterate_impl {
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_ITERATE_IMPLS boost::hana::make_tuple(                                               \
+#define HBRS_MPL_FN_ITERATE_IMPLS_HBRS_MPL boost::hana::make_tuple(                                               \
 		hbrs::mpl::detail::iterate_impl{}                                                                              \
 	)
 

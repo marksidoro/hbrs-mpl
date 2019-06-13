@@ -21,7 +21,7 @@
 #include <hbrs/mpl/fuse/std/detail/operators.hpp>
 #include <boost/hana/tuple.hpp>
 
-#define HBRS_MPL_FUSE_STD_FN_POSTINCREMENT_IMPLS boost::hana::make_tuple(                                              \
+#define HBRS_MPL_FN_POSTINCREMENT_IMPLS_STD boost::hana::make_tuple(                                              \
 		hbrs::mpl::detail::postincrement_impl_std_op{},                                                                \
 		hbrs::mpl::detail::postincrement_impl_op{}                                                                     \
 	)

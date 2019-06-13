@@ -21,7 +21,7 @@
 #include <hbrs/mpl/fuse/boost/hana/detail/operators.hpp>
 #include <boost/hana/tuple.hpp>
 
-#define HBRS_MPL_FUSE_BOOST_HANA_FN_DIVIDE_IMPLS boost::hana::make_tuple(                                     \
+#define HBRS_MPL_FN_DIVIDE_IMPLS_BOOST_HANA boost::hana::make_tuple(                                     \
 		hbrs::mpl::detail::divide_impl_hana_ic{}                                                                       \
 	)
 
