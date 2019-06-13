@@ -18,10 +18,14 @@
 #define HBRS_MPL_FN_HORZCAT_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/dt/function/fwd.hpp>
+#include <hbrs/mpl/dt/function.hpp>
+#include <hbrs/mpl/core/implementations_of.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 HBRS_MPL_DEC_F2(horzcat, horzcat_t)
+HBRS_MPL_DEF_F2(horzcat, horzcat_t)
 HBRS_MPL_NAMESPACE_END
+
+HBRS_MPL_MAP_IMPLS(horzcat_t, boost::hana::make_tuple())
 
 #endif // !HBRS_MPL_FN_HORZCAT_FWD_HPP

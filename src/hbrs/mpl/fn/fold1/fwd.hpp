@@ -18,10 +18,17 @@
 #define HBRS_MPL_FN_FOLD1_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/dt/function/fwd.hpp>
+#include <hbrs/mpl/dt/function.hpp>
+#include <hbrs/mpl/core/implementations_of.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 HBRS_MPL_DEC_F2(fold1, fold1_t)
+HBRS_MPL_DEF_F2(fold1, fold1_t)
 HBRS_MPL_NAMESPACE_END
+
+#include "fwd/elemental.hpp"
+#include "fwd/std.hpp"
+
+HBRS_MPL_MAP_IMPLS(fold1_t, HBRS_MPL_FN_FOLD1_IMPLS_ELEMENTAL, HBRS_MPL_FN_FOLD1_IMPLS_STD)
 
 #endif // !HBRS_MPL_FN_FOLD1_FWD_HPP

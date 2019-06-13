@@ -18,10 +18,18 @@
 #define HBRS_MPL_FN_EXPAND_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/dt/function/fwd.hpp>
+#include <hbrs/mpl/dt/function.hpp>
+#include <hbrs/mpl/core/implementations_of.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 HBRS_MPL_DEC_F2(expand, expand_t)
+HBRS_MPL_DEF_F2(expand, expand_t)
 HBRS_MPL_NAMESPACE_END
+
+#include "fwd/elemental.hpp"
+#include "fwd/hbrs_mpl.hpp"
+#include "fwd/matlab.hpp"
+
+HBRS_MPL_MAP_IMPLS(expand_t, HBRS_MPL_FN_EXPAND_IMPLS_ELEMENTAL, HBRS_MPL_FN_EXPAND_IMPLS_HBRS_MPL, HBRS_MPL_FN_EXPAND_IMPLS_MATLAB)
 
 #endif // !HBRS_MPL_FN_EXPAND_FWD_HPP

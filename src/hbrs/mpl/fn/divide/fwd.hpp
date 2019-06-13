@@ -18,12 +18,20 @@
 #define HBRS_MPL_FN_DIVIDE_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/dt/function/fwd.hpp>
+#include <hbrs/mpl/dt/function.hpp>
+#include <hbrs/mpl/core/implementations_of.hpp>
 
 #define HBRS_MPL_OPERATOR_DIVIDE /
 
 HBRS_MPL_NAMESPACE_BEGIN
 HBRS_MPL_DEC_F2(divide, divide_t)
+HBRS_MPL_DEF_F2(divide, divide_t)
 HBRS_MPL_NAMESPACE_END
+
+#include "fwd/boost_hana.hpp"
+#include "fwd/elemental.hpp"
+#include "fwd/std.hpp"
+
+HBRS_MPL_MAP_IMPLS(divide_t, HBRS_MPL_FN_DIVIDE_IMPLS_BOOST_HANA, HBRS_MPL_FN_DIVIDE_IMPLS_ELEMENTAL, HBRS_MPL_FN_DIVIDE_IMPLS_STD)
 
 #endif // !HBRS_MPL_FN_DIVIDE_FWD_HPP

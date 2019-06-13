@@ -18,12 +18,20 @@
 #define HBRS_MPL_FN_AND_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/dt/function/fwd.hpp>
+#include <hbrs/mpl/dt/function.hpp>
+#include <hbrs/mpl/core/implementations_of.hpp>
 
 #define HBRS_MPL_OPERATOR_AND &&
 
 HBRS_MPL_NAMESPACE_BEGIN
 HBRS_MPL_DEC_F2(and_, and_t)
+HBRS_MPL_DEF_F2(and_, and_t)
 HBRS_MPL_NAMESPACE_END
+
+#include "fwd/boost_hana.hpp"
+#include "fwd/hbrs_mpl.hpp"
+#include "fwd/std.hpp"
+
+HBRS_MPL_MAP_IMPLS(and_t, HBRS_MPL_FN_AND_IMPLS_BOOST_HANA, HBRS_MPL_FN_AND_IMPLS_HBRS_MPL, HBRS_MPL_FN_AND_IMPLS_STD)
 
 #endif // !HBRS_MPL_FN_AND_FWD_HPP
