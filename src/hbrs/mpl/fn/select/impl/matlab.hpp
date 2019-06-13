@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATLAB_FUSE_FN_SELECT_HPP
-#define MATLAB_FUSE_FN_SELECT_HPP
+#ifndef HBRS_MPL_FN_SELECT_IMPL_MATLAB_HPP
+#define HBRS_MPL_FN_SELECT_IMPL_MATLAB_HPP
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 
@@ -32,7 +32,7 @@
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
@@ -41,7 +41,7 @@ struct select_impl_matrix {
 	template<
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matlab::matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, hbrs::mpl::ml_matrix_tag >::value
 		>* = nullptr
 	>
 	decltype(auto)
@@ -69,7 +69,7 @@ struct select_impl_matrix {
 	template<
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matlab::matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, hbrs::mpl::ml_matrix_tag >::value
 		>* = nullptr
 	>
 	decltype(auto)
@@ -99,7 +99,7 @@ struct select_impl_matrix {
 	template<
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matlab::matrix_tag >::value &&
+			std::is_same< hana::tag_of_t<Matrix>, hbrs::mpl::ml_matrix_tag >::value &&
 			std::is_lvalue_reference<Matrix>::value
 		>* = nullptr
 	>
@@ -123,7 +123,7 @@ struct select_impl_matrix {
 	template<typename BaseType>
 	auto
 	operator()(
-		matlab::matrix<BaseType> a,
+		hbrs::mpl::ml_matrix<BaseType> a,
 		std::pair<
 			mpl::matrix_index<int, int>,
 			mpl::matrix_size<int, int>
@@ -133,7 +133,7 @@ struct select_impl_matrix {
 		
 		auto idx = hana::first(rng);
 		auto sz = hana::second(rng);
-		matlab::matrix<std::remove_const_t<BaseType>> b{sz.m(), sz.n()};
+		hbrs::mpl::ml_matrix<std::remove_const_t<BaseType>> b{sz.m(), sz.n()};
 		
 		for(int i = 0; i < sz.m(); ++i) {
 			for(int j = 0; j < sz.n(); ++j) {
@@ -147,10 +147,10 @@ struct select_impl_matrix {
 };
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define MATLAB_FUSE_FN_SELECT_IMPLS boost::hana::make_tuple(                                                           \
+#define HBRS_MPL_FN_SELECT_IMPLS_MATLAB boost::hana::make_tuple(                                                           \
 		matlab::detail::select_impl_matrix{}                                                                           \
 	)
 
-#endif // !MATLAB_FUSE_FN_SELECT_HPP
+#endif // !HBRS_MPL_FN_SELECT_IMPL_MATLAB_HPP

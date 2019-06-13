@@ -19,22 +19,22 @@
 #include <hbrs/mpl/dt/bidiag_result.hpp>
 
 extern "C" {
-	#include <matlab/cxn/bidiag_level0.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/bidiag_level0.h>
 }
 #undef I /* I is defined by MATLAB Coder, but also used within Boost Unit Test Framework as a template parameter. */
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 #define _DEF_BIDIAG(lvl)                                                                                               \
 	mpl::bidiag_result<                                                                                                \
-		matlab::matrix<real_T> /* U */,                                                                                \
-		matlab::matrix<real_T> /* B */,                                                                                \
-		matlab::matrix<real_T> /* V */                                                                                 \
+		hbrs::mpl::ml_matrix<real_T> /* U */,                                                                                \
+		hbrs::mpl::ml_matrix<real_T> /* B */,                                                                                \
+		hbrs::mpl::ml_matrix<real_T> /* V */                                                                                 \
 	>                                                                                                                  \
-	bidiag_impl_level ## lvl::operator()(matlab::matrix<real_T> const& a, mpl::decompose_mode mode) const {            \
+	bidiag_impl_level ## lvl::operator()(hbrs::mpl::ml_matrix<real_T> const& a, mpl::decompose_mode mode) const {            \
 		using mpl::decompose_mode;                                                                                     \
-		matlab::matrix<real_T> u, b, v;                                                                                \
+		hbrs::mpl::ml_matrix<real_T> u, b, v;                                                                                \
 		                                                                                                               \
 		bidiag_level ## lvl(                                                                                           \
 			&a.data(),                                                                                                 \
@@ -55,4 +55,4 @@ _DEF_BIDIAG(0)
 #undef _DEF_BIDIAG
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

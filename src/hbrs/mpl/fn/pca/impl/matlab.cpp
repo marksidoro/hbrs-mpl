@@ -21,26 +21,26 @@
 #include <hbrs/mpl/dt/ml_vector.hpp>
 
 extern "C" {
-	#include <matlab/cxn/pca_level0.h>
-	#include <matlab/cxn/pca_level1.h>
-	#include <matlab/cxn/pca_level2.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/pca_level0.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/pca_level1.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/pca_level2.h>
 }
 #undef I /* I is defined by MATLAB Coder, but also used within Boost Unit Test Framework as a template parameter. */
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 #define _DEF_PCA(lvl)                                                                                                  \
 	mpl::pca_result<                                                                                                   \
-		matlab::matrix<real_T> /* coeff */,                                                                            \
-		matlab::matrix<real_T> /* score */,                                                                            \
-		matlab::column_vector<real_T> /* latent*/,                                                                     \
-		mpl::smr<matlab::matrix<real_T>, int> /* mu */                                                                 \
+		hbrs::mpl::ml_matrix<real_T> /* coeff */,                                                                            \
+		hbrs::mpl::ml_matrix<real_T> /* score */,                                                                            \
+		hbrs::mpl::ml_column_vector<real_T> /* latent*/,                                                                     \
+		mpl::smr<hbrs::mpl::ml_matrix<real_T>, int> /* mu */                                                                 \
 	>                                                                                                                  \
-	pca_impl_level ## lvl::operator()(matlab::matrix<real_T> const& a, bool economy) const {                           \
-		matlab::matrix<real_T> coeff, score;                                                                           \
-		matlab::column_vector<real_T> latent;                                                                          \
-		matlab::matrix<real_T> mu;                                                                                     \
+	pca_impl_level ## lvl::operator()(hbrs::mpl::ml_matrix<real_T> const& a, bool economy) const {                           \
+		hbrs::mpl::ml_matrix<real_T> coeff, score;                                                                           \
+		hbrs::mpl::ml_column_vector<real_T> latent;                                                                          \
+		hbrs::mpl::ml_matrix<real_T> mu;                                                                                     \
 		                                                                                                               \
 		pca_level ## lvl(                                                                                              \
 			&a.data(),                                                                                                 \
@@ -60,4 +60,4 @@ _DEF_PCA(2)
 #undef _DEF_PCA
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

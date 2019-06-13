@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATLAB_FUSE_FN_SVD_HPP
-#define MATLAB_FUSE_FN_SVD_HPP
+#ifndef HBRS_MPL_FN_SVD_IMPL_MATLAB_HPP
+#define HBRS_MPL_FN_SVD_IMPL_MATLAB_HPP
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/dt/decompose_mode.hpp>
@@ -25,7 +25,7 @@
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace mpl = hbrs::mpl;
 namespace detail {
@@ -33,11 +33,11 @@ namespace detail {
 #define _DEC_SVD(lvl)                                                                                                  \
 	struct svd_impl_level ## lvl {                                                                                     \
 		mpl::svd_result<                                                                                               \
-			matlab::matrix<real_T> /* U */,                                                                            \
-			matlab::matrix<real_T> /* S */,                                                                            \
-			matlab::matrix<real_T> /* V */                                                                             \
+			hbrs::mpl::ml_matrix<real_T> /* U */,                                                                            \
+			hbrs::mpl::ml_matrix<real_T> /* S */,                                                                            \
+			hbrs::mpl::ml_matrix<real_T> /* V */                                                                             \
 		>                                                                                                              \
-		operator()(matlab::matrix<real_T> const& a, mpl::decompose_mode mode) const;                                   \
+		operator()(hbrs::mpl::ml_matrix<real_T> const& a, mpl::decompose_mode mode) const;                                   \
 	};
 
 _DEC_SVD(0)
@@ -45,11 +45,11 @@ _DEC_SVD(1)
 #undef _DEC_SVD
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define MATLAB_FUSE_FN_SVD_IMPLS boost::hana::make_tuple(                                                              \
+#define HBRS_MPL_FN_SVD_IMPLS_MATLAB boost::hana::make_tuple(                                                              \
 		matlab::detail::svd_impl_level0{},                                                                             \
 		matlab::detail::svd_impl_level1{}                                                                              \
 	)
 
-#endif // !MATLAB_FUSE_FN_SVD_HPP
+#endif // !HBRS_MPL_FN_SVD_IMPL_MATLAB_HPP

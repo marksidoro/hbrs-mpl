@@ -25,23 +25,23 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 extern "C" {
-	#include <matlab/cxn/pca_filter_level0.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/pca_filter_level0.h>
 }
 #undef I /* I is defined by MATLAB Coder, but also used within Boost Unit Test Framework as a template parameter. */
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 mpl::pca_filter_result<
-	matlab::matrix<real_T> /* data */,
-	matlab::column_vector<real_T> /* latent*/
+	hbrs::mpl::ml_matrix<real_T> /* data */,
+	hbrs::mpl::ml_column_vector<real_T> /* latent*/
 >
-pca_filter_impl::operator()(matlab::matrix<real_T> const& a, std::vector<bool> const& keep) const {
+pca_filter_impl::operator()(hbrs::mpl::ml_matrix<real_T> const& a, std::vector<bool> const& keep) const {
 	using namespace hbrs::mpl;
 	auto keep_sz = (*size)(keep);
 	auto filter_sz = boost::numeric_cast<int>(keep_sz);
 	
-	matlab::column_vector<boolean_T> filter{filter_sz}; /* row or column vector does not matter */
+	hbrs::mpl::ml_column_vector<boolean_T> filter{filter_sz}; /* row or column vector does not matter */
 	
 	for(int i = 0; i < filter_sz; ++i) {
 		filter[i] = keep[i];
@@ -51,10 +51,10 @@ pca_filter_impl::operator()(matlab::matrix<real_T> const& a, std::vector<bool> c
 }
 
 mpl::pca_filter_result<
-	matlab::matrix<real_T> /* data */,
-	matlab::column_vector<real_T> /* latent*/
+	hbrs::mpl::ml_matrix<real_T> /* data */,
+	hbrs::mpl::ml_column_vector<real_T> /* latent*/
 >
-pca_filter_impl::operator()(matlab::matrix<real_T> const& a, matlab::column_vector<boolean_T> const& keep) const {
+pca_filter_impl::operator()(hbrs::mpl::ml_matrix<real_T> const& a, hbrs::mpl::ml_column_vector<boolean_T> const& keep) const {
 	using namespace hbrs::mpl;
 	auto sz = (*size)(a);
 	int m_ = (*m)(sz);
@@ -63,8 +63,8 @@ pca_filter_impl::operator()(matlab::matrix<real_T> const& a, matlab::column_vect
 	auto keep_sz = (*size)(keep);
 	BOOST_ASSERT(keep_sz == m_-1<n_ ? m_-1 : std::min(m_, n_));
 	
-	matlab::matrix<real_T> data;
-	matlab::column_vector<real_T> latent;
+	hbrs::mpl::ml_matrix<real_T> data;
+	hbrs::mpl::ml_column_vector<real_T> latent;
 	
 	pca_filter_level0(
 		&a.data(),
@@ -113,17 +113,17 @@ pca_filter_impl::operator()(matlab::matrix<real_T> const& a, matlab::column_vect
 // }
 
 mpl::pca_filter_result<
-	matlab::matrix<real_T> /* data */,
-	matlab::column_vector<real_T> /* latent*/
+	hbrs::mpl::ml_matrix<real_T> /* data */,
+	hbrs::mpl::ml_column_vector<real_T> /* latent*/
 >
-pca_filter_impl::operator()(matlab::matrix<real_T> const& a, std::function<bool(int)> const& keep) const {
+pca_filter_impl::operator()(hbrs::mpl::ml_matrix<real_T> const& a, std::function<bool(int)> const& keep) const {
 	using namespace hbrs::mpl;
 	auto sz = (*size)(a);
 	int m_ = (*m)(sz);
 	int n_ = (*n)(sz);
 	
 	int filter_sz = m_-1<n_ ? m_-1 : std::min(m_, n_);
-	matlab::column_vector<boolean_T> filter{filter_sz}; /* row or column vector does not matter */
+	hbrs::mpl::ml_column_vector<boolean_T> filter{filter_sz}; /* row or column vector does not matter */
 	
 	for(int i = 0; i < filter_sz; ++i) {
 		filter[i] = keep(i);
@@ -133,4 +133,4 @@ pca_filter_impl::operator()(matlab::matrix<real_T> const& a, std::function<bool(
 }
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

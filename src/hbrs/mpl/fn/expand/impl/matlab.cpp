@@ -16,10 +16,10 @@
 
 #include <hbrs/mpl/fn/expand.hpp>
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 //TODO: explicit template instantiations
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

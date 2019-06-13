@@ -17,13 +17,13 @@
 #include <hbrs/mpl/fn/columns.hpp>
 #include <hbrs/mpl/dt/ml_matrix.hpp>
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-mpl::smcs<matlab::matrix<real_T>>
-columns_impl_matrix::operator()(matlab::matrix<real_T> a) const {
+mpl::smcs<hbrs::mpl::ml_matrix<real_T>>
+columns_impl_matrix::operator()(hbrs::mpl::ml_matrix<real_T> a) const {
 	return {a};
 }
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

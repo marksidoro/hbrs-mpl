@@ -14,19 +14,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATLAB_FUSE_FN_AT_HPP
-#define MATLAB_FUSE_FN_AT_HPP
+#ifndef HBRS_MPL_FN_AT_IMPL_MATLAB_HPP
+#define HBRS_MPL_FN_AT_IMPL_MATLAB_HPP
 
 #include <hbrs/mpl/core/preprocessor.hpp>
-#include <matlab/fwd/dt/matrix.hpp>
-#include <matlab/fwd/dt/vector.hpp>
+#include <hbrs/mpl/dt/ml_matrix/fwd.hpp>
+#include <hbrs/mpl/dt/ml_vector/fwd.hpp>
 #include <hbrs/mpl/detail/function_object.hpp>
 #include <hbrs/mpl/dt/matrix_index/fwd.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace mpl = hbrs::mpl;
 namespace detail {
@@ -57,18 +57,18 @@ struct at_impl_emxArray {
 	operator()(emxArray_boolean_T const& a, mpl::matrix_index<int,int> i) const;
 };
 
-HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_column_vector, matlab::column_vector_tag, at)
-HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_row_vector, matlab::row_vector_tag, at)
-HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_matrix, matlab::matrix_tag, at)
+HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_column_vector, hbrs::mpl::ml_column_vector_tag, at)
+HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_row_vector, hbrs::mpl::ml_row_vector_tag, at)
+HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_matrix, hbrs::mpl::ml_matrix_tag, at)
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define MATLAB_FUSE_FN_AT_IMPLS boost::hana::make_tuple(                                                               \
+#define HBRS_MPL_FN_AT_IMPLS_MATLAB boost::hana::make_tuple(                                                               \
 		matlab::detail::at_impl_emxArray{},                                                                            \
 		matlab::detail::at_impl_column_vector{},                                                                       \
 		matlab::detail::at_impl_row_vector{},                                                                          \
 		matlab::detail::at_impl_matrix{}                                                                               \
 	)
 
-#endif // !MATLAB_FUSE_FN_AT_HPP
+#endif // !HBRS_MPL_FN_AT_IMPL_MATLAB_HPP

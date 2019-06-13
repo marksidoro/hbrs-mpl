@@ -18,27 +18,27 @@
 #include <hbrs/mpl/dt/ml_matrix.hpp>
 
 extern "C" {
-	#include <matlab/cxn/plus_mm.h>
-	#include <matlab/cxn/plus_ms.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/plus_mm.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/plus_ms.h>
 }
 #undef I /* I is defined by MATLAB Coder, but also used within Boost Unit Test Framework as a template parameter. */
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-matlab::matrix<real_T>
-plus_impl_matrix_scalar::operator()(matlab::matrix<real_T> const& a, real_T b) const {
-	matlab::matrix<real_T> c;
+hbrs::mpl::ml_matrix<real_T>
+plus_impl_matrix_scalar::operator()(hbrs::mpl::ml_matrix<real_T> const& a, real_T b) const {
+	hbrs::mpl::ml_matrix<real_T> c;
 	plus_ms(&a.data(), b, &c.data());
 	return c;
 }
 
-matlab::matrix<real_T>
-plus_impl_matrix_matrix::operator()(matlab::matrix<real_T> const& a, matlab::matrix<real_T> const& b) const {
-	matlab::matrix<real_T> c;
+hbrs::mpl::ml_matrix<real_T>
+plus_impl_matrix_matrix::operator()(hbrs::mpl::ml_matrix<real_T> const& a, hbrs::mpl::ml_matrix<real_T> const& b) const {
+	hbrs::mpl::ml_matrix<real_T> c;
 	plus_mm(&a.data(), &b.data(), &c.data());
 	return c;
 }
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

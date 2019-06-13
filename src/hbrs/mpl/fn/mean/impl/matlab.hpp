@@ -14,11 +14,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATLAB_FUSE_FN_MEAN_HPP
-#define MATLAB_FUSE_FN_MEAN_HPP
+#ifndef HBRS_MPL_FN_MEAN_IMPL_MATLAB_HPP
+#define HBRS_MPL_FN_MEAN_IMPL_MATLAB_HPP
 
 #include <hbrs/mpl/core/preprocessor.hpp>
-#include <matlab/fwd/dt/matrix.hpp>
+#include <hbrs/mpl/dt/ml_matrix/fwd.hpp>
 #include <hbrs/mpl/dt/smc.hpp>
 #include <hbrs/mpl/dt/smcs.hpp>
 #include <hbrs/mpl/dt/smr.hpp>
@@ -27,24 +27,24 @@
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace mpl = hbrs::mpl;
 
 namespace detail {
 struct mean_impl_matrix {
-	mpl::smc<matlab::matrix<real_T>, int>
-	operator()(mpl::smrs<matlab::matrix<real_T>> const& a) const;
+	mpl::smc<hbrs::mpl::ml_matrix<real_T>, int>
+	operator()(mpl::smrs<hbrs::mpl::ml_matrix<real_T>> const& a) const;
 	
-	mpl::smr<matlab::matrix<real_T>, int>
-	operator()(mpl::smcs<matlab::matrix<real_T>> const& a) const;
+	mpl::smr<hbrs::mpl::ml_matrix<real_T>, int>
+	operator()(mpl::smcs<hbrs::mpl::ml_matrix<real_T>> const& a) const;
 };
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define MATLAB_FUSE_FN_MEAN_IMPLS boost::hana::make_tuple(                                                             \
+#define HBRS_MPL_FN_MEAN_IMPLS_MATLAB boost::hana::make_tuple(                                                             \
 		matlab::detail::mean_impl_matrix{}                                                                             \
 	)
 
-#endif // !MATLAB_FUSE_FN_MEAN_HPP
+#endif // !HBRS_MPL_FN_MEAN_IMPL_MATLAB_HPP

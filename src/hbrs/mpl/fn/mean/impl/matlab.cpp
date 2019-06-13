@@ -18,26 +18,26 @@
 #include <hbrs/mpl/dt/ml_matrix.hpp>
 
 extern "C" {
-	#include <matlab/cxn/mean_m.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/mean_m.h>
 }
 #undef I /* I is defined by MATLAB Coder, but also used within Boost Unit Test Framework as a template parameter. */
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-mpl::smc<matlab::matrix<real_T>, int>
-mean_impl_matrix::operator()(mpl::smrs<matlab::matrix<real_T>> const& a) const {
-	matlab::matrix<real_T> b;
+mpl::smc<hbrs::mpl::ml_matrix<real_T>, int>
+mean_impl_matrix::operator()(mpl::smrs<hbrs::mpl::ml_matrix<real_T>> const& a) const {
+	hbrs::mpl::ml_matrix<real_T> b;
 	mean_m(&a.data().data(), ::row_mean, &b.data());
 	return {b, 0};
 }
 
-mpl::smr<matlab::matrix<real_T>, int>
-mean_impl_matrix::operator()(mpl::smcs<matlab::matrix<real_T>> const& a) const {
-	matlab::matrix<real_T> b;
+mpl::smr<hbrs::mpl::ml_matrix<real_T>, int>
+mean_impl_matrix::operator()(mpl::smcs<hbrs::mpl::ml_matrix<real_T>> const& a) const {
+	hbrs::mpl::ml_matrix<real_T> b;
 	mean_m(&a.data().data(), ::column_mean, &b.data());
 	return {b, 0};
 }
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

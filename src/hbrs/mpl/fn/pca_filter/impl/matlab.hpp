@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATLAB_FUSE_FN_PCA_FILTER_HPP
-#define MATLAB_FUSE_FN_PCA_FILTER_HPP
+#ifndef HBRS_MPL_FN_PCA_FILTER_IMPL_MATLAB_HPP
+#define HBRS_MPL_FN_PCA_FILTER_IMPL_MATLAB_HPP
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/dt/pca_filter_result.hpp>
@@ -26,42 +26,42 @@
 #include <type_traits>
 #include <vector>
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace mpl = hbrs::mpl;
 namespace detail {
 
 struct pca_filter_impl {
 	mpl::pca_filter_result<
-		matlab::matrix<real_T> /* data */,
-		matlab::column_vector<real_T> /* latent*/
+		hbrs::mpl::ml_matrix<real_T> /* data */,
+		hbrs::mpl::ml_column_vector<real_T> /* latent*/
 	>
-	operator()(matlab::matrix<real_T> const& a, std::vector<bool> const& keep) const;
+	operator()(hbrs::mpl::ml_matrix<real_T> const& a, std::vector<bool> const& keep) const;
 	
 	mpl::pca_filter_result<
-		matlab::matrix<real_T> /* data */,
-		matlab::column_vector<real_T> /* latent*/
+		hbrs::mpl::ml_matrix<real_T> /* data */,
+		hbrs::mpl::ml_column_vector<real_T> /* latent*/
 	>
-	operator()(matlab::matrix<real_T> const& a, matlab::column_vector<boolean_T> const& keep) const;
+	operator()(hbrs::mpl::ml_matrix<real_T> const& a, hbrs::mpl::ml_column_vector<boolean_T> const& keep) const;
 	
 	mpl::pca_filter_result<
-		matlab::matrix<real_T> /* data */,
-		matlab::column_vector<real_T> /* latent*/
+		hbrs::mpl::ml_matrix<real_T> /* data */,
+		hbrs::mpl::ml_column_vector<real_T> /* latent*/
 	>
-	operator()(matlab::matrix<real_T> const& a, matlab::row_vector<boolean_T> const& keep) const = delete /* TODO: implement... */;
+	operator()(hbrs::mpl::ml_matrix<real_T> const& a, hbrs::mpl::ml_row_vector<boolean_T> const& keep) const = delete /* TODO: implement... */;
 	
 	mpl::pca_filter_result<
-		matlab::matrix<real_T> /* data */,
-		matlab::column_vector<real_T> /* latent*/
+		hbrs::mpl::ml_matrix<real_T> /* data */,
+		hbrs::mpl::ml_column_vector<real_T> /* latent*/
 	>
-	operator()(matlab::matrix<real_T> const& a, std::function<bool(int)> const& keep) const;
+	operator()(hbrs::mpl::ml_matrix<real_T> const& a, std::function<bool(int)> const& keep) const;
 };
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define MATLAB_FUSE_FN_PCA_FILTER_IMPLS boost::hana::make_tuple(                                                       \
+#define HBRS_MPL_FN_PCA_FILTER_IMPLS_MATLAB boost::hana::make_tuple(                                                       \
 		matlab::detail::pca_filter_impl{}                                                                              \
 	)
 
-#endif // !MATLAB_FUSE_FN_PCA_FILTER_HPP
+#endif // !HBRS_MPL_FN_PCA_FILTER_IMPL_MATLAB_HPP

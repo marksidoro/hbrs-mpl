@@ -17,7 +17,7 @@
 #include <hbrs/mpl/fn/n.hpp>
 #include <hbrs/mpl/dt/ml_matrix.hpp>
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 int const&
@@ -41,4 +41,4 @@ n_impl_matrix::operator()(matrix<boolean_T> const& a) const {
 }
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

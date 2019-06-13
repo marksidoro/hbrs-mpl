@@ -23,7 +23,7 @@
 #include <boost/exception/error_info.hpp>
 #include <tuple>
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 
 typedef boost::error_info<struct errinfo_vector_sizes_, std::tuple<int, int>  >
@@ -33,6 +33,6 @@ typedef boost::error_info<struct errinfo_vector_size_, int >
 typedef boost::error_info<struct errinfo_matrix_size_, mpl::matrix_size<int, int> >
 	errinfo_matrix_size;
 
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
 #endif // !MATLAB_FWD_DT_EXCEPTION_HPP

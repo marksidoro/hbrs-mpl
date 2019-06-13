@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATLAB_FUSE_FN_PCA_HPP
-#define MATLAB_FUSE_FN_PCA_HPP
+#ifndef HBRS_MPL_FN_PCA_IMPL_MATLAB_HPP
+#define HBRS_MPL_FN_PCA_IMPL_MATLAB_HPP
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/dt/pca_result.hpp>
@@ -26,7 +26,7 @@
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace mpl = hbrs::mpl;
 
@@ -35,12 +35,12 @@ namespace detail {
 #define _DEC_PCA(lvl)                                                                                                  \
 	struct pca_impl_level ## lvl {                                                                                     \
 		mpl::pca_result<                                                                                               \
-			matlab::matrix<real_T> /* coeff */,                                                                        \
-			matlab::matrix<real_T> /* score */,                                                                        \
-			matlab::column_vector<real_T> /* latent*/,                                                                 \
-			mpl::smr<matlab::matrix<real_T>, int> /* mu */                                                             \
+			hbrs::mpl::ml_matrix<real_T> /* coeff */,                                                                        \
+			hbrs::mpl::ml_matrix<real_T> /* score */,                                                                        \
+			hbrs::mpl::ml_column_vector<real_T> /* latent*/,                                                                 \
+			mpl::smr<hbrs::mpl::ml_matrix<real_T>, int> /* mu */                                                             \
 		>                                                                                                              \
-		operator()(matlab::matrix<real_T> const& a, bool economy) const;                                               \
+		operator()(hbrs::mpl::ml_matrix<real_T> const& a, bool economy) const;                                               \
 	};
 
 _DEC_PCA(0)
@@ -49,12 +49,12 @@ _DEC_PCA(2)
 #undef _DEC_PCA
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define MATLAB_FUSE_FN_PCA_IMPLS boost::hana::make_tuple(                                                              \
+#define HBRS_MPL_FN_PCA_IMPLS_MATLAB boost::hana::make_tuple(                                                              \
 		matlab::detail::pca_impl_level0{},                                                                             \
 		matlab::detail::pca_impl_level1{},                                                                             \
 		matlab::detail::pca_impl_level2{}                                                                              \
 	)
 
-#endif // !MATLAB_FUSE_FN_PCA_HPP
+#endif // !HBRS_MPL_FN_PCA_IMPL_MATLAB_HPP

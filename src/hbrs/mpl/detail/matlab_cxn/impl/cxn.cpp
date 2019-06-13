@@ -15,8 +15,8 @@
  */
 
 extern "C" {
-	#include <matlab/cxn/matlab_cxn_initialize.h>
-	#include <matlab/cxn/matlab_cxn_terminate.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/matlab_cxn_initialize.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/matlab_cxn_terminate.h>
 }
 #undef I /* I is defined by MATLAB Coder, but also used within Boost Unit Test Framework as a template parameter. */
 

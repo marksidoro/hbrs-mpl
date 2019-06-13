@@ -14,19 +14,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATLAB_FWD_DT_MATRIX_HPP
-#define MATLAB_FWD_DT_MATRIX_HPP
+#ifndef HBRS_MPL_DT_ML_MATRIX_FWD_HPP
+#define HBRS_MPL_DT_ML_MATRIX_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <boost/hana/fwd/core/make.hpp>
 #include <boost/hana/fwd/core/to.hpp>
 
 extern "C" {
-	#include <matlab/cxn/matlab_cxn_emxAPI.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/matlab_cxn_emxAPI.h>
 }
 #undef I /* I is defined by MATLAB Coder, but also used within Boost Unit Test Framework as a template parameter. */
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 
 template<typename BaseType>
@@ -35,6 +35,6 @@ struct matrix_tag {};
 constexpr auto make_matrix = hana::make<matrix_tag>;
 constexpr auto to_matrix = hana::to<matrix_tag>;
 
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#endif // !MATLAB_FWD_DT_MATRIX_HPP
+#endif // !HBRS_MPL_DT_ML_MATRIX_FWD_HPP

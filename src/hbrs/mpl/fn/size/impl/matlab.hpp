@@ -14,34 +14,34 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATLAB_FUSE_FN_SIZE_HPP
-#define MATLAB_FUSE_FN_SIZE_HPP
+#ifndef HBRS_MPL_FN_SIZE_IMPL_MATLAB_HPP
+#define HBRS_MPL_FN_SIZE_IMPL_MATLAB_HPP
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/function_object.hpp>
 
-#include <matlab/fwd/dt/matrix.hpp>
-#include <matlab/fwd/dt/vector.hpp>
+#include <hbrs/mpl/dt/ml_matrix/fwd.hpp>
+#include <hbrs/mpl/dt/ml_vector/fwd.hpp>
 
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_column_vector, matlab::column_vector_tag, length)
-HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_row_vector, matlab::row_vector_tag, length)
-HBRS_MPL_DEF_FO_TRY_METHOD(size_impl_matrix, matlab::matrix_tag, size)
+HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_column_vector, hbrs::mpl::ml_column_vector_tag, length)
+HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_row_vector, hbrs::mpl::ml_row_vector_tag, length)
+HBRS_MPL_DEF_FO_TRY_METHOD(size_impl_matrix, hbrs::mpl::ml_matrix_tag, size)
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define MATLAB_FUSE_FN_SIZE_IMPLS boost::hana::make_tuple(                                                             \
+#define HBRS_MPL_FN_SIZE_IMPLS_MATLAB boost::hana::make_tuple(                                                             \
 		matlab::detail::size_impl_matrix{},                                                                            \
 		matlab::detail::length_impl_column_vector{},                                                                   \
 		matlab::detail::length_impl_row_vector{}                                                                       \
 	)
 
-#endif // !MATLAB_FUSE_FN_SIZE_HPP
+#endif // !HBRS_MPL_FN_SIZE_IMPL_MATLAB_HPP

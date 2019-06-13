@@ -18,19 +18,19 @@
 #include <hbrs/mpl/dt/ml_matrix.hpp>
 
 extern "C" {
-	#include <matlab/cxn/multiply_mm.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/multiply_mm.h>
 }
 #undef I /* I is defined by MATLAB Coder, but also used within Boost Unit Test Framework as a template parameter. */
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-matlab::matrix<real_T>
-multiply_impl_matrix_matrix::operator()(matlab::matrix<real_T> const& a, matlab::matrix<real_T> const& b) const {
-	matlab::matrix<real_T> c;
+hbrs::mpl::ml_matrix<real_T>
+multiply_impl_matrix_matrix::operator()(hbrs::mpl::ml_matrix<real_T> const& a, hbrs::mpl::ml_matrix<real_T> const& b) const {
+	hbrs::mpl::ml_matrix<real_T> c;
 	multiply_mm(&a.data(), &b.data(), &c.data());
 	return c;
 }
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

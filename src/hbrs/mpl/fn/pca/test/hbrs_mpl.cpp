@@ -83,16 +83,16 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 				#ifdef HBRS_MPL_ENABLE_MATLAB
 				[](auto && a, auto economy) {
 					BOOST_TEST_PASSPOINT();
-					return matlab::detail::pca_impl_level0{}(matlab::make_matrix(HBRS_MPL_FWD(a)), economy);
+					return matlab::detail::pca_impl_level0{}(hbrs::mpl::make_ml_matrix(HBRS_MPL_FWD(a)), economy);
 				},
 				//TODO: Fix pca_impl_level1 and pca_impl_level2 and then reenable their tests here!
 // 				[](auto && a, auto economy) {
 // 					BOOST_TEST_PASSPOINT();
-// 					return matlab::detail::pca_impl_level1{}(matlab::make_matrix(HBRS_MPL_FWD(a)), economy);
+// 					return matlab::detail::pca_impl_level1{}(hbrs::mpl::make_ml_matrix(HBRS_MPL_FWD(a)), economy);
 // 				},
 // 				[](auto && a, auto economy) {
 // 					BOOST_TEST_PASSPOINT();
-// 					return matlab::detail::pca_impl_level2{}(matlab::make_matrix(HBRS_MPL_FWD(a)), economy);
+// 					return matlab::detail::pca_impl_level2{}(hbrs::mpl::make_ml_matrix(HBRS_MPL_FWD(a)), economy);
 // 				},
 				#endif
 				

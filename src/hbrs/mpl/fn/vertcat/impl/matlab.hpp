@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATLAB_FUSE_FN_VERTCAT_HPP
-#define MATLAB_FUSE_FN_VERTCAT_HPP
+#ifndef HBRS_MPL_FN_VERTCAT_IMPL_MATLAB_HPP
+#define HBRS_MPL_FN_VERTCAT_IMPL_MATLAB_HPP
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <matlab/dt/exception.hpp>
@@ -29,7 +29,7 @@
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace mpl = hbrs::mpl;
 
@@ -40,8 +40,8 @@ struct vertcat_impl_smr_smr {
 		typename MatrixA,
 		typename MatrixB,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<MatrixA>, matlab::matrix_tag >::value && 
-			std::is_same< hana::tag_of_t<MatrixB>, matlab::matrix_tag >::value && 
+			std::is_same< hana::tag_of_t<MatrixA>, hbrs::mpl::ml_matrix_tag >::value && 
+			std::is_same< hana::tag_of_t<MatrixB>, hbrs::mpl::ml_matrix_tag >::value && 
 			std::is_same< std::decay_t<MatrixA>, std::decay_t<MatrixB> >::value
 		>* = nullptr
 	>
@@ -81,8 +81,8 @@ struct vertcat_impl_matrix_smr {
 		typename MatrixA,
 		typename MatrixB,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<MatrixA>, matlab::matrix_tag >::value && 
-			std::is_same< hana::tag_of_t<MatrixB>, matlab::matrix_tag >::value && 
+			std::is_same< hana::tag_of_t<MatrixA>, hbrs::mpl::ml_matrix_tag >::value && 
+			std::is_same< hana::tag_of_t<MatrixB>, hbrs::mpl::ml_matrix_tag >::value && 
 			std::is_same< std::decay_t<MatrixA>, std::decay_t<MatrixB> >::value
 		>* = nullptr
 	>
@@ -123,11 +123,11 @@ struct vertcat_impl_matrix_smr {
 };
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define MATLAB_FUSE_FN_VERTCAT_IMPLS boost::hana::make_tuple(                                                          \
+#define HBRS_MPL_FN_VERTCAT_IMPLS_MATLAB boost::hana::make_tuple(                                                          \
 		matlab::detail::vertcat_impl_smr_smr{},                                                                        \
 		matlab::detail::vertcat_impl_matrix_smr{}                                                                      \
 	)
 
-#endif // !MATLAB_FUSE_FN_VERTCAT_HPP
+#endif // !HBRS_MPL_FN_VERTCAT_IMPL_MATLAB_HPP

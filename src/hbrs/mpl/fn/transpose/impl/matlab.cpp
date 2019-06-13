@@ -18,19 +18,19 @@
 #include <hbrs/mpl/dt/ml_matrix.hpp>
 
 extern "C" {
-	#include <matlab/cxn/transpose_m.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/transpose_m.h>
 }
 #undef I /* I is defined by MATLAB Coder, but also used within Boost Unit Test Framework as a template parameter. */
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-matlab::matrix<real_T>
-transpose_impl_matrix::operator()(matlab::matrix<real_T> const& a) const {
-	matlab::matrix<real_T> b;
+hbrs::mpl::ml_matrix<real_T>
+transpose_impl_matrix::operator()(hbrs::mpl::ml_matrix<real_T> const& a) const {
+	hbrs::mpl::ml_matrix<real_T> b;
 	transpose_m(&a.data(), &b.data());
 	return b;
 }
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

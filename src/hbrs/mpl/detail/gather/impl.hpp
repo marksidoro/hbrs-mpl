@@ -52,9 +52,9 @@ template <
 	typename T,
 	typename std::enable_if_t< 
 		#ifdef HBRS_MPL_ENABLE_MATLAB
-			std::is_same< hana::tag_of_t<T>, matlab::matrix_tag >::value ||
-			std::is_same< hana::tag_of_t<T>, matlab::column_vector_tag >::value ||
-			std::is_same< hana::tag_of_t<T>, matlab::row_vector_tag >::value ||
+			std::is_same< hana::tag_of_t<T>, hbrs::mpl::ml_matrix_tag >::value ||
+			std::is_same< hana::tag_of_t<T>, hbrs::mpl::ml_column_vector_tag >::value ||
+			std::is_same< hana::tag_of_t<T>, hbrs::mpl::ml_row_vector_tag >::value ||
 		#endif
 		#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 			std::is_same< hana::tag_of_t<T>, hbrs::mpl::el_matrix_tag >::value ||

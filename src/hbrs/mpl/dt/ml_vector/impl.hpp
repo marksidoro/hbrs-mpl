@@ -14,17 +14,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATLAB_DT_VECTOR_HPP
-#define MATLAB_DT_VECTOR_HPP
+#ifndef HBRS_MPL_DT_ML_VECTOR_IMPL_HPP
+#define HBRS_MPL_DT_ML_VECTOR_IMPL_HPP
 
-#include <matlab/fwd/dt/vector.hpp>
+#include <hbrs/mpl/dt/ml_vector/fwd.hpp>
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 #include <hbrs/mpl/fn/at.hpp>
 #include <algorithm>
 
-#define _MATLAB_DEF_VEC1(vector_kind, base_type)                                                                     \
-	MATLAB_NAMESPACE_BEGIN                                                                                             \
+#define _HBRS_MPL_DEF_ML_VEC1(vector_kind, base_type)                                                                     \
+	HBRS_MPL_NAMESPACE_BEGIN                                                                                             \
 	namespace mpl = hbrs::mpl;                                                                                         \
                                                                                                                        \
 	template<>                                                                                                         \
@@ -118,32 +118,32 @@
 		> ptr_;                                                                                                        \
 	};                                                                                                                 \
 	                                                                                                                   \
-	MATLAB_NAMESPACE_END                                                                                               \
+	HBRS_MPL_NAMESPACE_END                                                                                               \
                                                                                                                        \
 	namespace boost { namespace hana {                                                                                 \
                                                                                                                        \
 	template <>                                                                                                        \
-	struct tag_of< matlab::vector_kind ## _vector<base_type> > {                                       \
-		using type = matlab::vector_kind ## _vector_tag;                                               \
+	struct tag_of< hbrs::mpl::ml_ ## vector_kind< ## _vector<base_type> > {                                       \
+		using type = hbrs::mpl::ml_ ## vector_kind< ## _vector_tag;                                               \
 	};                                                                                                                 \
                                                                                                                        \
 	/* namespace hana */ } /* namespace boost */ }
 
-_MATLAB_DEF_VEC1(column, real_T)
-_MATLAB_DEF_VEC1(column, boolean_T)
-_MATLAB_DEF_VEC1(row, real_T)
-_MATLAB_DEF_VEC1(row, boolean_T)
+_HBRS_MPL_DEF_ML_VEC1(column, real_T)
+_HBRS_MPL_DEF_ML_VEC1(column, boolean_T)
+_HBRS_MPL_DEF_ML_VEC1(row, real_T)
+_HBRS_MPL_DEF_ML_VEC1(row, boolean_T)
 
-#undef _MATLAB_DEF_VEC1
+#undef _HBRS_MPL_DEF_ML_VEC1
 
 namespace boost { namespace hana {
 
 template <>
-struct make_impl<matlab::column_vector_tag>;
+struct make_impl<hbrs::mpl::ml_column_vector_tag>;
 
 template <>
-struct make_impl<matlab::row_vector_tag>;
+struct make_impl<hbrs::mpl::ml_row_vector_tag>;
 
 /* namespace hana */ } /* namespace boost */ }
 
-#endif // !MATLAB_DT_VECTOR_HPP
+#endif // !HBRS_MPL_DT_ML_VECTOR_IMPL_HPP

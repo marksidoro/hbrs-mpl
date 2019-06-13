@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATLAB_FUSE_FN_EXPAND_HPP
-#define MATLAB_FUSE_FN_EXPAND_HPP
+#ifndef HBRS_MPL_FN_EXPAND_IMPL_MATLAB_HPP
+#define HBRS_MPL_FN_EXPAND_IMPL_MATLAB_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
@@ -33,7 +33,7 @@
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace mpl = hbrs::mpl;
 
@@ -44,7 +44,7 @@ struct expand_impl_smr {
 	template<
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matlab::matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, hbrs::mpl::ml_matrix_tag >::value
 		>* = nullptr
 	>
 	auto
@@ -132,11 +132,11 @@ struct expand_impl_row_vector {
 };
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define MATLAB_FUSE_FN_EXPAND_IMPLS boost::hana::make_tuple(                                                           \
+#define HBRS_MPL_FN_EXPAND_IMPLS_MATLAB boost::hana::make_tuple(                                                           \
 		matlab::detail::expand_impl_smr{},                                                                             \
 		matlab::detail::expand_impl_row_vector{}                                                                       \
 	)
 
-#endif // !MATLAB_FUSE_FN_EXPAND_HPP
+#endif // !HBRS_MPL_FN_EXPAND_IMPL_MATLAB_HPP

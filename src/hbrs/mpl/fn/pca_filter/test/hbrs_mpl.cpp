@@ -87,7 +87,7 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 			auto funs = hana::drop_back(hana::make_tuple(
 				#ifdef HBRS_MPL_ENABLE_MATLAB
 				[](auto && a, auto keep) {
-					return matlab::detail::pca_filter_impl{}(matlab::make_matrix(HBRS_MPL_FWD(a)), keep);
+					return matlab::detail::pca_filter_impl{}(hbrs::mpl::make_ml_matrix(HBRS_MPL_FWD(a)), keep);
 				},
 				#endif
 				

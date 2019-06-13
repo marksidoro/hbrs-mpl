@@ -23,7 +23,7 @@
 #include <hbrs/mpl/fn/multiply.hpp>
 #include <boost/assert.hpp>
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 /* NOTE: MATLAB is column-major. 
@@ -94,4 +94,4 @@ at_impl_emxArray::operator()(emxArray_boolean_T const& a, mpl::matrix_index<int,
 }
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END

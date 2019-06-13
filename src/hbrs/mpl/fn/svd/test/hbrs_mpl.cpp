@@ -104,10 +104,10 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(0.000000001)) {
 			auto funs = hana::drop_back(hana::make_tuple(
 				#ifdef HBRS_MPL_ENABLE_MATLAB
 				[](auto && a, auto mode) {
-					return matlab::detail::svd_impl_level0{}(matlab::make_matrix(HBRS_MPL_FWD(a)), mode);
+					return matlab::detail::svd_impl_level0{}(hbrs::mpl::make_ml_matrix(HBRS_MPL_FWD(a)), mode);
 				},
 				[](auto && a, auto mode) {
-					return matlab::detail::svd_impl_level1{}(matlab::make_matrix(HBRS_MPL_FWD(a)), mode);
+					return matlab::detail::svd_impl_level1{}(hbrs::mpl::make_ml_matrix(HBRS_MPL_FWD(a)), mode);
 				},
 				#endif
 				

@@ -14,38 +14,38 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATLAB_FUSE_FN_PLUS_HPP
-#define MATLAB_FUSE_FN_PLUS_HPP
+#ifndef HBRS_MPL_FN_PLUS_IMPL_MATLAB_HPP
+#define HBRS_MPL_FN_PLUS_IMPL_MATLAB_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/dt/smr/fwd.hpp>
-#include <matlab/fwd/dt/matrix.hpp>
+#include <hbrs/mpl/dt/ml_matrix/fwd.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace mpl = hbrs::mpl;
 namespace hana = boost::hana;
 namespace detail {
 
 struct plus_impl_matrix_scalar {
-	matlab::matrix<real_T>
-	operator()(matlab::matrix<real_T> const& a, real_T b) const;
+	hbrs::mpl::ml_matrix<real_T>
+	operator()(hbrs::mpl::ml_matrix<real_T> const& a, real_T b) const;
 };
 
 struct plus_impl_matrix_matrix {
-	matlab::matrix<real_T>
-	operator()(matlab::matrix<real_T> const& a, matlab::matrix<real_T> const& b) const;
+	hbrs::mpl::ml_matrix<real_T>
+	operator()(hbrs::mpl::ml_matrix<real_T> const& a, hbrs::mpl::ml_matrix<real_T> const& b) const;
 };
 
 /* namespace detail */ }
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
-#define MATLAB_FUSE_FN_PLUS_IMPLS boost::hana::make_tuple(                                                             \
+#define HBRS_MPL_FN_PLUS_IMPLS_MATLAB boost::hana::make_tuple(                                                             \
 		matlab::detail::plus_impl_matrix_scalar{},                                                                     \
 		matlab::detail::plus_impl_matrix_matrix{}                                                                      \
 	)
 
-#endif // !MATLAB_FUSE_FN_PLUS_HPP
+#endif // !HBRS_MPL_FN_PLUS_IMPL_MATLAB_HPP

@@ -14,10 +14,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATLAB_DT_MATRIX_HPP
-#define MATLAB_DT_MATRIX_HPP
+#ifndef HBRS_MPL_DT_ML_MATRIX_IMPL_HPP
+#define HBRS_MPL_DT_ML_MATRIX_IMPL_HPP
 
-#include <matlab/fwd/dt/matrix.hpp>
+#include <hbrs/mpl/dt/ml_matrix/fwd.hpp>
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 
@@ -37,11 +37,11 @@
 #include <algorithm>
 #include <limits>
 
-MATLAB_NAMESPACE_BEGIN
+HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace mpl = hbrs::mpl;
 
-#define _MATLAB_DEF_MAT1(base_type)                                                                                    \
+#define _HBRS_MPL_DEF_ML_MAT1(base_type)                                                                                    \
 	template<>                                                                                                         \
 	struct matrix<base_type> {                                                                                         \
 		                                                                                                               \
@@ -188,24 +188,24 @@ namespace mpl = hbrs::mpl;
 		> ptr_;                                                                                                        \
 	};
 
-_MATLAB_DEF_MAT1(real_T)
-_MATLAB_DEF_MAT1(boolean_T)
+_HBRS_MPL_DEF_ML_MAT1(real_T)
+_HBRS_MPL_DEF_ML_MAT1(boolean_T)
 
-#undef _MATLAB_DEF_MAT1
+#undef _HBRS_MPL_DEF_ML_MAT1
 
-MATLAB_NAMESPACE_END
+HBRS_MPL_NAMESPACE_END
 
 namespace boost { namespace hana {
 
 template <typename BaseType>
-struct tag_of< matlab::matrix<BaseType> > {
-	using type = matlab::matrix_tag;
+struct tag_of< hbrs::mpl::ml_matrix<BaseType> > {
+	using type = hbrs::mpl::ml_matrix_tag;
 };
 
 template <>
-struct make_impl<matlab::matrix_tag> {
+struct make_impl<hbrs::mpl::ml_matrix_tag> {
 	template <typename Ring>
-	static constexpr matlab::matrix<Ring>
+	static constexpr hbrs::mpl::ml_matrix<Ring>
 	apply(basic_type<Ring>, hbrs::mpl::matrix_size<int, int> sz) {
 		return {sz.m(), sz.n()};
 	}
@@ -224,7 +224,7 @@ struct make_impl<matlab::matrix_tag> {
 	apply(
 		hbrs::mpl::sm<hbrs::mpl::rtsav<T>, hbrs::mpl::matrix_size<M, N>, Order> const& b
 	) {
-		return hbrs::mpl::detail::copy_matrix(b, matlab::matrix<real_T>{(int)b.size().m(), (int)b.size().n()});
+		return hbrs::mpl::detail::copy_matrix(b, hbrs::mpl::ml_matrix<real_T>{(int)b.size().m(), (int)b.size().n()});
 	}
 	
 	template <
@@ -242,7 +242,7 @@ struct make_impl<matlab::matrix_tag> {
 	apply(
 		hbrs::mpl::sm<hbrs::mpl::ctsav<T, Length>, hbrs::mpl::matrix_size<M, N>, Order> const& b
 	) {
-		return hbrs::mpl::detail::copy_matrix(b, matlab::matrix<real_T>{(int)b.size().m(), (int)b.size().n()});
+		return hbrs::mpl::detail::copy_matrix(b, hbrs::mpl::ml_matrix<real_T>{(int)b.size().m(), (int)b.size().n()});
 	}
 	
 	template <
@@ -261,11 +261,11 @@ struct make_impl<matlab::matrix_tag> {
 		return hbrs::mpl::detail::copy_matrix(
 			data,
 			hbrs::mpl::storage_order_c<Order>, 
-			matlab::matrix<real_T>{sz.m(), sz.n()}
+			hbrs::mpl::ml_matrix<real_T>{sz.m(), sz.n()}
 		);
 	}
 };
 
 /* namespace hana */ } /* namespace boost */ }
 
-#endif // !MATLAB_DT_MATRIX_HPP
+#endif // !HBRS_MPL_DT_ML_MATRIX_IMPL_HPP
