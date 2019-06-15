@@ -23,6 +23,10 @@
 #include <boost/system/error_code.hpp>
 #include <tuple>
 
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+	#include <El.hpp>
+#endif
+
 HBRS_MPL_NAMESPACE_BEGIN
 
 struct exception;
@@ -60,6 +64,31 @@ typedef boost::error_info<
 
 struct mpi_error_info;
 typedef boost::error_info<struct errinfo_mpi_error_info_, mpi_error_info> errinfo_mpi_error_info;
+
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+typedef boost::error_info<struct errinfo_el_vector_sizes_, std::tuple<El::Int, El::Int>  > 
+	errinfo_el_vector_sizes;
+typedef boost::error_info<struct errinfo_el_vector_size_, El::Int > 
+	errinfo_el_vector_size;
+typedef boost::error_info<struct errinfo_el_matrix_size_, matrix_size<El::Int, El::Int> > 
+	errinfo_el_matrix_size;
+typedef boost::error_info<
+	struct errinfo_el_matrix_sizes_,
+	std::tuple<
+		matrix_size<El::Int, El::Int>,
+		matrix_size<El::Int, El::Int>
+	>
+> errinfo_el_matrix_sizes;
+#endif
+
+#ifdef HBRS_MPL_ENABLE_MATLAB
+typedef boost::error_info<struct errinfo_ml_vector_sizes_, std::tuple<int, int>  >
+	errinfo_ml_vector_sizes;
+typedef boost::error_info<struct errinfo_ml_vector_size_, int >
+	errinfo_ml_vector_size;
+typedef boost::error_info<struct errinfo_ml_matrix_size_, matrix_size<int, int> >
+	errinfo_ml_matrix_size;
+#endif
 
 HBRS_MPL_NAMESPACE_END
 
