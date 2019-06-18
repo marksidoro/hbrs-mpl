@@ -14,17 +14,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/times.hpp>
+#include "elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-template auto times_impl_matrix_matrix::operator()(matrix<float>               const&, matrix<float>               const&) const;
-template auto times_impl_matrix_matrix::operator()(matrix<El::Complex<float>>  const&, matrix<El::Complex<float>>  const&) const;
-template auto times_impl_matrix_matrix::operator()(matrix<double>              const&, matrix<double>              const&) const;
-template auto times_impl_matrix_matrix::operator()(matrix<El::Complex<double>> const&, matrix<El::Complex<double>> const&) const;
+template auto times_impl_el_matrix_el_matrix::operator()(el_matrix<float>               const&, el_matrix<float>               const&) const;
+template auto times_impl_el_matrix_el_matrix::operator()(el_matrix<El::Complex<float>>  const&, el_matrix<El::Complex<float>>  const&) const;
+template auto times_impl_el_matrix_el_matrix::operator()(el_matrix<double>              const&, el_matrix<double>              const&) const;
+template auto times_impl_el_matrix_el_matrix::operator()(el_matrix<El::Complex<double>> const&, el_matrix<El::Complex<double>> const&) const;
 
 //TODO: Add dist impls
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL

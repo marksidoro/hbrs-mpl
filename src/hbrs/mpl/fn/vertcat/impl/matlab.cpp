@@ -14,7 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/vertcat.hpp>
+#include "matlab.hpp"
+#ifdef HBRS_MPL_ENABLE_MATLAB
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
@@ -23,3 +24,5 @@ namespace detail {
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_MATLAB

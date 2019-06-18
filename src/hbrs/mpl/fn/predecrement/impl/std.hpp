@@ -14,16 +14,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_STD_FN_PREDECREMENT_HPP
-#define HBRS_MPL_FUSE_STD_FN_PREDECREMENT_HPP
+#ifndef HBRS_MPL_FN_PREDECREMENT_IMPL_STD_HPP
+#define HBRS_MPL_FN_PREDECREMENT_IMPL_STD_HPP
 
-#include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/fuse/std/detail/operators.hpp>
-#include <boost/hana/tuple.hpp>
+#include "../fwd/std.hpp"
 
-#define HBRS_MPL_FN_PREDECREMENT_IMPLS_STD boost::hana::make_tuple(                                               \
-		hbrs::mpl::detail::predecrement_impl_std_op{},                                                                 \
-		hbrs::mpl::detail::predecrement_impl_op{}                                                                      \
-	)
+#include <hbrs/mpl/detail/operators/impl/std.hpp>
 
-#endif // !HBRS_MPL_FUSE_STD_FN_PREDECREMENT_HPP
+#endif // !HBRS_MPL_FN_PREDECREMENT_IMPL_STD_HPP

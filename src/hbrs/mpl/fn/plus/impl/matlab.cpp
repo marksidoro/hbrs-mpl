@@ -14,7 +14,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/plus.hpp>
+#include "matlab.hpp"
+#ifdef HBRS_MPL_ENABLE_MATLAB
+
 #include <hbrs/mpl/dt/ml_matrix.hpp>
 
 extern "C" {
@@ -26,19 +28,21 @@ extern "C" {
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-hbrs::mpl::ml_matrix<real_T>
-plus_impl_matrix_scalar::operator()(hbrs::mpl::ml_matrix<real_T> const& a, real_T b) const {
-	hbrs::mpl::ml_matrix<real_T> c;
+ml_matrix<real_T>
+plus_impl_ml_matrix_scalar::operator()(ml_matrix<real_T> const& a, real_T b) const {
+	ml_matrix<real_T> c;
 	plus_ms(&a.data(), b, &c.data());
 	return c;
 }
 
-hbrs::mpl::ml_matrix<real_T>
-plus_impl_matrix_matrix::operator()(hbrs::mpl::ml_matrix<real_T> const& a, hbrs::mpl::ml_matrix<real_T> const& b) const {
-	hbrs::mpl::ml_matrix<real_T> c;
+ml_matrix<real_T>
+plus_impl_ml_matrix_ml_matrix::operator()(ml_matrix<real_T> const& a, ml_matrix<real_T> const& b) const {
+	ml_matrix<real_T> c;
 	plus_mm(&a.data(), &b.data(), &c.data());
 	return c;
 }
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_MATLAB

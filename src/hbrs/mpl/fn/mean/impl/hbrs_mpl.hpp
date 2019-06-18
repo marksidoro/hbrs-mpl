@@ -14,17 +14,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_HBRS_MPL_FN_MEAN_HPP
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_MEAN_HPP
+#ifndef HBRS_MPL_FN_MEAN_IMPL_HBRS_MPL_HPP
+#define HBRS_MPL_FN_MEAN_IMPL_HBRS_MPL_HPP
+
+#include "../fwd/hbrs_mpl.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 
-#include <hbrs/mpl/dt/smcs/fwd.hpp>
-#include <hbrs/mpl/dt/rtsam/fwd.hpp>
-#include <hbrs/mpl/dt/sm/fwd.hpp>
-#include <hbrs/mpl/dt/ctsav/fwd.hpp>
-#include <hbrs/mpl/dt/matrix_size/fwd.hpp>
-#include <hbrs/mpl/dt/storage_order/fwd.hpp>
+#include <hbrs/mpl/dt/smcs.hpp>
+#include <hbrs/mpl/dt/rtsam.hpp>
+#include <hbrs/mpl/dt/sm.hpp>
+#include <hbrs/mpl/dt/ctsav.hpp>
+#include <hbrs/mpl/dt/matrix_size.hpp>
+#include <hbrs/mpl/dt/storage_order.hpp>
 
 #include <hbrs/mpl/dt/matrix_index.hpp>
 #include <hbrs/mpl/dt/srv.hpp>
@@ -37,9 +39,7 @@
 #include <hbrs/mpl/fn/at.hpp>
 
 #include <boost/hana/integral_constant.hpp>
-#include <boost/hana/tuple.hpp>
-#include <boost/hana/core/tag_of.hpp>
-#include <type_traits>
+
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
@@ -83,55 +83,47 @@ mean_impl_smcs_matrix(Columns && cols, hana::basic_type<Ring>, storage_order_<Or
 	return mean_;
 }
 
-struct mean_impl_smcs_sm_ctsav_icsz {
-	template <
-		typename Ring, std::size_t SequenceSize,
-		std::size_t MatrixSizeM, std::size_t MatrixSizeN,
-		storage_order Order,
-		typename std::enable_if_t<
-			std::is_arithmetic<std::decay_t<Ring>>::value
-		>* = nullptr
-	>
-	auto
-	operator()(
-		//TODO: extend to non-ref, non-const-ref, ...
-		mpl::smcs<
-			sm<
-				ctsav<Ring, SequenceSize>,
-				matrix_size<hana::size_t<MatrixSizeM>, hana::size_t<MatrixSizeN>>,
-				Order
-			> const&
-		> const& a) const {
-		typedef std::decay_t<Ring> _Ring_;
-		return mean_impl_smcs_matrix(a, hana::type_c<_Ring_>, storage_order_c<Order>);
-	}
-};
 
-struct mean_impl_smcs_rtsam {
-	template <
-		typename Ring,
-		storage_order Order,
-		typename std::enable_if_t<
-			std::is_arithmetic<std::decay_t<Ring>>::value
-		>* = nullptr
-	>
-	auto
-	operator()(
-		//TODO: extend to non-ref, non-const-ref, ...
-		mpl::smcs<
-			rtsam<Ring, Order> const&
-		> const& a) const {
-		typedef std::decay_t<Ring> _Ring_;
-		return mean_impl_smcs_matrix(a, hana::type_c<_Ring_>, storage_order_c<Order>);
-	}
-};
+template <
+	typename Ring, std::size_t SequenceSize,
+	std::size_t MatrixSizeM, std::size_t MatrixSizeN,
+	storage_order Order,
+	typename std::enable_if_t<
+		std::is_arithmetic<std::decay_t<Ring>>::value
+	>*
+>
+auto
+mean_impl_smcs_sm_ctsav_icsz::operator()(
+	//TODO: extend to non-ref, non-const-ref, ...
+	smcs<
+		sm<
+			ctsav<Ring, SequenceSize>,
+			matrix_size<hana::size_t<MatrixSizeM>, hana::size_t<MatrixSizeN>>,
+			Order
+		> const&
+	> const& a) const {
+	typedef std::decay_t<Ring> _Ring_;
+	return mean_impl_smcs_matrix(a, hana::type_c<_Ring_>, storage_order_c<Order>);
+}
+
+template <
+	typename Ring,
+	storage_order Order,
+	typename std::enable_if_t<
+		std::is_arithmetic<std::decay_t<Ring>>::value
+	>*
+>
+auto
+mean_impl_smcs_rtsam::operator()(
+	//TODO: extend to non-ref, non-const-ref, ...
+	smcs<
+		rtsam<Ring, Order> const&
+	> const& a) const {
+	typedef std::decay_t<Ring> _Ring_;
+	return mean_impl_smcs_matrix(a, hana::type_c<_Ring_>, storage_order_c<Order>);
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_MEAN_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                  \
-		hbrs::mpl::detail::mean_impl_smcs_sm_ctsav_icsz{},                                                             \
-		hbrs::mpl::detail::mean_impl_smcs_rtsam{}                                                                      \
-	)
-
-#endif // !HBRS_MPL_FUSE_HBRS_MPL_FN_MEAN_HPP
+#endif // !HBRS_MPL_FN_MEAN_IMPL_HBRS_MPL_HPP

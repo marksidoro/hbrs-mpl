@@ -17,61 +17,57 @@
 #ifndef HBRS_MPL_FN_FOLD1_IMPL_ELEMENTAL_HPP
 #define HBRS_MPL_FN_FOLD1_IMPL_ELEMENTAL_HPP
 
-#include <hbrs/mpl/config.hpp>
+#include "../fwd/elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/dt/el_matrix.hpp>
-#include <hbrs/mpl/fn/fold1_left.hpp>
 #include <hbrs/mpl/dt/smc.hpp>
 #include <hbrs/mpl/dt/smr.hpp>
 #include <hbrs/mpl/dt/zas.hpp>
-#include <El.hpp>
-#include <boost/hana/tuple.hpp>
-#include <boost/range/irange.hpp>
-#include <type_traits>
-#include <functional>
-#include <vector>
+#include <hbrs/mpl/fn/fold1_left.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace mpl = hbrs::mpl;
 namespace detail {
 
-struct fold1_impl_zas_smc_matrix_irange {
-	template <
-		typename Matrix,
-		typename Integer,
-		typename F,
-		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
-			//TODO: Add invokable check for F?
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(mpl::zas<mpl::smc<Matrix, El::Int>, boost::integer_range<Integer>> const& a, F && f) const {
-		return (*mpl::fold1_left)(a, HBRS_MPL_FWD(f));
-	}
-};
+template <
+	typename Matrix,
+	typename Integer,
+	typename F,
+	typename std::enable_if_t<
+		std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value
+		//TODO: Add invokable check for F?
+	>*
+>
+constexpr decltype(auto)
+fold1_impl_zas_smc_el_matrix_irange::operator()(
+	zas<smc<Matrix, El::Int>,
+	boost::integer_range<Integer>> const& a,
+	F && f
+) const {
+	return (*fold1_left)(a, HBRS_MPL_FWD(f));
+}
 
-struct fold1_impl_zas_smr_matrix_irange {
-	template <
-		typename Matrix,
-		typename Integer,
-		typename F,
-		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
-			//TODO: Add invokable check for F?
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(mpl::zas<mpl::smr<Matrix, El::Int>, boost::integer_range<Integer>> const& a, F && f) const {
-		return (*mpl::fold1_left)(a, HBRS_MPL_FWD(f));
-	}
-};
+template <
+	typename Matrix,
+	typename Integer,
+	typename F,
+	typename std::enable_if_t<
+		std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value
+		//TODO: Add invokable check for F?
+	>*
+>
+constexpr decltype(auto)
+fold1_impl_zas_smr_el_matrix_irange::operator()(
+	zas<smr<Matrix, El::Int>,
+	boost::integer_range<Integer>> const& a,
+	F && f
+) const {
+	return (*fold1_left)(a, HBRS_MPL_FWD(f));
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_FOLD1_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                         \
-		elemental::detail::fold1_impl_zas_smc_matrix_irange{},                                                         \
-		elemental::detail::fold1_impl_zas_smr_matrix_irange{}                                                          \
-	)
-
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
 #endif // !HBRS_MPL_FN_FOLD1_IMPL_ELEMENTAL_HPP

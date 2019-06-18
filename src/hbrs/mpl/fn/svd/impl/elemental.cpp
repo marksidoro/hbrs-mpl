@@ -14,20 +14,23 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/svd.hpp>
+#include "elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-template auto svd_impl_matrix::operator()(matrix<float>               const&, mpl::decompose_mode) const;
-template auto svd_impl_matrix::operator()(matrix<El::Complex<float>>  const&, mpl::decompose_mode) const;
-template auto svd_impl_matrix::operator()(matrix<double>              const&, mpl::decompose_mode) const;
-template auto svd_impl_matrix::operator()(matrix<El::Complex<double>> const&, mpl::decompose_mode) const;
+template auto svd_impl_el_matrix::operator()(el_matrix<float>               const&, decompose_mode) const;
+template auto svd_impl_el_matrix::operator()(el_matrix<El::Complex<float>>  const&, decompose_mode) const;
+template auto svd_impl_el_matrix::operator()(el_matrix<double>              const&, decompose_mode) const;
+template auto svd_impl_el_matrix::operator()(el_matrix<El::Complex<double>> const&, decompose_mode) const;
 
-template auto svd_impl_dist_matrix::operator()(dist_matrix<float>               const&, mpl::decompose_mode) const;
-template auto svd_impl_dist_matrix::operator()(dist_matrix<El::Complex<float>>  const&, mpl::decompose_mode) const;
-template auto svd_impl_dist_matrix::operator()(dist_matrix<double>              const&, mpl::decompose_mode) const;
-template auto svd_impl_dist_matrix::operator()(dist_matrix<El::Complex<double>> const&, mpl::decompose_mode) const;
+template auto svd_impl_el_dist_matrix::operator()(el_dist_matrix<float>               const&, decompose_mode) const;
+template auto svd_impl_el_dist_matrix::operator()(el_dist_matrix<El::Complex<float>>  const&, decompose_mode) const;
+template auto svd_impl_el_dist_matrix::operator()(el_dist_matrix<double>              const&, decompose_mode) const;
+template auto svd_impl_el_dist_matrix::operator()(el_dist_matrix<El::Complex<double>> const&, decompose_mode) const;
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL

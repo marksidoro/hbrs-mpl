@@ -14,58 +14,46 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_STD_FN_POWER_HPP
-#define HBRS_MPL_FUSE_STD_FN_POWER_HPP
+#ifndef HBRS_MPL_FN_POWER_IMPL_STD_HPP
+#define HBRS_MPL_FN_POWER_IMPL_STD_HPP
 
-#include <hbrs/mpl/config.hpp>
-#include <boost/hana/tuple.hpp>
+#include "../fwd/std.hpp"
+
 #include <cmath>
-#include <type_traits>
-#include <complex>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-//TODO: Add more impls, see https://en.cppreference.com/w/cpp/numeric/math/pow
-struct power_impl_std_arithmetic {
-	template<
-		typename T,
-		typename std::enable_if_t< 
-			std::is_arithmetic<T>::value
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(T base, T exp) const {
-		return std::pow(base, exp);
-	}
-};
+template<
+	typename T,
+	typename std::enable_if_t< 
+		std::is_arithmetic<T>::value
+	>*
+>
+constexpr decltype(auto)
+power_impl_std_arithmetic::operator()(T base, T exp) const {
+	return std::pow(base, exp);
+}
 
-struct power_impl_std_complex {
-	template<typename T, typename U>
-	constexpr decltype(auto)
-	operator()(std::complex<T> const& x, std::complex<U> const& y) const {
-		return std::pow(x, y);
-	}
-	
-	template<typename T, typename U>
-	constexpr decltype(auto)
-	operator()(std::complex<T> const& x, U const& y) const {
-		return std::pow(x, y);
-	}
-	
-	template<typename T, typename U>
-	constexpr decltype(auto)
-	operator()(T const& x, std::complex<U> const& y) const {
-		return std::pow(x, y);
-	}
-};
+template<typename T, typename U>
+constexpr decltype(auto)
+power_impl_std_complex::operator()(std::complex<T> const& x, std::complex<U> const& y) const {
+	return std::pow(x, y);
+}
+
+template<typename T, typename U>
+constexpr decltype(auto)
+power_impl_std_complex::operator()(std::complex<T> const& x, U const& y) const {
+	return std::pow(x, y);
+}
+
+template<typename T, typename U>
+constexpr decltype(auto)
+power_impl_std_complex::operator()(T const& x, std::complex<U> const& y) const {
+	return std::pow(x, y);
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_POWER_IMPLS_STD boost::hana::make_tuple(                                                      \
-		hbrs::mpl::detail::power_impl_std_arithmetic{},                                                                \
-		hbrs::mpl::detail::power_impl_std_complex{}                                                                        \
-	)
-
-#endif // !HBRS_MPL_FUSE_STD_FN_POWER_HPP
+#endif // !HBRS_MPL_FN_POWER_IMPL_STD_HPP

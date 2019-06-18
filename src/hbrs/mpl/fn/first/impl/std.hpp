@@ -14,35 +14,27 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_STD_FN_FIRST_HPP
-#define HBRS_MPL_FUSE_STD_FN_FIRST_HPP
+#ifndef HBRS_MPL_FN_FIRST_IMPL_STD_HPP
+#define HBRS_MPL_FN_FIRST_IMPL_STD_HPP
+
+#include "../fwd/std.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
-#include <boost/hana/ext/std/pair.hpp>
-#include <boost/hana/tuple.hpp>
-#include <boost/hana/core/tag_of.hpp>
-#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct first_impl_std_pair {
-	template<
-		typename Pair,
-		typename std::enable_if_t< std::is_same< hana::tag_of_t<Pair>, hana::ext::std::pair_tag >::value >* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(Pair && p) const {
-		return std::get<0>(HBRS_MPL_FWD(p));
-	}
-};
-	
+template<
+	typename Pair,
+	typename std::enable_if_t< std::is_same< hana::tag_of_t<Pair>, hana::ext::std::pair_tag >::value >*
+>
+constexpr decltype(auto)
+first_impl_std_pair::operator()(Pair && p) const {
+	return std::get<0>(HBRS_MPL_FWD(p));
+}
+
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_FIRST_IMPLS_STD boost::hana::make_tuple(                                                      \
-		hbrs::mpl::detail::first_impl_std_pair{}                                                                       \
-	)
-
-#endif // !HBRS_MPL_FUSE_STD_FN_FIRST_HPP
+#endif // !HBRS_MPL_FN_FIRST_IMPL_STD_HPP

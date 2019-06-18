@@ -14,15 +14,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/absolute.hpp>
+#include "elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-template auto absolute_impl_matrix::operator()(matrix<float>               const&) const;
-// template auto absolute_impl_matrix::operator()(matrix<El::Complex<float>>  const&) const;
-template auto absolute_impl_matrix::operator()(matrix<double>              const&) const;
-// template auto absolute_impl_matrix::operator()(matrix<El::Complex<double>> const&) const;
+template auto absolute_impl_el_matrix::operator()(el_matrix<float>               const&) const;
+// template auto absolute_impl_el_matrix::operator()(el_matrix<El::Complex<float>>  const&) const;
+template auto absolute_impl_el_matrix::operator()(el_matrix<double>              const&) const;
+// template auto absolute_impl_el_matrix::operator()(el_matrix<El::Complex<double>> const&) const;
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL

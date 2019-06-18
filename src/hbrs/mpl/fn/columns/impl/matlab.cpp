@@ -14,16 +14,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/columns.hpp>
+#include "matlab.hpp"
+#ifdef HBRS_MPL_ENABLE_MATLAB
+
 #include <hbrs/mpl/dt/ml_matrix.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-mpl::smcs<hbrs::mpl::ml_matrix<real_T>>
-columns_impl_matrix::operator()(hbrs::mpl::ml_matrix<real_T> a) const {
+smcs<ml_matrix<real_T>>
+columns_impl_ml_matrix::operator()(ml_matrix<real_T> a) const {
 	return {a};
 }
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_MATLAB

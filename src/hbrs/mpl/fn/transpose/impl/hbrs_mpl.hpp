@@ -14,51 +14,42 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_HBRS_MPL_FN_TRANSPOSE_HPP
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_TRANSPOSE_HPP
+#ifndef HBRS_MPL_FN_TRANSPOSE_IMPL_HBRS_MPL_HPP
+#define HBRS_MPL_FN_TRANSPOSE_IMPL_HBRS_MPL_HPP
 
-#include <hbrs/mpl/config.hpp>
+#include "../fwd/hbrs_mpl.hpp"
+
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/dt/srv.hpp>
 #include <hbrs/mpl/dt/scv.hpp>
-#include <boost/hana/tuple.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct transpose_impl_srv {
-	template <
-		typename Vector,
-		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Vector>, srv_tag>::value
-		>* = nullptr
-	>
-	constexpr auto
-	operator()(Vector && v) const {
-		return make_scv(HBRS_MPL_FWD(v));
-	}
-};
+template <
+	typename Vector,
+	typename std::enable_if_t<
+		std::is_same< hana::tag_of_t<Vector>, srv_tag>::value
+	>*
+>
+constexpr auto
+transpose_impl_srv::operator()(Vector && v) const {
+	return make_scv(HBRS_MPL_FWD(v));
+}
 
-struct transpose_impl_scv {
-	template <
-		typename Vector,
-		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Vector>, scv_tag>::value
-		>* = nullptr
-	>
-	constexpr auto 
-	operator()(Vector && v) const {
-		return make_srv(HBRS_MPL_FWD(v));
-	}
-};
+template <
+	typename Vector,
+	typename std::enable_if_t<
+		std::is_same< hana::tag_of_t<Vector>, scv_tag>::value
+	>*
+>
+constexpr auto 
+transpose_impl_scv::operator()(Vector && v) const {
+	return make_srv(HBRS_MPL_FWD(v));
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_TRANSPOSE_IMPLS_HBRS_MPL boost::hana::make_tuple(                                             \
-		hbrs::mpl::detail::transpose_impl_srv{},                                                                       \
-		hbrs::mpl::detail::transpose_impl_scv{}                                                                        \
-	)
-
-#endif // !HBRS_MPL_FUSE_HBRS_MPL_FN_TRANSPOSE_HPP
+#endif // !HBRS_MPL_FN_TRANSPOSE_IMPL_HBRS_MPL_HPP

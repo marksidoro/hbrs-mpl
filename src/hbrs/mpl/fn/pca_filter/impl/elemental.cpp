@@ -14,35 +14,35 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/pca_filter.hpp>
-
-#include <hbrs/mpl/dt/el_matrix.hpp>
-#include <hbrs/mpl/dt/el_dist_matrix.hpp>
+#include "elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 //TODO: Why does El::Complex<...> fail?
 
-template auto pca_filter_impl_matrix::operator()(matrix<float>               const&,  std::function<bool(int)> const&) const;
-// template auto pca_filter_impl_matrix::operator()(matrix<El::Complex<float>>  const&,  std::function<bool(int)> const&) const;
-template auto pca_filter_impl_matrix::operator()(matrix<double>              const&,  std::function<bool(int)> const&) const;
-// template auto pca_filter_impl_matrix::operator()(matrix<El::Complex<double>> const&,  std::function<bool(int)>const& ) const;
+template auto pca_filter_impl_el_matrix::operator()(el_matrix<float>               const&,  std::function<bool(int)> const&) const;
+// template auto pca_filter_impl_el_matrix::operator()(el_matrix<El::Complex<float>>  const&,  std::function<bool(int)> const&) const;
+template auto pca_filter_impl_el_matrix::operator()(el_matrix<double>              const&,  std::function<bool(int)> const&) const;
+// template auto pca_filter_impl_el_matrix::operator()(el_matrix<El::Complex<double>> const&,  std::function<bool(int)>const& ) const;
 
-template auto pca_filter_impl_matrix::operator()(dist_matrix<float>               const&,  std::function<bool(int)> const&) const;
-// template auto pca_filter_impl_matrix::operator()(dist_matrix<El::Complex<float>>  const&,  std::function<bool(int)> const&) const;
-template auto pca_filter_impl_matrix::operator()(dist_matrix<double>              const&,  std::function<bool(int)> const&) const;
-// template auto pca_filter_impl_matrix::operator()(dist_matrix<El::Complex<double>> const&,  std::function<bool(int)> const&) const;
+template auto pca_filter_impl_el_matrix::operator()(el_dist_matrix<float>               const&,  std::function<bool(int)> const&) const;
+// template auto pca_filter_impl_el_matrix::operator()(el_dist_matrix<El::Complex<float>>  const&,  std::function<bool(int)> const&) const;
+template auto pca_filter_impl_el_matrix::operator()(el_dist_matrix<double>              const&,  std::function<bool(int)> const&) const;
+// template auto pca_filter_impl_el_matrix::operator()(el_dist_matrix<El::Complex<double>> const&,  std::function<bool(int)> const&) const;
 
-template auto pca_filter_impl_matrix::operator()(matrix<float>               const&,  std::vector<bool> const&) const;
-// template auto pca_filter_impl_matrix::operator()(matrix<El::Complex<float>>  const&,  std::vector<bool> const&) const;
-template auto pca_filter_impl_matrix::operator()(matrix<double>              const&,  std::vector<bool> const&) const;
-// template auto pca_filter_impl_matrix::operator()(matrix<El::Complex<double>> const&,  std::vector<bool> const&) const;
+template auto pca_filter_impl_el_matrix::operator()(el_matrix<float>               const&,  std::vector<bool> const&) const;
+// template auto pca_filter_impl_el_matrix::operator()(el_matrix<El::Complex<float>>  const&,  std::vector<bool> const&) const;
+template auto pca_filter_impl_el_matrix::operator()(el_matrix<double>              const&,  std::vector<bool> const&) const;
+// template auto pca_filter_impl_el_matrix::operator()(el_matrix<El::Complex<double>> const&,  std::vector<bool> const&) const;
 
-template auto pca_filter_impl_matrix::operator()(dist_matrix<float>               const&,  std::vector<bool> const&) const;
-// template auto pca_filter_impl_matrix::operator()(dist_matrix<El::Complex<float>>  const&,  std::vector<bool> const&) const;
-template auto pca_filter_impl_matrix::operator()(dist_matrix<double>              const&,  std::vector<bool> const&) const;
-// template auto pca_filter_impl_matrix::operator()(dist_matrix<El::Complex<double>> const&,  std::vector<bool> const&) const;
+template auto pca_filter_impl_el_matrix::operator()(el_dist_matrix<float>               const&,  std::vector<bool> const&) const;
+// template auto pca_filter_impl_el_matrix::operator()(el_dist_matrix<El::Complex<float>>  const&,  std::vector<bool> const&) const;
+template auto pca_filter_impl_el_matrix::operator()(el_dist_matrix<double>              const&,  std::vector<bool> const&) const;
+// template auto pca_filter_impl_el_matrix::operator()(el_dist_matrix<El::Complex<double>> const&,  std::vector<bool> const&) const;
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL

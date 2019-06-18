@@ -14,15 +14,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/power.hpp>
+#include "elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-template auto power_impl::operator()(float               const&, float               const&) const;
-template auto power_impl::operator()(El::Complex<float>  const&, El::Complex<float>  const&) const;
-template auto power_impl::operator()(double              const&, double              const&) const;
-template auto power_impl::operator()(El::Complex<double> const&, El::Complex<double> const&) const;
+template auto power_impl_el::operator()(float               const&, float               const&) const;
+template auto power_impl_el::operator()(El::Complex<float>  const&, El::Complex<float>  const&) const;
+template auto power_impl_el::operator()(double              const&, double              const&) const;
+template auto power_impl_el::operator()(El::Complex<double> const&, El::Complex<double> const&) const;
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL

@@ -14,50 +14,53 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/vertcat.hpp>
+#include "elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-template auto vertcat_impl_smr_smr::operator()(
-	mpl::smr<matrix<float>, El::Int> const&,
-	mpl::smr<matrix<float>, El::Int> const&
+template auto vertcat_impl_smr_el_matrix_smr_el_matrix::operator()(
+	smr<el_matrix<float>, El::Int> const&,
+	smr<el_matrix<float>, El::Int> const&
 ) const;
 
-template auto vertcat_impl_smr_smr::operator()(
-	mpl::smr<matrix<El::Complex<float>>, El::Int> const&,
-	mpl::smr<matrix<El::Complex<float>>, El::Int> const&
+template auto vertcat_impl_smr_el_matrix_smr_el_matrix::operator()(
+	smr<el_matrix<El::Complex<float>>, El::Int> const&,
+	smr<el_matrix<El::Complex<float>>, El::Int> const&
 ) const;
 
-template auto vertcat_impl_smr_smr::operator()(
-	mpl::smr<matrix<double>, El::Int> const&,
-	mpl::smr<matrix<double>, El::Int> const&
+template auto vertcat_impl_smr_el_matrix_smr_el_matrix::operator()(
+	smr<el_matrix<double>, El::Int> const&,
+	smr<el_matrix<double>, El::Int> const&
 ) const;
 
-template auto vertcat_impl_smr_smr::operator()(
-	mpl::smr<matrix<El::Complex<double>>, El::Int> const&,
-	mpl::smr<matrix<El::Complex<double>>, El::Int> const&
+template auto vertcat_impl_smr_el_matrix_smr_el_matrix::operator()(
+	smr<el_matrix<El::Complex<double>>, El::Int> const&,
+	smr<el_matrix<El::Complex<double>>, El::Int> const&
 ) const;
 
-template auto vertcat_impl_matrix_smr::operator()(
-	matrix<float> const&,
-	mpl::smr<matrix<float>, El::Int> const&
+template auto vertcat_impl_el_matrix_smr::operator()(
+	el_matrix<float> const&,
+	smr<el_matrix<float>, El::Int> const&
 ) const;
 
-template auto vertcat_impl_matrix_smr::operator()(
-	matrix<El::Complex<float>> const&,
-	mpl::smr<matrix<El::Complex<float>>, El::Int> const&
+template auto vertcat_impl_el_matrix_smr::operator()(
+	el_matrix<El::Complex<float>> const&,
+	smr<el_matrix<El::Complex<float>>, El::Int> const&
 ) const;
 
-template auto vertcat_impl_matrix_smr::operator()(
-	matrix<double> const&,
-	mpl::smr<matrix<double>, El::Int> const&
+template auto vertcat_impl_el_matrix_smr::operator()(
+	el_matrix<double> const&,
+	smr<el_matrix<double>, El::Int> const&
 ) const;
 
-template auto vertcat_impl_matrix_smr::operator()(
-	matrix<El::Complex<double>> const&,
-	mpl::smr<matrix<El::Complex<double>>, El::Int> const&
+template auto vertcat_impl_el_matrix_smr::operator()(
+	el_matrix<El::Complex<double>> const&,
+	smr<el_matrix<El::Complex<double>>, El::Int> const&
 ) const;
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL

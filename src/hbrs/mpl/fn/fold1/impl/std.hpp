@@ -14,43 +14,33 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_STD_FN_FOLD1_HPP
-#define HBRS_MPL_FUSE_STD_FN_FOLD1_HPP
+#ifndef HBRS_MPL_FN_FOLD1_IMPL_STD_HPP
+#define HBRS_MPL_FN_FOLD1_IMPL_STD_HPP
 
-#include <hbrs/mpl/config.hpp>
+#include "../fwd/std.hpp"
+
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/fn/fold1_left.hpp>
-#include <boost/hana/ext/std/array.hpp>
-#include <boost/hana/ext/std/vector.hpp>
-#include <boost/hana/ext/std/tuple.hpp>
-#include <boost/hana/core/tag_of.hpp>
-#include <boost/hana/tuple.hpp>
-#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct fold1_impl_std {
-	template <
-		typename Sequence,
-		typename F,
-		typename std::enable_if_t< 
-			std::is_same<hana::tag_of_t<Sequence>, hana::ext::std::array_tag>::value ||
-			std::is_same<hana::tag_of_t<Sequence>, hana::ext::std::vector_tag>::value ||
-			std::is_same<hana::tag_of_t<Sequence>, hana::ext::std::tuple_tag>::value
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(Sequence && s, F && f) const {
-		return fold1_left(s, HBRS_MPL_FWD(f));
-	}
-};
+template <
+	typename Sequence,
+	typename F,
+	typename std::enable_if_t< 
+		std::is_same<hana::tag_of_t<Sequence>, hana::ext::std::array_tag>::value ||
+		std::is_same<hana::tag_of_t<Sequence>, hana::ext::std::vector_tag>::value ||
+		std::is_same<hana::tag_of_t<Sequence>, hana::ext::std::tuple_tag>::value
+	>*
+>
+constexpr decltype(auto)
+fold1_impl_std::operator()(Sequence && s, F && f) const {
+	return fold1_left(s, HBRS_MPL_FWD(f));
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_FOLD1_IMPLS_STD boost::hana::make_tuple(                                                      \
-		hbrs::mpl::detail::fold1_impl_std{}                                                                            \
-	)
-
-#endif // !HBRS_MPL_FUSE_STD_FN_FOLD1_HPP
+#endif // !HBRS_MPL_FN_FOLD1_IMPL_STD_HPP

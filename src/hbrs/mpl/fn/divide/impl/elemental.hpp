@@ -17,79 +17,65 @@
 #ifndef HBRS_MPL_FN_DIVIDE_IMPL_ELEMENTAL_HPP
 #define HBRS_MPL_FN_DIVIDE_IMPL_ELEMENTAL_HPP
 
-#include <hbrs/mpl/config.hpp>
-#include <El.hpp>
-#include <hbrs/mpl/dt/el_vector/fwd.hpp>
-#include <hbrs/mpl/dt/el_dist_vector/fwd.hpp>
-#include <hbrs/mpl/dt/el_dist_matrix.hpp> // TODO: Remove once dist_column_vector is correctly implemented
-#include <boost/hana/tuple.hpp>
-#include <type_traits>
+#include "../fwd/elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+
+#include <hbrs/mpl/dt/el_vector.hpp>
+#include <hbrs/mpl/dt/el_dist_vector.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace mpl = hbrs::mpl;
 namespace detail {
 
-struct divide_impl_vector_scalar {
-	template <
-		typename Vector,
-		typename Scalar,
-		typename std::enable_if_t< 
-			(
-				std::is_same< hana::tag_of_t<Vector>, column_vector_tag >::value ||
-				std::is_same< hana::tag_of_t<Vector>, row_vector_tag >::value
-			) &&
-			std::is_arithmetic<Scalar>::value
-		>* = nullptr
-	>
-	auto
-	operator()(Vector v, Scalar const& b) const {
-		//TODO: Move to member function? Or replace with transform call?
-		El::Scale(Scalar(1)/b, v.data());
-		return v;
-	}
-};
+template <
+	typename Vector,
+	typename Scalar,
+	typename std::enable_if_t< 
+		(
+			std::is_same< hana::tag_of_t<Vector>, el_column_vector_tag >::value ||
+			std::is_same< hana::tag_of_t<Vector>, el_row_vector_tag >::value
+		) &&
+		std::is_arithmetic<Scalar>::value
+	>*
+>
+auto
+divide_impl_el_vector_scalar::operator()(Vector v, Scalar const& b) const {
+	//TODO: Move to member function? Or replace with transform call?
+	El::Scale(Scalar(1)/b, v.data());
+	return v;
+}
 
-struct divide_impl_dist_vector_scalar {
-	template <
-		typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping,
-		typename Scalar,
-		typename std::enable_if_t<
-			std::is_arithmetic_v<Scalar>
-		>* = nullptr
-	>
-	auto
-	operator()(
-		dist_column_vector<Ring, Columnwise, Rowwise, Wrapping> && v,
-		Scalar const& b
-	) const {
-		//TODO: Move to member function? Or replace with transform call?
-		typedef std::decay_t<Ring> _Ring_;
-		El::Scale(_Ring_(1)/b, v.data());
-		return HBRS_MPL_FWD(v);
-	}
-};
+template <
+	typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping,
+	typename Scalar,
+	typename std::enable_if_t<
+		std::is_arithmetic_v<Scalar>
+	>*
+>
+auto
+divide_impl_el_dist_vector_scalar::operator()(
+	el_dist_column_vector<Ring, Columnwise, Rowwise, Wrapping> && v,
+	Scalar const& b
+) const {
+	//TODO: Move to member function? Or replace with transform call?
+	typedef std::decay_t<Ring> _Ring_;
+	El::Scale(_Ring_(1)/b, v.data());
+	return HBRS_MPL_FWD(v);
+}
 
-struct divide_impl_matrix_scalar {
-	template <
-		typename Ring,
-		typename std::enable_if_t< 
-			!std::is_const< Ring >::value
-		>* = nullptr
-	>
-	auto
-	operator()(matrix<Ring> a, Ring const& b) const {
-		El::Scale(Ring(1)/b, a.data());
-		return a;
-	}
-};
+template <
+	typename Ring,
+	typename std::enable_if_t< 
+		!std::is_const< Ring >::value
+	>*
+>
+auto
+divide_impl_el_matrix_scalar::operator()(el_matrix<Ring> a, Ring const& b) const {
+	El::Scale(Ring(1)/b, a.data());
+	return a;
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_DIVIDE_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                        \
-		elemental::detail::divide_impl_vector_scalar{},                                                                \
-		elemental::detail::divide_impl_dist_vector_scalar{},                                                           \
-		elemental::detail::divide_impl_matrix_scalar{}                                                                 \
-	)
-
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
 #endif // !HBRS_MPL_FN_DIVIDE_IMPL_ELEMENTAL_HPP

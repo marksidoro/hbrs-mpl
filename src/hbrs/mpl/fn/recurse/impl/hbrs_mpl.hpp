@@ -14,14 +14,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_HBRS_MPL_FN_RECURSE_HPP
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_RECURSE_HPP
+#ifndef HBRS_MPL_FN_RECURSE_IMPL_HBRS_MPL_HPP
+#define HBRS_MPL_FN_RECURSE_IMPL_HBRS_MPL_HPP
+
+#include "../fwd/hbrs_mpl.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
-#include <boost/hana/integral_constant.hpp>
 #include <boost/hana/unpack.hpp>
-#include <boost/hana/tuple.hpp>
-#include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -90,29 +89,22 @@ struct recurse_functor_t {
 	RecursionStep rs;
 };
 
-struct recurse_impl {
-	template <
-		typename Condition,
-		typename LastStep,
-		typename RecursionStep
-		//TODO: enable only if invokable...
-	>
-	constexpr recurse_functor_t<
-		std::decay_t<Condition>,
-		std::decay_t<LastStep>,
-		std::decay_t<RecursionStep>
-	>
-	operator()(Condition && c, LastStep && ls, RecursionStep && rs) const {
-		return {HBRS_MPL_FWD(c), HBRS_MPL_FWD(ls), HBRS_MPL_FWD(rs)};
-	}
-};
+template <
+	typename Condition,
+	typename LastStep,
+	typename RecursionStep
+	//TODO: enable only if invokable...
+>
+constexpr recurse_functor_t<
+	std::decay_t<Condition>,
+	std::decay_t<LastStep>,
+	std::decay_t<RecursionStep>
+>
+recurse_impl::operator()(Condition && c, LastStep && ls, RecursionStep && rs) const {
+	return {HBRS_MPL_FWD(c), HBRS_MPL_FWD(ls), HBRS_MPL_FWD(rs)};
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_RECURSE_IMPLS_HBRS_MPL boost::hana::make_tuple(                                               \
-		hbrs::mpl::detail::recurse_impl{}                                                                              \
-	)
-
-
-#endif // !HBRS_MPL_FUSE_HBRS_MPL_FN_RECURSE_HPP
+#endif // !HBRS_MPL_FN_RECURSE_IMPL_HBRS_MPL_HPP

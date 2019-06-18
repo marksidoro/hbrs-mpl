@@ -14,19 +14,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/sum.hpp>
+#include "elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace mpl = hbrs::mpl;
-
 namespace detail {
 
 //TODO: Add non-dist impls
 
-template auto sum_impl_dist_matrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<dist_matrix<float>>> const&) const;
-template auto sum_impl_dist_matrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<dist_matrix<El::Complex<float>>>> const&) const;
-template auto sum_impl_dist_matrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<dist_matrix<double>>> const&) const;
-template auto sum_impl_dist_matrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<dist_matrix<El::Complex<double>>>> const&) const;
+template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<float>>> const&) const;
+template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<El::Complex<float>>>> const&) const;
+template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<double>>> const&) const;
+template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<El::Complex<double>>>> const&) const;
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL

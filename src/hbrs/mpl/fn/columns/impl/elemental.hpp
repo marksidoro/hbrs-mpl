@@ -17,75 +17,66 @@
 #ifndef HBRS_MPL_FN_COLUMNS_IMPL_ELEMENTAL_HPP
 #define HBRS_MPL_FN_COLUMNS_IMPL_ELEMENTAL_HPP
 
+#include "../fwd/elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+
 #include <hbrs/mpl/config.hpp>
+
 #include <hbrs/mpl/dt/el_matrix.hpp>
 #include <hbrs/mpl/dt/el_dist_matrix.hpp>
 #include <hbrs/mpl/dt/el_vector.hpp>
+
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/m.hpp>
 #include <hbrs/mpl/fn/n.hpp>
 #include <hbrs/mpl/dt/smcs.hpp>
 #include <hbrs/mpl/dt/expression.hpp>
-#include <boost/hana/tuple.hpp>
+
 #include <type_traits>
 #include <vector>
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace mpl = hbrs::mpl;
 namespace detail {
 
-struct columns_impl_matrix_1 {
-	template <
-		typename Matrix,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
-		>* = nullptr
-	>
-	constexpr auto
-	operator()(Matrix && a) const {
-		return mpl::smcs<Matrix>{HBRS_MPL_FWD(a)};
-	}
-};
+template <
+	typename Matrix,
+	typename std::enable_if_t< 
+		std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value
+	>*
+>
+constexpr auto
+columns_impl_el_matrix_1::operator()(Matrix && a) const {
+	return smcs<Matrix>{HBRS_MPL_FWD(a)};
+}
 
-struct columns_impl_matrix_2 {
-	template <typename Ring>
-	constexpr auto
-	operator()(matrix<Ring> const& a) const {
-		using namespace hbrs::mpl;
-		
-		typedef std::decay_t<Ring> _Ring_;
-		auto a_sz = (*size)(a);
-		auto a_n = (*n)(a_sz);
-		
-		std::vector<row_vector<_Ring_>> v;
-		v.reserve(a_n);
-		for(El::Int i = 0; i < a_n; ++i) {
-			v.emplace_back( a.data()(El::ALL, i) );
-		}
-		return v;
+template <typename Ring>
+constexpr auto
+columns_impl_el_matrix_2::operator()(el_matrix<Ring> const& a) const {
+	typedef std::decay_t<Ring> _Ring_;
+	auto a_sz = (*size)(a);
+	auto a_n = (*n)(a_sz);
+	
+	std::vector<row_vector<_Ring_>> v;
+	v.reserve(a_n);
+	for(El::Int i = 0; i < a_n; ++i) {
+		v.emplace_back( a.data()(El::ALL, i) );
 	}
-};
+	return v;
+}
 
-struct columns_impl_dist_matrix {
-	template <
-		typename DistMatrix,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<DistMatrix>, dist_matrix_tag >::value
-		>* = nullptr
-	>
-	constexpr auto
-	operator()(DistMatrix && a) const {
-		return mpl::make_expression(mpl::columns, std::tuple<decltype(a)>{HBRS_MPL_FWD(a)});
-	}
-};
+template <
+	typename DistMatrix,
+	typename std::enable_if_t< 
+		std::is_same< hana::tag_of_t<DistMatrix>, dist_matrix_tag >::value
+	>*
+>
+constexpr auto
+columns_impl_el_dist_matrix::operator()(DistMatrix && a) const {
+	return make_expression(columns, std::tuple<decltype(a)>{HBRS_MPL_FWD(a)});
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_COLUMNS_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                       \
-		elemental::detail::columns_impl_matrix_1{},                                                                    \
-		elemental::detail::columns_impl_matrix_2{},                                                                    \
-		elemental::detail::columns_impl_dist_matrix{}                                                                   \
-	)
-
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
 #endif // !HBRS_MPL_FN_COLUMNS_IMPL_ELEMENTAL_HPP

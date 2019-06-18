@@ -14,36 +14,29 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_BOOST_HANA_FN_SECOND_HPP
-#define HBRS_MPL_FUSE_BOOST_HANA_FN_SECOND_HPP
+#ifndef HBRS_MPL_FN_SECOND_IMPL_BOOST_HANA_HPP
+#define HBRS_MPL_FN_SECOND_IMPL_BOOST_HANA_HPP
+
+#include "../fwd/boost_hana.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/pair.hpp>
 #include <boost/hana/second.hpp>
-#include <boost/hana/tuple.hpp>
-#include <boost/hana/core/tag_of.hpp>
-#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct second_impl_hana_pair {
-	template<
-		typename Pair,
-		typename std::enable_if_t< std::is_same< hana::tag_of_t<Pair>, hana::pair_tag >::value >* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(Pair && p) const {
-		return hana::second(HBRS_MPL_FWD(p));
-	}
-};
-	
+template<
+	typename Pair,
+	typename std::enable_if_t< std::is_same< hana::tag_of_t<Pair>, hana::pair_tag >::value >*
+>
+constexpr decltype(auto)
+second_impl_hana_pair::operator()(Pair && p) const {
+	return hana::second(HBRS_MPL_FWD(p));
+}
+
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_SECOND_IMPLS_BOOST_HANA boost::hana::make_tuple(                                              \
-		hbrs::mpl::detail::second_impl_hana_pair{}                                                                     \
-	)
-
-#endif // !HBRS_MPL_FUSE_BOOST_HANA_FN_SECOND_HPP
+#endif // !HBRS_MPL_FN_SECOND_IMPL_BOOST_HANA_HPP

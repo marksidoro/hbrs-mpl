@@ -14,7 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/minus.hpp>
+#include "elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 #include <hbrs/mpl/dt/el_dist_matrix.hpp>
 #include <hbrs/mpl/dt/el_dist_vector.hpp>
@@ -22,52 +23,54 @@
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-template auto minus_impl_matrix_matrix::operator()(matrix<float>,               matrix<float>               const&) const;
-template auto minus_impl_matrix_matrix::operator()(matrix<El::Complex<float>>,  matrix<El::Complex<float>>  const&) const;
-template auto minus_impl_matrix_matrix::operator()(matrix<double>,              matrix<double>              const&) const;
-template auto minus_impl_matrix_matrix::operator()(matrix<El::Complex<double>>, matrix<El::Complex<double>> const&) const;
+template auto minus_impl_el_matrix_el_matrix::operator()(el_matrix<float>,               el_matrix<float>               const&) const;
+template auto minus_impl_el_matrix_el_matrix::operator()(el_matrix<El::Complex<float>>,  el_matrix<El::Complex<float>>  const&) const;
+template auto minus_impl_el_matrix_el_matrix::operator()(el_matrix<double>,              el_matrix<double>              const&) const;
+template auto minus_impl_el_matrix_el_matrix::operator()(el_matrix<El::Complex<double>>, el_matrix<El::Complex<double>> const&) const;
 
-template decltype(auto) minus_impl_dist_matrix_expand_expr_dist_matrix::operator()(
-	dist_matrix<float> &,
-	mpl::expression<
-		mpl::expand_t,
+template decltype(auto) minus_impl_el_dist_matrix_expand_expr_el_dist_matrix::operator()(
+	el_dist_matrix<float> &,
+	expression<
+		expand_t,
 		std::tuple<
-			dist_row_vector<float> const&,
-			mpl::matrix_size<El::Int, El::Int> const&
+			el_dist_row_vector<float> const&,
+			matrix_size<El::Int, El::Int> const&
 		>
 	>) const;
-template decltype(auto) minus_impl_dist_matrix_expand_expr_dist_matrix::operator()(
-	dist_matrix<El::Complex<float>> &,
-	mpl::expression<
-		mpl::expand_t,
+template decltype(auto) minus_impl_el_dist_matrix_expand_expr_el_dist_matrix::operator()(
+	el_dist_matrix<El::Complex<float>> &,
+	expression<
+		expand_t,
 		std::tuple<
-			dist_row_vector<El::Complex<float>> const&,
-			mpl::matrix_size<El::Int, El::Int> const&
+			el_dist_row_vector<El::Complex<float>> const&,
+			matrix_size<El::Int, El::Int> const&
 		>
 	>) const;
-template decltype(auto) minus_impl_dist_matrix_expand_expr_dist_matrix::operator()(
-	dist_matrix<double> &,
-	mpl::expression<
-		mpl::expand_t,
+template decltype(auto) minus_impl_el_dist_matrix_expand_expr_el_dist_matrix::operator()(
+	el_dist_matrix<double> &,
+	expression<
+		expand_t,
 		std::tuple<
-			dist_row_vector<double> const&,
-			mpl::matrix_size<El::Int, El::Int> const&
+			el_dist_row_vector<double> const&,
+			matrix_size<El::Int, El::Int> const&
 		>
 	>) const;
-template decltype(auto) minus_impl_dist_matrix_expand_expr_dist_matrix::operator()(
-	dist_matrix<El::Complex<double>> &,
-	mpl::expression<
-		mpl::expand_t,
+template decltype(auto) minus_impl_el_dist_matrix_expand_expr_el_dist_matrix::operator()(
+	el_dist_matrix<El::Complex<double>> &,
+	expression<
+		expand_t,
 		std::tuple<
-			dist_row_vector<El::Complex<double>> const&,
-			mpl::matrix_size<El::Int, El::Int> const&
+			el_dist_row_vector<El::Complex<double>> const&,
+			matrix_size<El::Int, El::Int> const&
 		>
 	>) const;
 
-template auto minus_impl_matrix_scalar::operator()(matrix<float>,               float               const&) const;
-template auto minus_impl_matrix_scalar::operator()(matrix<El::Complex<float>>,  El::Complex<float>  const&) const;
-template auto minus_impl_matrix_scalar::operator()(matrix<double>,              double              const&) const;
-template auto minus_impl_matrix_scalar::operator()(matrix<El::Complex<double>>, El::Complex<double> const&) const;
+template auto minus_impl_el_matrix_scalar::operator()(el_matrix<float>,               float               const&) const;
+template auto minus_impl_el_matrix_scalar::operator()(el_matrix<El::Complex<float>>,  El::Complex<float>  const&) const;
+template auto minus_impl_el_matrix_scalar::operator()(el_matrix<double>,              double              const&) const;
+template auto minus_impl_el_matrix_scalar::operator()(el_matrix<El::Complex<double>>, El::Complex<double> const&) const;
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL

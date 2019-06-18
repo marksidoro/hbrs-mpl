@@ -17,35 +17,28 @@
 #ifndef HBRS_MPL_FN_ROWS_IMPL_ELEMENTAL_HPP
 #define HBRS_MPL_FN_ROWS_IMPL_ELEMENTAL_HPP
 
-#include <hbrs/mpl/config.hpp>
+#include "../fwd/elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+
 #include <hbrs/mpl/dt/el_matrix.hpp>
-#include <El.hpp>
 #include <hbrs/mpl/dt/smrs.hpp>
-#include <boost/hana/tuple.hpp>
-#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace mpl = hbrs::mpl;
 namespace detail {
 
-struct rows_impl_matrix {
-	template <
-		typename Matrix,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
-		>* = nullptr
-	>
-	constexpr auto
-	operator()(Matrix && a) const {
-		return mpl::smrs<Matrix>{HBRS_MPL_FWD(a)};
-	}
-};
+template <
+	typename Matrix,
+	typename std::enable_if_t< 
+		std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value
+	>*
+>
+constexpr auto
+rows_impl_el_matrix::operator()(Matrix && a) const {
+	return smrs<Matrix>{HBRS_MPL_FWD(a)};
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_ROWS_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                          \
-		elemental::detail::rows_impl_matrix{}                                                                          \
-	)
-
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
 #endif // !HBRS_MPL_FN_ROWS_IMPL_ELEMENTAL_HPP

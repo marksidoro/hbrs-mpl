@@ -17,98 +17,87 @@
 #ifndef HBRS_MPL_FN_ZIP_IMPL_ELEMENTAL_HPP
 #define HBRS_MPL_FN_ZIP_IMPL_ELEMENTAL_HPP
 
-#include <hbrs/mpl/config.hpp>
+#include "../fwd/elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+
 #include <hbrs/mpl/dt/el_matrix.hpp>
 #include <hbrs/mpl/dt/smc.hpp>
 #include <hbrs/mpl/dt/smr.hpp>
 #include <hbrs/mpl/dt/zas.hpp>
-#include <El.hpp>
-#include <boost/hana/tuple.hpp>
-#include <boost/range/irange.hpp>
-#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace mpl = hbrs::mpl;
 namespace detail {
 
-struct zip_impl_smc_matrix_integer_range {
-	template <
-		typename Matrix,
-		typename Integer,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value &&
-			std::is_lvalue_reference<Matrix>::value
-		>* = nullptr
-	>
-	constexpr auto
-	operator()(mpl::smc<Matrix, El::Int> a, boost::integer_range<Integer> b) const {
-		return mpl::make_zas(a, b);
-	}
-	
-	template <
-		typename Matrix,
-		typename Integer,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value &&
-			!std::is_lvalue_reference<Matrix>::value
-		>* = nullptr
-	>
-	constexpr auto
-	operator()(mpl::smc<Matrix, El::Int> a, boost::integer_range<Integer> b) const {
-		typedef decltype(a.at(0)) Ring;
-		typedef std::decay_t<Ring> _Ring_;
-		
-		matrix<_Ring_> c{a.length(), 1};
-		for(El::Int i = 0; i < a.length(); ++i) {
-			c.at({i, 0}) = a.at(i);
-		}
-		
-		return mpl::make_zas(mpl::make_smc(std::move(c), 0), b);
-	}
-};
+template <
+	typename Matrix,
+	typename Integer,
+	typename std::enable_if_t< 
+		std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value &&
+		std::is_lvalue_reference<Matrix>::value
+	>*
+>
+constexpr auto
+zip_impl_smc_el_matrix_integer_range::operator()(smc<Matrix, El::Int> a, boost::integer_range<Integer> b) const {
+	return make_zas(a, b);
+}
 
-struct zip_impl_smr_matrix_integer_range {
-	template <
-		typename Matrix,
-		typename Integer,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value &&
-			std::is_lvalue_reference<Matrix>::value
-		>* = nullptr
-	>
-	constexpr auto
-	operator()(mpl::smr<Matrix, El::Int> a, boost::integer_range<Integer> b) const {
-		return mpl::make_zas(a, b);
+template <
+	typename Matrix,
+	typename Integer,
+	typename std::enable_if_t< 
+		std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value &&
+		!std::is_lvalue_reference<Matrix>::value
+	>*
+>
+constexpr auto
+zip_impl_smc_el_matrix_integer_range::operator()(smc<Matrix, El::Int> a, boost::integer_range<Integer> b) const {
+	typedef decltype(a.at(0)) Ring;
+	typedef std::decay_t<Ring> _Ring_;
+	
+	el_matrix<_Ring_> c{a.length(), 1};
+	for(El::Int i = 0; i < a.length(); ++i) {
+		c.at({i, 0}) = a.at(i);
 	}
 	
-	template <
-		typename Matrix,
-		typename Integer,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value &&
-			!std::is_lvalue_reference<Matrix>::value
-		>* = nullptr
-	>
-	constexpr auto
-	operator()(mpl::smr<Matrix, El::Int> a, boost::integer_range<Integer> b) const {
-		typedef decltype(a.at(0)) Ring;
-		typedef std::decay_t<Ring> _Ring_;
-		
-		matrix<_Ring_> c{1, a.length()};
-		for(El::Int i = 0; i < a.length(); ++i) {
-			c.at({0, i}) = a.at(i);
-		}
-		
-		return mpl::make_zas(mpl::make_smr(std::move(c), 0), b);
+	return make_zas(make_smc(std::move(c), 0), b);
+}
+
+template <
+	typename Matrix,
+	typename Integer,
+	typename std::enable_if_t< 
+		std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value &&
+		std::is_lvalue_reference<Matrix>::value
+	>*
+>
+constexpr auto
+zip_impl_smr_el_matrix_integer_range::operator()(smr<Matrix, El::Int> a, boost::integer_range<Integer> b) const {
+	return make_zas(a, b);
+}
+
+template <
+	typename Matrix,
+	typename Integer,
+	typename std::enable_if_t< 
+		std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value &&
+		!std::is_lvalue_reference<Matrix>::value
+	>*
+>
+constexpr auto
+zip_impl_smr_el_matrix_integer_range::operator()(smr<Matrix, El::Int> a, boost::integer_range<Integer> b) const {
+	typedef decltype(a.at(0)) Ring;
+	typedef std::decay_t<Ring> _Ring_;
+	
+	el_matrix<_Ring_> c{1, a.length()};
+	for(El::Int i = 0; i < a.length(); ++i) {
+		c.at({0, i}) = a.at(i);
 	}
-};
+	
+	return make_zas(make_smr(std::move(c), 0), b);
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_ZIP_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                           \
-		elemental::detail::zip_impl_smc_matrix_integer_range{},                                                        \
-		elemental::detail::zip_impl_smr_matrix_integer_range{}                                                         \
-	)
-
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
 #endif // !HBRS_MPL_FN_ZIP_IMPL_ELEMENTAL_HPP

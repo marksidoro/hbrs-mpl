@@ -17,52 +17,42 @@
 #ifndef HBRS_MPL_FN_INDICES_IMPL_ELEMENTAL_HPP
 #define HBRS_MPL_FN_INDICES_IMPL_ELEMENTAL_HPP
 
-#include <hbrs/mpl/config.hpp>
+#include "../fwd/elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+
 #include <hbrs/mpl/dt/el_matrix.hpp>
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/dt/smc.hpp>
 #include <hbrs/mpl/dt/smr.hpp>
-#include <El.hpp>
-#include <boost/hana/tuple.hpp>
 #include <boost/range/irange.hpp>
-#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace mpl = hbrs::mpl;
 namespace detail {
 
-struct indices_impl_smc_matrix {
-	template <
-		typename Matrix,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
-		>* = nullptr
-	>
-	constexpr auto
-	operator()(mpl::smc<Matrix, El::Int> const& a) const {
-		return boost::irange(El::Int{0}, (*mpl::size)(a));
-	}
-};
+template <
+	typename Matrix,
+	typename std::enable_if_t< 
+		std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value
+	>*
+>
+constexpr auto
+indices_impl_smc_el_matrix::operator()(smc<Matrix, El::Int> const& a) const {
+	return boost::irange(El::Int{0}, (*size)(a));
+}
 
-struct indices_impl_smr_matrix {
-	template <
-		typename Matrix,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
-		>* = nullptr
-	>
-	constexpr auto
-	operator()(mpl::smr<Matrix, El::Int> const& a) const {
-		return boost::irange(El::Int{0}, (*mpl::size)(a));
-	}
-};
+template <
+	typename Matrix,
+	typename std::enable_if_t< 
+		std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value
+	>*
+>
+constexpr auto
+indices_impl_smr_el_matrix::operator()(smr<Matrix, El::Int> const& a) const {
+	return boost::irange(El::Int{0}, (*size)(a));
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_INDICES_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                       \
-		elemental::detail::indices_impl_smc_matrix{},                                                                  \
-		elemental::detail::indices_impl_smr_matrix{}                                                                   \
-	)
-
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
 #endif // !HBRS_MPL_FN_INDICES_IMPL_ELEMENTAL_HPP

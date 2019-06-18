@@ -14,39 +14,31 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_HBRS_MPL_FN_FOLD1_LEFT_HPP
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_FOLD1_LEFT_HPP
+#ifndef HBRS_MPL_FN_FOLD1_LEFT_IMPL_HBRS_MPL_HPP
+#define HBRS_MPL_FN_FOLD1_LEFT_IMPL_HBRS_MPL_HPP
 
-#include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/detail/is_tag_and_is_invokable.hpp>
+#include "../fwd/hbrs_mpl.hpp"
+
 #include <hbrs/mpl/detail/fold1_left.hpp>
 #include <hbrs/mpl/dt/zas.hpp>
-#include <boost/hana/tuple.hpp>
-#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct fold1_left_impl {
-	template <
-		typename Sequence,
-		typename F,
-		typename std::enable_if_t<
-			is_tag_and_is_invokable_trait<detail::fold1_left_t, Sequence &&, zas_tag, F&& >::value
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(Sequence && s, F && f) const {
-		return detail::fold1_left(s, HBRS_MPL_FWD(f));
-	}
-};
+template <
+	typename Sequence,
+	typename F,
+	typename std::enable_if_t<
+		is_tag_and_is_invokable_trait<detail::fold1_left_t, Sequence &&, zas_tag, F&& >::value
+	>*
+>
+constexpr decltype(auto)
+fold1_left_impl::operator()(Sequence && s, F && f) const {
+	return detail::fold1_left(s, HBRS_MPL_FWD(f));
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_FOLD1_LEFT_IMPLS_HBRS_MPL boost::hana::make_tuple(                                            \
-		hbrs::mpl::detail::fold1_left_impl{}                                                                           \
-	)
-
-#endif // !HBRS_MPL_FUSE_HBRS_MPL_FN_FOLD1_LEFT_HPP
+#endif // !HBRS_MPL_FN_FOLD1_LEFT_IMPL_HBRS_MPL_HPP

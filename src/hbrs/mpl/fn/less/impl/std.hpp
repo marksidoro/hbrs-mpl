@@ -14,61 +14,49 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_STD_FN_LESS_HPP
-#define HBRS_MPL_FUSE_STD_FN_LESS_HPP
+#ifndef HBRS_MPL_FN_LESS_IMPL_STD_HPP
+#define HBRS_MPL_FN_LESS_IMPL_STD_HPP
 
-#include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/fuse/std/detail/operators.hpp>
-#include <boost/hana/tuple.hpp>
-#include <array>
+#include "../fwd/std.hpp"
+
+#include <hbrs/mpl/detail/operators/impl/std.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-/* compare operators for std::array are constexpr since C++20 only!
- * Ref.: https://en.cppreference.com/w/cpp/container/array/operator_cmp
- */
-struct less_impl_std_array {
-	template <
-		class T, std::size_t N,
-		std::size_t I
-	>
-	constexpr bool 
-	impl(std::array<T, N> const& lhs, std::array<T, N> const& rhs, std::integral_constant<std::size_t, I>) const {
-		if constexpr (N == I) {
-			return false;
-		} else {
-			if (lhs[I] < rhs[I]) {
-				return true;
-			}
-			
-			if (rhs[I] < lhs[I]) {
-				return false;
-			}
-			
-			return impl(lhs, rhs, std::integral_constant<std::size_t, I+1>{});
+template <
+	class T, std::size_t N,
+	std::size_t I
+>
+constexpr bool 
+less_impl_std_array_impl(
+	std::array<T, N> const& lhs,
+	std::array<T, N> const& rhs,
+	std::integral_constant<std::size_t, I>
+) const {
+	if constexpr (N == I) {
+		return false;
+	} else {
+		if (lhs[I] < rhs[I]) {
+			return true;
 		}
+		
+		if (rhs[I] < lhs[I]) {
+			return false;
+		}
+		
+		return less_impl_std_array_impl(lhs, rhs, std::integral_constant<std::size_t, I+1>{});
 	}
-	
-	template <class T, std::size_t N>
-	constexpr bool 
-	operator()(std::array<T, N> const& lhs, std::array<T, N> const& rhs) {
-		return impl(lhs, rhs, std::integral_constant<std::size_t, 0>{});
-	}
-};
+}
+
+template <class T, std::size_t N>
+constexpr bool
+less_impl_std_array::operator()(std::array<T, N> const& lhs, std::array<T, N> const& rhs) {
+	return less_impl_std_array_impl(lhs, rhs, std::integral_constant<std::size_t, 0>{});
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_LESS_IMPLS_STD boost::hana::make_tuple(                                                       \
-		hbrs::mpl::detail::less_impl_std_array{},                                                                      \
-		hbrs::mpl::detail::less_impl_std_ic{},                                                                         \
-		hbrs::mpl::detail::less_impl_std_op{},                                                                         \
-		hbrs::mpl::detail::less_impl_lhs_is_braces_constructible{},                                                    \
-		hbrs::mpl::detail::less_impl_rhs_is_braces_constructible{},                                                    \
-		hbrs::mpl::detail::less_impl_numeric_cast{},                                                                   \
-		hbrs::mpl::detail::less_impl_op{}                                                                              \
-	)
-
-#endif // !HBRS_MPL_FUSE_STD_FN_LESS_HPP
+#endif // !HBRS_MPL_FN_LESS_IMPL_STD_HPP

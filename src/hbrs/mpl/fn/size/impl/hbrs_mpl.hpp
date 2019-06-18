@@ -14,31 +14,30 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_HBRS_MPL_FN_SIZE_HPP
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_SIZE_HPP
+#ifndef HBRS_MPL_FN_SIZE_IMPL_HBRS_MPL_HPP
+#define HBRS_MPL_FN_SIZE_IMPL_HBRS_MPL_HPP
 
-#include <hbrs/mpl/core/preprocessor.hpp>
+#include "../fwd/hbrs_mpl.hpp"
+
 #include <hbrs/mpl/detail/function_object.hpp>
-#include <hbrs/mpl/dt/ctsav/fwd.hpp>
-#include <hbrs/mpl/dt/rtsav/fwd.hpp>
-#include <hbrs/mpl/dt/submatrix/fwd.hpp>
-#include <hbrs/mpl/dt/subsequence/fwd.hpp>
-#include <hbrs/mpl/dt/matrix_size/fwd.hpp>
-#include <hbrs/mpl/dt/sm/fwd.hpp>
-#include <hbrs/mpl/dt/smc/fwd.hpp>
-#include <hbrs/mpl/dt/smcs/fwd.hpp>
-#include <hbrs/mpl/dt/smr/fwd.hpp>
-#include <hbrs/mpl/dt/smrs/fwd.hpp>
-#include <hbrs/mpl/dt/sms/fwd.hpp>
-#include <hbrs/mpl/dt/srv/fwd.hpp>
-#include <hbrs/mpl/dt/scv/fwd.hpp>
-#include <hbrs/mpl/dt/ctsam/fwd.hpp>
-#include <hbrs/mpl/dt/rtsam/fwd.hpp>
-#include <hbrs/mpl/dt/zas/fwd.hpp>
-#include <boost/hana/tuple.hpp>
+#include <hbrs/mpl/dt/ctsav.hpp>
+#include <hbrs/mpl/dt/rtsav.hpp>
+#include <hbrs/mpl/dt/submatrix.hpp>
+#include <hbrs/mpl/dt/subsequence.hpp>
+#include <hbrs/mpl/dt/matrix_size.hpp>
+#include <hbrs/mpl/dt/sm.hpp>
+#include <hbrs/mpl/dt/smc.hpp>
+#include <hbrs/mpl/dt/smcs.hpp>
+#include <hbrs/mpl/dt/smr.hpp>
+#include <hbrs/mpl/dt/smrs.hpp>
+#include <hbrs/mpl/dt/sms.hpp>
+#include <hbrs/mpl/dt/srv.hpp>
+#include <hbrs/mpl/dt/scv.hpp>
+#include <hbrs/mpl/dt/ctsam.hpp>
+#include <hbrs/mpl/dt/rtsam.hpp>
+#include <hbrs/mpl/dt/zas.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace hana = boost::hana;
 namespace detail {
 
 HBRS_MPL_DEF_FO_TRY_METHOD(size_impl_ctsav,    ctsav_tag,    length)
@@ -60,22 +59,4 @@ HBRS_MPL_DEF_FO_TRY_METHOD(size_impl_zas,      zas_tag,      length)
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_SIZE_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                  \
-		hbrs::mpl::detail::size_impl_ctsav{},                                                                          \
-		hbrs::mpl::detail::size_impl_rtsav{},                                                                          \
-		hbrs::mpl::detail::size_impl_submatrix{},                                                                      \
-		hbrs::mpl::detail::size_impl_subsequence{},                                                                    \
-		hbrs::mpl::detail::size_impl_sm{},                                                                             \
-		hbrs::mpl::detail::size_impl_smc{},                                                                            \
-		hbrs::mpl::detail::size_impl_smcs{},                                                                           \
-		hbrs::mpl::detail::size_impl_smr{},                                                                            \
-		hbrs::mpl::detail::size_impl_smrs{},                                                                           \
-		hbrs::mpl::detail::size_impl_sms{},                                                                            \
-		hbrs::mpl::detail::size_impl_srv{},                                                                            \
-		hbrs::mpl::detail::size_impl_scv{},                                                                            \
-		hbrs::mpl::detail::size_impl_ctsam{},                                                                          \
-		hbrs::mpl::detail::size_impl_rtsam{},                                                                          \
-		hbrs::mpl::detail::size_impl_zas{}                                                                             \
-	)
-
-#endif // !HBRS_MPL_FUSE_HBRS_MPL_FN_SIZE_HPP
+#endif // !HBRS_MPL_FN_SIZE_IMPL_HBRS_MPL_HPP

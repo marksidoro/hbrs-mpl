@@ -14,57 +14,59 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/select.hpp>
+#include "elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace mpl = hbrs::mpl;
 namespace detail {
 
 //TODO: Why does compilation fail for those specalizations???
-// template decltype(auto) select_impl_Matrix::operator()(El::Matrix<float>               const&,
-// 	mpl::range<mpl::matrix_index<El::Int, El::Int>, mpl::matrix_index<El::Int, El::Int>> const&) const;
-// template decltype(auto) select_impl_Matrix::operator()(El::Matrix<El::Complex<float>>  const&,
-// 	mpl::range<mpl::matrix_index<El::Int, El::Int>, mpl::matrix_index<El::Int, El::Int>> const&) const;
-// template decltype(auto) select_impl_Matrix::operator()(El::Matrix<double>              const&,
-// 	mpl::range<mpl::matrix_index<El::Int, El::Int>, mpl::matrix_index<El::Int, El::Int>> const&) const;
-// template decltype(auto) select_impl_Matrix::operator()(El::Matrix<El::Complex<double>> const&,
-// 	mpl::range<mpl::matrix_index<El::Int, El::Int>, mpl::matrix_index<El::Int, El::Int>> const&) const;
+// template decltype(auto) select_impl_el_matrix::operator()(el_matrix<float>               const&,
+// 	range<matrix_index<El::Int, El::Int>, matrix_index<El::Int, El::Int>> const&) const;
+// template decltype(auto) select_impl_el_matrix::operator()(el_matrix<El::Complex<float>>  const&,
+// 	range<matrix_index<El::Int, El::Int>, matrix_index<El::Int, El::Int>> const&) const;
+// template decltype(auto) select_impl_el_matrix::operator()(el_matrix<double>              const&,
+// 	range<matrix_index<El::Int, El::Int>, matrix_index<El::Int, El::Int>> const&) const;
+// template decltype(auto) select_impl_el_matrix::operator()(el_matrix<El::Complex<double>> const&,
+// 	range<matrix_index<El::Int, El::Int>, matrix_index<El::Int, El::Int>> const&) const;
 // 
-// template decltype(auto) select_impl_Matrix::operator()(El::Matrix<float>               &&,
-// 	mpl::range<mpl::matrix_index<El::Int, El::Int>, mpl::matrix_index<El::Int, El::Int>> const&) const;
-// template decltype(auto) select_impl_Matrix::operator()(El::Matrix<El::Complex<float>>  &&,
-// 	mpl::range<mpl::matrix_index<El::Int, El::Int>, mpl::matrix_index<El::Int, El::Int>> const&) const;
-// template decltype(auto) select_impl_Matrix::operator()(El::Matrix<double>              &&,
-// 	mpl::range<mpl::matrix_index<El::Int, El::Int>, mpl::matrix_index<El::Int, El::Int>> const&) const;
-// template decltype(auto) select_impl_Matrix::operator()(El::Matrix<El::Complex<double>> &&,
-// 	mpl::range<mpl::matrix_index<El::Int, El::Int>, mpl::matrix_index<El::Int, El::Int>> const&) const;
+// template decltype(auto) select_impl_el_matrix::operator()(el_matrix<float>               &&,
+// 	range<matrix_index<El::Int, El::Int>, matrix_index<El::Int, El::Int>> const&) const;
+// template decltype(auto) select_impl_el_matrix::operator()(el_matrix<El::Complex<float>>  &&,
+// 	range<matrix_index<El::Int, El::Int>, matrix_index<El::Int, El::Int>> const&) const;
+// template decltype(auto) select_impl_el_matrix::operator()(el_matrix<double>              &&,
+// 	range<matrix_index<El::Int, El::Int>, matrix_index<El::Int, El::Int>> const&) const;
+// template decltype(auto) select_impl_el_matrix::operator()(el_matrix<El::Complex<double>> &&,
+// 	range<matrix_index<El::Int, El::Int>, matrix_index<El::Int, El::Int>> const&) const;
 // 
-// template decltype(auto) select_impl_Matrix::operator()(El::Matrix<float>               &,
-// 	mpl::range<mpl::matrix_index<El::Int, El::Int>, mpl::matrix_index<El::Int, El::Int>> const&) const;
-// template decltype(auto) select_impl_Matrix::operator()(El::Matrix<El::Complex<float>>  &,
-// 	mpl::range<mpl::matrix_index<El::Int, El::Int>, mpl::matrix_index<El::Int, El::Int>> const&) const;
-// template decltype(auto) select_impl_Matrix::operator()(El::Matrix<double>              &,
-// 	mpl::range<mpl::matrix_index<El::Int, El::Int>, mpl::matrix_index<El::Int, El::Int>> const&) const;
-// template decltype(auto) select_impl_Matrix::operator()(El::Matrix<El::Complex<double>> &,
-// 	mpl::range<mpl::matrix_index<El::Int, El::Int>, mpl::matrix_index<El::Int, El::Int>> const&) const;
+// template decltype(auto) select_impl_el_matrix::operator()(el_matrix<float>               &,
+// 	range<matrix_index<El::Int, El::Int>, matrix_index<El::Int, El::Int>> const&) const;
+// template decltype(auto) select_impl_el_matrix::operator()(el_matrix<El::Complex<float>>  &,
+// 	range<matrix_index<El::Int, El::Int>, matrix_index<El::Int, El::Int>> const&) const;
+// template decltype(auto) select_impl_el_matrix::operator()(el_matrix<double>              &,
+// 	range<matrix_index<El::Int, El::Int>, matrix_index<El::Int, El::Int>> const&) const;
+// template decltype(auto) select_impl_el_matrix::operator()(el_matrix<El::Complex<double>> &,
+// 	range<matrix_index<El::Int, El::Int>, matrix_index<El::Int, El::Int>> const&) const;
 
-template matrix<float               const> select_impl_matrix::operator()(matrix<float>               const&, std::pair<El::IR, El::IR> const&) const;
-template matrix<El::Complex<float>  const> select_impl_matrix::operator()(matrix<El::Complex<float>>  const&, std::pair<El::IR, El::IR> const&) const;
-template matrix<double              const> select_impl_matrix::operator()(matrix<double>              const&, std::pair<El::IR, El::IR> const&) const;
-template matrix<El::Complex<double> const> select_impl_matrix::operator()(matrix<El::Complex<double>> const&, std::pair<El::IR, El::IR> const&) const;
+template el_matrix<float               const> select_impl_el_matrix::operator()(el_matrix<float>               const&, std::pair<El::IR, El::IR> const&) const;
+template el_matrix<El::Complex<float>  const> select_impl_el_matrix::operator()(el_matrix<El::Complex<float>>  const&, std::pair<El::IR, El::IR> const&) const;
+template el_matrix<double              const> select_impl_el_matrix::operator()(el_matrix<double>              const&, std::pair<El::IR, El::IR> const&) const;
+template el_matrix<El::Complex<double> const> select_impl_el_matrix::operator()(el_matrix<El::Complex<double>> const&, std::pair<El::IR, El::IR> const&) const;
 
-// template matrix<Ring> select_impl_matrix::operator()(matrix<float>               &&, std::pair<El::IR, El::IR> const&) const;
-// template matrix<Ring> select_impl_matrix::operator()(matrix<El::Complex<float>>  &&, std::pair<El::IR, El::IR> const&) const;
-// template matrix<Ring> select_impl_matrix::operator()(matrix<double>              &&, std::pair<El::IR, El::IR> const&) const;
-// template matrix<Ring> select_impl_matrix::operator()(matrix<El::Complex<double>> &&, std::pair<El::IR, El::IR> const&) const;
+// template el_matrix<Ring> select_impl_el_matrix::operator()(el_matrix<float>               &&, std::pair<El::IR, El::IR> const&) const;
+// template el_matrix<Ring> select_impl_el_matrix::operator()(el_matrix<El::Complex<float>>  &&, std::pair<El::IR, El::IR> const&) const;
+// template el_matrix<Ring> select_impl_el_matrix::operator()(el_matrix<double>              &&, std::pair<El::IR, El::IR> const&) const;
+// template el_matrix<Ring> select_impl_el_matrix::operator()(el_matrix<El::Complex<double>> &&, std::pair<El::IR, El::IR> const&) const;
 
-template matrix<float              > select_impl_matrix::operator()(matrix<float>               &, std::pair<El::IR, El::IR> const&) const;
-template matrix<El::Complex<float> > select_impl_matrix::operator()(matrix<El::Complex<float>>  &, std::pair<El::IR, El::IR> const&) const;
-template matrix<double             > select_impl_matrix::operator()(matrix<double>              &, std::pair<El::IR, El::IR> const&) const;
-template matrix<El::Complex<double>> select_impl_matrix::operator()(matrix<El::Complex<double>> &, std::pair<El::IR, El::IR> const&) const;
+template el_matrix<float              > select_impl_el_matrix::operator()(el_matrix<float>               &, std::pair<El::IR, El::IR> const&) const;
+template el_matrix<El::Complex<float> > select_impl_el_matrix::operator()(el_matrix<El::Complex<float>>  &, std::pair<El::IR, El::IR> const&) const;
+template el_matrix<double             > select_impl_el_matrix::operator()(el_matrix<double>              &, std::pair<El::IR, El::IR> const&) const;
+template el_matrix<El::Complex<double>> select_impl_el_matrix::operator()(el_matrix<El::Complex<double>> &, std::pair<El::IR, El::IR> const&) const;
 
 //TODO: More!!
 //TODO: Add Dist* impls!
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL

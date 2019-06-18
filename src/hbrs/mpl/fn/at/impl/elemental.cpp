@@ -14,45 +14,49 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/at.hpp>
+#include "elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+
 #include <hbrs/mpl/dt/matrix_index.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-template decltype(auto) at_impl_matrix::operator()(matrix<float> &,      mpl::matrix_index<El::Int, El::Int> const&) const;
-template decltype(auto) at_impl_matrix::operator()(matrix<float> const&, mpl::matrix_index<El::Int, El::Int> const&) const;
-template decltype(auto) at_impl_matrix::operator()(matrix<float> &&,    mpl::matrix_index<El::Int, El::Int> const&) const;
+template decltype(auto) at_impl_el_matrix::operator()(el_matrix<float> &,      matrix_index<El::Int, El::Int> const&) const;
+template decltype(auto) at_impl_el_matrix::operator()(el_matrix<float> const&, matrix_index<El::Int, El::Int> const&) const;
+template decltype(auto) at_impl_el_matrix::operator()(el_matrix<float> &&,     matrix_index<El::Int, El::Int> const&) const;
 
-template decltype(auto) at_impl_matrix::operator()(matrix<El::Complex<float>> &,      mpl::matrix_index<El::Int, El::Int> const&) const;
-template decltype(auto) at_impl_matrix::operator()(matrix<El::Complex<float>> const&, mpl::matrix_index<El::Int, El::Int> const&) const;
-template decltype(auto) at_impl_matrix::operator()(matrix<El::Complex<float>> &&,    mpl::matrix_index<El::Int, El::Int> const&) const;
+template decltype(auto) at_impl_el_matrix::operator()(el_matrix<El::Complex<float>> &,      matrix_index<El::Int, El::Int> const&) const;
+template decltype(auto) at_impl_el_matrix::operator()(el_matrix<El::Complex<float>> const&, matrix_index<El::Int, El::Int> const&) const;
+template decltype(auto) at_impl_el_matrix::operator()(el_matrix<El::Complex<float>> &&,     matrix_index<El::Int, El::Int> const&) const;
 
-template decltype(auto) at_impl_matrix::operator()(matrix<double> &,      mpl::matrix_index<El::Int, El::Int> const&) const;
-template decltype(auto) at_impl_matrix::operator()(matrix<double> const&, mpl::matrix_index<El::Int, El::Int> const&) const;
-template decltype(auto) at_impl_matrix::operator()(matrix<double> &&,    mpl::matrix_index<El::Int, El::Int> const&) const;
+template decltype(auto) at_impl_el_matrix::operator()(el_matrix<double> &,      matrix_index<El::Int, El::Int> const&) const;
+template decltype(auto) at_impl_el_matrix::operator()(el_matrix<double> const&, matrix_index<El::Int, El::Int> const&) const;
+template decltype(auto) at_impl_el_matrix::operator()(el_matrix<double> &&,     matrix_index<El::Int, El::Int> const&) const;
 
-template decltype(auto) at_impl_matrix::operator()(matrix<El::Complex<double>> &,      mpl::matrix_index<El::Int, El::Int> const&) const;
-template decltype(auto) at_impl_matrix::operator()(matrix<El::Complex<double>> const&, mpl::matrix_index<El::Int, El::Int> const&) const;
-template decltype(auto) at_impl_matrix::operator()(matrix<El::Complex<double>> &&,    mpl::matrix_index<El::Int, El::Int> const&) const;
+template decltype(auto) at_impl_el_matrix::operator()(el_matrix<El::Complex<double>> &,      matrix_index<El::Int, El::Int> const&) const;
+template decltype(auto) at_impl_el_matrix::operator()(el_matrix<El::Complex<double>> const&, matrix_index<El::Int, El::Int> const&) const;
+template decltype(auto) at_impl_el_matrix::operator()(el_matrix<El::Complex<double>> &&,     matrix_index<El::Int, El::Int> const&) const;
 
-template decltype(auto) at_impl_matrix_smr::operator()(matrix<float> &,      El::Int) const;
-template decltype(auto) at_impl_matrix_smr::operator()(matrix<float> const&, El::Int) const;
-template decltype(auto) at_impl_matrix_smr::operator()(matrix<float> &&,    El::Int) const;
+template decltype(auto) at_impl_el_matrix_smr::operator()(el_matrix<float> &,      El::Int) const;
+template decltype(auto) at_impl_el_matrix_smr::operator()(el_matrix<float> const&, El::Int) const;
+template decltype(auto) at_impl_el_matrix_smr::operator()(el_matrix<float> &&,     El::Int) const;
 
-template decltype(auto) at_impl_matrix_smr::operator()(matrix<El::Complex<float>> &,      El::Int) const;
-template decltype(auto) at_impl_matrix_smr::operator()(matrix<El::Complex<float>> const&, El::Int) const;
-template decltype(auto) at_impl_matrix_smr::operator()(matrix<El::Complex<float>> &&,    El::Int) const;
+template decltype(auto) at_impl_el_matrix_smr::operator()(el_matrix<El::Complex<float>> &,      El::Int) const;
+template decltype(auto) at_impl_el_matrix_smr::operator()(el_matrix<El::Complex<float>> const&, El::Int) const;
+template decltype(auto) at_impl_el_matrix_smr::operator()(el_matrix<El::Complex<float>> &&,     El::Int) const;
 
-template decltype(auto) at_impl_matrix_smr::operator()(matrix<double> &,      El::Int) const;
-template decltype(auto) at_impl_matrix_smr::operator()(matrix<double> const&, El::Int) const;
-template decltype(auto) at_impl_matrix_smr::operator()(matrix<double> &&,    El::Int) const;
+template decltype(auto) at_impl_el_matrix_smr::operator()(el_matrix<double> &,      El::Int) const;
+template decltype(auto) at_impl_el_matrix_smr::operator()(el_matrix<double> const&, El::Int) const;
+template decltype(auto) at_impl_el_matrix_smr::operator()(el_matrix<double> &&,     El::Int) const;
 
-template decltype(auto) at_impl_matrix_smr::operator()(matrix<El::Complex<double>> &,      El::Int) const;
-template decltype(auto) at_impl_matrix_smr::operator()(matrix<El::Complex<double>> const&, El::Int) const;
-template decltype(auto) at_impl_matrix_smr::operator()(matrix<El::Complex<double>> &&,    El::Int) const;
+template decltype(auto) at_impl_el_matrix_smr::operator()(el_matrix<El::Complex<double>> &,      El::Int) const;
+template decltype(auto) at_impl_el_matrix_smr::operator()(el_matrix<El::Complex<double>> const&, El::Int) const;
+template decltype(auto) at_impl_el_matrix_smr::operator()(el_matrix<El::Complex<double>> &&,     El::Int) const;
 
 //TODO: Add row_vector and column_vector impls!
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL

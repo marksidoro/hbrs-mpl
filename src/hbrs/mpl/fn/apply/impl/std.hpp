@@ -14,41 +14,36 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_STD_FN_APPLY_HPP
-#define HBRS_MPL_FUSE_STD_FN_APPLY_HPP
+#ifndef HBRS_MPL_FN_APPLY_IMPL_STD_HPP
+#define HBRS_MPL_FN_APPLY_IMPL_STD_HPP
+
+#include "../fwd/std.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/is_applicable.hpp>
 #include <boost/hana/unpack.hpp>
 #include <boost/hana/ext/std/tuple.hpp>
-#include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
-	
-struct apply_impl_std_tuple_unpack {
-	template <
-		typename F,
-		typename Args,
-		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Args>, hana::ext::std::tuple_tag >::value &&
-			is_applicable_trait<F&&, Args&&>::value
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(F && f, Args && args) const {
-		return hana::unpack(HBRS_MPL_FWD(args), HBRS_MPL_FWD(f));
-	}
-};
-	
+
+template <
+	typename F,
+	typename Args,
+	typename std::enable_if_t<
+		std::is_same< hana::tag_of_t<Args>, hana::ext::std::tuple_tag >::value &&
+		is_applicable_trait<F&&, Args&&>::value
+	>*
+>
+constexpr decltype(auto)
+apply_impl_std_tuple_unpack::operator()(F && f, Args && args) const {
+	return hana::unpack(HBRS_MPL_FWD(args), HBRS_MPL_FWD(f));
+}
+
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_APPLY_IMPLS_STD boost::hana::make_tuple(                                                      \
-		hbrs::mpl::detail::apply_impl_std_tuple_unpack{}                                                               \
-	)
-
-#endif // !HBRS_MPL_FUSE_STD_FN_APPLY_HPP
+#endif // !HBRS_MPL_FN_APPLY_IMPL_STD_HPP

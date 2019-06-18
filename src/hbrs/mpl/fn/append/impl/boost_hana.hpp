@@ -14,8 +14,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_BOOST_HANA_FN_APPEND_HPP
-#define HBRS_MPL_FUSE_BOOST_HANA_FN_APPEND_HPP
+#ifndef HBRS_MPL_FN_APPEND_IMPL_BOOST_HANA_HPP
+#define HBRS_MPL_FN_APPEND_IMPL_BOOST_HANA_HPP
+
+#include "../fwd/boost_hana.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/concat.hpp>
@@ -27,24 +29,17 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct append_impl_hana_tuple {
-
-	template<
-		typename S,
-		typename E,
-		typename std::enable_if_t< std::is_same< hana::tag_of_t<S>, hana::tuple_tag >::value >* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(S && s, E && e) const {
-		return hana::concat(HBRS_MPL_FWD(s), hana::tuple<E&&>(HBRS_MPL_FWD(e)));
-	}
-};
+template<
+	typename S,
+	typename E,
+	typename std::enable_if_t< std::is_same< hana::tag_of_t<S>, hana::tuple_tag >::value >*
+>
+constexpr decltype(auto)
+append_impl_hana_tuple::operator()(S && s, E && e) const {
+	return hana::concat(HBRS_MPL_FWD(s), hana::tuple<E&&>(HBRS_MPL_FWD(e)));
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_APPEND_IMPLS_BOOST_HANA boost::hana::make_tuple(                                              \
-		hbrs::mpl::detail::append_impl_hana_tuple{}                                                                    \
-	)
-
-#endif // !HBRS_MPL_FUSE_BOOST_HANA_FN_APPEND_HPP
+#endif // !HBRS_MPL_FN_APPEND_IMPL_BOOST_HANA_HPP

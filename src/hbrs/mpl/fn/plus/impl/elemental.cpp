@@ -14,25 +14,25 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/plus.hpp>
-
-#include <hbrs/mpl/dt/el_dist_matrix.hpp>
-#include <hbrs/mpl/dt/el_dist_vector.hpp>
+#include "elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-template auto plus_impl_matrix_matrix::operator()(matrix<float>,               matrix<float>               const&) const;
-template auto plus_impl_matrix_matrix::operator()(matrix<El::Complex<float>>,  matrix<El::Complex<float>>  const&) const;
-template auto plus_impl_matrix_matrix::operator()(matrix<double>,              matrix<double>              const&) const;
-template auto plus_impl_matrix_matrix::operator()(matrix<El::Complex<double>>, matrix<El::Complex<double>> const&) const;
+template auto plus_impl_el_matrix_el_matrix::operator()(el_matrix<float>,               el_matrix<float>               const&) const;
+template auto plus_impl_el_matrix_el_matrix::operator()(el_matrix<El::Complex<float>>,  el_matrix<El::Complex<float>>  const&) const;
+template auto plus_impl_el_matrix_el_matrix::operator()(el_matrix<double>,              el_matrix<double>              const&) const;
+template auto plus_impl_el_matrix_el_matrix::operator()(el_matrix<El::Complex<double>>, el_matrix<El::Complex<double>> const&) const;
 
-template auto plus_impl_matrix_scalar::operator()(matrix<float>,               float               const&) const;
-template auto plus_impl_matrix_scalar::operator()(matrix<El::Complex<float>>,  El::Complex<float>  const&) const;
-template auto plus_impl_matrix_scalar::operator()(matrix<double>,              double              const&) const;
-template auto plus_impl_matrix_scalar::operator()(matrix<El::Complex<double>>, El::Complex<double> const&) const;
+template auto plus_impl_el_matrix_scalar::operator()(el_matrix<float>,               float               const&) const;
+template auto plus_impl_el_matrix_scalar::operator()(el_matrix<El::Complex<float>>,  El::Complex<float>  const&) const;
+template auto plus_impl_el_matrix_scalar::operator()(el_matrix<double>,              double              const&) const;
+template auto plus_impl_el_matrix_scalar::operator()(el_matrix<El::Complex<double>>, El::Complex<double> const&) const;
 
 //TODO: Add dist_*_vector impls!
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL

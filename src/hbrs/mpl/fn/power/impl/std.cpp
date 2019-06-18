@@ -14,7 +14,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/power.hpp>
+#include "std.hpp"
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {

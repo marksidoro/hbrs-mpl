@@ -14,39 +14,32 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_BOOST_HANA_FN_FOLD_LEFT_HPP
-#define HBRS_MPL_FUSE_BOOST_HANA_FN_FOLD_LEFT_HPP
+#ifndef HBRS_MPL_FN_FOLD_LEFT_IMPL_BOOST_HANA_HPP
+#define HBRS_MPL_FN_FOLD_LEFT_IMPL_BOOST_HANA_HPP
+
+#include "../fwd/boost_hana.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/core/evaluate.hpp>
 #include <boost/hana/fold_left.hpp>
-#include <boost/hana/tuple.hpp>
-#include <boost/hana/core/tag_of.hpp>
 #include <boost/hana/functional/demux.hpp>
-#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
-	
-struct fold_left_impl_hana_tuple {
-	template<
-		typename S, 
-		typename I, 
-		typename F, 
-		typename std::enable_if_t< std::is_same< hana::tag_of_t<S>, hana::tuple_tag >::value >* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(S && s, I && i, F && f) const {
-		return hana::fold_left(HBRS_MPL_FWD(s), HBRS_MPL_FWD(i), hana::demux(evaluate)(HBRS_MPL_FWD(f)));
-	}
-};
+
+template<
+	typename S, 
+	typename I, 
+	typename F, 
+	typename std::enable_if_t< std::is_same< hana::tag_of_t<S>, hana::tuple_tag >::value >*
+>
+constexpr decltype(auto)
+fold_left_impl_hana_tuple::operator()(S && s, I && i, F && f) const {
+	return hana::fold_left(HBRS_MPL_FWD(s), HBRS_MPL_FWD(i), hana::demux(evaluate)(HBRS_MPL_FWD(f)));
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_FOLD_LEFT_IMPLS_BOOST_HANA boost::hana::make_tuple(                                           \
-		hbrs::mpl::detail::fold_left_impl_hana_tuple{}                                                                 \
-	)
-
-#endif // !HBRS_MPL_FUSE_BOOST_HANA_FN_FOLD_LEFT_HPP
+#endif // !HBRS_MPL_FN_FOLD_LEFT_IMPL_BOOST_HANA_HPP

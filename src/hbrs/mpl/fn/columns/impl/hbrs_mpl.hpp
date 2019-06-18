@@ -14,15 +14,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_HBRS_MPL_FN_COLUMNS_HPP
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_COLUMNS_HPP
+#ifndef HBRS_MPL_FN_COLUMNS_IMPL_HBRS_MPL_HPP
+#define HBRS_MPL_FN_COLUMNS_IMPL_HBRS_MPL_HPP
+
+#include "../fwd/hbrs_mpl.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
-#include <hbrs/mpl/dt/sm/fwd.hpp>
-#include <hbrs/mpl/dt/rtsam/fwd.hpp>
-#include <hbrs/mpl/dt/ctsam/fwd.hpp>
+#include <hbrs/mpl/dt/sm.hpp>
+#include <hbrs/mpl/dt/rtsam.hpp>
+#include <hbrs/mpl/dt/ctsam.hpp>
 #include <hbrs/mpl/dt/smcs.hpp>
-#include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
 
@@ -30,26 +31,20 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct columns_impl {
-	template <
-		typename Matrix,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, sm_tag >::value ||
-			std::is_same< hana::tag_of_t<Matrix>, rtsam_tag >::value ||
-			std::is_same< hana::tag_of_t<Matrix>, ctsam_tag >::value
-		>* = nullptr
-	>
-	constexpr auto
-	operator()(Matrix && a) const {
-		return smcs<Matrix>{HBRS_MPL_FWD(a)};
-	}
-};
+template <
+	typename Matrix,
+	typename std::enable_if_t< 
+		std::is_same< hana::tag_of_t<Matrix>, sm_tag >::value ||
+		std::is_same< hana::tag_of_t<Matrix>, rtsam_tag >::value ||
+		std::is_same< hana::tag_of_t<Matrix>, ctsam_tag >::value
+	>*
+>
+constexpr auto
+columns_impl::operator()(Matrix && a) const {
+	return smcs<Matrix>{HBRS_MPL_FWD(a)};
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_COLUMNS_IMPLS_HBRS_MPL boost::hana::make_tuple(                                               \
-		hbrs::mpl::detail::columns_impl{}                                                                              \
-	)
-
-#endif // !HBRS_MPL_FUSE_HBRS_MPL_FN_COLUMNS_HPP
+#endif // !HBRS_MPL_FN_COLUMNS_IMPL_HBRS_MPL_HPP

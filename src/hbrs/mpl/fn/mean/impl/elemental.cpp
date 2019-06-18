@@ -14,27 +14,28 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/mean.hpp>
+#include "elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace mpl = hbrs::mpl;
-
 namespace detail {
 
-template auto mean_impl_smcs_matrix::operator()(mpl::smcs<matrix<float>> const&) const;
-template auto mean_impl_smcs_matrix::operator()(mpl::smcs<matrix<El::Complex<float>>> const&) const;
-template auto mean_impl_smcs_matrix::operator()(mpl::smcs<matrix<double>> const&) const;
-template auto mean_impl_smcs_matrix::operator()(mpl::smcs<matrix<El::Complex<double>>> const&) const;
+template auto mean_impl_smcs_el_matrix::operator()(smcs<el_matrix<float>> const&) const;
+template auto mean_impl_smcs_el_matrix::operator()(smcs<el_matrix<El::Complex<float>>> const&) const;
+template auto mean_impl_smcs_el_matrix::operator()(smcs<el_matrix<double>> const&) const;
+template auto mean_impl_smcs_el_matrix::operator()(smcs<el_matrix<El::Complex<double>>> const&) const;
 
-template auto mean_impl_smrs_matrix::operator()(mpl::smrs<matrix<float>> const&) const;
-template auto mean_impl_smrs_matrix::operator()(mpl::smrs<matrix<El::Complex<float>>> const&) const;
-template auto mean_impl_smrs_matrix::operator()(mpl::smrs<matrix<double>> const&) const;
-template auto mean_impl_smrs_matrix::operator()(mpl::smrs<matrix<El::Complex<double>>> const&) const;
+template auto mean_impl_smrs_el_matrix::operator()(smrs<el_matrix<float>> const&) const;
+template auto mean_impl_smrs_el_matrix::operator()(smrs<el_matrix<El::Complex<float>>> const&) const;
+template auto mean_impl_smrs_el_matrix::operator()(smrs<el_matrix<double>> const&) const;
+template auto mean_impl_smrs_el_matrix::operator()(smrs<el_matrix<El::Complex<double>>> const&) const;
 
-template auto mean_impl_dist_matrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<dist_matrix<float>>> const&) const;
-template auto mean_impl_dist_matrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<dist_matrix<El::Complex<float>>>> const&) const;
-template auto mean_impl_dist_matrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<dist_matrix<double>>> const&) const;
-template auto mean_impl_dist_matrix_columns::operator()(mpl::expression<mpl::columns_t, std::tuple<dist_matrix<El::Complex<double>>>> const&) const;
+template auto mean_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<float>>> const&) const;
+template auto mean_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<El::Complex<float>>>> const&) const;
+template auto mean_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<double>>> const&) const;
+template auto mean_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<El::Complex<double>>>> const&) const;
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL

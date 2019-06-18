@@ -14,10 +14,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_HBRS_MPL_FN_AND_HPP
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_AND_HPP
+#ifndef HBRS_MPL_FN_AND_IMPL_HBRS_MPL_HPP
+#define HBRS_MPL_FN_AND_IMPL_HBRS_MPL_HPP
 
-#include <hbrs/mpl/config.hpp>
+#include "../fwd/hbrs_mpl.hpp"
+
 #include <boost/hana/integral_constant.hpp>
 #include <boost/hana/ext/std/integral_constant.hpp>
 #include <boost/hana/tuple.hpp>
@@ -28,86 +29,77 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct and__impl_ic {
-	template<
-		typename L,
-		typename R,
-		typename std::enable_if_t<
-			(
-				std::is_same<
-					hana::tag_of_t<
-						decltype(evaluate(std::declval<L&&>()))
-					>,
-					hana::integral_constant_tag<bool>
-				>::value ||
-				std::is_same<
-					hana::tag_of_t<
-						decltype(evaluate(std::declval<L&&>()))
-					>,
-					hana::ext::std::integral_constant_tag<bool>
-				>::value 
-			) &&
-			(
-				std::is_same<
-					hana::tag_of_t<
-						decltype(evaluate(std::declval<R&&>()))
-					>,
-					hana::integral_constant_tag<bool>
-				>::value ||
-				std::is_same<
-					hana::tag_of_t<
-						decltype(evaluate(std::declval<R&&>()))
-					>,
-					hana::ext::std::integral_constant_tag<bool>
-				>::value ||
-				std::is_same<
-					hana::tag_of_t<
-						decltype(evaluate(std::declval<R&&>()))
-					>,
-					bool
-				>::value
-			)
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(L && l, R && r) const {
-		return evaluate(
-			hana::if_(
-				evaluate(HBRS_MPL_FWD(l)),
-				hana::true_c,
-				HBRS_MPL_FWD(r)
-			)
-		);
-	}
-};
-
-struct and__impl_i {
-	template<
-		typename L,
-		typename R,
-		typename std::enable_if_t<
-			std::is_convertible<
-				decltype(evaluate(std::declval<L&&>())),
-				bool
-			>::value &&
-			std::is_convertible<
-				decltype(evaluate(std::declval<R&&>())),
+template<
+	typename L,
+	typename R,
+	typename std::enable_if_t<
+		(
+			std::is_same<
+				hana::tag_of_t<
+					decltype(evaluate(std::declval<L&&>()))
+				>,
+				hana::integral_constant_tag<bool>
+			>::value ||
+			std::is_same<
+				hana::tag_of_t<
+					decltype(evaluate(std::declval<L&&>()))
+				>,
+				hana::ext::std::integral_constant_tag<bool>
+			>::value 
+		) &&
+		(
+			std::is_same<
+				hana::tag_of_t<
+					decltype(evaluate(std::declval<R&&>()))
+				>,
+				hana::integral_constant_tag<bool>
+			>::value ||
+			std::is_same<
+				hana::tag_of_t<
+					decltype(evaluate(std::declval<R&&>()))
+				>,
+				hana::ext::std::integral_constant_tag<bool>
+			>::value ||
+			std::is_same<
+				hana::tag_of_t<
+					decltype(evaluate(std::declval<R&&>()))
+				>,
 				bool
 			>::value
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(L && l, R && r) const {
-		return evaluate(HBRS_MPL_FWD(l)) && evaluate(HBRS_MPL_FWD(r));
-	}
-};
+		)
+	>*
+>
+constexpr decltype(auto)
+and__impl_ic::operator()(L && l, R && r) const {
+	return evaluate(
+		hana::if_(
+			evaluate(HBRS_MPL_FWD(l)),
+			hana::true_c,
+			HBRS_MPL_FWD(r)
+		)
+	);
+}
+
+template<
+	typename L,
+	typename R,
+	typename std::enable_if_t<
+		std::is_convertible<
+			decltype(evaluate(std::declval<L&&>())),
+			bool
+		>::value &&
+		std::is_convertible<
+			decltype(evaluate(std::declval<R&&>())),
+			bool
+		>::value
+	>*
+>
+constexpr decltype(auto)
+and__impl_i::operator()(L && l, R && r) const {
+	return evaluate(HBRS_MPL_FWD(l)) && evaluate(HBRS_MPL_FWD(r));
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_AND_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                   \
-		hbrs::mpl::detail::and__impl_ic{},                                                                             \
-		hbrs::mpl::detail::and__impl_i{}                                                                               \
-	)
-
-#endif // !HBRS_MPL_FUSE_HBRS_MPL_FN_AND_HPP
+#endif // !HBRS_MPL_FN_AND_IMPL_HBRS_MPL_HPP

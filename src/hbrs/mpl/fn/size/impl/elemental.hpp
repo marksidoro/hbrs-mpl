@@ -17,41 +17,29 @@
 #ifndef HBRS_MPL_FN_SIZE_IMPL_ELEMENTAL_HPP
 #define HBRS_MPL_FN_SIZE_IMPL_ELEMENTAL_HPP
 
-#include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/core/preprocessor.hpp>
+#include "../fwd/elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+
 #include <hbrs/mpl/detail/function_object.hpp>
-
-#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
-#include <hbrs/mpl/dt/el_dist_matrix/fwd.hpp>
-#include <hbrs/mpl/dt/el_vector/fwd.hpp>
-#include <hbrs/mpl/dt/el_dist_vector/fwd.hpp>
-
-#include <boost/hana/tuple.hpp>
+#include <hbrs/mpl/dt/el_matrix.hpp>
+#include <hbrs/mpl/dt/el_dist_matrix.hpp>
+#include <hbrs/mpl/dt/el_vector.hpp>
+#include <hbrs/mpl/dt/el_dist_vector.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace hana = boost::hana;
-
 namespace detail {
 
-HBRS_MPL_DEF_FO_TRY_METHOD(size_impl_matrix, matrix_tag, size)
-HBRS_MPL_DEF_FO_TRY_METHOD(size_impl_dist_matrix, dist_matrix_tag, size)
+HBRS_MPL_DEF_FO_TRY_METHOD(size_impl_el_matrix, el_matrix_tag, size)
+HBRS_MPL_DEF_FO_TRY_METHOD(size_impl_el_dist_matrix, el_dist_matrix_tag, size)
 
-HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_column_vector, column_vector_tag, length)
-HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_row_vector, row_vector_tag, length)
+HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_el_column_vector, el_column_vector_tag, length)
+HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_el_row_vector, el_row_vector_tag, length)
 
-HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_dist_column_vector, dist_column_vector_tag, length)
-HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_dist_row_vector, dist_row_vector_tag, length)
+HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_el_dist_column_vector, el_dist_column_vector_tag, length)
+HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_el_dist_row_vector, el_dist_row_vector_tag, length)
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_SIZE_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                          \
-		elemental::detail::length_impl_column_vector{},                                                                \
-		elemental::detail::length_impl_row_vector{},                                                                   \
-		elemental::detail::length_impl_dist_column_vector{},                                                           \
-		elemental::detail::length_impl_dist_row_vector{},                                                              \
-		elemental::detail::size_impl_matrix{},                                                                         \
-		elemental::detail::size_impl_dist_matrix{}                                                                     \
-	)
-
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
 #endif // !HBRS_MPL_FN_SIZE_IMPL_ELEMENTAL_HPP

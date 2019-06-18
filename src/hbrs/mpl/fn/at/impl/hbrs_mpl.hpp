@@ -14,31 +14,32 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_HBRS_MPL_FN_AT_HPP
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_AT_HPP
+#ifndef HBRS_MPL_FN_AT_IMPL_HBRS_MPL_HPP
+#define HBRS_MPL_FN_AT_IMPL_HBRS_MPL_HPP
+
+#include "../fwd/hbrs_mpl.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/function_object.hpp>
-#include <hbrs/mpl/dt/ctsav/fwd.hpp>
-#include <hbrs/mpl/dt/rtsav/fwd.hpp>
-#include <hbrs/mpl/dt/submatrix/fwd.hpp>
-#include <hbrs/mpl/dt/subsequence/fwd.hpp>
-#include <hbrs/mpl/dt/sm/fwd.hpp>
-#include <hbrs/mpl/dt/smc/fwd.hpp>
-#include <hbrs/mpl/dt/smcs/fwd.hpp>
-#include <hbrs/mpl/dt/smr/fwd.hpp>
-#include <hbrs/mpl/dt/smrs/fwd.hpp>
-#include <hbrs/mpl/dt/sms/fwd.hpp>
-#include <hbrs/mpl/dt/srv/fwd.hpp>
-#include <hbrs/mpl/dt/scv/fwd.hpp>
-#include <hbrs/mpl/dt/ctsam/fwd.hpp>
-#include <hbrs/mpl/dt/rtsam/fwd.hpp>
-#include <hbrs/mpl/dt/zas/fwd.hpp>
+#include <hbrs/mpl/dt/ctsav.hpp>
+#include <hbrs/mpl/dt/rtsav.hpp>
+#include <hbrs/mpl/dt/submatrix.hpp>
+#include <hbrs/mpl/dt/subsequence.hpp>
+#include <hbrs/mpl/dt/sm.hpp>
+#include <hbrs/mpl/dt/smc.hpp>
+#include <hbrs/mpl/dt/smcs.hpp>
+#include <hbrs/mpl/dt/smr.hpp>
+#include <hbrs/mpl/dt/smrs.hpp>
+#include <hbrs/mpl/dt/sms.hpp>
+#include <hbrs/mpl/dt/srv.hpp>
+#include <hbrs/mpl/dt/scv.hpp>
+#include <hbrs/mpl/dt/ctsam.hpp>
+#include <hbrs/mpl/dt/rtsam.hpp>
+#include <hbrs/mpl/dt/zas.hpp>
 #include <hbrs/mpl/dt/bidiag_result.hpp>
 #include <hbrs/mpl/dt/svd_result.hpp>
 #include <hbrs/mpl/dt/pca_result.hpp>
 #include <hbrs/mpl/dt/pca_filter_result.hpp>
-#include <boost/hana/tuple.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
@@ -61,16 +62,14 @@ HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_rtsam,    rtsam_tag,    at)
 HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_zas,      zas_tag,      at)
 
 #define _HBRS_MPL_DEF_FO_NAMED_AT(impl_t, tag_t, named_t, method)                                                      \
-	struct impl_t {                                                                                                    \
-		template<                                                                                                      \
-			typename T,                                                                                                \
-			typename std::enable_if_t< std::is_same< hana::tag_of_t<T>, tag_t>::value >* = nullptr                     \
-		>                                                                                                              \
-		constexpr decltype(auto)                                                                                       \
-		operator()(T && t, named_t) const {                                                                            \
-			return HBRS_MPL_FWD(t).method();                                                                           \
-		}                                                                                                              \
-	};
+	template<                                                                                                          \
+		typename T,                                                                                                    \
+		typename std::enable_if_t< std::is_same< hana::tag_of_t<T>, tag_t>::value >*                                   \
+	>                                                                                                                  \
+	constexpr decltype(auto)                                                                                           \
+	impl_t::operator()(T && t, named_t) const {                                                                        \
+		return HBRS_MPL_FWD(t).method();                                                                               \
+	}                                                                                                                  \
 
 _HBRS_MPL_DEF_FO_NAMED_AT(at_impl_bidiag_u, bidiag_result_tag, bidiag_u, u)
 _HBRS_MPL_DEF_FO_NAMED_AT(at_impl_bidiag_b, bidiag_result_tag, bidiag_b, b)
@@ -90,34 +89,4 @@ _HBRS_MPL_DEF_FO_NAMED_AT(at_impl_pca_filter_latent, pca_filter_result_tag, pca_
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_AT_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                    \
-		hbrs::mpl::detail::at_impl_ctsav{},                                                                            \
-		hbrs::mpl::detail::at_impl_rtsav{},                                                                            \
-		hbrs::mpl::detail::at_impl_submatrix{},                                                                        \
-		hbrs::mpl::detail::at_impl_subsequence{},                                                                      \
-		hbrs::mpl::detail::at_impl_sm{},                                                                               \
-		hbrs::mpl::detail::at_impl_smc{},                                                                              \
-		hbrs::mpl::detail::at_impl_smcs{},                                                                             \
-		hbrs::mpl::detail::at_impl_smr{},                                                                              \
-		hbrs::mpl::detail::at_impl_smrs{},                                                                             \
-		hbrs::mpl::detail::at_impl_sms{},                                                                              \
-		hbrs::mpl::detail::at_impl_srv{},                                                                              \
-		hbrs::mpl::detail::at_impl_scv{},                                                                              \
-		hbrs::mpl::detail::at_impl_ctsam{},                                                                            \
-		hbrs::mpl::detail::at_impl_rtsam{},                                                                            \
-		hbrs::mpl::detail::at_impl_bidiag_u{},                                                                         \
-		hbrs::mpl::detail::at_impl_bidiag_b{},                                                                         \
-		hbrs::mpl::detail::at_impl_bidiag_v{},                                                                         \
-		hbrs::mpl::detail::at_impl_svd_u{},                                                                            \
-		hbrs::mpl::detail::at_impl_svd_s{},                                                                            \
-		hbrs::mpl::detail::at_impl_svd_v{},                                                                            \
-		hbrs::mpl::detail::at_impl_pca_coeff{},                                                                        \
-		hbrs::mpl::detail::at_impl_pca_score{},                                                                        \
-		hbrs::mpl::detail::at_impl_pca_latent{},                                                                       \
-		hbrs::mpl::detail::at_impl_pca_mean{},                                                                         \
-		hbrs::mpl::detail::at_impl_pca_filter_data{},                                                                  \
-		hbrs::mpl::detail::at_impl_pca_filter_latent{},                                                                \
-		hbrs::mpl::detail::at_impl_zas{}                                                                               \
-	)                                                                                                                  \
-
-#endif // !HBRS_MPL_FUSE_HBRS_MPL_FN_AT_HPP
+#endif // !HBRS_MPL_FN_AT_IMPL_HBRS_MPL_HPP

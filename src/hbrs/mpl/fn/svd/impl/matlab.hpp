@@ -17,39 +17,6 @@
 #ifndef HBRS_MPL_FN_SVD_IMPL_MATLAB_HPP
 #define HBRS_MPL_FN_SVD_IMPL_MATLAB_HPP
 
-#include <hbrs/mpl/core/preprocessor.hpp>
-#include <hbrs/mpl/dt/decompose_mode.hpp>
-#include <hbrs/mpl/dt/svd_result.hpp>
-#include <hbrs/mpl/dt/ml_matrix.hpp>
-#include <boost/hana/tuple.hpp>
-#include <boost/hana/core/tag_of.hpp>
-#include <type_traits>
-
-HBRS_MPL_NAMESPACE_BEGIN
-namespace hana = boost::hana;
-namespace mpl = hbrs::mpl;
-namespace detail {
-
-#define _DEC_SVD(lvl)                                                                                                  \
-	struct svd_impl_level ## lvl {                                                                                     \
-		mpl::svd_result<                                                                                               \
-			hbrs::mpl::ml_matrix<real_T> /* U */,                                                                            \
-			hbrs::mpl::ml_matrix<real_T> /* S */,                                                                            \
-			hbrs::mpl::ml_matrix<real_T> /* V */                                                                             \
-		>                                                                                                              \
-		operator()(hbrs::mpl::ml_matrix<real_T> const& a, mpl::decompose_mode mode) const;                                   \
-	};
-
-_DEC_SVD(0)
-_DEC_SVD(1)
-#undef _DEC_SVD
-
-/* namespace detail */ }
-HBRS_MPL_NAMESPACE_END
-
-#define HBRS_MPL_FN_SVD_IMPLS_MATLAB boost::hana::make_tuple(                                                              \
-		matlab::detail::svd_impl_level0{},                                                                             \
-		matlab::detail::svd_impl_level1{}                                                                              \
-	)
+#include "../fwd/matlab.hpp"
 
 #endif // !HBRS_MPL_FN_SVD_IMPL_MATLAB_HPP

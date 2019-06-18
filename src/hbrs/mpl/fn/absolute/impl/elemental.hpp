@@ -17,45 +17,38 @@
 #ifndef HBRS_MPL_FN_ABSOLUTE_IMPL_ELEMENTAL_HPP
 #define HBRS_MPL_FN_ABSOLUTE_IMPL_ELEMENTAL_HPP
 
-#include <hbrs/mpl/config.hpp>
+#include "../fwd/elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+
 #include <hbrs/mpl/dt/el_matrix.hpp>
 #include <hbrs/mpl/fn/at.hpp>
-#include <boost/hana/tuple.hpp>
 #include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace mpl = hbrs::mpl;
 namespace detail {
 
-struct absolute_impl_matrix {
-	template <
-		typename Ring,
-		typename std::enable_if_t<
-			std::is_arithmetic< Ring >::value /* TODO: absolute() is not yet implemented for El::Complex<> */
-		>* = nullptr
-	>
-	auto
-	operator()(matrix<Ring> const& a) const {
-		using namespace hbrs::mpl;
-		
-		matrix<std::remove_const_t<Ring>> b{ a.m(), a.n() };
-		
-		for(El::Int j=0; j < a.n(); ++j) {
-			for(El::Int i=0; i < a.m(); ++i) {
-				auto ix = make_matrix_index(i,j);
-				(*at)(b, ix) = (*absolute)(at(a, ix));
-			}
+template <
+	typename Ring,
+	typename std::enable_if_t<
+		std::is_arithmetic< Ring >::value /* TODO: absolute() is not yet implemented for El::Complex<> */
+	>*
+>
+auto
+absolute_impl_el_matrix::operator()(el_matrix<Ring> const& a) const {
+	el_matrix<std::remove_const_t<Ring>> b{ a.m(), a.n() };
+	
+	for(El::Int j=0; j < a.n(); ++j) {
+		for(El::Int i=0; i < a.m(); ++i) {
+			auto ix = make_matrix_index(i,j);
+			(*at)(b, ix) = (*absolute)(at(a, ix));
 		}
-		
-		return b;
 	}
-};
+	
+	return b;
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_ABSOLUTE_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                      \
-		elemental::detail::absolute_impl_matrix{}                                                                      \
-	)
-
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
 #endif // !HBRS_MPL_FN_ABSOLUTE_IMPL_ELEMENTAL_HPP

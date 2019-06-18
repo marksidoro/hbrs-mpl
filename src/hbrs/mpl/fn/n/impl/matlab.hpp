@@ -17,38 +17,6 @@
 #ifndef HBRS_MPL_FN_N_IMPL_MATLAB_HPP
 #define HBRS_MPL_FN_N_IMPL_MATLAB_HPP
 
-#include <hbrs/mpl/core/preprocessor.hpp>
-#include <hbrs/mpl/dt/ml_matrix/fwd.hpp>
-#include <boost/hana/tuple.hpp>
-#include <boost/hana/core/tag_of.hpp>
-#include <type_traits>
-
-HBRS_MPL_NAMESPACE_BEGIN
-namespace hana = boost::hana;
-namespace detail {
-
-struct n_impl_emxArray {
-	int const&
-	operator()(emxArray_real_T const& a) const;
-
-	int const&
-	operator()(emxArray_boolean_T const& a) const;
-};
-
-struct n_impl_matrix {
-	int const&
-	operator()(hbrs::mpl::ml_matrix<real_T> const& a) const;
-
-	int const&
-	operator()(hbrs::mpl::ml_matrix<boolean_T> const& a) const;
-};
-
-/* namespace detail */ }
-HBRS_MPL_NAMESPACE_END
-
-#define HBRS_MPL_FN_N_IMPLS_MATLAB boost::hana::make_tuple(                                                                \
-		matlab::detail::n_impl_emxArray{},                                                                             \
-		matlab::detail::n_impl_matrix{}                                                                                \
-	)
+#include "../fwd/matlab.hpp"
 
 #endif // !HBRS_MPL_FN_N_IMPL_MATLAB_HPP

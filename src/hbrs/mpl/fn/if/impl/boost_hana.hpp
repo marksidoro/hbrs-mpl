@@ -14,44 +14,37 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_BOOST_HANA_FN_IF_HPP
-#define HBRS_MPL_FUSE_BOOST_HANA_FN_IF_HPP
+#ifndef HBRS_MPL_FN_IF_IMPL_BOOST_HANA_HPP
+#define HBRS_MPL_FN_IF_IMPL_BOOST_HANA_HPP
+
+#include "../fwd/boost_hana.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/integral_constant.hpp>
-#include <boost/hana/tuple.hpp>
-#include <boost/hana/core/tag_of.hpp>
-#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
-	
-struct if_impl_hana_bool {
-	template <
-		typename If,
-		typename Else
-	>
-	constexpr decltype(auto)
-	operator()(hana::true_, If && i, Else && e) const {
-		return HBRS_MPL_FWD(i);
-	}
-	
-	template <
-		typename If,
-		typename Else
-	>
-	constexpr decltype(auto)
-	operator()(hana::false_, If && i, Else && e) const {
-		return HBRS_MPL_FWD(e);
-	}
-};
+
+template <
+	typename If,
+	typename Else
+>
+constexpr decltype(auto)
+if_impl_hana_bool::operator()(hana::true_, If && i, Else && e) const {
+	return HBRS_MPL_FWD(i);
+}
+
+template <
+	typename If,
+	typename Else
+>
+constexpr decltype(auto)
+if_impl_hana_bool::operator()(hana::false_, If && i, Else && e) const {
+	return HBRS_MPL_FWD(e);
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_IF_IMPLS_BOOST_HANA boost::hana::make_tuple(                                                  \
-		hbrs::mpl::detail::if_impl_hana_bool{}                                                                         \
-	)
-
-#endif // !HBRS_MPL_FUSE_BOOST_HANA_FN_IF_HPP
+#endif // !HBRS_MPL_FN_IF_IMPL_BOOST_HANA_HPP

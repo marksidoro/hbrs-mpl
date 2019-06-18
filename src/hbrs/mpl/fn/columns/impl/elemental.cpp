@@ -14,22 +14,25 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/columns.hpp>
+#include "elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-template auto columns_impl_matrix_1::operator()(matrix<float>               const&) const;
-template auto columns_impl_matrix_1::operator()(matrix<El::Complex<float>>  const&) const;
-template auto columns_impl_matrix_1::operator()(matrix<double>              const&) const;
-template auto columns_impl_matrix_1::operator()(matrix<El::Complex<double>> const&) const;
+template auto columns_impl_el_matrix_1::operator()(el_matrix<float>               const&) const;
+template auto columns_impl_el_matrix_1::operator()(el_matrix<El::Complex<float>>  const&) const;
+template auto columns_impl_el_matrix_1::operator()(el_matrix<double>              const&) const;
+template auto columns_impl_el_matrix_1::operator()(el_matrix<El::Complex<double>> const&) const;
 
-template auto columns_impl_matrix_2::operator()(matrix<float>               const&) const;
-template auto columns_impl_matrix_2::operator()(matrix<El::Complex<float>>  const&) const;
-template auto columns_impl_matrix_2::operator()(matrix<double>              const&) const;
-template auto columns_impl_matrix_2::operator()(matrix<El::Complex<double>> const&) const;
+template auto columns_impl_el_matrix_2::operator()(el_matrix<float>               const&) const;
+template auto columns_impl_el_matrix_2::operator()(el_matrix<El::Complex<float>>  const&) const;
+template auto columns_impl_el_matrix_2::operator()(el_matrix<double>              const&) const;
+template auto columns_impl_el_matrix_2::operator()(el_matrix<El::Complex<double>> const&) const;
 
-//TODO: Add columns_impl_DistMatrix impl!
+//TODO: Add columns_impl_el_dist_matrix impl!
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL

@@ -14,8 +14,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/mean.hpp>
+#include "matlab.hpp"
+#ifdef HBRS_MPL_ENABLE_MATLAB
+
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/dt/ml_matrix.hpp>
+#include <hbrs/mpl/dt/smc.hpp>
+#include <hbrs/mpl/dt/smcs.hpp>
+#include <hbrs/mpl/dt/smr.hpp>
+#include <hbrs/mpl/dt/smrs.hpp>
 
 extern "C" {
 	#include <hbrs/mpl/detail/matlab_cxn/impl/mean_m.h>
@@ -25,19 +32,21 @@ extern "C" {
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-mpl::smc<hbrs::mpl::ml_matrix<real_T>, int>
-mean_impl_matrix::operator()(mpl::smrs<hbrs::mpl::ml_matrix<real_T>> const& a) const {
-	hbrs::mpl::ml_matrix<real_T> b;
+smc<ml_matrix<real_T>, int>
+mean_impl_ml_matrix::operator()(smrs<ml_matrix<real_T>> const& a) const {
+	ml_matrix<real_T> b;
 	mean_m(&a.data().data(), ::row_mean, &b.data());
 	return {b, 0};
 }
 
-mpl::smr<hbrs::mpl::ml_matrix<real_T>, int>
-mean_impl_matrix::operator()(mpl::smcs<hbrs::mpl::ml_matrix<real_T>> const& a) const {
-	hbrs::mpl::ml_matrix<real_T> b;
+smr<ml_matrix<real_T>, int>
+mean_impl_ml_matrix::operator()(smcs<ml_matrix<real_T>> const& a) const {
+	ml_matrix<real_T> b;
 	mean_m(&a.data().data(), ::column_mean, &b.data());
 	return {b, 0};
 }
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_MATLAB

@@ -14,8 +14,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_BOOST_HANA_FN_CONTAINS_HPP
-#define HBRS_MPL_FUSE_BOOST_HANA_FN_CONTAINS_HPP
+#ifndef HBRS_MPL_FN_CONTAINS_IMPL_BOOST_HANA_HPP
+#define HBRS_MPL_FN_CONTAINS_IMPL_BOOST_HANA_HPP
+
+#include "../fwd/boost_hana.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/tuple.hpp>
@@ -28,27 +30,22 @@
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
-	
-struct contains_impl_hana_tuple {
-	template<
-		typename S, 
-		typename E, 
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<S>, hana::tuple_tag >::value &&
-			hana::Comparable<E&&>::value
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(S && s, E && e) const {
-		return hana::contains(HBRS_MPL_FWD(s), HBRS_MPL_FWD(e));
-	}
-};
+
+template<
+	typename S, 
+	typename E, 
+	typename std::enable_if_t< 
+		std::is_same< hana::tag_of_t<S>, hana::tuple_tag >::value &&
+		hana::Comparable<E&&>::value
+	>*
+>
+constexpr decltype(auto)
+contains_impl_hana_tuple::operator()(S && s, E && e) const {
+	return hana::contains(HBRS_MPL_FWD(s), HBRS_MPL_FWD(e));
+}
+
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_CONTAINS_IMPLS_BOOST_HANA boost::hana::make_tuple(                                            \
-		hbrs::mpl::detail::contains_impl_hana_tuple{}                                                                  \
-	)
-
-#endif // !HBRS_MPL_FUSE_BOOST_HANA_FN_CONTAINS_HPP
+#endif // !HBRS_MPL_FN_CONTAINS_IMPL_BOOST_HANA_HPP

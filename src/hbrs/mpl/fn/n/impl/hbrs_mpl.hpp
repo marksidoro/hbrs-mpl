@@ -14,27 +14,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_HBRS_MPL_FN_N_HPP
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_N_HPP
+#ifndef HBRS_MPL_FN_N_IMPL_HBRS_MPL_HPP
+#define HBRS_MPL_FN_N_IMPL_HBRS_MPL_HPP
 
-#include <hbrs/mpl/config.hpp>
+#include "../fwd/hbrs_mpl.hpp"
+
 #include <hbrs/mpl/detail/function_object.hpp>
-#include <hbrs/mpl/dt/matrix_size/fwd.hpp>
-#include <hbrs/mpl/dt/matrix_index/fwd.hpp>
-#include <boost/hana/tuple.hpp>
+#include <hbrs/mpl/dt/matrix_size.hpp>
+#include <hbrs/mpl/dt/matrix_index.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-HBRS_MPL_DEF_FO_TRY_METHOD(n_impl_matrix_size,        matrix_size_tag,        n)
-HBRS_MPL_DEF_FO_TRY_METHOD(n_impl_matrix_index,       matrix_index_tag,       n)
+HBRS_MPL_DEF_FO_TRY_METHOD(n_impl_matrix_size, matrix_size_tag, n)
+HBRS_MPL_DEF_FO_TRY_METHOD(n_impl_matrix_index, matrix_index_tag, n)
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_N_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                     \
-		hbrs::mpl::detail::n_impl_matrix_size{},                                                                       \
-		hbrs::mpl::detail::n_impl_matrix_index{}                                                                       \
-	)
-
-#endif // !HBRS_MPL_FUSE_HBRS_MPL_FN_N_HPP
+#endif // !HBRS_MPL_FN_N_IMPL_HBRS_MPL_HPP

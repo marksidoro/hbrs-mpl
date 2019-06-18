@@ -14,17 +14,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/divide.hpp>
+#include "elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-//TODO: Add divide_impl_vector_Scalar and divide_impl_dist_vector_Scalar impls!
+//TODO: Add divide_impl_el_vector_scalar and divide_impl_el_dist_vector_scalar impls!
 
-template auto divide_impl_matrix_scalar::operator()(matrix<float>              , float               const&) const;
-template auto divide_impl_matrix_scalar::operator()(matrix<El::Complex<float>> , El::Complex<float>  const&) const;
-template auto divide_impl_matrix_scalar::operator()(matrix<double>             , double              const&) const;
-template auto divide_impl_matrix_scalar::operator()(matrix<El::Complex<double>>, El::Complex<double> const&) const;
+template auto divide_impl_el_matrix_scalar::operator()(el_matrix<float>              , float               const&) const;
+template auto divide_impl_el_matrix_scalar::operator()(el_matrix<El::Complex<float>> , El::Complex<float>  const&) const;
+template auto divide_impl_el_matrix_scalar::operator()(el_matrix<double>             , double              const&) const;
+template auto divide_impl_el_matrix_scalar::operator()(el_matrix<El::Complex<double>>, El::Complex<double> const&) const;
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL

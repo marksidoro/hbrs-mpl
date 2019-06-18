@@ -17,126 +17,110 @@
 #ifndef HBRS_MPL_FN_EXPAND_IMPL_MATLAB_HPP
 #define HBRS_MPL_FN_EXPAND_IMPL_MATLAB_HPP
 
-#include <hbrs/mpl/config.hpp>
+#include "../fwd/matlab.hpp"
+#ifdef HBRS_MPL_ENABLE_MATLAB
+
 #include <hbrs/mpl/core/preprocessor.hpp>
-#include <matlab/dt/exception.hpp>
+#include <hbrs/mpl/dt/exception.hpp>
 #include <hbrs/mpl/dt/smr.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>
+#include <hbrs/mpl/dt/matrix_index.hpp>
+#include <hbrs/mpl/dt/ml_matrix.hpp>
+#include <hbrs/mpl/dt/ml_vector.hpp>
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/n.hpp>
 #include <hbrs/mpl/fn/m.hpp>
 #include <hbrs/mpl/fn/at.hpp>
-#include <hbrs/mpl/dt/matrix_index.hpp>
-#include <hbrs/mpl/dt/ml_matrix.hpp>
-#include <hbrs/mpl/dt/ml_vector.hpp>
-#include <boost/hana/tuple.hpp>
-#include <boost/hana/core/tag_of.hpp>
-#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
-namespace mpl = hbrs::mpl;
-
 namespace detail {
 
-//TODO: Join with elemental::detail::expand_impl_smr!
-struct expand_impl_smr {
-	template<
-		typename Matrix,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hbrs::mpl::ml_matrix_tag >::value
-		>* = nullptr
-	>
-	auto
-	operator()(
-		mpl::smr<Matrix, int> const& a,
-		mpl::matrix_size<int, int> const& sz
-	) const {
-		using namespace hbrs::mpl;
-		auto a_sz = (*size)(a);
-		auto m_ = (*m)(sz);
-		auto n_ = (*n)(sz);
-		
-		if (((n_ % a_sz) != 0) || (m_ == 0)) {
-			BOOST_THROW_EXCEPTION((
-				incompatible_matrix_vector_exception{} 
-				<< matlab::errinfo_vector_size{a_sz}
-				<< matlab::errinfo_matrix_size{sz}
-			));
-		}
-		
-		bool vert_expand = m_ > 1;
-		bool horz_expand = n_ != a_sz;
-		
-		std::decay_t<Matrix> c{m_, n_};
-		
-		if ((vert_expand && horz_expand) || vert_expand) {
-			for(int i = 0; i < m_; ++i) {
-				for(int j = 0; j < n_; ++j) {
-					(*at)(c, mpl::make_matrix_index(i, j)) = (*at)(a, j % a_sz);
-				}
-			}
-		} else {
-			//only horz_expand or no expansion
-			for(int i = 0; i < n_; ++i) {
-				(*at)(c, mpl::matrix_index<int, int>(0, i)) = (*at)(a, i % a_sz);
-			}
-		}
-		
-		return c;
+template<
+	typename Matrix,
+	typename std::enable_if_t< 
+		std::is_same< hana::tag_of_t<Matrix>, ml_matrix_tag >::value
+	>*
+>
+auto
+expand_impl_smr_ml_matrix::operator()(
+	smr<Matrix, int> const& a,
+	matrix_size<int, int> const& sz
+) const {
+	auto a_sz = (*size)(a);
+	auto m_ = (*m)(sz);
+	auto n_ = (*n)(sz);
+	
+	if (((n_ % a_sz) != 0) || (m_ == 0)) {
+		BOOST_THROW_EXCEPTION((
+			incompatible_matrix_vector_exception{} 
+			<< errinfo_ml_vector_size{a_sz}
+			<< errinfo_ml_matrix_size{sz}
+		));
 	}
-};
+	
+	bool vert_expand = m_ > 1;
+	bool horz_expand = n_ != a_sz;
+	
+	std::decay_t<Matrix> c{m_, n_};
+	
+	if ((vert_expand && horz_expand) || vert_expand) {
+		for(int i = 0; i < m_; ++i) {
+			for(int j = 0; j < n_; ++j) {
+				(*at)(c, make_matrix_index(i, j)) = (*at)(a, j % a_sz);
+			}
+		}
+	} else {
+		//only horz_expand or no expansion
+		for(int i = 0; i < n_; ++i) {
+			(*at)(c, matrix_index<int, int>(0, i)) = (*at)(a, i % a_sz);
+		}
+	}
+	
+	return c;
+}
 
-//TODO: Join with elemental::detail::expand_impl_row_vector!
-struct expand_impl_row_vector {
-	template<typename Ring>
-	auto
-	operator()(
-		row_vector<Ring> const& v,
-		mpl::matrix_size<int, int> const& sz
-	) const {
-		using namespace hbrs::mpl;
-		
-		auto v_sz = (*size)(v);
-		auto a_m = (*m)(sz);
-		auto a_n = (*n)(sz);
-		
-		if (((a_n % v_sz) != 0) || (a_m == 0)) {
-			BOOST_THROW_EXCEPTION((
-				incompatible_matrix_vector_exception{} 
-				<< matlab::errinfo_vector_size{v_sz}
-				<< matlab::errinfo_matrix_size{sz}
-			));
-		}
-		
-		bool vert_expand = a_m > 1;
-		bool horz_expand = a_n != v_sz;
-		
-		auto c = make_matrix(hana::type_c<std::decay_t<Ring>>, sz);
-		
-		if ((vert_expand && horz_expand) || vert_expand) {
-			for(int i = 0; i < a_m; ++i) {
-				for(int j = 0; j < a_n; ++j) {
-					(*at)(c, make_matrix_index(i, j)) = (*at)(v, j % v_sz);
-				}
-			}
-		} else {
-			//only horz_expand or no expansion
-			for(int i = 0; i < a_n; ++i) {
-				(*at)(c, make_matrix_index(0, i)) = (*at)(v, i % v_sz);
-			}
-		}
-		
-		return c;
+template<typename Ring>
+auto
+expand_impl_ml_row_vector::operator()(
+	row_vector<Ring> const& v,
+	matrix_size<int, int> const& sz
+) const {
+	auto v_sz = (*size)(v);
+	auto a_m = (*m)(sz);
+	auto a_n = (*n)(sz);
+	
+	if (((a_n % v_sz) != 0) || (a_m == 0)) {
+		BOOST_THROW_EXCEPTION((
+			incompatible_matrix_vector_exception{} 
+			<< errinfo_ml_vector_size{v_sz}
+			<< errinfo_ml_matrix_size{sz}
+		));
 	}
-};
+	
+	bool vert_expand = a_m > 1;
+	bool horz_expand = a_n != v_sz;
+	
+	auto c = make_matrix(hana::type_c<std::decay_t<Ring>>, sz);
+	
+	if ((vert_expand && horz_expand) || vert_expand) {
+		for(int i = 0; i < a_m; ++i) {
+			for(int j = 0; j < a_n; ++j) {
+				(*at)(c, make_matrix_index(i, j)) = (*at)(v, j % v_sz);
+			}
+		}
+	} else {
+		//only horz_expand or no expansion
+		for(int i = 0; i < a_n; ++i) {
+			(*at)(c, make_matrix_index(0, i)) = (*at)(v, i % v_sz);
+		}
+	}
+	
+	return c;
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_EXPAND_IMPLS_MATLAB boost::hana::make_tuple(                                                           \
-		matlab::detail::expand_impl_smr{},                                                                             \
-		matlab::detail::expand_impl_row_vector{}                                                                       \
-	)
-
+#endif // !HBRS_MPL_ENABLE_MATLAB
 #endif // !HBRS_MPL_FN_EXPAND_IMPL_MATLAB_HPP

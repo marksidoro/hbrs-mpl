@@ -14,9 +14,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/svd.hpp>
+#include "matlab.hpp"
+#ifdef HBRS_MPL_ENABLE_MATLAB
+
 #include <hbrs/mpl/dt/ml_matrix.hpp>
 #include <hbrs/mpl/dt/svd_result.hpp>
+#include <hbrs/mpl/dt/decompose_mode.hpp>
 
 extern "C" {
 	#include <hbrs/mpl/detail/matlab_cxn/impl/svd_level0.h>
@@ -28,14 +31,13 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 #define _DEF_SVD(lvl)                                                                                                  \
-	mpl::svd_result<                                                                                                   \
-		hbrs::mpl::ml_matrix<real_T> /* U */,                                                                                \
-		hbrs::mpl::ml_matrix<real_T> /* S */,                                                                                \
-		hbrs::mpl::ml_matrix<real_T> /* V */                                                                                 \
+	svd_result<                                                                                                        \
+		ml_matrix<real_T> /* U */,                                                                                     \
+		ml_matrix<real_T> /* S */,                                                                                     \
+		ml_matrix<real_T> /* V */                                                                                      \
 	>                                                                                                                  \
-	svd_impl_level ## lvl::operator()(hbrs::mpl::ml_matrix<real_T> const& a, mpl::decompose_mode mode) const {               \
-		using mpl::decompose_mode;                                                                                     \
-		hbrs::mpl::ml_matrix<real_T> u, s, v;                                                                                \
+	svd_impl_level ## lvl ## _ml_matrix::operator()(ml_matrix<real_T> const& a, decompose_mode mode) const {           \
+		ml_matrix<real_T> u, s, v;                                                                                     \
 		                                                                                                               \
 		svd_level ## lvl(                                                                                              \
 			&a.data(),                                                                                                 \
@@ -58,3 +60,5 @@ _DEF_SVD(1)
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_MATLAB

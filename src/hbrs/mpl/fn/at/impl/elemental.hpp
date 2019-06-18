@@ -17,44 +17,38 @@
 #ifndef HBRS_MPL_FN_AT_IMPL_ELEMENTAL_HPP
 #define HBRS_MPL_FN_AT_IMPL_ELEMENTAL_HPP
 
-#include <hbrs/mpl/config.hpp>
+#include "../fwd/elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/function_object.hpp>
-
-#include <hbrs/mpl/dt/matrix_index/fwd.hpp>
-#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
-#include <hbrs/mpl/dt/el_dist_matrix/fwd.hpp>
-#include <hbrs/mpl/dt/el_vector/fwd.hpp>
-#include <hbrs/mpl/dt/el_dist_vector/fwd.hpp>
+#include <hbrs/mpl/dt/el_matrix.hpp>
+#include <hbrs/mpl/dt/el_dist_matrix.hpp>
+#include <hbrs/mpl/dt/el_vector.hpp>
+#include <hbrs/mpl/dt/el_dist_vector.hpp>
 
 #include <hbrs/mpl/dt/smr.hpp>
-#include <El.hpp>
-
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
-#include <boost/assert.hpp>
+
 #include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
-namespace mpl = hbrs::mpl;
-
 namespace detail {
 
 HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_matrix, matrix_tag, at)
 
-struct at_impl_matrix_smr {
-	template <
-		typename Matrix,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
-		>* = nullptr
-	>
-	decltype(auto)
-	operator()(Matrix && m, El::Int i) const {
-		return mpl::smr<Matrix, El::Int>{HBRS_MPL_FWD(m), i};
-	}
-};
+template <
+	typename Matrix,
+	typename std::enable_if_t< 
+		std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value
+	>*
+>
+decltype(auto)
+at_impl_el_matrix_smr::operator()(Matrix && m, El::Int i) const {
+	return smr<Matrix, El::Int>{HBRS_MPL_FWD(m), i};
+}
 
 HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_column_vector, column_vector_tag, at)
 HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_row_vector, row_vector_tag, at)
@@ -62,11 +56,5 @@ HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_row_vector, row_vector_tag, at)
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_AT_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                            \
-		elemental::detail::at_impl_column_vector{},                                                                    \
-		elemental::detail::at_impl_row_vector{},                                                                       \
-		elemental::detail::at_impl_matrix{},                                                                           \
-		elemental::detail::at_impl_matrix_smr{}                                                                        \
-	)
-
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
 #endif // !HBRS_MPL_FN_AT_IMPL_ELEMENTAL_HPP

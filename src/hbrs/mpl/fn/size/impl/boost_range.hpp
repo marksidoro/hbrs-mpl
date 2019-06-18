@@ -14,31 +14,23 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_BOOST_RANGE_FN_SIZE_HPP
-#define HBRS_MPL_FUSE_BOOST_RANGE_FN_SIZE_HPP
+#ifndef HBRS_MPL_FN_SIZE_IMPL_BOOST_RANGE_HPP
+#define HBRS_MPL_FN_SIZE_IMPL_BOOST_RANGE_HPP
 
-#include <hbrs/mpl/config.hpp>
-#include <boost/range/irange.hpp>
+#include "../fwd/boost_range.hpp"
+
 #include <boost/range/size.hpp>
-#include <boost/hana/tuple.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace hana = boost::hana;
 namespace detail {
 
-struct size_impl_range_integer_range {
-	template<typename Integer>
-	constexpr decltype(auto)
-	operator()(boost::integer_range<Integer> const& s) const {
-		return s.size();
-	}
-};
+template<typename Integer>
+constexpr decltype(auto)
+size_impl_range_integer_range::operator()(boost::integer_range<Integer> const& s) const {
+	return s.size();
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_SIZE_IMPLS_BOOST_RANGE boost::hana::make_tuple(                                               \
-		hbrs::mpl::detail::size_impl_range_integer_range{}                                                             \
-	)
-
-#endif // !HBRS_MPL_FUSE_BOOST_RANGE_FN_SIZE_HPP
+#endif // !HBRS_MPL_FN_SIZE_IMPL_BOOST_RANGE_HPP

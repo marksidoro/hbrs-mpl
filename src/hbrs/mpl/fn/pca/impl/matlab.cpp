@@ -14,7 +14,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/pca.hpp>
+#include "matlab.hpp"
+#ifdef HBRS_MPL_ENABLE_MATLAB
+
 #include <hbrs/mpl/dt/smr.hpp>
 #include <hbrs/mpl/dt/pca_result.hpp>
 #include <hbrs/mpl/dt/ml_matrix.hpp>
@@ -31,16 +33,16 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 #define _DEF_PCA(lvl)                                                                                                  \
-	mpl::pca_result<                                                                                                   \
-		hbrs::mpl::ml_matrix<real_T> /* coeff */,                                                                            \
-		hbrs::mpl::ml_matrix<real_T> /* score */,                                                                            \
-		hbrs::mpl::ml_column_vector<real_T> /* latent*/,                                                                     \
-		mpl::smr<hbrs::mpl::ml_matrix<real_T>, int> /* mu */                                                                 \
+	pca_result<                                                                                                        \
+		ml_matrix<real_T>           /* coeff */,                                                                       \
+		ml_matrix<real_T>           /* score */,                                                                       \
+		ml_column_vector<real_T>    /* latent*/,                                                                       \
+		smr<ml_matrix<real_T>, int> /* mu */                                                                           \
 	>                                                                                                                  \
-	pca_impl_level ## lvl::operator()(hbrs::mpl::ml_matrix<real_T> const& a, bool economy) const {                           \
-		hbrs::mpl::ml_matrix<real_T> coeff, score;                                                                           \
-		hbrs::mpl::ml_column_vector<real_T> latent;                                                                          \
-		hbrs::mpl::ml_matrix<real_T> mu;                                                                                     \
+	pca_impl_level ## lvl ## _ml_matrix::operator()(ml_matrix<real_T> const& a, bool economy) const {                  \
+		ml_matrix<real_T> coeff, score;                                                                                \
+		ml_column_vector<real_T> latent;                                                                               \
+		ml_matrix<real_T> mu;                                                                                          \
 		                                                                                                               \
 		pca_level ## lvl(                                                                                              \
 			&a.data(),                                                                                                 \
@@ -61,3 +63,5 @@ _DEF_PCA(2)
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_MATLAB

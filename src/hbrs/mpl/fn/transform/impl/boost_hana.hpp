@@ -14,41 +14,34 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_BOOST_HANA_FN_TRANSFORM_HPP
-#define HBRS_MPL_FUSE_BOOST_HANA_FN_TRANSFORM_HPP
+#ifndef HBRS_MPL_FN_TRANSFORM_IMPL_BOOST_HANA_HPP
+#define HBRS_MPL_FN_TRANSFORM_IMPL_BOOST_HANA_HPP
 
-#include <hbrs/mpl/config.hpp>
+#include "../fwd/boost_hana.hpp"
+
 #include <hbrs/mpl/core/preprocessor.hpp>
+#include <boost/hana/functional/demux.hpp>
+#include <hbrs/mpl/core/evaluate.hpp>
 #include <boost/hana/transform.hpp>
-#include <boost/hana/tuple.hpp>
-#include <boost/hana/core/tag_of.hpp>
-#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-
-struct transform_impl_hana_tuple {
-	template<
-		typename S,
-		typename F,
-		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<S>, hana::tuple_tag>::value
-			//TODO: Add invokable check for F?
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(S && s, F && f) const {
-		return hana::transform(HBRS_MPL_FWD(s), hana::demux(evaluate)(HBRS_MPL_FWD(f)));
-	}
-};
+template<
+	typename S,
+	typename F,
+	typename std::enable_if_t<
+		std::is_same< hana::tag_of_t<S>, hana::tuple_tag>::value
+		//TODO: Add invokable check for F?
+	>*
+>
+constexpr decltype(auto)
+transform_impl_hana_tuple::operator()(S && s, F && f) const {
+	return hana::transform(HBRS_MPL_FWD(s), hana::demux(evaluate)(HBRS_MPL_FWD(f)));
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_TRANSFORM_IMPLS_BOOST_HANA boost::hana::make_tuple(                                           \
-		hbrs::mpl::detail::transform_impl_hana_tuple{}                                                                 \
-	)
-
-#endif // !HBRS_MPL_FUSE_BOOST_HANA_FN_TRANSFORM_HPP
+#endif // !HBRS_MPL_FN_TRANSFORM_IMPL_BOOST_HANA_HPP

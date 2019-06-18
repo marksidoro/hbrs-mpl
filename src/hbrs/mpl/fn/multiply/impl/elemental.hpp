@@ -17,36 +17,31 @@
 #ifndef HBRS_MPL_FN_MULTIPLY_IMPL_ELEMENTAL_HPP
 #define HBRS_MPL_FN_MULTIPLY_IMPL_ELEMENTAL_HPP
 
-#include <hbrs/mpl/config.hpp>
-#include <El.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/hana/tuple.hpp>
+#include "../fwd/elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+
+#include <hbrs/mpl/core/preprocessor.hpp>
+#include <hbrs/mpl/dt/scv.hpp>
+#include <hbrs/mpl/dt/matrix_index.hpp>
+#include <hbrs/mpl/dt/exception.hpp>
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/fn/multiply.hpp>
 #include <hbrs/mpl/fn/not_equal.hpp>
-#include <hbrs/mpl/dt/scv/fwd.hpp>
-#include <hbrs/mpl/dt/matrix_index.hpp>
-#include <boost/mpl/void.hpp>
-#include <boost/hana/ext/std/vector.hpp>
-#include <elemental/dt/exception.hpp>
-#include <type_traits>
-
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace mpl = hbrs::mpl;
 namespace detail {
 
 template <typename A, typename B, typename C>
 decltype(auto)
-multiply_impl(A const& a, B const& b, C c) {
+multiply_impl_el(A const& a, B const& b, C c) {
 	typedef decltype(a.data().Get(0,0)) Ring;
 	typedef std::decay_t<Ring> _Ring_;
 	
 	if (a.n() != b.m()) {
 		BOOST_THROW_EXCEPTION((
-			mpl::incompatible_matrices_exception{}
-			<< elemental::errinfo_matrix_sizes{{ {a.m(), a.n()}, {b.m(), b.n()} }}
+			incompatible_matrices_exception{}
+			<< errinfo_el_matrix_sizes{{ {a.m(), a.n()}, {b.m(), b.n()} }}
 		));
 	}
 	
@@ -65,130 +60,113 @@ multiply_impl(A const& a, B const& b, C c) {
 	return hana::make<hana::tag_of_t<A>>(c);
 }
 
-struct multiply_impl_matrix_matrix {
-	template <
-		typename RingL,
-		typename RingR,
-		typename std::enable_if_t<
-			!std::is_same<RingL, RingR>::value &&
-			boost::mpl::is_not_void_<std::common_type_t<RingL, RingR>>::value
-		>* = nullptr
-	>
-	decltype(auto)
-	operator()(matrix<RingL> const& a, matrix<RingR> const& b) const {
-		using namespace hbrs::mpl;
-		typedef std::common_type_t<RingL, RingR> Ring;
-		
-		//Replace with faster algorithm (e.g. Strassen algorithm) and use parallelization
-		
-		matrix<Ring> a_ct {a.m(), a.n()};
-		for(El::Int j = 0; j < a.n(); ++j) {
-			for(El::Int i = 0; i < a.m(); ++i) {
-				a_ct.at({i,j}) = a.at({i,j});
-			}
+template <
+	typename RingL,
+	typename RingR,
+	typename std::enable_if_t<
+		!std::is_same<RingL, RingR>::value &&
+		boost::is_not_void_<std::common_type_t<RingL, RingR>>::value
+	>*
+>
+decltype(auto)
+multiply_impl_el_matrix_el_matrix::operator()(el_matrix<RingL> const& a, el_matrix<RingR> const& b) const {
+	typedef std::common_type_t<RingL, RingR> Ring;
+	
+	//Replace with faster algorithm (e.g. Strassen algorithm) and use parallelization
+	
+	el_matrix<Ring> a_ct {a.m(), a.n()};
+	for(El::Int j = 0; j < a.n(); ++j) {
+		for(El::Int i = 0; i < a.m(); ++i) {
+			a_ct.at({i,j}) = a.at({i,j});
 		}
-		
-		matrix<Ring> b_ct {b.m(), b.n()};
-		for(El::Int j = 0; j < b.n(); ++j) {
-			for(El::Int i = 0; i < b.m(); ++i) {
-				b_ct.at({i,j}) = b.at({i,j});
-			}
-		}
-		
-		return multiply_impl(a_ct, b_ct, El::Matrix<Ring>{});
 	}
 	
-	template <typename Ring>
-	decltype(auto)
-	operator()(matrix<Ring> const& a, matrix<Ring> const& b) const {
-		return multiply_impl(a, b, El::Matrix<Ring>{});
-	}
-};
-
-struct multiply_impl_dist_matrix_dist_matrix {
-	template <
-		typename RingL, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap Wrapping,
-		typename RingR, El::Dist ColumnwiseR, El::Dist RowwiseR,
-		typename std::enable_if_t<
-			std::is_same_v<RingL, RingR> ||
-			boost::mpl::is_not_void_<std::common_type_t<RingL, RingR>>::value
-		>* = nullptr
-	>
-	decltype(auto)
-	operator()(
-		dist_matrix<RingL, ColumnwiseL, RowwiseL, Wrapping> const& a,
-		dist_matrix<RingR, ColumnwiseR, RowwiseR, Wrapping> const& b
-	) const {
-		BOOST_ASSERT(a.data().Grid() == b.data().Grid());
-		// "El::MC, El::MR" as used by proxy in Elemental/src/blas_like/level3/Gemm/NN.hpp
-		
-		typedef std::common_type_t<RingL, RingR> Ring;
-		return multiply_impl(
-			a,
-			b,
-			El::DistMatrix<Ring, El::MC, El::MR, Wrapping>{a.data().Grid()}
-		);
-	}
-};
-
-struct multiply_impl_matrix_scv_vector {
-	template <
-		typename MatrixRing,
-		typename Sequence,
-		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Sequence>, hana::ext::std::vector_tag >::value
-			//TODO: Check that MatrixRing and VectorRing (see below) are compatible!
-		>* = nullptr
-	>
-	auto
-	operator()(matrix<MatrixRing> const& a, mpl::scv<Sequence> const& b) const {
-		using namespace hbrs::mpl;
-		
-		typedef typename std::remove_reference_t<Sequence>::value_type VectorRing;
-		typedef std::decay_t<decltype( std::declval<MatrixRing>() * std::declval<VectorRing>() )> Ring;
-		
-		if ((*not_equal)(a.n(), b.size())) {
-			BOOST_THROW_EXCEPTION((
-				incompatible_matrix_vector_exception{}
-				<< elemental::errinfo_matrix_size{(*size)(a)}
-				<< elemental::errinfo_vector_size{(El::Int)b.size()}
-			));
+	el_matrix<Ring> b_ct {b.m(), b.n()};
+	for(El::Int j = 0; j < b.n(); ++j) {
+		for(El::Int i = 0; i < b.m(); ++i) {
+			b_ct.at({i,j}) = b.at({i,j});
 		}
-		
-		std::vector<Ring> c(a.m(), 0);
-		
-		for(El::Int j = 0; j < a.n(); ++j ) {
-			for(El::Int i = 0; i < a.m(); ++i ) {
-				(*at)(c,i) += (*at)(a, make_matrix_index(i,j)) * b.at(j);
-			}
-		}
-		
-		return make_scv(c);
 	}
-};
+	
+	return multiply_impl_el(a_ct, b_ct, El::Matrix<Ring>{});
+}
 
-struct multiply_impl_matrix_scalar {
-	template <
-		typename Ring,
-		typename std::enable_if_t< 
-			!std::is_const< Ring >::value
-		>* = nullptr
-	>
-	auto
-	operator()(matrix<Ring> a, Ring const& b) const {
-		El::Scale(b, a.data());
-		return a;
+template <typename Ring>
+decltype(auto)
+multiply_impl_el_matrix_el_matrix::operator()(el_matrix<Ring> const& a, el_matrix<Ring> const& b) const {
+	return multiply_impl_el(a, b, El::Matrix<Ring>{});
+}
+
+template <
+	typename RingL, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap Wrapping,
+	typename RingR, El::Dist ColumnwiseR, El::Dist RowwiseR,
+	typename std::enable_if_t<
+		std::is_same_v<RingL, RingR> ||
+		boost::is_not_void_<std::common_type_t<RingL, RingR>>::value
+	>*
+>
+decltype(auto)
+multiply_impl_el_dist_matrix_el_dist_matrix::operator()(
+	el_dist_matrix<RingL, ColumnwiseL, RowwiseL, Wrapping> const& a,
+	el_dist_matrix<RingR, ColumnwiseR, RowwiseR, Wrapping> const& b
+) const {
+	BOOST_ASSERT(a.data().Grid() == b.data().Grid());
+	// "El::MC, El::MR" as used by proxy in Elemental/src/blas_like/level3/Gemm/NN.hpp
+	
+	typedef std::common_type_t<RingL, RingR> Ring;
+	return multiply_impl_el(
+		a,
+		b,
+		El::DistMatrix<Ring, El::MC, El::MR, Wrapping>{a.data().Grid()}
+	);
+}
+
+template <
+	typename MatrixRing,
+	typename Sequence,
+	typename std::enable_if_t<
+		std::is_same< hana::tag_of_t<Sequence>, hana::ext::std::vector_tag >::value
+		//TODO: Check that MatrixRing and VectorRing (see below) are compatible!
+	>*
+>
+auto
+multiply_impl_el_matrix_scv_vector::operator()(el_matrix<MatrixRing> const& a, scv<Sequence> const& b) const {
+	typedef typename std::remove_reference_t<Sequence>::value_type VectorRing;
+	typedef std::decay_t<decltype( std::declval<MatrixRing>() * std::declval<VectorRing>() )> Ring;
+	
+	if ((*not_equal)(a.n(), b.size())) {
+		BOOST_THROW_EXCEPTION((
+			incompatible_matrix_vector_exception{}
+			<< errinfo_el_matrix_size{(*size)(a)}
+			<< errinfo_el_vector_size{(El::Int)b.size()}
+		));
 	}
-};
+	
+	std::vector<Ring> c(a.m(), 0);
+	
+	for(El::Int j = 0; j < a.n(); ++j ) {
+		for(El::Int i = 0; i < a.m(); ++i ) {
+			(*at)(c,i) += (*at)(a, make_matrix_index(i,j)) * b.at(j);
+		}
+	}
+	
+	return make_scv(c);
+}
+
+template <
+	typename Ring,
+	typename std::enable_if_t< 
+		!std::is_const< Ring >::value
+	>*
+>
+auto
+multiply_impl_el_matrix_scalar::operator()(el_matrix<Ring> a, Ring const& b) const {
+	El::Scale(b, a.data());
+	return a;
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_MULTIPLY_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                      \
-		elemental::detail::multiply_impl_matrix_matrix{},                                                              \
-		elemental::detail::multiply_impl_matrix_scv_vector{},                                                          \
-		elemental::detail::multiply_impl_matrix_scalar{},                                                              \
-		elemental::detail::multiply_impl_dist_matrix_dist_matrix{}                                                     \
-	)
-
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
 #endif // !HBRS_MPL_FN_MULTIPLY_IMPL_ELEMENTAL_HPP

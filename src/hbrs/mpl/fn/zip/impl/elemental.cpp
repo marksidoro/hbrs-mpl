@@ -14,30 +14,33 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/zip.hpp>
+#include "elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-template auto zip_impl_smc_matrix_integer_range::operator()(mpl::smc<matrix<float>               , El::Int>, boost::integer_range<El::Int>) const;
-template auto zip_impl_smc_matrix_integer_range::operator()(mpl::smc<matrix<El::Complex<float>>  , El::Int>, boost::integer_range<El::Int>) const;
-template auto zip_impl_smc_matrix_integer_range::operator()(mpl::smc<matrix<double>              , El::Int>, boost::integer_range<El::Int>) const;
-template auto zip_impl_smc_matrix_integer_range::operator()(mpl::smc<matrix<El::Complex<double>> , El::Int>, boost::integer_range<El::Int>) const;
+template auto zip_impl_smc_el_matrix_integer_range::operator()(smc<el_matrix<float>               , El::Int>, boost::integer_range<El::Int>) const;
+template auto zip_impl_smc_el_matrix_integer_range::operator()(smc<el_matrix<El::Complex<float>>  , El::Int>, boost::integer_range<El::Int>) const;
+template auto zip_impl_smc_el_matrix_integer_range::operator()(smc<el_matrix<double>              , El::Int>, boost::integer_range<El::Int>) const;
+template auto zip_impl_smc_el_matrix_integer_range::operator()(smc<el_matrix<El::Complex<double>> , El::Int>, boost::integer_range<El::Int>) const;
 
-template auto zip_impl_smc_matrix_integer_range::operator()(mpl::smc<matrix<float>              const& , El::Int>, boost::integer_range<El::Int>) const;
-template auto zip_impl_smc_matrix_integer_range::operator()(mpl::smc<matrix<El::Complex<float>> const& , El::Int>, boost::integer_range<El::Int>) const;
-template auto zip_impl_smc_matrix_integer_range::operator()(mpl::smc<matrix<double>             const& , El::Int>, boost::integer_range<El::Int>) const;
-template auto zip_impl_smc_matrix_integer_range::operator()(mpl::smc<matrix<El::Complex<double>>const& , El::Int>, boost::integer_range<El::Int>) const;
+template auto zip_impl_smc_el_matrix_integer_range::operator()(smc<el_matrix<float>              const& , El::Int>, boost::integer_range<El::Int>) const;
+template auto zip_impl_smc_el_matrix_integer_range::operator()(smc<el_matrix<El::Complex<float>> const& , El::Int>, boost::integer_range<El::Int>) const;
+template auto zip_impl_smc_el_matrix_integer_range::operator()(smc<el_matrix<double>             const& , El::Int>, boost::integer_range<El::Int>) const;
+template auto zip_impl_smc_el_matrix_integer_range::operator()(smc<el_matrix<El::Complex<double>>const& , El::Int>, boost::integer_range<El::Int>) const;
 
-template auto zip_impl_smr_matrix_integer_range::operator()(mpl::smr<matrix<float>               , El::Int>, boost::integer_range<El::Int>) const;
-template auto zip_impl_smr_matrix_integer_range::operator()(mpl::smr<matrix<El::Complex<float>>  , El::Int>, boost::integer_range<El::Int>) const;
-template auto zip_impl_smr_matrix_integer_range::operator()(mpl::smr<matrix<double>              , El::Int>, boost::integer_range<El::Int>) const;
-template auto zip_impl_smr_matrix_integer_range::operator()(mpl::smr<matrix<El::Complex<double>> , El::Int>, boost::integer_range<El::Int>) const;
+template auto zip_impl_smr_el_matrix_integer_range::operator()(smr<el_matrix<float>               , El::Int>, boost::integer_range<El::Int>) const;
+template auto zip_impl_smr_el_matrix_integer_range::operator()(smr<el_matrix<El::Complex<float>>  , El::Int>, boost::integer_range<El::Int>) const;
+template auto zip_impl_smr_el_matrix_integer_range::operator()(smr<el_matrix<double>              , El::Int>, boost::integer_range<El::Int>) const;
+template auto zip_impl_smr_el_matrix_integer_range::operator()(smr<el_matrix<El::Complex<double>> , El::Int>, boost::integer_range<El::Int>) const;
 
-template auto zip_impl_smr_matrix_integer_range::operator()(mpl::smr<matrix<float>              const& , El::Int>, boost::integer_range<El::Int>) const;
-template auto zip_impl_smr_matrix_integer_range::operator()(mpl::smr<matrix<El::Complex<float>> const& , El::Int>, boost::integer_range<El::Int>) const;
-template auto zip_impl_smr_matrix_integer_range::operator()(mpl::smr<matrix<double>             const& , El::Int>, boost::integer_range<El::Int>) const;
-template auto zip_impl_smr_matrix_integer_range::operator()(mpl::smr<matrix<El::Complex<double>>const& , El::Int>, boost::integer_range<El::Int>) const;
+template auto zip_impl_smr_el_matrix_integer_range::operator()(smr<el_matrix<float>              const& , El::Int>, boost::integer_range<El::Int>) const;
+template auto zip_impl_smr_el_matrix_integer_range::operator()(smr<el_matrix<El::Complex<float>> const& , El::Int>, boost::integer_range<El::Int>) const;
+template auto zip_impl_smr_el_matrix_integer_range::operator()(smr<el_matrix<double>             const& , El::Int>, boost::integer_range<El::Int>) const;
+template auto zip_impl_smr_el_matrix_integer_range::operator()(smr<el_matrix<El::Complex<double>>const& , El::Int>, boost::integer_range<El::Int>) const;
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL

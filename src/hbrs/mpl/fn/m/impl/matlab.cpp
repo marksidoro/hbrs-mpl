@@ -14,7 +14,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/m.hpp>
+#include "matlab.hpp"
+#ifdef HBRS_MPL_ENABLE_MATLAB
+
 #include <hbrs/mpl/dt/ml_matrix.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -31,14 +33,16 @@ m_impl_emxArray::operator()(emxArray_boolean_T const& a) const {
 }
 
 int const&
-m_impl_matrix::operator()(matrix<real_T> const& a) const { 
+m_impl_ml_matrix::operator()(ml_matrix<real_T> const& a) const { 
 	return a.m();
 }
 
 int const&
-m_impl_matrix::operator()(matrix<boolean_T> const& a) const { 
+m_impl_ml_matrix::operator()(ml_matrix<boolean_T> const& a) const { 
 	return a.m();
 }
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_MATLAB

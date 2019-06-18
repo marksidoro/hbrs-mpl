@@ -14,30 +14,24 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_HBRS_MPL_FN_ID_HPP
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_ID_HPP
+#ifndef HBRS_MPL_FN_ID_IMPL_HBRS_MPL_HPP
+#define HBRS_MPL_FN_ID_IMPL_HBRS_MPL_HPP
+
+#include "../fwd/hbrs_mpl.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
-#include <boost/hana/tuple.hpp>
-#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct id_impl {
-	template <typename T>
-	constexpr decltype(auto)
-	operator()(T && t) const {
-		return HBRS_MPL_FWD(t);
-	}
-};
+template <typename T>
+constexpr decltype(auto)
+id_impl::operator()(T && t) const {
+	return HBRS_MPL_FWD(t);
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_ID_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                    \
-		hbrs::mpl::detail::id_impl{}                                                                                   \
-	)                                                                                                                  \
-
-#endif // !HBRS_MPL_FUSE_HBRS_MPL_FN_ID_HPP
+#endif // !HBRS_MPL_FN_ID_IMPL_HBRS_MPL_HPP

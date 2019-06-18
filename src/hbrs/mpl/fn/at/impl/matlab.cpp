@@ -14,13 +14,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/at.hpp>
+#include "matlab.hpp"
+#ifdef HBRS_MPL_ENABLE_MATLAB
+
 #include <hbrs/mpl/dt/matrix_index.hpp>
 
 #include <hbrs/mpl/fn/m.hpp>
 #include <hbrs/mpl/fn/n.hpp>
 #include <hbrs/mpl/fn/plus.hpp>
 #include <hbrs/mpl/fn/multiply.hpp>
+
 #include <boost/assert.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -55,7 +58,7 @@ at_impl_emxArray::operator()(emxArray_boolean_T const& v, int d0) const {
 }
 
 real_T & 
-at_impl_emxArray::operator()(emxArray_real_T & a, mpl::matrix_index<int,int> i) const {
+at_impl_emxArray::operator()(emxArray_real_T & a, matrix_index<int,int> i) const {
 	using namespace mpl;
 	
 	// changin' indices from row (C) to column (MATLAB) order!
@@ -67,7 +70,7 @@ at_impl_emxArray::operator()(emxArray_real_T & a, mpl::matrix_index<int,int> i) 
 }
 
 boolean_T & 
-at_impl_emxArray::operator()(emxArray_boolean_T & a, mpl::matrix_index<int,int> i) const {
+at_impl_emxArray::operator()(emxArray_boolean_T & a, matrix_index<int,int> i) const {
 	using namespace mpl;
 	
 	int i_ = (*plus)(multiply(n(i), m(a)), m(i));
@@ -76,7 +79,7 @@ at_impl_emxArray::operator()(emxArray_boolean_T & a, mpl::matrix_index<int,int> 
 }
 
 real_T const& 
-at_impl_emxArray::operator()(emxArray_real_T const& a, mpl::matrix_index<int,int> i) const {
+at_impl_emxArray::operator()(emxArray_real_T const& a, matrix_index<int,int> i) const {
 	using namespace mpl;
 	
 	int i_ = (*plus)(multiply(n(i), m(a)), m(i));
@@ -85,7 +88,7 @@ at_impl_emxArray::operator()(emxArray_real_T const& a, mpl::matrix_index<int,int
 }
 
 boolean_T const& 
-at_impl_emxArray::operator()(emxArray_boolean_T const& a, mpl::matrix_index<int,int> i) const {
+at_impl_emxArray::operator()(emxArray_boolean_T const& a, matrix_index<int,int> i) const {
 	using namespace mpl;
 	
 	int i_ = (*plus)(multiply(n(i), m(a)), m(i));
@@ -95,3 +98,5 @@ at_impl_emxArray::operator()(emxArray_boolean_T const& a, mpl::matrix_index<int,
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_MATLAB

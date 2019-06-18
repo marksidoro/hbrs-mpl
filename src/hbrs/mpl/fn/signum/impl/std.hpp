@@ -14,19 +14,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_STD_FN_SIGNUM_HPP
-#define HBRS_MPL_FUSE_STD_FN_SIGNUM_HPP
+#ifndef HBRS_MPL_FN_SIGNUM_IMPL_STD_HPP
+#define HBRS_MPL_FN_SIGNUM_IMPL_STD_HPP
+
+#include "../fwd/std.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
-#include <hbrs/mpl/core/evaluate.hpp>
-
 #include <hbrs/mpl/fn/transform.hpp>
-
-#include <boost/hana/tuple.hpp>
-#include <boost/hana/ext/std/array.hpp>
-#include <boost/hana/ext/std/vector.hpp>
-#include <boost/hana/ext/std/tuple.hpp>
-
 #include <array>
 #include <vector>
 #include <tuple>
@@ -36,95 +30,81 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct signum_impl_std_arithmetic {
-	/* Src.: https://stackoverflow.com/a/4609795/6490710 */
-	template<
-		typename T,
-		typename std::enable_if_t<
-			std::is_arithmetic<T>::value && std::is_signed<T>::value
-		>* = nullptr
-	>
-	constexpr int
-	operator()(T x) const {
-		return (T(0) < x) - (x < T(0));
-	}
-	
-	template<
-		typename T,
-		typename std::enable_if_t<
-			std::is_arithmetic<T>::value && !std::is_signed<T>::value
-		>* = nullptr
-	>
-	constexpr int
-	operator()(T x) const {
-		return T(0) < x;
-	}
-};
+/* Src.: https://stackoverflow.com/a/4609795/6490710 */
+template<
+	typename T,
+	typename std::enable_if_t<
+		std::is_arithmetic<T>::value && std::is_signed<T>::value
+	>*
+>
+constexpr int
+signum_impl_std_arithmetic::operator()(T x) const {
+	return (T(0) < x) - (x < T(0));
+}
 
-struct signum_impl_std_ic {
-	template<
-		typename T, T x,
-		typename std::enable_if_t<
-			std::is_arithmetic<T>::value && std::is_signed<T>::value
-		>* = nullptr
-	>
-	constexpr std::integral_constant<int, ((T(0) < x) - (x < T(0)))>
-	operator()(std::integral_constant<T, x>) const {
-		return {};
-	}
-	
-	template<
-		typename T, T x,
-		typename std::enable_if_t<
-			std::is_arithmetic<T>::value && !std::is_signed<T>::value
-		>* = nullptr
-	>
-	constexpr std::integral_constant<int, (T(0) < x)>
-	operator()(std::integral_constant<T, x>) const {
-		return {};
-	}
-};
+template<
+	typename T,
+	typename std::enable_if_t<
+		std::is_arithmetic<T>::value && !std::is_signed<T>::value
+	>*
+>
+constexpr int
+signum_impl_std_arithmetic::operator()(T x) const {
+	return T(0) < x;
+}
 
-struct signum_impl_std_array_vector {
-	template<
-		typename S,
-		typename std::enable_if_t<
-			(
-				std::is_same< hana::tag_of_t<S>, hana::ext::std::array_tag>::value ||
-				std::is_same< hana::tag_of_t<S>, hana::ext::std::vector_tag>::value
-			) &&
-			std::is_arithmetic<
-				typename std::remove_reference_t<S>::value_type
-			>::value
-			//TODO: Replace by check "signum(S::value_type) != error"
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(S&& s) const {
-		return (*transform)(HBRS_MPL_FWD(s), signum);
-	}
-};
+template<
+	typename T, T x,
+	typename std::enable_if_t<
+		std::is_arithmetic<T>::value && std::is_signed<T>::value
+	>*
+>
+constexpr std::integral_constant<int, ((T(0) < x) - (x < T(0)))>
+signum_impl_std_ic::operator()(std::integral_constant<T, x>) const {
+	return {};
+}
 
-struct signum_impl_std_tuple {
-	template<
-		typename S,
-		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<S>, hana::ext::std::tuple_tag>::value
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(S && s) const {
-		return (*transform)(HBRS_MPL_FWD(s), signum);
-	}
-};
+template<
+	typename T, T x,
+	typename std::enable_if_t<
+		std::is_arithmetic<T>::value && !std::is_signed<T>::value
+	>*
+>
+constexpr std::integral_constant<int, (T(0) < x)>
+signum_impl_std_ic::operator()(std::integral_constant<T, x>) const {
+	return {};
+}
+
+template<
+	typename S,
+	typename std::enable_if_t<
+		(
+			std::is_same< hana::tag_of_t<S>, hana::ext::std::array_tag>::value ||
+			std::is_same< hana::tag_of_t<S>, hana::ext::std::vector_tag>::value
+		) &&
+		std::is_arithmetic<
+			typename std::remove_reference_t<S>::value_type
+		>::value
+		//TODO: Replace by check "signum(S::value_type) != error"
+	>*
+>
+constexpr decltype(auto)
+signum_impl_std_array_vector::operator()(S&& s) const {
+	return (*transform)(HBRS_MPL_FWD(s), signum);
+}
+
+template<
+	typename S,
+	typename std::enable_if_t<
+		std::is_same< hana::tag_of_t<S>, hana::ext::std::tuple_tag>::value
+	>*
+>
+constexpr decltype(auto)
+signum_impl_std_tuple::operator()(S && s) const {
+	return (*transform)(HBRS_MPL_FWD(s), signum);
+}
+
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_SIGNUM_IMPLS_STD boost::hana::make_tuple(                                                     \
-		hbrs::mpl::detail::signum_impl_std_arithmetic{},                                                               \
-		hbrs::mpl::detail::signum_impl_std_ic{},                                                                       \
-		hbrs::mpl::detail::signum_impl_std_array_vector{},                                                             \
-		hbrs::mpl::detail::signum_impl_std_tuple{}                                                                     \
-	)
-
-#endif // !HBRS_MPL_FUSE_STD_FN_SIGNUM_HPP
+#endif // !HBRS_MPL_FN_SIGNUM_IMPL_STD_HPP

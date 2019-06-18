@@ -14,12 +14,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_BOOST_HANA_FN_NOT_EQUAL_HPP
-#define HBRS_MPL_FUSE_BOOST_HANA_FN_NOT_EQUAL_HPP
+#ifndef HBRS_MPL_FN_NOT_EQUAL_IMPL_BOOST_HANA_HPP
+#define HBRS_MPL_FN_NOT_EQUAL_IMPL_BOOST_HANA_HPP
 
-#include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/fuse/boost/hana/detail/operators.hpp>
-#include <boost/hana/tuple.hpp>
+#include "../fwd/boost_hana.hpp"
+
+#include <hbrs/mpl/detail/operators/impl/boost_hana.hpp>
 #include <hbrs/mpl/fn/not.hpp>
 #include <hbrs/mpl/fn/equal.hpp>
 
@@ -27,29 +27,22 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct not_equal_impl_hana_pair {
-	template<
-		typename PairL,
-		typename PairR,
-		typename std::enable_if_t<
-			//TODO: Replace by compare types of concept products, like in boost/hana/equal.hpp under "Comparable for Products"
-			std::is_same< hana::tag_of_t<PairL>, hana::pair_tag >::value &&
-			std::is_same< hana::tag_of_t<PairR>, hana::pair_tag >::value
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(PairL const& l, PairR const& r) const {
-		return not_(equal(l,r));
-	}
-};
+template<
+	typename PairL,
+	typename PairR,
+	typename std::enable_if_t<
+		//TODO: Replace by compare types of concept products, like in boost/hana/equal.hpp under "Comparable for Products"
+		std::is_same< hana::tag_of_t<PairL>, hana::pair_tag >::value &&
+		std::is_same< hana::tag_of_t<PairR>, hana::pair_tag >::value
+	>*
+>
+constexpr decltype(auto)
+not_equal_impl_hana_pair::operator()(PairL const& l, PairR const& r) const {
+	return not_(equal(l,r));
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_NOT_EQUAL_IMPLS_BOOST_HANA boost::hana::make_tuple(                                  \
-		hbrs::mpl::detail::not_equal_impl_hana_pair{},                                                                 \
-		hbrs::mpl::detail::not_equal_impl_hana_ic{}                                                                    \
-	)
-
-#endif // !HBRS_MPL_FUSE_BOOST_HANA_FN_NOT_EQUAL_HPP
+#endif // !HBRS_MPL_FN_NOT_EQUAL_IMPL_BOOST_HANA_HPP
 

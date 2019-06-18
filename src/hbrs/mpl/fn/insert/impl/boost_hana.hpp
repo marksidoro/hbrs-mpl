@@ -14,66 +14,55 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_BOOST_HANA_FN_INSERT_HPP
-#define HBRS_MPL_FUSE_BOOST_HANA_FN_INSERT_HPP
+#ifndef HBRS_MPL_FN_INSERT_IMPL_BOOST_HANA_HPP
+#define HBRS_MPL_FN_INSERT_IMPL_BOOST_HANA_HPP
+
+#include "../fwd/boost_hana.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
-#include <hbrs/mpl/detail/is_core_applicable.hpp>
-#include <boost/hana/map.hpp>
 #include <boost/hana/insert.hpp>
 #include <boost/hana/first.hpp>
 #include <boost/hana/second.hpp>
-#include <boost/hana/tuple.hpp>
 #include <boost/hana/pair.hpp>
-#include <boost/hana/ext/std/pair.hpp>
-#include <boost/hana/core/tag_of.hpp>
-#include <boost/hana/concept/comparable.hpp>
-#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct insert_impl_hana_map {
-	template <
-		typename Map,
-		typename Pair, 
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Map>, hana::map_tag >::value &&
-			(
-				std::is_same< hana::tag_of_t<Pair>, hana::pair_tag           >::value ||
-				std::is_same< hana::tag_of_t<Pair>, hana::ext::std::pair_tag >::value
-			) &&
-			is_core_applicable_trait<
-				hana::insert_impl<hana::tag_of_t<Map>>, Map&&, Pair&&
-			>::value
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(Map && m, Pair && p) const {
-		return hana::insert(HBRS_MPL_FWD(m), HBRS_MPL_FWD(p));
-	}
-	
-	template <
-		typename Map,
-		typename Key,
-		typename Value,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Map>, hana::map_tag >::value &&
-			hana::Comparable<Key&&>::value
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(Map && m, Key && k, Value && v) const {
-		return hana::insert(HBRS_MPL_FWD(m), hana::make_pair(HBRS_MPL_FWD(k), HBRS_MPL_FWD(v)));
-	}
-};
+template <
+	typename Map,
+	typename Pair, 
+	typename std::enable_if_t< 
+		std::is_same< hana::tag_of_t<Map>, hana::map_tag >::value &&
+		(
+			std::is_same< hana::tag_of_t<Pair>, hana::pair_tag           >::value ||
+			std::is_same< hana::tag_of_t<Pair>, hana::ext::std::pair_tag >::value
+		) &&
+		is_core_applicable_trait<
+			hana::insert_impl<hana::tag_of_t<Map>>, Map&&, Pair&&
+		>::value
+	>*
+>
+constexpr decltype(auto)
+insert_impl_hana_map::operator()(Map && m, Pair && p) const {
+	return hana::insert(HBRS_MPL_FWD(m), HBRS_MPL_FWD(p));
+}
+
+template <
+	typename Map,
+	typename Key,
+	typename Value,
+	typename std::enable_if_t< 
+		std::is_same< hana::tag_of_t<Map>, hana::map_tag >::value &&
+		hana::Comparable<Key&&>::value
+	>*
+>
+constexpr decltype(auto)
+insert_impl_hana_map::operator()(Map && m, Key && k, Value && v) const {
+	return hana::insert(HBRS_MPL_FWD(m), hana::make_pair(HBRS_MPL_FWD(k), HBRS_MPL_FWD(v)));
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_INSERT_IMPLS_BOOST_HANA boost::hana::make_tuple(                                              \
-		hbrs::mpl::detail::insert_impl_hana_map{}                                                                      \
-	)
-
-#endif // !HBRS_MPL_FUSE_BOOST_HANA_FN_INSERT_HPP
+#endif // !HBRS_MPL_FN_INSERT_IMPL_BOOST_HANA_HPP

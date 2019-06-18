@@ -17,26 +17,22 @@
 #ifndef HBRS_MPL_FN_M_IMPL_ELEMENTAL_HPP
 #define HBRS_MPL_FN_M_IMPL_ELEMENTAL_HPP
 
-#include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/core/preprocessor.hpp>
+#include "../fwd/elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+
+#include <hbrs/mpl/detail/function_object.hpp>
 #include <hbrs/mpl/dt/el_matrix.hpp>
 #include <hbrs/mpl/dt/el_dist_matrix.hpp>
-#include <boost/hana/tuple.hpp>
-#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-HBRS_MPL_DEF_FO_TRY_METHOD(m_impl_matrix, matrix_tag, m)
-HBRS_MPL_DEF_FO_TRY_METHOD(m_impl_dist_matrix, dist_matrix_tag, m)
+HBRS_MPL_DEF_FO_TRY_METHOD(m_impl_el_matrix, el_matrix_tag, m)
+HBRS_MPL_DEF_FO_TRY_METHOD(m_impl_el_dist_matrix, el_dist_matrix_tag, m)
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_M_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                             \
-		elemental::detail::m_impl_matrix{},                                                                            \
-		elemental::detail::m_impl_dist_matrix{}                                                                        \
-	)
-
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
 #endif // !HBRS_MPL_FN_M_IMPL_ELEMENTAL_HPP

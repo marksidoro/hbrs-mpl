@@ -17,157 +17,134 @@
 #ifndef HBRS_MPL_FN_EXPAND_IMPL_ELEMENTAL_HPP
 #define HBRS_MPL_FN_EXPAND_IMPL_ELEMENTAL_HPP
 
-#include <hbrs/mpl/config.hpp>
+#include "../fwd/elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+
+
 #include <hbrs/mpl/core/preprocessor.hpp>
+
 #include <hbrs/mpl/dt/el_matrix.hpp>
 #include <hbrs/mpl/dt/el_dist_matrix.hpp>
 #include <hbrs/mpl/dt/el_vector.hpp>
 #include <hbrs/mpl/dt/el_dist_vector.hpp>
 
+#include <hbrs/mpl/dt/exception.hpp>
 #include <hbrs/mpl/dt/expression.hpp>
 #include <hbrs/mpl/dt/smr.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
-#include <elemental/dt/exception.hpp>
-#include <boost/hana/tuple.hpp>
-#include <El.hpp>
-#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
-namespace mpl = hbrs::mpl;
 namespace detail {
 
+template<
+	typename Matrix,
+	typename std::enable_if_t< 
+		std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value
+	>*
+>
+auto
+expand_impl_smr_el_matrix::operator()(
+	smr<Matrix, El::Int> const& a,
+	matrix_size<El::Int, El::Int> const& sz
+) const {
+	auto a_sz = a.length(); //TODO: Replace with (*size)(a);
+	auto m_ = sz.m(); // TODO: Replace with (*m)(sz);
+	auto n_ = sz.n(); // TODO: Replace with (*n)(sz);
 	
-//TODO: Join with matlab::detail::expand_impl_smr!
-struct expand_impl_smr {
-	template<
-		typename Matrix,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
-		>* = nullptr
-	>
-	auto
-	operator()(
-		mpl::smr<Matrix, El::Int> const& a,
-		mpl::matrix_size<El::Int, El::Int> const& sz
-	) const {
-		using namespace hbrs::mpl;
-		
-		auto a_sz = a.length(); //TODO: Replace with (*size)(a);
-		auto m_ = sz.m(); // TODO: Replace with (*m)(sz);
-		auto n_ = sz.n(); // TODO: Replace with (*n)(sz);
-		
-		if (((n_ % a_sz) != 0) || (m_ == 0)) {
-			BOOST_THROW_EXCEPTION((
-				incompatible_matrix_vector_exception{} 
-				<< elemental::errinfo_vector_size{a_sz}
-				<< elemental::errinfo_matrix_size{sz}
-			));
-		}
-		
-		bool vert_expand = m_ > 1;
-		bool horz_expand = n_ != a_sz;
-		
-		std::decay_t<Matrix> c{m_, n_};
-		
-		if ((vert_expand && horz_expand) || vert_expand) {
-			for(El::Int i = 0; i < m_; ++i) {
-				for(El::Int j = 0; j < n_; ++j) {
-					(*at)(c, make_matrix_index(i, j)) = (*at)(a, j % a_sz);
-				}
-			}
-		} else {
-			//only horz_expand or no expansion
-			for(El::Int i = 0; i < n_; ++i) {
-				(*at)(c, make_matrix_index(0, i)) = (*at)(a, i % a_sz);
-			}
-		}
-		
-		return c;
+	if (((n_ % a_sz) != 0) || (m_ == 0)) {
+		BOOST_THROW_EXCEPTION((
+			incompatible_matrix_vector_exception{} 
+			<< errinfo_el_vector_size{a_sz}
+			<< errinfo_el_matrix_size{sz}
+		));
 	}
-};
-
-//TODO: Join with matlab::detail::expand_impl_row_vector!
-struct expand_impl_row_vector {
-	template<typename Ring>
-	auto
-	operator()(
-		row_vector<Ring> const& v,
-		mpl::matrix_size<El::Int, El::Int> const& sz
-	) const  {
-		using namespace hbrs::mpl;
-		
-		auto v_sz = v.length(); // TODO: Replace with (*size)(v);
-		auto a_m = sz.m(); // TODO: Replace with (*m)(sz);
-		auto a_n = sz.n(); // TODO: Replace with (*n)(sz);
-		
-		if (((a_n % v_sz) != 0) || (a_m == 0)) {
-			BOOST_THROW_EXCEPTION((
-				incompatible_matrix_vector_exception{} 
-				<< elemental::errinfo_vector_size{v_sz}
-				<< elemental::errinfo_matrix_size{sz}
-			));
-		}
-		
-		bool vert_expand = a_m > 1;
-		bool horz_expand = a_n != v_sz;
-		
-		auto c = make_matrix(hana::type_c<std::decay_t<Ring>>, sz);
-		
-		if ((vert_expand && horz_expand) || vert_expand) {
-			for(El::Int i = 0; i < a_m; ++i) {
-				for(El::Int j = 0; j < a_n; ++j) {
-					(*at)(c, make_matrix_index(i, j)) = (*at)(v, j % v_sz);
-				}
-			}
-		} else {
-			//only horz_expand or no expansion
-			for(El::Int i = 0; i < a_n; ++i) {
-				(*at)(c, make_matrix_index(0, i)) = (*at)(v, i % v_sz);
+	
+	bool vert_expand = m_ > 1;
+	bool horz_expand = n_ != a_sz;
+	
+	std::decay_t<Matrix> c{m_, n_};
+	
+	if ((vert_expand && horz_expand) || vert_expand) {
+		for(El::Int i = 0; i < m_; ++i) {
+			for(El::Int j = 0; j < n_; ++j) {
+				(*at)(c, make_matrix_index(i, j)) = (*at)(a, j % a_sz);
 			}
 		}
-		
-		return c;
-	}
-};
-
-//TODO: Add expand_impl_column_vector
-struct expand_impl_dist_row_vector {
-	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
-	constexpr auto
-	operator()(
-		dist_row_vector<Ring, Columnwise, Rowwise, Wrapping> const& v,
-		mpl::matrix_size<El::Int, El::Int> const& sz
-	) const {
-		using namespace hbrs::mpl;
-		
-		auto v_sz = v.length(); // TODO: Replace with (*size)(v);
-		auto a_m = sz.m(); // TODO: Replace with (*m)(sz);
-		auto a_n = sz.n(); // TODO: Replace with (*n)(sz);
-		
-		if (((a_n % v_sz) != 0) || (a_m == 0)) {
-			BOOST_THROW_EXCEPTION((
-				incompatible_matrix_vector_exception{} 
-				<< elemental::errinfo_vector_size{v_sz}
-				<< elemental::errinfo_matrix_size{sz}
-			));
+	} else {
+		//only horz_expand or no expansion
+		for(El::Int i = 0; i < n_; ++i) {
+			(*at)(c, make_matrix_index(0, i)) = (*at)(a, i % a_sz);
 		}
-		
-		return mpl::make_expression(mpl::expand, std::tuple<decltype(v), decltype(sz)>{v, sz});
 	}
-};
+	
+	return c;
+}
 
-//TODO: Add expand_impl_dist_column_vector
+template<typename Ring>
+auto
+expand_impl_el_row_vector::operator()(
+	row_vector<Ring> const& v,
+	matrix_size<El::Int, El::Int> const& sz
+) const  {
+	auto v_sz = v.length(); // TODO: Replace with (*size)(v);
+	auto a_m = sz.m(); // TODO: Replace with (*m)(sz);
+	auto a_n = sz.n(); // TODO: Replace with (*n)(sz);
+	
+	if (((a_n % v_sz) != 0) || (a_m == 0)) {
+		BOOST_THROW_EXCEPTION((
+			incompatible_matrix_vector_exception{} 
+			<< errinfo_el_vector_size{v_sz}
+			<< errinfo_el_matrix_size{sz}
+		));
+	}
+	
+	bool vert_expand = a_m > 1;
+	bool horz_expand = a_n != v_sz;
+	
+	auto c = make_matrix(hana::type_c<std::decay_t<Ring>>, sz);
+	
+	if ((vert_expand && horz_expand) || vert_expand) {
+		for(El::Int i = 0; i < a_m; ++i) {
+			for(El::Int j = 0; j < a_n; ++j) {
+				(*at)(c, make_matrix_index(i, j)) = (*at)(v, j % v_sz);
+			}
+		}
+	} else {
+		//only horz_expand or no expansion
+		for(El::Int i = 0; i < a_n; ++i) {
+			(*at)(c, make_matrix_index(0, i)) = (*at)(v, i % v_sz);
+		}
+	}
+	
+	return c;
+}
+
+template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
+constexpr auto
+expand_impl_el_dist_row_vector::operator()(
+	dist_row_vector<Ring, Columnwise, Rowwise, Wrapping> const& v,
+	matrix_size<El::Int, El::Int> const& sz
+) const {
+	auto v_sz = v.length(); // TODO: Replace with (*size)(v);
+	auto a_m = sz.m(); // TODO: Replace with (*m)(sz);
+	auto a_n = sz.n(); // TODO: Replace with (*n)(sz);
+	
+	if (((a_n % v_sz) != 0) || (a_m == 0)) {
+		BOOST_THROW_EXCEPTION((
+			incompatible_matrix_vector_exception{} 
+			<< errinfo_el_vector_size{v_sz}
+			<< errinfo_el_matrix_size{sz}
+		));
+	}
+	
+	return make_expression(expand, std::tuple<decltype(v), decltype(sz)>{v, sz});
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_EXPAND_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                        \
-		elemental::detail::expand_impl_smr{},                                                                          \
-		elemental::detail::expand_impl_row_vector{},                                                                   \
-		elemental::detail::expand_impl_dist_row_vector{}                                                               \
-	)
-
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
 #endif // !HBRS_MPL_FN_EXPAND_IMPL_ELEMENTAL_HPP

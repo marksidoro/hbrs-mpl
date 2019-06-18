@@ -14,28 +14,31 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/expand.hpp>
+#include "elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-template auto expand_impl_smr::operator()(
-	mpl::smr<matrix<float>, El::Int> const&,
-	mpl::matrix_size<El::Int, El::Int> const&) const;
+template auto expand_impl_smr_el_matrix::operator()(
+	smr<el_matrix<float>, El::Int> const&,
+	matrix_size<El::Int, El::Int> const&) const;
 
-template auto expand_impl_smr::operator()(
-	mpl::smr<matrix<El::Complex<float>>, El::Int> const&,
-	mpl::matrix_size<El::Int, El::Int> const&) const;
+template auto expand_impl_smr_el_matrix::operator()(
+	smr<el_matrix<El::Complex<float>>, El::Int> const&,
+	matrix_size<El::Int, El::Int> const&) const;
 
-template auto expand_impl_smr::operator()(
-	mpl::smr<matrix<double>, El::Int> const&,
-	mpl::matrix_size<El::Int, El::Int> const&) const;
+template auto expand_impl_smr_el_matrix::operator()(
+	smr<el_matrix<double>, El::Int> const&,
+	matrix_size<El::Int, El::Int> const&) const;
 
-template auto expand_impl_smr::operator()(
-	mpl::smr<matrix<El::Complex<double>>, El::Int> const&,
-	mpl::matrix_size<El::Int, El::Int> const&) const;
+template auto expand_impl_smr_el_matrix::operator()(
+	smr<el_matrix<El::Complex<double>>, El::Int> const&,
+	matrix_size<El::Int, El::Int> const&) const;
 
-//TODO: Add (dist-)row_vector and (dist-)column_vector impls!
+//TODO: Add el_dist_row_vector, el_row_vector, el_dist_column_vector and el_column_vector impls!
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL

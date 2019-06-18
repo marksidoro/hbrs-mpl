@@ -17,34 +17,6 @@
 #ifndef HBRS_MPL_FN_MEAN_IMPL_MATLAB_HPP
 #define HBRS_MPL_FN_MEAN_IMPL_MATLAB_HPP
 
-#include <hbrs/mpl/core/preprocessor.hpp>
-#include <hbrs/mpl/dt/ml_matrix/fwd.hpp>
-#include <hbrs/mpl/dt/smc.hpp>
-#include <hbrs/mpl/dt/smcs.hpp>
-#include <hbrs/mpl/dt/smr.hpp>
-#include <hbrs/mpl/dt/smrs.hpp>
-#include <boost/hana/tuple.hpp>
-#include <boost/hana/core/tag_of.hpp>
-#include <type_traits>
-
-HBRS_MPL_NAMESPACE_BEGIN
-namespace hana = boost::hana;
-namespace mpl = hbrs::mpl;
-
-namespace detail {
-struct mean_impl_matrix {
-	mpl::smc<hbrs::mpl::ml_matrix<real_T>, int>
-	operator()(mpl::smrs<hbrs::mpl::ml_matrix<real_T>> const& a) const;
-	
-	mpl::smr<hbrs::mpl::ml_matrix<real_T>, int>
-	operator()(mpl::smcs<hbrs::mpl::ml_matrix<real_T>> const& a) const;
-};
-
-/* namespace detail */ }
-HBRS_MPL_NAMESPACE_END
-
-#define HBRS_MPL_FN_MEAN_IMPLS_MATLAB boost::hana::make_tuple(                                                             \
-		matlab::detail::mean_impl_matrix{}                                                                             \
-	)
+#include "../fwd/matlab.hpp"
 
 #endif // !HBRS_MPL_FN_MEAN_IMPL_MATLAB_HPP

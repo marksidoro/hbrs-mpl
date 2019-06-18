@@ -14,44 +14,44 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/size.hpp>
-
-#include <hbrs/mpl/dt/el_vector.hpp>
-#include <hbrs/mpl/dt/el_dist_vector.hpp>
+#include "elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-template decltype(auto) size_impl_matrix::operator()(matrix<float> const&) const;
-template decltype(auto) size_impl_matrix::operator()(matrix<El::Complex<float>> const&) const;
-template decltype(auto) size_impl_matrix::operator()(matrix<double> const&) const;
-template decltype(auto) size_impl_matrix::operator()(matrix<El::Complex<double>> const&) const;
+template decltype(auto) size_impl_el_matrix::operator()(el_matrix<float> const&) const;
+template decltype(auto) size_impl_el_matrix::operator()(el_matrix<El::Complex<float>> const&) const;
+template decltype(auto) size_impl_el_matrix::operator()(el_matrix<double> const&) const;
+template decltype(auto) size_impl_el_matrix::operator()(el_matrix<El::Complex<double>> const&) const;
 
-template decltype(auto) size_impl_dist_matrix::operator()(dist_matrix<float> const&) const;
-template decltype(auto) size_impl_dist_matrix::operator()(dist_matrix<El::Complex<float>> const&) const;
-template decltype(auto) size_impl_dist_matrix::operator()(dist_matrix<double> const&) const;
-template decltype(auto) size_impl_dist_matrix::operator()(dist_matrix<El::Complex<double>> const&) const;
+template decltype(auto) size_impl_el_dist_matrix::operator()(el_dist_matrix<float> const&) const;
+template decltype(auto) size_impl_el_dist_matrix::operator()(el_dist_matrix<El::Complex<float>> const&) const;
+template decltype(auto) size_impl_el_dist_matrix::operator()(el_dist_matrix<double> const&) const;
+template decltype(auto) size_impl_el_dist_matrix::operator()(el_dist_matrix<El::Complex<double>> const&) const;
 
-template decltype(auto) length_impl_row_vector::operator()(row_vector<float> const&) const;
-template decltype(auto) length_impl_row_vector::operator()(row_vector<El::Complex<float>> const&) const;
-template decltype(auto) length_impl_row_vector::operator()(row_vector<double> const&) const;
-template decltype(auto) length_impl_row_vector::operator()(row_vector<El::Complex<double>> const&) const;
+template decltype(auto) length_impl_el_row_vector::operator()(el_row_vector<float> const&) const;
+template decltype(auto) length_impl_el_row_vector::operator()(el_row_vector<El::Complex<float>> const&) const;
+template decltype(auto) length_impl_el_row_vector::operator()(el_row_vector<double> const&) const;
+template decltype(auto) length_impl_el_row_vector::operator()(el_row_vector<El::Complex<double>> const&) const;
 
-template decltype(auto) length_impl_column_vector::operator()(column_vector<float> const&) const;
-template decltype(auto) length_impl_column_vector::operator()(column_vector<El::Complex<float>> const&) const;
-template decltype(auto) length_impl_column_vector::operator()(column_vector<double> const&) const;
-template decltype(auto) length_impl_column_vector::operator()(column_vector<El::Complex<double>> const&) const;
+template decltype(auto) length_impl_el_column_vector::operator()(el_column_vector<float> const&) const;
+template decltype(auto) length_impl_el_column_vector::operator()(el_column_vector<El::Complex<float>> const&) const;
+template decltype(auto) length_impl_el_column_vector::operator()(el_column_vector<double> const&) const;
+template decltype(auto) length_impl_el_column_vector::operator()(el_column_vector<El::Complex<double>> const&) const;
 
 // TODO: 
-// template decltype(auto) length_impl_dist_row_vector::operator()(dist_row_vector<float> const&) const;
-// template decltype(auto) length_impl_dist_row_vector::operator()(dist_row_vector<El::Complex<float>> const&) const;
-// template decltype(auto) length_impl_dist_row_vector::operator()(dist_row_vector<double> const&) const;
-// template decltype(auto) length_impl_dist_row_vector::operator()(dist_row_vector<El::Complex<double>> const&) const;
+// template decltype(auto) length_impl_el_dist_row_vector::operator()(el_dist_row_vector<float> const&) const;
+// template decltype(auto) length_impl_el_dist_row_vector::operator()(el_dist_row_vector<El::Complex<float>> const&) const;
+// template decltype(auto) length_impl_el_dist_row_vector::operator()(el_dist_row_vector<double> const&) const;
+// template decltype(auto) length_impl_el_dist_row_vector::operator()(el_dist_row_vector<El::Complex<double>> const&) const;
 // 
-// template decltype(auto) length_impl_dist_column_vector::operator()(dist_column_vector<float> const&) const;
-// template decltype(auto) length_impl_dist_column_vector::operator()(dist_column_vector<El::Complex<float>> const&) const;
-// template decltype(auto) length_impl_dist_column_vector::operator()(dist_column_vector<double> const&) const;
-// template decltype(auto) length_impl_dist_column_vector::operator()(dist_column_vector<El::Complex<double>> const&) const;
+// template decltype(auto) length_impl_el_dist_column_vector::operator()(el_dist_column_vector<float> const&) const;
+// template decltype(auto) length_impl_el_dist_column_vector::operator()(el_dist_column_vector<El::Complex<float>> const&) const;
+// template decltype(auto) length_impl_el_dist_column_vector::operator()(el_dist_column_vector<double> const&) const;
+// template decltype(auto) length_impl_el_dist_column_vector::operator()(el_dist_column_vector<El::Complex<double>> const&) const;
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL

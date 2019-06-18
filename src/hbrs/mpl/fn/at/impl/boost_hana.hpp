@@ -14,8 +14,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_BOOST_HANA_FN_AT_HPP
-#define HBRS_MPL_FUSE_BOOST_HANA_FN_AT_HPP
+#ifndef HBRS_MPL_FN_AT_IMPL_BOOST_HANA_HPP
+#define HBRS_MPL_FN_AT_IMPL_BOOST_HANA_HPP
+
+#include "../fwd/boost_hana.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/fn/apply_at.hpp>
@@ -32,43 +34,33 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct at_impl_hana_tuple_ic {
-	
-	template<
-		typename S,
-		typename Where,
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<S>, hana::tuple_tag >::value && 
-			hana::IntegralConstant<Where>::value
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(S && s, Where && w) const {
-		return hana::at(HBRS_MPL_FWD(s), HBRS_MPL_FWD(w));
-	}
-	
-};
+template<
+	typename S,
+	typename Where,
+	typename std::enable_if_t< 
+		std::is_same< hana::tag_of_t<S>, hana::tuple_tag >::value && 
+		hana::IntegralConstant<Where>::value
+	>*
+>
+constexpr decltype(auto)
+at_impl_hana_tuple_ic::operator()(S && s, Where && w) const {
+	return hana::at(HBRS_MPL_FWD(s), HBRS_MPL_FWD(w));
+}
 
-struct at_impl_hana_tuple_hmg_int_entry {
-	template<
-		typename S, 
-		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<S>, hana::tuple_tag >::value &&
-			detail::is_homogenous_container_v<S>
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(S&& s, std::size_t w) const {
-		return apply_at(hana::id, HBRS_MPL_FWD(s), w);
-	}
-};
+
+template<
+	typename S, 
+	typename std::enable_if_t< 
+		std::is_same< hana::tag_of_t<S>, hana::tuple_tag >::value &&
+		detail::is_homogenous_container_v<S>
+	>*
+>
+constexpr decltype(auto)
+at_impl_hana_tuple_hmg_int_entry::operator()(S&& s, std::size_t w) const {
+	return apply_at(hana::id, HBRS_MPL_FWD(s), w);
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_AT_IMPLS_BOOST_HANA boost::hana::make_tuple(                                                  \
-		hbrs::mpl::detail::at_impl_hana_tuple_ic{},                                                                    \
-		hbrs::mpl::detail::at_impl_hana_tuple_hmg_int_entry{}                                                          \
-	)
-
-#endif // !HBRS_MPL_FUSE_BOOST_HANA_FN_AT_HPP
+#endif // !HBRS_MPL_FN_AT_IMPL_BOOST_HANA_HPP

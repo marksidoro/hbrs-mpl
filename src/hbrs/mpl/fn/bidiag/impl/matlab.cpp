@@ -14,9 +14,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/fn/bidiag.hpp>
+#include "matlab.hpp"
+#ifdef HBRS_MPL_ENABLE_MATLAB
+
 #include <hbrs/mpl/dt/ml_matrix.hpp>
 #include <hbrs/mpl/dt/bidiag_result.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
+#include <hbrs/mpl/dt/decompose_mode.hpp>
 
 extern "C" {
 	#include <hbrs/mpl/detail/matlab_cxn/impl/bidiag_level0.h>
@@ -27,14 +31,13 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 #define _DEF_BIDIAG(lvl)                                                                                               \
-	mpl::bidiag_result<                                                                                                \
-		hbrs::mpl::ml_matrix<real_T> /* U */,                                                                                \
-		hbrs::mpl::ml_matrix<real_T> /* B */,                                                                                \
-		hbrs::mpl::ml_matrix<real_T> /* V */                                                                                 \
+	bidiag_result<                                                                                                     \
+		ml_matrix<real_T> /* U */,                                                                                     \
+		ml_matrix<real_T> /* B */,                                                                                     \
+		ml_matrix<real_T> /* V */                                                                                      \
 	>                                                                                                                  \
-	bidiag_impl_level ## lvl::operator()(hbrs::mpl::ml_matrix<real_T> const& a, mpl::decompose_mode mode) const {            \
-		using mpl::decompose_mode;                                                                                     \
-		hbrs::mpl::ml_matrix<real_T> u, b, v;                                                                                \
+	bidiag_impl_level ## lvl ## _ml_matrix::operator()(ml_matrix<real_T> const& a, decompose_mode mode) const {        \
+		ml_matrix<real_T> u, b, v;                                                                                     \
 		                                                                                                               \
 		bidiag_level ## lvl(                                                                                           \
 			&a.data(),                                                                                                 \
@@ -56,3 +59,5 @@ _DEF_BIDIAG(0)
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_MATLAB

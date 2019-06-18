@@ -17,48 +17,28 @@
 #ifndef HBRS_MPL_FN_POWER_IMPL_ELEMENTAL_HPP
 #define HBRS_MPL_FN_POWER_IMPL_ELEMENTAL_HPP
 
-#include <hbrs/mpl/config.hpp>
+#include "../fwd/elemental.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+
 #include <El.hpp>
-#include <boost/hana/tuple.hpp>
-#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace mpl = hbrs::mpl;
 namespace detail {
 
-template<typename F, typename T, typename = void>
-struct pow_is_invokable_trait : std::false_type {};
-
-template<typename F, typename T>
-struct pow_is_invokable_trait<
-	F, T,
-	decltype(
-		(void)
-		El::Pow(
-			std::declval<F>(), std::declval<T>()
-		)
-	)
-> : std::true_type {};
-
-struct power_impl {
-	template <
-		typename F,
-		typename T,
-		typename std::enable_if_t< 
-			pow_is_invokable_trait<F const& , T const&>::value
-		>* = nullptr
-	>
-	auto
-	operator()(F const& a, T const& b) const {
-		return El::Pow(a, b);
-	}
-};
+template <
+	typename F,
+	typename T,
+	typename std::enable_if_t< 
+		pow_is_invokable_trait<F const& , T const&>::value
+	>*
+>
+auto
+power_impl_el::operator()(F const& a, T const& b) const {
+	return El::Pow(a, b);
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_POWER_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                         \
-		elemental::detail::power_impl{}                                                                                \
-	)
-
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
 #endif // !HBRS_MPL_FN_POWER_IMPL_ELEMENTAL_HPP

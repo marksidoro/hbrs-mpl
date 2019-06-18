@@ -14,15 +14,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_BOOST_HANA_FN_AND_HPP
-#define HBRS_MPL_FUSE_BOOST_HANA_FN_AND_HPP
+#ifndef HBRS_MPL_FN_AND_IMPL_BOOST_HANA_HPP
+#define HBRS_MPL_FN_AND_IMPL_BOOST_HANA_HPP
 
-#include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/fuse/boost/hana/detail/operators.hpp>
-#include <boost/hana/tuple.hpp>
+#include "../fwd/boost_hana.hpp"
+#include <hbrs/mpl/detail/operators/impl/boost_hana.hpp>
 
-#define HBRS_MPL_FN_AND_IMPLS_BOOST_HANA boost::hana::make_tuple(                                        \
-		hbrs::mpl::detail::and__impl_hana_ic{}                                                                         \
-	)
-
-#endif // !HBRS_MPL_FUSE_BOOST_HANA_FN_AND_HPP
+#endif // !HBRS_MPL_FN_AND_IMPL_BOOST_HANA_HPP

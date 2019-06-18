@@ -14,43 +14,32 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_STD_FN_FOLD1_LEFT_HPP
-#define HBRS_MPL_FUSE_STD_FN_FOLD1_LEFT_HPP
+#ifndef HBRS_MPL_FN_FOLD1_LEFT_IMPL_STD_HPP
+#define HBRS_MPL_FN_FOLD1_LEFT_IMPL_STD_HPP
 
-#include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/detail/is_tag_and_is_invokable.hpp>
+#include "../fwd/std.hpp"
+
 #include <hbrs/mpl/detail/fold1_left.hpp>
-#include <boost/hana/ext/std/array.hpp>
-#include <boost/hana/ext/std/vector.hpp>
-#include <boost/hana/ext/std/tuple.hpp>
-#include <boost/hana/tuple.hpp>
-#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct fold1_left_impl_std {
-	template <
-		typename Sequence,
-		typename F,
-		typename std::enable_if_t< 
-			is_tag_and_is_invokable_trait<fold1_left_t, Sequence &&, hana::ext::std::array_tag, F&& >::value ||
-			is_tag_and_is_invokable_trait<fold1_left_t, Sequence &&, hana::ext::std::vector_tag, F&& >::value ||
-			is_tag_and_is_invokable_trait<fold1_left_t, Sequence &&, hana::ext::std::tuple_tag, F&& >::value
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(Sequence && s, F && f) const {
-		return detail::fold1_left(s, HBRS_MPL_FWD(f));
-	}
-};
+template <
+	typename Sequence,
+	typename F,
+	typename std::enable_if_t< 
+		is_tag_and_is_invokable_trait<fold1_left_t, Sequence &&, hana::ext::std::array_tag, F&& >::value ||
+		is_tag_and_is_invokable_trait<fold1_left_t, Sequence &&, hana::ext::std::vector_tag, F&& >::value ||
+		is_tag_and_is_invokable_trait<fold1_left_t, Sequence &&, hana::ext::std::tuple_tag, F&& >::value
+	>*
+>
+constexpr decltype(auto)
+fold1_left_impl_std::operator()(Sequence && s, F && f) const {
+	return detail::fold1_left(s, HBRS_MPL_FWD(f));
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_FOLD1_LEFT_IMPLS_STD boost::hana::make_tuple(                                                 \
-		hbrs::mpl::detail::fold1_left_impl_std{}                                                                       \
-	)
-
-#endif // !HBRS_MPL_FUSE_STD_FN_FOLD1_LEFT_HPP
+#endif // !HBRS_MPL_FN_FOLD1_LEFT_IMPL_STD_HPP

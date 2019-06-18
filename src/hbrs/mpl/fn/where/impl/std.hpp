@@ -14,44 +14,35 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_STD_FN_WHERE_HPP
-#define HBRS_MPL_FUSE_STD_FN_WHERE_HPP
+#ifndef HBRS_MPL_FN_WHERE_IMPL_STD_HPP
+#define HBRS_MPL_FN_WHERE_IMPL_STD_HPP
+
+#include "../fwd/std.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
-#include <hbrs/mpl/ext/boost/hana/ext/std/map.hpp>
-#include <boost/hana/tuple.hpp>
-#include <boost/hana/core/tag_of.hpp>
-#include <boost/mpl/if.hpp>
-#include <type_traits>
 #include <map>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct where_impl_std_map {
-	template<
-		typename M,
-		typename K,
-		typename std::enable_if_t< 
-			boost::mpl::if_c<
-				std::is_same< hana::tag_of_t<M>, hana::ext::std::map_tag >::value,
-				std::is_convertible<K&&, typename std::remove_reference_t<M>::key_type>,
-				std::false_type
-			>::type::value
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(M && m, K && k) const {
-		return HBRS_MPL_FWD(m).at(HBRS_MPL_FWD(k));
-	}
-};
+template<
+	typename M,
+	typename K,
+	typename std::enable_if_t< 
+		boost::mpl::if_c<
+			std::is_same< hana::tag_of_t<M>, hana::ext::std::map_tag >::value,
+			std::is_convertible<K&&, typename std::remove_reference_t<M>::key_type>,
+			std::false_type
+		>::type::value
+	>*
+>
+constexpr decltype(auto)
+where_impl_std_map::operator()(M && m, K && k) const {
+	return HBRS_MPL_FWD(m).at(HBRS_MPL_FWD(k));
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_WHERE_IMPLS_STD boost::hana::make_tuple(                                                      \
-		hbrs::mpl::detail::where_impl_std_map{}                                                                        \
-	)
-
-#endif // !HBRS_MPL_FUSE_STD_FN_WHERE_HPP
+#endif // !HBRS_MPL_FN_WHERE_IMPL_STD_HPP

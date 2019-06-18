@@ -14,35 +14,28 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_BOOST_HANA_FN_SIZE_HPP
-#define HBRS_MPL_FUSE_BOOST_HANA_FN_SIZE_HPP
+#ifndef HBRS_MPL_FN_SIZE_IMPL_BOOST_HANA_HPP
+#define HBRS_MPL_FN_SIZE_IMPL_BOOST_HANA_HPP
+
+#include "../fwd/boost_hana.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/length.hpp>
-#include <boost/hana/tuple.hpp>
-#include <boost/hana/core/tag_of.hpp>
-#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct size_impl_hana_tuple {
-	template<
-		typename S,
-		typename std::enable_if_t< std::is_same< hana::tag_of_t<S>, hana::tuple_tag >::value >* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(S&& s) const {
-		return hana::length(HBRS_MPL_FWD(s));
-	}
-};
+template<
+	typename S,
+	typename std::enable_if_t< std::is_same< hana::tag_of_t<S>, hana::tuple_tag >::value >*
+>
+constexpr decltype(auto)
+size_impl_hana_tuple::operator()(S&& s) const {
+	return hana::length(HBRS_MPL_FWD(s));
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_SIZE_IMPLS_BOOST_HANA boost::hana::make_tuple(                                                \
-		hbrs::mpl::detail::size_impl_hana_tuple{}                                                                      \
-	)
-
-#endif // !HBRS_MPL_FUSE_BOOST_HANA_FN_SIZE_HPP
+#endif // !HBRS_MPL_FN_SIZE_IMPL_BOOST_HANA_HPP

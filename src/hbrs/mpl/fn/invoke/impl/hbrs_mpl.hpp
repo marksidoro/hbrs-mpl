@@ -14,37 +14,30 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FUSE_HBRS_MPL_FN_INVOKE_HPP
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_INVOKE_HPP
+#ifndef HBRS_MPL_FN_INVOKE_IMPL_HBRS_MPL_HPP
+#define HBRS_MPL_FN_INVOKE_IMPL_HBRS_MPL_HPP
+
+#include "../fwd/hbrs_mpl.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
-#include <boost/hana/tuple.hpp>
-#include <boost/hana/core/tag_of.hpp>
-#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct invoke_impl {
-	template <
-		typename F,
-		typename... Args,
-		typename std::enable_if_t<
-			std::is_invocable<F, Args...>::value
-		>* = nullptr
-	>
-	constexpr decltype(auto)
-	operator()(F && f, Args&&... args) const {
-		return HBRS_MPL_FWD(f)(HBRS_MPL_FWD(args)...);
-	}
-};
-	
+template <
+	typename F,
+	typename... Args,
+	typename std::enable_if_t<
+		std::is_invocable<F, Args...>::value
+	>*
+>
+constexpr decltype(auto)
+invoke_impl::operator()(F && f, Args&&... args) const {
+	return HBRS_MPL_FWD(f)(HBRS_MPL_FWD(args)...);
+}
+
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_INVOKE_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                \
-		hbrs::mpl::detail::invoke_impl{}                                                                               \
-	)
-
-#endif // !HBRS_MPL_FUSE_HBRS_MPL_FN_INVOKE_HPP
+#endif // !HBRS_MPL_FN_INVOKE_IMPL_HBRS_MPL_HPP
