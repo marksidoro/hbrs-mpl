@@ -1,0 +1,27 @@
+/* Copyright (c) {{ now.year }} Jakob Meng, <jakobmeng@web.de>
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef HBRS_MPL_{{ category|upper }}_{{ component.name|upper }}_{{ sub|upper }}_HPP
+#define HBRS_MPL_{{ category|upper }}_{{ component.name|upper }}_{{ sub|upper }}_HPP
+
+{% if headers -%}
+{% for hdr in headers -%}
+#include "{{ sub }}/{{ hdr }}"
+{% endfor -%}
+{%- else -%}
+//BLANK
+{% endif %}
+#endif // !HBRS_MPL_{{ category|upper }}_{{ component.name|upper }}_{{ sub|upper }}_HPP
