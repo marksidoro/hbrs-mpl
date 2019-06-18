@@ -1,0 +1,14 @@
+# Copyright (c) {{ now.year }} Jakob Meng, <jakobmeng@web.de>
+#
+# Redistribution and use is allowed according to the terms of the BSD license.
+# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+#
+
+{% if sub_dirs -%}
+{% for sub_dir in sub_dirs -%}
+add_subdirectory({{ sub_dir.name }})
+{% endfor %}
+{% else -%}
+//BLANK
+
+{% endif %}
