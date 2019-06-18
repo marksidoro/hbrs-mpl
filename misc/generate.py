@@ -54,9 +54,20 @@ if __name__ == '__main__':
         cat_dir = project_dir / 'src/hbrs/mpl/' / cat
         
         for cmp_dir in [x for x in cat_dir.iterdir() if x.is_dir()]:
+            # Create component impl level CMakeLists.txt
+            impl_dir = cmp_dir / 'impl'
+            impl_cmake_file = impl_dir / 'CMakeLists.txt'
+            if impl_dir.exists() and not impl_cmake_file.exists():
+                impl_srcs = [x for x in impl_dir.iterdir() if x.is_file() and x.suffix == '.cpp']
+                with open(str(impl_cmake_file), 'w') as f:
+                    f.write(tmpl_cmake.render(
+                        srcs=impl_srcs,
+                        now=datetime.utcnow()
+                    ))
+            
             # Create component level CMakeLists.txt
             sub_cmake_file = cmp_dir / 'CMakeLists.txt'
-            sub_dirs = [x.name for x in cmp_dir.iterdir() if x.is_dir() and (x / 'CMakeLists.txt').exists()]
+            sub_dirs = [x for x in cmp_dir.iterdir() if x.is_dir() and (x / 'CMakeLists.txt').exists()]
             if not sub_cmake_file.exists() and sub_dirs:
                 with open(str(sub_cmake_file), 'w') as f:
                     f.write(tmpl_cmake.render(
@@ -64,11 +75,11 @@ if __name__ == '__main__':
                         now=datetime.utcnow()
                     ))
             
-            # Create component level headers
             for sub in [ 'fwd', 'impl' ]:
                 sub_dir = cmp_dir / sub
                 sub_hdr_file = cmp_dir / (sub + '.hpp')
-            
+                
+                # Create component level headers
                 if not sub_hdr_file.exists():
                     if sub_dir.exists():
                         sub_hdrs = [x.name for x in sub_dir.iterdir() if x.is_file() and x.suffix == '.hpp']
@@ -84,6 +95,7 @@ if __name__ == '__main__':
                             headers=sub_hdrs,
                             now=datetime.utcnow()
                         ))
+           
             
             # Create category level headers
             cmp_hdr_file = cmp_dir.with_suffix(cmp_dir.suffix+'.hpp')

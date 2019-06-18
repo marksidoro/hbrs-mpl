@@ -4,11 +4,29 @@
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 #
 
-{% if sub_dirs -%}
+{%- if srcs %}
+
+#################### build ####################
+
+target_sources(hbrs_mpl PRIVATE
+{%- for src in srcs %}
+    {{ src.name }}
+{%- endfor -%}
+)
+
+{% endif -%}
+
+{%- if sub_dirs %}
+
+#################### list the subdirectories ####################
+
 {% for sub_dir in sub_dirs -%}
 add_subdirectory({{ sub_dir.name }})
 {% endfor %}
-{% else -%}
+{% endif %}
+
+{%- if (not srcs and not sub_dirs) %}
+
 //BLANK
 
 {% endif %}
