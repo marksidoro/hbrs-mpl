@@ -13,6 +13,40 @@ target_sources(hbrs_mpl PRIVATE
     {{ src.name }}
 {%- endfor -%}
 )
+{% endif -%}
+
+{%- if benchmarks %}
+
+#################### benchmarks ####################
+
+foreach(name
+{%- for benchmark in benchmarks %}
+    {{ benchmark.stem }}
+{%- endfor -%}
+)
+    hbrs_mpl_add_benchmark(benchmark_{{ category }}_{{ component.name }}_${name} "${name}.cpp")
+endforeach()
+
+{% endif -%}
+
+{%- if tests or test %}
+
+#################### tests ####################
+
+{% if test -%}
+hbrs_mpl_add_test({{ category }}_{{ component.name }} "test.cpp")
+{% endif -%}
+
+{%- if tests -%}
+
+foreach(name
+{%- for test in tests %}
+    {{ test.stem }}
+{%- endfor -%}
+)
+    hbrs_mpl_add_test({{ category }}_{{ component.name }}_${name} "${name}.cpp")
+endforeach()
+{% endif -%}
 
 {% endif -%}
 
@@ -23,10 +57,9 @@ target_sources(hbrs_mpl PRIVATE
 {% for sub_dir in sub_dirs -%}
 add_subdirectory({{ sub_dir.name }})
 {% endfor %}
-{% endif %}
+{%- endif %}
 
-{%- if (not srcs and not sub_dirs) %}
+{%- if not (srcs or sub_dirs or benchmarks or test or tests) %}
 
-//BLANK
-
+# BLANK
 {% endif %}

@@ -61,17 +61,49 @@ if __name__ == '__main__':
                 impl_srcs = [x for x in impl_dir.iterdir() if x.is_file() and x.suffix == '.cpp']
                 with open(str(impl_cmake_file), 'w') as f:
                     f.write(tmpl_cmake.render(
+                        category=cat,
+                        component=cmp_dir,
                         srcs=impl_srcs,
+                        now=datetime.utcnow()
+                    ))
+            
+            # Create component benchmark level CMakeLists.txt
+            bench_dir = cmp_dir / 'benchmark'
+            bench_cmake_file = bench_dir / 'CMakeLists.txt'
+            if bench_dir.exists() and not bench_cmake_file.exists():
+                bench_srcs = [x for x in bench_dir.iterdir() if x.is_file() and x.suffix == '.cpp']
+                with open(str(bench_cmake_file), 'w') as f:
+                    f.write(tmpl_cmake.render(
+                        category=cat,
+                        component=cmp_dir,
+                        benchmarks=bench_srcs,
+                        now=datetime.utcnow()
+                    ))
+            
+            # Create component test level CMakeLists.txt
+            test_dir = cmp_dir / 'test'
+            test_cmake_file = test_dir / 'CMakeLists.txt'
+            if test_dir.exists() and not test_cmake_file.exists():
+                test_srcs = [x for x in test_dir.iterdir() if x.is_file() and x.suffix == '.cpp']
+                with open(str(test_cmake_file), 'w') as f:
+                    f.write(tmpl_cmake.render(
+                        category=cat,
+                        component=cmp_dir,
+                        tests=test_srcs,
                         now=datetime.utcnow()
                     ))
             
             # Create component level CMakeLists.txt
             sub_cmake_file = cmp_dir / 'CMakeLists.txt'
             sub_dirs = [x for x in cmp_dir.iterdir() if x.is_dir() and (x / 'CMakeLists.txt').exists()]
-            if not sub_cmake_file.exists() and sub_dirs:
+            test_src = cmp_dir / 'test.cpp'
+            if not sub_cmake_file.exists() and (sub_dirs or test_src.exists()):
                 with open(str(sub_cmake_file), 'w') as f:
                     f.write(tmpl_cmake.render(
+                        category=cat,
+                        component=cmp_dir,
                         sub_dirs=sub_dirs,
+                        test=test_src if test_src.exists() else None,
                         now=datetime.utcnow()
                     ))
             
@@ -114,6 +146,7 @@ if __name__ == '__main__':
         if not cat_cmake_file.exists():
             with open(str(cat_cmake_file), 'w') as f:
                 f.write(tmpl_cmake.render(
+                    category=cat,
                     sub_dirs=cat_dirs,
                     now=datetime.utcnow()
                 ))
