@@ -6,5 +6,4 @@
 
 #################### list the subdirectories ####################
 
-add_subdirectory(impl)
 add_subdirectory(test)
