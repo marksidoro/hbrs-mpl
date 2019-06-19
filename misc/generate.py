@@ -74,28 +74,30 @@ if __name__ == '__main__':
             bench_cmake_file = bench_dir / 'CMakeLists.txt'
             if bench_dir.exists() and not bench_cmake_file.exists():
                 bench_srcs = sorted([x for x in bench_dir.iterdir() if x.is_file() and x.suffix == '.cpp'])
-                print(str(bench_cmake_file))
-                with open(str(bench_cmake_file), 'w') as f:
-                    f.write(tmpl_cmake.render(
-                        category=cat,
-                        component=cmp_dir,
-                        benchmarks=bench_srcs,
-                        now=datetime.utcnow()
-                    ))
+                if bench_srcs:
+                    print(str(bench_cmake_file))
+                    with open(str(bench_cmake_file), 'w') as f:
+                        f.write(tmpl_cmake.render(
+                            category=cat,
+                            component=cmp_dir,
+                            benchmarks=bench_srcs,
+                            now=datetime.utcnow()
+                        ))
             
             # Create component test level CMakeLists.txt
             test_dir = cmp_dir / 'test'
             test_cmake_file = test_dir / 'CMakeLists.txt'
             if test_dir.exists() and not test_cmake_file.exists():
                 test_srcs = sorted([x for x in test_dir.iterdir() if x.is_file() and x.suffix == '.cpp'])
-                print(str(test_cmake_file))
-                with open(str(test_cmake_file), 'w') as f:
-                    f.write(tmpl_cmake.render(
-                        category=cat,
-                        component=cmp_dir,
-                        tests=test_srcs,
-                        now=datetime.utcnow()
-                    ))
+                if test_srcs:
+                    print(str(test_cmake_file))
+                    with open(str(test_cmake_file), 'w') as f:
+                        f.write(tmpl_cmake.render(
+                            category=cat,
+                            component=cmp_dir,
+                            tests=test_srcs,
+                            now=datetime.utcnow()
+                        ))
             
             # Create component level CMakeLists.txt
             sub_cmake_file = cmp_dir / 'CMakeLists.txt'
