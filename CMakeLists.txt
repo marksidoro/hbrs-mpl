@@ -1,10 +1,10 @@
-# Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+# Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 #
 
-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 
 #################### project settings ####################
 
@@ -25,57 +25,65 @@ option(HBRS_MPL_ENABLE_TESTS                  "Build unit tests." OFF)
 
 # NOTE: Keep list of packages in sync with dependencies in *-cmake.in!
 
-find_package(hbrs-cmake REQUIRED)
+find_package(hbrs-cmake)
 set_package_properties(hbrs-cmake PROPERTIES
     PURPOSE "Required for CMake modules."
-    TYPE REQUIRED
-)
+    TYPE REQUIRED)
 
 # Hana is part of boost since 1.61, Ref.: http://www.boost.org/users/history/
 # BOOST_TEST macro requires 1.59, Ref.: https://stackoverflow.com/a/38083784/6490710
 # boost::hana::overload_linearly with single argument is supported since boost 1.62, Ref.: https://github.com/boostorg/hana/commit/89755947faffc56ff76ef3eecca0430191e976b8
-find_package(Boost 1.62 REQUIRED COMPONENTS unit_test_framework system thread serialization chrono program_options filesystem iostreams regex exception signals)
+find_package(Boost 1.62 COMPONENTS unit_test_framework system thread serialization chrono program_options filesystem iostreams regex exception signals)
 set_package_properties(Boost PROPERTIES
     PURPOSE "Required for meta programming, unit tests and others."
-    TYPE REQUIRED
-)
+    TYPE REQUIRED)
 
-find_package(LAPACK)
-set_package_properties(LAPACK PROPERTIES
-    PURPOSE "Optional for matlab adapter."
-)
+if (HBRS_MPL_ENABLE_MATLAB)
+    find_package(LAPACK)
+    set_package_properties(LAPACK PROPERTIES
+        PURPOSE "Optional for matlab adapter.")
 
-# NOTE: If find_package(LAPACK) does not choose LAPACKE but another LAPACK library like e.g. OpenBLAS then you have to 
-#       use static LAPACKE library (liblapacke.a) instead of dynamic LAPACKE library (liblapacke.so) because the 
-#       dynamic library requires symbols that are missing from other LAPACK libraries. To find the static LAPACKE 
-#       library set variable LAPACKE_USE_STATIC_LIBS, e.g. with 'cmake -DLAPACKE_USE_STATIC_LIBS=ON ...'.
-#       Ref.: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=902589
-find_package(LAPACKE)
-set_package_properties(LAPACKE PROPERTIES
-    PURPOSE "Optional for matlab adapter."
-)
+    # NOTE: If find_package(LAPACK) does not choose LAPACKE but another LAPACK library like e.g. OpenBLAS then you have to 
+    #       use static LAPACKE library (liblapacke.a) instead of dynamic LAPACKE library (liblapacke.so) because the 
+    #       dynamic library requires symbols that are missing from other LAPACK libraries. To find the static LAPACKE 
+    #       library set variable LAPACKE_USE_STATIC_LIBS, e.g. with 'cmake -DLAPACKE_USE_STATIC_LIBS=ON ...'.
+    #       Ref.: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=902589
+    find_package(LAPACKE)
+    set_package_properties(LAPACKE PROPERTIES
+        PURPOSE "Optional for matlab adapter.")
+
+    find_package(Matlab COMPONENTS MAIN_PROGRAM)
+    set_package_properties(Matlab PROPERTIES
+        PURPOSE "Required for matlab and unit tests."
+        TYPE REQUIRED)
+endif()
 
 find_package(OpenMP)
 set_package_properties(OpenMP PROPERTIES
-    PURPOSE "Required for addon elemental."
-)
+    PURPOSE "Required for parallel computations, e.g. in Elemental."
+    TYPE REQUIRED)
 
-find_package(MPI REQUIRED)
+find_package(MPI)
 set_package_properties(MPI PROPERTIES
-    PURPOSE "Required for distributed computations, e.g. in addon elemental."
-    TYPE REQUIRED
-)
+    PURPOSE "Required for distributed computations, e.g. in Elemental."
+    TYPE REQUIRED)
 
-find_package(Matlab COMPONENTS MAIN_PROGRAM)
-set_package_properties(Matlab PROPERTIES
-    PURPOSE "Required for addon matlab and unit tests."
-)
+if (HBRS_MPL_ENABLE_ELEMENTAL)
+    find_package(Elemental)
+    set_package_properties(Elemental PROPERTIES
+        DESCRIPTION "Distributed linear algebra algorithms"
+        PURPOSE "Required for Elemental."
+        TYPE REQUIRED)
+endif()
 
-find_package(Elemental)
-set_package_properties(Elemental PROPERTIES
-    DESCRIPTION "Distributed linear algebra algorithms"
-    PURPOSE "Required for addon elemental."
-)
+if(HBRS_MPL_ENABLE_MEMCHECK)
+    find_package(VALGRIND)
+    set_package_properties(Elemental PROPERTIES
+        PURPOSE "Required for tests."
+        TYPE REQUIRED)
+endif()
+
+feature_summary(WHAT REQUIRED_PACKAGES_NOT_FOUND FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
 #################### source settings ####################
 
@@ -172,13 +180,55 @@ set(HBRS_MPL_INSTALL_TARGETS_DEFAULT_DESTINATIONS
     PRIVATE_HEADER DESTINATION "${HBRS_MPL_INSTALL_INCLUDEDIR}"
     INCLUDES DESTINATION "${HBRS_MPL_INSTALL_INCLUDEDIR}")
 
+#################### benchmarks ####################
+
+add_custom_target(benchmarks COMMENT "Run all benchmarks.")
+
+include(DevTools)
+function(hbrs_mpl_add_benchmark target)
+    add_executable(${target} EXCLUDE_FROM_ALL ${ARGN})
+    target_link_libraries(${target} hbrs_mpl)
+    maybe_disassemble(${target})
+    maybe_callgrind(${target})
+    maybe_gperftools_profile(${target})
+    maybe_perf(${target})
+    add_dependencies(benchmarks ${target})
+endfunction()
+
+#################### tests ####################
+
+# CMake's target test does not build but only executes tests
+# Ref.: https://stackoverflow.com/a/736838/6490710
+if(HBRS_MPL_ENABLE_TESTS)
+    set(_MAYBE_ALL ALL)
+endif()
+
+add_custom_target(tests ${_MAYBE_ALL} COMMENT "Build all tests.")
+
+include(DevTools)
+function(hbrs_mpl_add_test target)
+    add_executable(${target} EXCLUDE_FROM_ALL ${ARGN})
+    target_link_libraries(${target} hbrs_mpl ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+    target_include_directories(${target}
+        SYSTEM
+        PUBLIC ${Boost_INCLUDE_DIRS})
+    
+    if(HBRS_MPL_ENABLE_MEMCHECK AND VALGRIND)
+        add_test(${target} ${VALGRIND} --leak-check=full --error-exitcode=1 ${CMAKE_CURRENT_BINARY_DIR}/${target})
+    else()
+        add_test(${target} ${CMAKE_CURRENT_BINARY_DIR}/${target})
+    endif()
+    
+    add_dependencies(tests ${target})
+    
+    if(HBRS_MPL_ENABLE_OBJDUMP)
+        maybe_disassemble(${target})
+    endif()
+endfunction()
+
 #################### list the subdirectories ####################
 
-add_subdirectory(include)
 add_subdirectory(src)
-add_subdirectory(addon)
-add_subdirectory(test)
-add_subdirectory(benchmark)
 
 #################### install files ####################
 
