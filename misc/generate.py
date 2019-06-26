@@ -65,7 +65,7 @@ if __name__ == '__main__':
                         f.write(tmpl_cmake.render(
                             category=cat,
                             component=cmp_dir,
-                            srcs=impl_srcs,
+                            impls=impl_srcs,
                             now=datetime.utcnow()
                         ))
             
@@ -102,14 +102,16 @@ if __name__ == '__main__':
             # Create component level CMakeLists.txt
             sub_cmake_file = cmp_dir / 'CMakeLists.txt'
             sub_dirs = sorted([x for x in cmp_dir.iterdir() if x.is_dir() and (x / 'CMakeLists.txt').exists()])
+            impl_src = cmp_dir / 'impl.cpp'
             test_src = cmp_dir / 'test.cpp'
-            if not sub_cmake_file.exists() and (sub_dirs or test_src.exists()):
+            if not sub_cmake_file.exists() and (sub_dirs or impl_src.exists() or test_src.exists()):
                 print(str(sub_cmake_file))
                 with open(str(sub_cmake_file), 'w') as f:
                     f.write(tmpl_cmake.render(
                         category=cat,
                         component=cmp_dir,
                         sub_dirs=sub_dirs,
+                        impl=impl_src if impl_src.exists() else None,
                         test=test_src if test_src.exists() else None,
                         now=datetime.utcnow()
                     ))

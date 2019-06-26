@@ -9,6 +9,7 @@
 add_subdirectory(ctsam)
 add_subdirectory(ctsav)
 add_subdirectory(escsv)
+add_subdirectory(exception)
 add_subdirectory(functor)
 add_subdirectory(range)
 add_subdirectory(rtsam)

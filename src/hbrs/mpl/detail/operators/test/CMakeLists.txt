@@ -7,8 +7,8 @@
 #################### tests ####################
 
 foreach(name
-    hbrs_mpl
     elemental
+    hbrs_mpl
     matlab)
     hbrs_mpl_add_test(detail_operators_${name} "${name}.cpp")
 endforeach()

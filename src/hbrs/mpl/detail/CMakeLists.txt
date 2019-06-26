@@ -7,8 +7,10 @@
 #################### list the subdirectories ####################
 
 add_subdirectory(are_same)
+add_subdirectory(environment)
 add_subdirectory(index_of)
 add_subdirectory(is_braces_constructible)
 add_subdirectory(is_core_applicable)
 add_subdirectory(matlab_cxn)
+add_subdirectory(mpi)
 add_subdirectory(operators)

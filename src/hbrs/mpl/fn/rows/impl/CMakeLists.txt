@@ -7,5 +7,5 @@
 #################### build ####################
 
 target_sources(hbrs_mpl PRIVATE
-    matlab.cpp
-    elemental.cpp)
+    elemental.cpp
+    matlab.cpp)

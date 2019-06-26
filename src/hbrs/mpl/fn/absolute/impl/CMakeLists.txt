@@ -7,5 +7,5 @@
 #################### build ####################
 
 target_sources(hbrs_mpl PRIVATE
-    std.cpp
-    elemental.cpp)
+    elemental.cpp
+    std.cpp)
