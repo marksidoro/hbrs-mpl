@@ -17,6 +17,8 @@
 #ifndef HBRS_MPL_DETAIL_OPERATORS_FWD_HPP
 #define HBRS_MPL_DETAIL_OPERATORS_FWD_HPP
 
-//BLANK
+#include "fwd/boost_hana.hpp"
+#include "fwd/operators.hpp"
+#include "fwd/std.hpp"
 
 #endif // !HBRS_MPL_DETAIL_OPERATORS_FWD_HPP

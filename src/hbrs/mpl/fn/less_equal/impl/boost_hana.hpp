@@ -20,5 +20,12 @@
 #include "../fwd/boost_hana.hpp"
 
 #include <hbrs/mpl/detail/operators/impl/boost_hana.hpp>
+#include <boost/hana/less_equal.hpp>
+
+HBRS_MPL_NAMESPACE_BEGIN
+namespace detail {
+HBRS_MPL_DEFINE_BOOST_HANA_INTEGRAL_CONSTANT_OPERATOR_IMPL_ARITY2(less_equal, HBRS_MPL_OPERATOR_LESS_EQUAL, less_equal)
+/* namespace detail */ }
+HBRS_MPL_NAMESPACE_END
 
 #endif // !HBRS_MPL_FN_LESS_EQUAL_IMPL_BOOST_HANA_HPP

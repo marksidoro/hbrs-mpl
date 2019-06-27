@@ -22,10 +22,13 @@
 #include <hbrs/mpl/detail/operators/impl/boost_hana.hpp>
 #include <hbrs/mpl/fn/not.hpp>
 #include <hbrs/mpl/fn/equal.hpp>
+#include <boost/hana/not_equal.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
+
+HBRS_MPL_DEFINE_BOOST_HANA_INTEGRAL_CONSTANT_OPERATOR_IMPL_ARITY2(not_equal, HBRS_MPL_OPERATOR_NOT_EQUAL, not_equal)
 
 template<
 	typename PairL,

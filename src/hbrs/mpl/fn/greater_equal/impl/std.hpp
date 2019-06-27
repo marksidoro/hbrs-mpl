@@ -26,6 +26,10 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
+HBRS_MPL_DEFINE_STD_INTEGRAL_CONSTANT_OPERATOR_IMPL_ARITY2(greater_equal, HBRS_MPL_OPERATOR_GREATER_EQUAL)
+HBRS_MPL_DEFINE_STD_ARITHMETIC_ENUM_OPERATOR_IMPL_ARITY2(greater_equal, HBRS_MPL_OPERATOR_GREATER_EQUAL)
+HBRS_MPL_DEFINE_FREEFUN_OPERATOR_IMPL_ARITY2(greater_equal, HBRS_MPL_OPERATOR_GREATER_EQUAL)
+
 template <class T, std::size_t N>
 constexpr bool 
 greater_equal_impl_std_array::operator()(std::array<T, N> const& lhs, std::array<T, N> const& rhs) {

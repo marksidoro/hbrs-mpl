@@ -25,6 +25,10 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
+HBRS_MPL_DEFINE_STD_INTEGRAL_CONSTANT_OPERATOR_IMPL_ARITY2(less, HBRS_MPL_OPERATOR_LESS)
+HBRS_MPL_DEFINE_STD_ARITHMETIC_ENUM_OPERATOR_IMPL_ARITY2(less, HBRS_MPL_OPERATOR_LESS)
+HBRS_MPL_DEFINE_FREEFUN_OPERATOR_IMPL_ARITY2(less, HBRS_MPL_OPERATOR_LESS)
+
 template <
 	class T, std::size_t N,
 	std::size_t I
@@ -34,7 +38,7 @@ less_impl_std_array_impl(
 	std::array<T, N> const& lhs,
 	std::array<T, N> const& rhs,
 	std::integral_constant<std::size_t, I>
-) const {
+) {
 	if constexpr (N == I) {
 		return false;
 	} else {

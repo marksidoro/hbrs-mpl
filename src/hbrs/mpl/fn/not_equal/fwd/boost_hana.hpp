@@ -27,6 +27,8 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
+HBRS_MPL_DECLARE_BOOST_HANA_INTEGRAL_CONSTANT_OPERATOR_IMPL_ARITY2(not_equal, HBRS_MPL_OPERATOR_NOT_EQUAL, not_equal)
+
 struct not_equal_impl_hana_pair {
 	template<
 		typename PairL,

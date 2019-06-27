@@ -21,6 +21,13 @@
 #include <hbrs/mpl/detail/operators/fwd/boost_hana.hpp>
 #include <boost/hana/tuple.hpp>
 
+HBRS_MPL_NAMESPACE_BEGIN
+namespace detail {
+HBRS_MPL_DECLARE_BOOST_HANA_INTEGRAL_CONSTANT_OPERATOR_IMPL_ARITY2(less_equal, HBRS_MPL_OPERATOR_LESS_EQUAL, less_equal)
+/* namespace detail */ }
+HBRS_MPL_NAMESPACE_END
+
+
 #define HBRS_MPL_FN_LESS_EQUAL_IMPLS_BOOST_HANA boost::hana::make_tuple(                                               \
 		hbrs::mpl::detail::less_equal_impl_hana_ic{}                                                                   \
 	)

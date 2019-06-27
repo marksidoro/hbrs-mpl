@@ -21,8 +21,6 @@
 #include <hbrs/mpl/dt/function.hpp>
 #include <hbrs/mpl/core/implementations_of.hpp>
 
-#define HBRS_MPL_OPERATOR_GREATER_EQUAL >=
-
 HBRS_MPL_NAMESPACE_BEGIN
 HBRS_MPL_DEC_F2(greater_equal, greater_equal_t)
 HBRS_MPL_DEF_F2(greater_equal, greater_equal_t)

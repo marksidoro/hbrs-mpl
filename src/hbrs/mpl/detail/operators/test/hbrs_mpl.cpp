@@ -100,6 +100,8 @@ BOOST_AUTO_TEST_CASE(operators_test_1) {
 	static_assert((*plus)(1, 2) == 3, "");
 	
 	static_assert((*divide)(hana::int_c<6>,  hana::int_c<3>) == hana::int_c<2>, "");
+	
+	static_assert(detail::divide_impl_hana_ic{}(hana::int_c<6>,  3) == 2, "");
 	static_assert((*divide)(hana::int_c<6>,  3) == 2, "");
 	static_assert((*divide)(hana::uint_c<6>, hana::uint_c<3>) == hana::uint_c<2>, "");
 	
@@ -129,6 +131,9 @@ BOOST_AUTO_TEST_CASE(operators_test_1) {
 	static_assert((*multiply)(3_c, -4_c) == -12_c, "");
 	static_assert((*divide)(6, 3) == 2, "");
 	BOOST_TEST((*divide)(6, 3ul) == 2);
+	BOOST_TEST((*divide)(6u, hana::uint_c<3>) == 2);
+	BOOST_TEST((*divide)(6, 3u) == 2);
+	BOOST_TEST((*divide)(6, hana::uint_c<3>) == 2);
 	static_assert((*divide)(6_c, 3_c) == 2_c, "");
 	static_assert((*modulo)(7, 3) == 1, "");
 	static_assert((*modulo)(7_c, 3_c) == 1_c, "");
@@ -183,7 +188,9 @@ BOOST_AUTO_TEST_CASE(operators_test_1) {
 	
 	// TODO: further unit tests for other operators functions
 	detail::equal_impl_numeric_cast{}(1ul,1);
+	detail::equal_impl_numeric_cast{}(1, 1ul);
 	BOOST_TEST((*equal)(1u, 1));
+	BOOST_TEST((*equal)(1, 1u));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

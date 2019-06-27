@@ -23,9 +23,12 @@
 #include <boost/hana/pair.hpp>
 #include <type_traits>
 
+
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
+
+HBRS_MPL_DECLARE_BOOST_HANA_INTEGRAL_CONSTANT_OPERATOR_IMPL_ARITY2(equal, HBRS_MPL_OPERATOR_EQUAL, equal)
 
 struct equal_impl_hana_pair {
 	template<

@@ -18,6 +18,7 @@
 #define HBRS_MPL_FN_EQUAL_IMPL_BOOST_HANA_HPP
 
 #include "../fwd/boost_hana.hpp"
+
 #include <hbrs/mpl/detail/operators/impl/boost_hana.hpp>
 
 #include <boost/hana/pair.hpp>
@@ -25,12 +26,15 @@
 #include <hbrs/mpl/fn/equal.hpp>
 #include <hbrs/mpl/fn/first.hpp>
 #include <hbrs/mpl/fn/second.hpp>
+#include <boost/hana/equal.hpp>
 
 #include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
+
+HBRS_MPL_DEFINE_BOOST_HANA_INTEGRAL_CONSTANT_OPERATOR_IMPL_ARITY2(equal, HBRS_MPL_OPERATOR_EQUAL, equal)
 
 template<
 	typename PairL,

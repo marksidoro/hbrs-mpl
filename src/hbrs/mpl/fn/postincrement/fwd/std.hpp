@@ -21,6 +21,13 @@
 #include <hbrs/mpl/detail/operators/fwd/std.hpp>
 #include <boost/hana/tuple.hpp>
 
+HBRS_MPL_NAMESPACE_BEGIN
+namespace detail {
+HBRS_MPL_DECLARE_STD_ARITHMETIC_ENUM_OPERATOR_IMPL_ARITY1_POST(postincrement, HBRS_MPL_OPERATOR_POSTINCREMENT)
+HBRS_MPL_DECLARE_FREEFUN_OPERATOR_IMPL_ARITY1_POST(postincrement, HBRS_MPL_OPERATOR_POSTINCREMENT)
+/* namespace detail */ }
+HBRS_MPL_NAMESPACE_END
+
 #define HBRS_MPL_FN_POSTINCREMENT_IMPLS_STD boost::hana::make_tuple(                                                   \
 		hbrs::mpl::detail::postincrement_impl_std_op{},                                                                \
 		hbrs::mpl::detail::postincrement_impl_op{}                                                                     \

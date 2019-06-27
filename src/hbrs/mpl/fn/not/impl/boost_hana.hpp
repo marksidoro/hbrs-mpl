@@ -20,5 +20,12 @@
 #include "../fwd/boost_hana.hpp"
 
 #include <hbrs/mpl/detail/operators/impl/boost_hana.hpp>
+#include <boost/hana/not.hpp>
+
+HBRS_MPL_NAMESPACE_BEGIN
+namespace detail {
+HBRS_MPL_DEFINE_BOOST_HANA_INTEGRAL_CONSTANT_OPERATOR_IMPL_ARITY1(not_, HBRS_MPL_OPERATOR_NOT, not)
+/* namespace detail */ }
+HBRS_MPL_NAMESPACE_END
 
 #endif // !HBRS_MPL_FN_NOT_IMPL_BOOST_HANA_HPP

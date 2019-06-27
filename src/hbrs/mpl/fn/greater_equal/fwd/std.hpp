@@ -26,6 +26,10 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
+HBRS_MPL_DECLARE_STD_INTEGRAL_CONSTANT_OPERATOR_IMPL_ARITY2(greater_equal, HBRS_MPL_OPERATOR_GREATER_EQUAL)
+HBRS_MPL_DECLARE_STD_ARITHMETIC_ENUM_OPERATOR_IMPL_ARITY2(greater_equal, HBRS_MPL_OPERATOR_GREATER_EQUAL)
+HBRS_MPL_DECLARE_FREEFUN_OPERATOR_IMPL_ARITY2(greater_equal, HBRS_MPL_OPERATOR_GREATER_EQUAL)
+
 /* compare operators for std::array are constexpr since C++20 only!
  * Ref.: https://en.cppreference.com/w/cpp/container/array/operator_cmp
  */

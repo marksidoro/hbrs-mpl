@@ -20,25 +20,7 @@
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/type.hpp>
-
-#include <hbrs/mpl/fn/preincrement/fwd.hpp>
-#include <hbrs/mpl/fn/predecrement/fwd.hpp>
-#include <hbrs/mpl/fn/postincrement/fwd.hpp>
-#include <hbrs/mpl/fn/postdecrement/fwd.hpp>
-#include <hbrs/mpl/fn/plus/fwd.hpp>
-#include <hbrs/mpl/fn/minus/fwd.hpp>
-#include <hbrs/mpl/fn/multiply/fwd.hpp>
-#include <hbrs/mpl/fn/divide/fwd.hpp>
-#include <hbrs/mpl/fn/modulo/fwd.hpp>
-#include <hbrs/mpl/fn/equal/fwd.hpp>
-#include <hbrs/mpl/fn/not_equal/fwd.hpp>
-#include <hbrs/mpl/fn/less/fwd.hpp>
-#include <hbrs/mpl/fn/greater/fwd.hpp>
-#include <hbrs/mpl/fn/less_equal/fwd.hpp>
-#include <hbrs/mpl/fn/greater_equal/fwd.hpp>
-#include <hbrs/mpl/fn/not/fwd.hpp>
-#include <hbrs/mpl/fn/and/fwd.hpp>
-#include <hbrs/mpl/fn/or/fwd.hpp>
+#include <hbrs/mpl/detail/operators/fwd/operators.hpp>
 
 #define _HAS_OPERATOR_IMPL_ARITY1(op_name, op_sign)                                                                    \
 	_HAS_OPERATOR_IMPL_ARITY1_PRE(op_name, op_sign)

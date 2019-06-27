@@ -18,6 +18,14 @@
 #define HBRS_MPL_FN_DIVIDE_IMPL_BOOST_HANA_HPP
 
 #include "../fwd/boost_hana.hpp"
+
 #include <hbrs/mpl/detail/operators/impl/boost_hana.hpp>
+#include <boost/hana/div.hpp>
+
+HBRS_MPL_NAMESPACE_BEGIN
+namespace detail {
+HBRS_MPL_DEFINE_BOOST_HANA_INTEGRAL_CONSTANT_OPERATOR_IMPL_ARITY2(divide, HBRS_MPL_OPERATOR_DIVIDE, div)
+/* namespace detail */ }
+HBRS_MPL_NAMESPACE_END
 
 #endif // !HBRS_MPL_FN_DIVIDE_IMPL_BOOST_HANA_HPP

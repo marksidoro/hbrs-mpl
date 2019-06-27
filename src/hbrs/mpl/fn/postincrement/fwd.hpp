@@ -21,8 +21,6 @@
 #include <hbrs/mpl/dt/function.hpp>
 #include <hbrs/mpl/core/implementations_of.hpp>
 
-#define HBRS_MPL_OPERATOR_POSTINCREMENT ++
-
 HBRS_MPL_NAMESPACE_BEGIN
 HBRS_MPL_DEC_F1(postincrement, postincrement_t)
 HBRS_MPL_DEF_F1(postincrement, postincrement_t)

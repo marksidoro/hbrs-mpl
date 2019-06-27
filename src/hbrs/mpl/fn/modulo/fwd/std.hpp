@@ -21,6 +21,14 @@
 #include <hbrs/mpl/detail/operators/fwd/std.hpp>
 #include <boost/hana/tuple.hpp>
 
+HBRS_MPL_NAMESPACE_BEGIN
+namespace detail {
+HBRS_MPL_DECLARE_STD_INTEGRAL_CONSTANT_OPERATOR_IMPL_ARITY2(modulo, HBRS_MPL_OPERATOR_MODULO)
+HBRS_MPL_DECLARE_STD_ARITHMETIC_ENUM_OPERATOR_IMPL_ARITY2(modulo, HBRS_MPL_OPERATOR_MODULO)
+HBRS_MPL_DECLARE_FREEFUN_OPERATOR_IMPL_ARITY2(modulo, HBRS_MPL_OPERATOR_MODULO)
+/* namespace detail */ }
+HBRS_MPL_NAMESPACE_END
+
 #define HBRS_MPL_FN_MODULO_IMPLS_STD boost::hana::make_tuple(                                                          \
 		hbrs::mpl::detail::modulo_impl_std_ic{},                                                                       \
 		hbrs::mpl::detail::modulo_impl_std_op{},                                                                       \
