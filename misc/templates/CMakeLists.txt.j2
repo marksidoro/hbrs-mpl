@@ -16,8 +16,14 @@ target_sources(hbrs_mpl PRIVATE
 )
 {% endif -%}
 
-{% if benchmarks %}
+{% if benchmark or benchmarks %}
 #################### benchmarks ####################
+
+{% if benchmark -%}
+hbrs_mpl_add_benchmark(benchmark_{{ category }}_{{ component.name }} "benchmark.cpp")
+{% endif -%}
+
+{%- if benchmarks -%}
 
 foreach(name
 {%- for benchmark in benchmarks %}
@@ -26,6 +32,8 @@ foreach(name
 )
     hbrs_mpl_add_benchmark(benchmark_{{ category }}_{{ component.name }}_${name} "${name}.cpp")
 endforeach()
+
+{% endif -%}
 
 {% endif -%}
 
@@ -57,6 +65,6 @@ add_subdirectory({{ sub_dir.name }})
 {% endfor %}
 {%- endif %}
 
-{%- if not (impl or impls or sub_dirs or benchmarks or test or tests) %}
+{%- if not (impl or impls or sub_dirs or benchmark or benchmarks or test or tests) %}
 # BLANK
 {% endif %}
