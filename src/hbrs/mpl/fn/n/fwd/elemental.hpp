@@ -18,7 +18,7 @@
 #define HBRS_MPL_FN_N_FWD_ELEMENTAL_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/core/preprocessor.hpp>
+#include <hbrs/mpl/detail/function_object.hpp>
 
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 	#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
@@ -32,10 +32,8 @@ namespace hana = boost::hana;
 namespace detail {
 
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
-
 HBRS_MPL_DEC_FO_TRY_METHOD(n_impl_el_matrix, el_matrix_tag, n)
 HBRS_MPL_DEC_FO_TRY_METHOD(n_impl_el_dist_matrix, el_dist_matrix_tag, n)
-
 #else
 struct n_impl_el_matrix{};
 struct n_impl_el_dist_matrix{};

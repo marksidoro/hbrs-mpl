@@ -21,6 +21,7 @@
 
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 	#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
+	#include <El.hpp>
 #endif
 
 #include <hbrs/mpl/dt/smc/fwd.hpp>
@@ -44,12 +45,12 @@ struct fold1_impl_zas_smc_el_matrix_irange {
 		typename Integer,
 		typename F,
 		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value
 			//TODO: Add invokable check for F?
 		>* = nullptr
 	>
 	constexpr decltype(auto)
-	operator()(mpl::zas<mpl::smc<Matrix, El::Int>, boost::integer_range<Integer>> const& a, F && f) const;
+	operator()(zas<smc<Matrix, El::Int>, boost::integer_range<Integer>> const& a, F && f) const;
 };
 
 struct fold1_impl_zas_smr_el_matrix_irange {
@@ -58,12 +59,12 @@ struct fold1_impl_zas_smr_el_matrix_irange {
 		typename Integer,
 		typename F,
 		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value
 			//TODO: Add invokable check for F?
 		>* = nullptr
 	>
 	constexpr decltype(auto)
-	operator()(mpl::zas<mpl::smr<Matrix, El::Int>, boost::integer_range<Integer>> const& a, F && f) const;
+	operator()(zas<smr<Matrix, El::Int>, boost::integer_range<Integer>> const& a, F && f) const;
 };
 
 #else

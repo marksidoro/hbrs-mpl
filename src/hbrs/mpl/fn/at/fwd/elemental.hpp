@@ -18,9 +18,7 @@
 #define HBRS_MPL_FN_AT_FWD_ELEMENTAL_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/function_object.hpp>
-#include <hbrs/mpl/dt/matrix_index/fwd.hpp>
 
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 	#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
@@ -45,7 +43,7 @@ struct at_impl_el_matrix_smr {
 	template <
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value
 		>* = nullptr
 	>
 	decltype(auto)

@@ -40,22 +40,22 @@ template auto vertcat_impl_smr_el_matrix_smr_el_matrix::operator()(
 	smr<el_matrix<El::Complex<double>>, El::Int> const&
 ) const;
 
-template auto vertcat_impl_el_matrix_smr::operator()(
+template auto vertcat_impl_el_matrix_smr_el_matrix::operator()(
 	el_matrix<float> const&,
 	smr<el_matrix<float>, El::Int> const&
 ) const;
 
-template auto vertcat_impl_el_matrix_smr::operator()(
+template auto vertcat_impl_el_matrix_smr_el_matrix::operator()(
 	el_matrix<El::Complex<float>> const&,
 	smr<el_matrix<El::Complex<float>>, El::Int> const&
 ) const;
 
-template auto vertcat_impl_el_matrix_smr::operator()(
+template auto vertcat_impl_el_matrix_smr_el_matrix::operator()(
 	el_matrix<double> const&,
 	smr<el_matrix<double>, El::Int> const&
 ) const;
 
-template auto vertcat_impl_el_matrix_smr::operator()(
+template auto vertcat_impl_el_matrix_smr_el_matrix::operator()(
 	el_matrix<El::Complex<double>> const&,
 	smr<el_matrix<El::Complex<double>>, El::Int> const&
 ) const;

@@ -25,6 +25,7 @@
 	#include <hbrs/mpl/fn/expand/fwd.hpp>
 	#include <hbrs/mpl/dt/expression/fwd.hpp>
 	#include <boost/mpl/if.hpp>
+	#include <boost/mpl/void.hpp>
 #endif
 
 #include <boost/hana/tuple.hpp>

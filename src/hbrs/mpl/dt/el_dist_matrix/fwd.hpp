@@ -14,10 +14,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_EL_DIST_MATRIX_FWD_IMPL_HPP
-#define HBRS_MPL_DT_EL_DIST_MATRIX_FWD_IMPL_HPP
+#ifndef HBRS_MPL_DT_EL_DIST_MATRIX_FWD_HPP
+#define HBRS_MPL_DT_EL_DIST_MATRIX_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+
 #include <boost/hana/fwd/core/make.hpp>
 #include <boost/hana/fwd/core/to.hpp>
 #include <El.hpp>
@@ -33,4 +35,5 @@ constexpr auto to_el_dist_matrix = hana::to<el_dist_matrix_tag>;
 
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_DT_EL_DIST_MATRIX_FWD_IMPL_HPP
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
+#endif // !HBRS_MPL_DT_EL_DIST_MATRIX_FWD_HPP

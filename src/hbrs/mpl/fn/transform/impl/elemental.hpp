@@ -133,7 +133,7 @@ template <
 auto
 transform_impl_el_dist_matrix::operator()(el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& a, F && f) const {
 	typedef std::decay_t<Ring> _Ring_;
-	el_dist_matrix<_Ring_, Columnwise, Rowwise, Wrapping> b{{a.data().Grid(), a.m(), a.n()}};
+	el_dist_matrix<_Ring_, Columnwise, Rowwise, Wrapping> b{a.data().Grid(), a.m(), a.n()};
 	transform_el(a.data().LockedMatrix(), b.data().Matrix(), HBRS_MPL_FWD(f));
 	return b;
 }

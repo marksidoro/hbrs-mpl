@@ -21,7 +21,7 @@
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 #include <hbrs/mpl/core/preprocessor.hpp>
-#include <hbrs/mpl/dt/el_el_dist_matrix.hpp>
+#include <hbrs/mpl/dt/el_dist_matrix.hpp>
 #include <hbrs/mpl/dt/el_dist_vector.hpp>
 #include <hbrs/mpl/fn/expand.hpp>
 #include <hbrs/mpl/dt/expression.hpp>
@@ -82,7 +82,7 @@ template <
 	typename RingL, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap WrappingL,
 	typename RingR, El::Dist ColumnwiseR, El::Dist RowwiseR, El::DistWrap WrappingR,
 	typename std::enable_if_t<
-		boost::is_not_void_<std::common_type_t<RingL, RingR>>::value
+		boost::mpl::is_not_void_<std::common_type_t<RingL, RingR>>::value
 	>*
 >
 auto
@@ -104,7 +104,7 @@ template <
 	typename RingL, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap WrappingL,
 	typename RingR, El::Dist ColumnwiseR, El::Dist RowwiseR, El::DistWrap WrappingR,
 	typename std::enable_if_t<
-		boost::is_not_void_<std::common_type_t<RingL, RingR>>::value
+		boost::mpl::is_not_void_<std::common_type_t<RingL, RingR>>::value
 	>*
 >
 auto

@@ -32,7 +32,6 @@ namespace detail {
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 struct pca_impl_el_matrix {
-	/* C++ code is equivalent to MATLAB code in file hbrs-mpl/addon/matlab/cxn/pca_level2.m */
 	template <typename Ring>
 	auto
 	operator()(el_matrix<Ring> const& a, bool economy) const;

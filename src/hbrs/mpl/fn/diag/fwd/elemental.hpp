@@ -23,8 +23,8 @@
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 	#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
 	#include <hbrs/mpl/dt/el_dist_matrix/fwd.hpp>
-	#include <hbrs/mpl/dt/el_vector.hpp>
-	#include <hbrs/mpl/dt/el_dist_vector.hpp>
+	#include <hbrs/mpl/dt/el_vector/fwd.hpp>
+	#include <hbrs/mpl/dt/el_dist_vector/fwd.hpp>
 #endif
 
 #include <hbrs/mpl/fn/at.hpp>
@@ -41,14 +41,14 @@ namespace detail {
 struct diag_impl_el_matrix {
 	template <typename Ring>
 	auto
-	operator()(matrix<Ring> const& m) const;
+	operator()(el_matrix<Ring> const& m) const;
 };
 
 //TODO: replace with a wrapper struct?!
 struct diag_impl_el_dist_matrix {
 	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 	auto
-	operator()(dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& m) const;
+	operator()(el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& m) const;
 };
 #else
 struct diag_impl_el_matrix {};

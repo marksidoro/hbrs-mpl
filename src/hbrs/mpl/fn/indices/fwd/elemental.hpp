@@ -37,7 +37,7 @@ struct indices_impl_smc_el_matrix {
 	template <
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value
 		>* = nullptr
 	>
 	constexpr auto
@@ -48,7 +48,7 @@ struct indices_impl_smr_el_matrix {
 	template <
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value
 		>* = nullptr
 	>
 	constexpr auto

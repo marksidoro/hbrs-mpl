@@ -40,8 +40,8 @@ struct pca_filter_impl_el_matrix {
 	template <
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same_v< hana::tag_of_t<Matrix>, matrix_tag > ||
-			std::is_same_v< hana::tag_of_t<Matrix>, dist_matrix_tag >
+			std::is_same_v< hana::tag_of_t<Matrix>, el_matrix_tag > ||
+			std::is_same_v< hana::tag_of_t<Matrix>, el_dist_matrix_tag >
 		>* = nullptr
 	>
 	auto
@@ -50,8 +50,8 @@ struct pca_filter_impl_el_matrix {
 	template <
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same_v< hana::tag_of_t<Matrix>, matrix_tag > ||
-			std::is_same_v< hana::tag_of_t<Matrix>, dist_matrix_tag >
+			std::is_same_v< hana::tag_of_t<Matrix>, el_matrix_tag > ||
+			std::is_same_v< hana::tag_of_t<Matrix>, el_dist_matrix_tag >
 		>* = nullptr
 	>
 	auto

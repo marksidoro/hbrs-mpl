@@ -25,7 +25,6 @@
 #include <hbrs/mpl/dt/el_dist_matrix.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace hana = boost::hana;
 namespace detail {
 
 HBRS_MPL_DEF_FO_TRY_METHOD(m_impl_el_matrix, el_matrix_tag, m)

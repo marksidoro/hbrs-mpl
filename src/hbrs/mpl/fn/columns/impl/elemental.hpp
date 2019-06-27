@@ -26,6 +26,7 @@
 #include <hbrs/mpl/dt/el_dist_matrix.hpp>
 #include <hbrs/mpl/dt/el_vector.hpp>
 
+#include <hbrs/mpl/fn/columns/fwd.hpp>
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/m.hpp>
 #include <hbrs/mpl/fn/n.hpp>
@@ -56,7 +57,7 @@ columns_impl_el_matrix_2::operator()(el_matrix<Ring> const& a) const {
 	auto a_sz = (*size)(a);
 	auto a_n = (*n)(a_sz);
 	
-	std::vector<row_vector<_Ring_>> v;
+	std::vector<el_row_vector<_Ring_>> v;
 	v.reserve(a_n);
 	for(El::Int i = 0; i < a_n; ++i) {
 		v.emplace_back( a.data()(El::ALL, i) );
@@ -67,7 +68,7 @@ columns_impl_el_matrix_2::operator()(el_matrix<Ring> const& a) const {
 template <
 	typename DistMatrix,
 	typename std::enable_if_t< 
-		std::is_same< hana::tag_of_t<DistMatrix>, dist_matrix_tag >::value
+		std::is_same< hana::tag_of_t<DistMatrix>, el_dist_matrix_tag >::value
 	>*
 >
 constexpr auto

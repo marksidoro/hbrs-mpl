@@ -21,6 +21,7 @@
 
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 	#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
+	#include <hbrs/mpl/dt/el_dist_matrix/fwd.hpp>
 	#include <hbrs/mpl/dt/decompose_mode/fwd.hpp>
 #endif
 

@@ -14,10 +14,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_EL_VECTOR_IMPL_IMPL_HPP
-#define HBRS_MPL_DT_EL_VECTOR_IMPL_IMPL_HPP
+#ifndef HBRS_MPL_DT_EL_VECTOR_IMPL_HPP
+#define HBRS_MPL_DT_EL_VECTOR_IMPL_HPP
 
 #include "fwd.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
@@ -104,32 +105,32 @@
 	namespace boost { namespace hana {                                                                                 \
                                                                                                                        \
 	template <typename Ring>                                                                                           \
-	struct tag_of< hbrs::mpl::el_ ## vector_kind< ## _vector<Ring> > {                                                 \
-		using type = hbrs::mpl::el_ ## vector_kind< ## _vector_tag;                                                    \
+	struct tag_of< hbrs::mpl::el_ ## vector_kind ## _vector<Ring> > {                                                  \
+		using type = hbrs::mpl::el_ ## vector_kind ## _vector_tag;                                                     \
 	};                                                                                                                 \
                                                                                                                        \
 	template <>                                                                                                        \
-	struct make_impl<hbrs::mpl::el_ ## vector_kind< ## _vector_tag> {                                                  \
+	struct make_impl<hbrs::mpl::el_ ## vector_kind ## _vector_tag> {                                                   \
 		template <typename Ring>                                                                                       \
-		static hbrs::mpl::el_ ## vector_kind< ## _vector<Ring>                                                         \
+		static hbrs::mpl::el_ ## vector_kind ## _vector<Ring>                                                          \
 		apply(basic_type<Ring>, El::Int sz) {                                                                          \
 			return {sz};                                                                                               \
 		}                                                                                                              \
 	                                                                                                                   \
 		template <typename Ring>                                                                                       \
-		static hbrs::mpl::el_ ## vector_kind< ## _vector<std::decay_t<Ring>>                                           \
+		static hbrs::mpl::el_ ## vector_kind ## _vector<std::decay_t<Ring>>                                            \
 		apply(El::Matrix<Ring> data) {                                                                                 \
 			return {data};                                                                                             \
 		}                                                                                                              \
 		                                                                                                               \
 		template <typename Ring>                                                                                       \
-		static hbrs::mpl::el_ ## vector_kind< ## _vector<std::decay_t<Ring>>                                           \
+		static hbrs::mpl::el_ ## vector_kind ## _vector<std::decay_t<Ring>>                                            \
 		apply(Ring const* data, El::Int sz) {                                                                          \
 			return {data, sz};                                                                                         \
 		}                                                                                                              \
 		                                                                                                               \
 		template <typename Ring>                                                                                       \
-		static hbrs::mpl::el_ ## vector_kind< ## _vector<std::decay_t<Ring>>                                           \
+		static hbrs::mpl::el_ ## vector_kind ## _vector<std::decay_t<Ring>>                                            \
 		apply(std::initializer_list<Ring> data) {                                                                      \
 			return { data.begin(), boost::numeric_cast<El::Int>(data.size()) };                                        \
 		}                                                                                                              \
@@ -145,63 +146,64 @@ _HBRS_MPL_DEF_EL_VECTOR(row)
 HBRS_MPL_NAMESPACE_BEGIN
 
 template<typename Ring>
-column_vector<Ring>::column_vector(El::Matrix<Ring> data) : data_{data} {
+el_column_vector<Ring>::el_column_vector(El::Matrix<Ring> data) : data_{data} {
 	BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
 	BOOST_ASSERT(data_.Width() == 1);
 }
 
 template<typename Ring>
-row_vector<Ring>::row_vector(El::Matrix<Ring> data) : data_{data} {
+el_row_vector<Ring>::el_row_vector(El::Matrix<Ring> data) : data_{data} {
 	BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
 	BOOST_ASSERT(data_.Height() == 1);
 }
 
 template<typename Ring>
-column_vector<Ring>::column_vector(El::Int sz) : data_{sz,1} {
+el_column_vector<Ring>::el_column_vector(El::Int sz) : data_{sz,1} {
 	El::Zero(data_);
 }
 
 template<typename Ring>
-row_vector<Ring>::row_vector(El::Int sz) : data_{1,sz} {
+el_row_vector<Ring>::el_row_vector(El::Int sz) : data_{1,sz} {
 	El::Zero(data_);
 }
 
 template<typename Ring>
 decltype(auto)
-column_vector<Ring>::length() const {
+el_column_vector<Ring>::length() const {
 	return data_.Height();
 }
 
 template<typename Ring>
 decltype(auto)
-row_vector<Ring>::length() const {
+el_row_vector<Ring>::length() const {
 	return data_.Width();
 }
 
 template<typename Ring>
 decltype(auto)
-column_vector<Ring>::at(El::Int i) {
+el_column_vector<Ring>::at(El::Int i) {
 	return at_(data_, make_matrix_index(i, 0));
 }
 
 template<typename Ring>
 decltype(auto)
-column_vector<Ring>::at(El::Int i) const {
+el_column_vector<Ring>::at(El::Int i) const {
 	return at_(data_, make_matrix_index(i, 0));
 }
 
 template<typename Ring>
 decltype(auto)
-row_vector<Ring>::at(El::Int i) {
+el_row_vector<Ring>::at(El::Int i) {
 	return at_(data_, make_matrix_index(0, i));
 }
 
 template<typename Ring>
 decltype(auto)
-row_vector<Ring>::at(El::Int i) const {
+el_row_vector<Ring>::at(El::Int i) const {
 	return at_(data_, make_matrix_index(0, i));
 }
 
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_DT_EL_VECTOR_IMPL_IMPL_HPP
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
+#endif // !HBRS_MPL_DT_EL_VECTOR_IMPL_HPP

@@ -45,7 +45,7 @@ fold1_impl_zas_smc_el_matrix_irange::operator()(
 	boost::integer_range<Integer>> const& a,
 	F && f
 ) const {
-	return (*fold1_left)(a, HBRS_MPL_FWD(f));
+	return (*hbrs::mpl::fold1_left)(a, HBRS_MPL_FWD(f));
 }
 
 template <
@@ -63,7 +63,7 @@ fold1_impl_zas_smr_el_matrix_irange::operator()(
 	boost::integer_range<Integer>> const& a,
 	F && f
 ) const {
-	return (*fold1_left)(a, HBRS_MPL_FWD(f));
+	return (*hbrs::mpl::fold1_left)(a, HBRS_MPL_FWD(f));
 }
 
 /* namespace detail */ }

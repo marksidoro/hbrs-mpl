@@ -37,7 +37,7 @@ struct columns_impl_el_matrix_1 {
 	template <
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value
 		>* = nullptr
 	>
 	constexpr auto
@@ -47,14 +47,14 @@ struct columns_impl_el_matrix_1 {
 struct columns_impl_el_matrix_2 {
 	template <typename Ring>
 	constexpr auto
-	operator()(matrix<Ring> const& a) const;
+	operator()(el_matrix<Ring> const& a) const;
 };
 
 struct columns_impl_el_dist_matrix {
 	template <
 		typename DistMatrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<DistMatrix>, dist_matrix_tag >::value
+			std::is_same< hana::tag_of_t<DistMatrix>, el_dist_matrix_tag >::value
 		>* = nullptr
 	>
 	constexpr auto

@@ -26,6 +26,7 @@
 	#include <hbrs/mpl/dt/el_dist_vector/fwd.hpp>
 	#include <hbrs/mpl/dt/matrix_index/fwd.hpp>
 	#include <hbrs/mpl/dt/matrix_size/fwd.hpp>
+	#include <hbrs/mpl/dt/range/fwd.hpp>
 #endif
 
 #include <boost/hana/tuple.hpp>
@@ -86,8 +87,8 @@ struct select_impl_el_matrix {
 	template<
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value ||
-			std::is_same< hana::tag_of_t<Matrix>, dist_matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value ||
+			std::is_same< hana::tag_of_t<Matrix>, el_dist_matrix_tag >::value
 		>* = nullptr
 	>
 	decltype(auto)

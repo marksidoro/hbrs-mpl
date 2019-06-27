@@ -86,7 +86,7 @@ expand_impl_smr_el_matrix::operator()(
 template<typename Ring>
 auto
 expand_impl_el_row_vector::operator()(
-	row_vector<Ring> const& v,
+	el_row_vector<Ring> const& v,
 	matrix_size<El::Int, El::Int> const& sz
 ) const  {
 	auto v_sz = v.length(); // TODO: Replace with (*size)(v);
@@ -104,7 +104,7 @@ expand_impl_el_row_vector::operator()(
 	bool vert_expand = a_m > 1;
 	bool horz_expand = a_n != v_sz;
 	
-	auto c = make_matrix(hana::type_c<std::decay_t<Ring>>, sz);
+	auto c = make_el_matrix(hana::type_c<std::decay_t<Ring>>, sz);
 	
 	if ((vert_expand && horz_expand) || vert_expand) {
 		for(El::Int i = 0; i < a_m; ++i) {
@@ -125,7 +125,7 @@ expand_impl_el_row_vector::operator()(
 template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 constexpr auto
 expand_impl_el_dist_row_vector::operator()(
-	dist_row_vector<Ring, Columnwise, Rowwise, Wrapping> const& v,
+	el_dist_row_vector<Ring, Columnwise, Rowwise, Wrapping> const& v,
 	matrix_size<El::Int, El::Int> const& sz
 ) const {
 	auto v_sz = v.length(); // TODO: Replace with (*size)(v);

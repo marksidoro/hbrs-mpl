@@ -60,7 +60,7 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-/* C++ code is equivalent to MATLAB code in file hbrs-mpl/addon/matlab/cxn/pca_level2.m */
+/* C++ code is equivalent to MATLAB code in file src/hbrs/mpl/detail/matlab_cxn/impl/pca_level2.m */
 template <typename Ring>
 auto
 pca_impl_el_matrix::operator()(el_matrix<Ring> const& a, bool economy) const {
@@ -221,7 +221,6 @@ pca_impl_el_dist_matrix::operator()(el_dist_matrix<Ring, Columnwise, Rowwise, Wr
 	static_assert(!std::is_reference<Ring>::value && !std::is_const<Ring>::value, "");
 	static_assert(std::is_same<_Ring_, El::Base<_Ring_>>::value, "because S is returned as El::Base<_Ring_>");
 	
-	using namespace hbrs::mpl;
 	using namespace hana::literals;
 	
 	auto const a_sz = (*size)(a);

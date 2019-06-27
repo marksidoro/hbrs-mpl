@@ -54,9 +54,7 @@ struct power_impl_el {
 		>* = nullptr
 	>
 	auto
-	operator()(F const& a, T const& b) const {
-		return El::Pow(a, b);
-	}
+	operator()(F const& a, T const& b) const;
 };
 
 #else

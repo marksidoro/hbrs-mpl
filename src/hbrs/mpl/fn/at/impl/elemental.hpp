@@ -37,7 +37,7 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_matrix, matrix_tag, at)
+HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_el_matrix, el_matrix_tag, at)
 
 template <
 	typename Matrix,
@@ -50,8 +50,8 @@ at_impl_el_matrix_smr::operator()(Matrix && m, El::Int i) const {
 	return smr<Matrix, El::Int>{HBRS_MPL_FWD(m), i};
 }
 
-HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_column_vector, column_vector_tag, at)
-HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_row_vector, row_vector_tag, at)
+HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_el_column_vector, el_column_vector_tag, at)
+HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_el_row_vector, el_row_vector_tag, at)
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END

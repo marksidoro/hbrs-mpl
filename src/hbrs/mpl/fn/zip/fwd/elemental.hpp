@@ -24,6 +24,7 @@
 	#include <hbrs/mpl/dt/smc/fwd.hpp>
 	#include <hbrs/mpl/dt/smr/fwd.hpp>
 	#include <boost/range/irange.hpp>
+	#include <El.hpp>
 #endif
 
 #include <boost/hana/tuple.hpp>

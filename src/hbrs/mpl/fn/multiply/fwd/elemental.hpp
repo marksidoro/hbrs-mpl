@@ -79,7 +79,7 @@ struct multiply_impl_el_matrix_scv_vector {
 		>* = nullptr
 	>
 	auto
-	operator()(el_matrix<MatrixRing> const& a, mpl::scv<Sequence> const& b) const;
+	operator()(el_matrix<MatrixRing> const& a, scv<Sequence> const& b) const;
 };
 
 struct multiply_impl_el_matrix_scalar {

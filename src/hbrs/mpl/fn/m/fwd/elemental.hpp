@@ -18,7 +18,7 @@
 #define HBRS_MPL_FN_M_FWD_ELEMENTAL_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/core/preprocessor.hpp>
+#include <hbrs/mpl/detail/function_object.hpp>
 
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 	#include <hbrs/mpl/dt/el_matrix/fwd.hpp>

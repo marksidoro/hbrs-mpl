@@ -65,7 +65,7 @@ template <
 	typename RingR,
 	typename std::enable_if_t<
 		!std::is_same<RingL, RingR>::value &&
-		boost::is_not_void_<std::common_type_t<RingL, RingR>>::value
+		boost::mpl::is_not_void_<std::common_type_t<RingL, RingR>>::value
 	>*
 >
 decltype(auto)
@@ -102,7 +102,7 @@ template <
 	typename RingR, El::Dist ColumnwiseR, El::Dist RowwiseR,
 	typename std::enable_if_t<
 		std::is_same_v<RingL, RingR> ||
-		boost::is_not_void_<std::common_type_t<RingL, RingR>>::value
+		boost::mpl::is_not_void_<std::common_type_t<RingL, RingR>>::value
 	>*
 >
 decltype(auto)

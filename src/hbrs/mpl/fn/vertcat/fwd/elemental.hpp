@@ -22,6 +22,7 @@
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 	#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
 	#include <hbrs/mpl/dt/smr/fwd.hpp>
+	#include <El.hpp>
 #endif
 
 #include <boost/hana/tuple.hpp>

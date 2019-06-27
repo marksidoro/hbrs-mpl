@@ -21,6 +21,7 @@
 #include <El.hpp>
 
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
+	#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
 	#include <hbrs/mpl/dt/el_vector/fwd.hpp>
 	#include <hbrs/mpl/dt/el_dist_vector/fwd.hpp>
 #endif
@@ -38,8 +39,8 @@ struct divide_impl_el_vector_scalar {
 		typename Scalar,
 		typename std::enable_if_t< 
 			(
-				std::is_same< hana::tag_of_t<Vector>, column_vector_tag >::value ||
-				std::is_same< hana::tag_of_t<Vector>, row_vector_tag >::value
+				std::is_same< hana::tag_of_t<Vector>, el_column_vector_tag >::value ||
+				std::is_same< hana::tag_of_t<Vector>, el_row_vector_tag >::value
 			) &&
 			std::is_arithmetic<Scalar>::value
 		>* = nullptr
@@ -58,7 +59,7 @@ struct divide_impl_el_dist_vector_scalar {
 	>
 	auto
 	operator()(
-		dist_column_vector<Ring, Columnwise, Rowwise, Wrapping> && v,
+		el_dist_column_vector<Ring, Columnwise, Rowwise, Wrapping> && v,
 		Scalar const& b
 	) const;
 };
@@ -71,7 +72,7 @@ struct divide_impl_el_matrix_scalar {
 		>* = nullptr
 	>
 	auto
-	operator()(matrix<Ring> a, Ring const& b) const;
+	operator()(el_matrix<Ring> a, Ring const& b) const;
 };
 
 #else

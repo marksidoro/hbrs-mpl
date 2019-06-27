@@ -44,7 +44,7 @@ template <
 	typename RingL,
 	typename RingR,
 	typename std::enable_if_t<
-		boost::is_not_void_<std::common_type_t<RingL, RingR>>::value
+		boost::mpl::is_not_void_<std::common_type_t<RingL, RingR>>::value
 	>*
 >
 auto
@@ -121,7 +121,7 @@ template <
 	typename RingL, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap WrappingL,
 	typename RingR, El::Dist ColumnwiseR, El::Dist RowwiseR, El::DistWrap WrappingR,
 	typename std::enable_if_t<
-		boost::is_not_void_<std::common_type_t<RingL, RingR>>::value
+		boost::mpl::is_not_void_<std::common_type_t<RingL, RingR>>::value
 	>*
 >
 auto
@@ -144,7 +144,7 @@ template <
 	typename RingL, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap WrappingL,
 	typename RingR, El::Dist ColumnwiseR, El::Dist RowwiseR, El::DistWrap WrappingR,
 	typename std::enable_if_t<
-		boost::is_not_void_<std::common_type_t<RingL, RingR>>::value
+		boost::mpl::is_not_void_<std::common_type_t<RingL, RingR>>::value
 	>*
 >
 auto

@@ -26,6 +26,7 @@
 	#include <hbrs/mpl/dt/el_dist_vector/fwd.hpp>
 	#include <hbrs/mpl/dt/smrs/fwd.hpp>
 	#include <hbrs/mpl/dt/smcs/fwd.hpp>
+	#include <hbrs/mpl/dt/expression/fwd.hpp>
 	#include <hbrs/mpl/fn/columns/fwd.hpp>
 #endif
 

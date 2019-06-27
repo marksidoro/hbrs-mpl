@@ -18,7 +18,6 @@
 #define HBRS_MPL_FN_SIZE_FWD_ELEMENTAL_HPP
 
 #include <hbrs/mpl/config.hpp>
-
 #include <hbrs/mpl/detail/function_object.hpp>
 
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL

@@ -14,10 +14,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_EL_DIST_VECTOR_IMPL_IMPL_HPP
-#define HBRS_MPL_DT_EL_DIST_VECTOR_IMPL_IMPL_HPP
+#ifndef HBRS_MPL_DT_EL_DIST_VECTOR_IMPL_HPP
+#define HBRS_MPL_DT_EL_DIST_VECTOR_IMPL_HPP
 
 #include "fwd.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 #include <hbrs/mpl/dt/el_vector.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
@@ -91,7 +92,7 @@
 			hbrs::mpl::el_dist_ ## vector_kind ## _vector<                                                             \
 				Ring, El::STAR, El::STAR, El::ELEMENT                                                                  \
 			> m{grid, (El::Int)data.size()};                                                                           \
-			m.data().Matrix() = elemental::make_ ## vector_kind ## _vector(data).data();                               \
+			m.data().Matrix() = hbrs::mpl::make_el_ ## vector_kind ## _vector(data).data();                            \
 			return m;                                                                                                  \
 		}                                                                                                              \
 		                                                                                                               \
@@ -165,4 +166,5 @@ el_dist_row_vector<Ring, Columnwise, Rowwise, Wrapping>::length() const {
 
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_DT_EL_DIST_VECTOR_IMPL_IMPL_HPP
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
+#endif // !HBRS_MPL_DT_EL_DIST_VECTOR_IMPL_HPP

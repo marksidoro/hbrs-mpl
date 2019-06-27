@@ -85,12 +85,12 @@ template <
 	>*
 >
 auto
-operator()(Matrix && a, std::vector<bool> const& keep) const {
+pca_filter_impl_el_matrix::operator()(Matrix && a, std::vector<bool> const& keep) const {
 	auto a_sz = (*size)(a);
 	auto a_m = (*m)(a_sz);
 	auto a_n = (*n)(a_sz);
 	
-	BOOST_ASSERT(keep.size() == a_m-1<a_n ? a_m-1 : std::min(a_m, a_n));
+	BOOST_ASSERT(keep.size() == (unsigned)(a_m-1<a_n ? a_m-1 : std::min(a_m, a_n)));
 	
 	return (*this)(
 		HBRS_MPL_FWD(a), 

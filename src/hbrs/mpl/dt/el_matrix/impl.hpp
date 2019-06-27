@@ -14,16 +14,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_EL_MATRIX_IMPL_IMPL_HPP
-#define HBRS_MPL_DT_EL_MATRIX_IMPL_IMPL_HPP
+#ifndef HBRS_MPL_DT_EL_MATRIX_IMPL_HPP
+#define HBRS_MPL_DT_EL_MATRIX_IMPL_HPP
 
 #include "fwd.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 #include <hbrs/mpl/config.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <boost/hana/core/make.hpp>
 
-#include <elemental/dt/exception.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/translate_index.hpp>
 #include <hbrs/mpl/detail/copy_matrix.hpp>
@@ -199,4 +199,5 @@ struct make_impl<hbrs::mpl::el_matrix_tag> {
 
 BOOST_HANA_NAMESPACE_END
 
-#endif // !HBRS_MPL_DT_EL_MATRIX_IMPL_IMPL_HPP
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
+#endif // !HBRS_MPL_DT_EL_MATRIX_IMPL_HPP

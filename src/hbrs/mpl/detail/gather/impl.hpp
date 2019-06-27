@@ -52,14 +52,14 @@ template <
 	typename T,
 	typename std::enable_if_t< 
 		#ifdef HBRS_MPL_ENABLE_MATLAB
-			std::is_same< hana::tag_of_t<T>, hbrs::mpl::ml_matrix_tag >::value ||
-			std::is_same< hana::tag_of_t<T>, hbrs::mpl::ml_column_vector_tag >::value ||
-			std::is_same< hana::tag_of_t<T>, hbrs::mpl::ml_row_vector_tag >::value ||
+			std::is_same< hana::tag_of_t<T>, ml_matrix_tag >::value ||
+			std::is_same< hana::tag_of_t<T>, ml_column_vector_tag >::value ||
+			std::is_same< hana::tag_of_t<T>, ml_row_vector_tag >::value ||
 		#endif
 		#ifdef HBRS_MPL_ENABLE_ELEMENTAL
-			std::is_same< hana::tag_of_t<T>, hbrs::mpl::el_matrix_tag >::value ||
-			std::is_same< hana::tag_of_t<T>, hbrs::mpl::el_column_vector_tag >::value ||
-			std::is_same< hana::tag_of_t<T>, hbrs::mpl::el_row_vector_tag >::value ||
+			std::is_same< hana::tag_of_t<T>, el_matrix_tag >::value ||
+			std::is_same< hana::tag_of_t<T>, el_column_vector_tag >::value ||
+			std::is_same< hana::tag_of_t<T>, el_row_vector_tag >::value ||
 		#endif
 		std::is_same< hana::tag_of_t<T>, sm_tag >::value ||
 		std::is_same< hana::tag_of_t<T>, smr_tag >::value ||
@@ -82,14 +82,14 @@ gather(T && t) {
 	#define _DEF_GATHER_DIST(kind)                                                                                     \
 		template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>                         \
 		constexpr auto                                                                                                 \
-		gather(hbrs::mpl::el_dist_ ## kind<Ring, Columnwise, Rowwise, Wrapping> const& t) {                               \
+		gather(el_dist_ ## kind<Ring, Columnwise, Rowwise, Wrapping> const& t) {                                       \
 			typedef std::decay_t<Ring> _Ring_;                                                                         \
 			El::DistMatrix<_Ring_, El::CIRC, El::CIRC, Wrapping> dmat{t.data()};                                       \
 			                                                                                                           \
 			if (dmat.Grid().Rank() == 0) {                                                                             \
-				return elemental::make_ ## kind(dmat.Matrix());                                                        \
+				return make_el_ ## kind(dmat.Matrix());                                                                \
 			} else {                                                                                                   \
-				return elemental::make_ ## kind(El::Matrix<_Ring_>{dmat.Height(), dmat.Width()});                      \
+				return make_el_ ## kind(El::Matrix<_Ring_>{dmat.Height(), dmat.Width()});                              \
 			}                                                                                                          \
 		}
 	

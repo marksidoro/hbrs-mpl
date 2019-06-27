@@ -47,7 +47,7 @@ struct mean_impl_smcs_el_matrix {
 	template <
 		typename Matrix,
 		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value
 		>* = nullptr
 	>
 	auto
@@ -58,7 +58,7 @@ struct mean_impl_smrs_el_matrix {
 	template <
 		typename Matrix,
 		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value
 		>* = nullptr
 	>
 	auto
@@ -69,7 +69,7 @@ struct mean_impl_el_dist_matrix_columns {
 	template <
 		typename DistMatrix,
 		typename std::enable_if_t<
-			std::is_same< hana::tag_of_t<DistMatrix>, dist_matrix_tag >::value
+			std::is_same< hana::tag_of_t<DistMatrix>, el_dist_matrix_tag >::value
 		>* = nullptr
 	>
 	auto

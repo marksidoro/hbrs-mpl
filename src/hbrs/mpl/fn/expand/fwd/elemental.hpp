@@ -21,10 +21,10 @@
 #include <hbrs/mpl/core/preprocessor.hpp>
 
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
-	#include <hbrs/mpl/dt/el_matrix.hpp>
-	#include <hbrs/mpl/dt/el_dist_matrix.hpp>
-	#include <hbrs/mpl/dt/el_vector.hpp>
-	#include <hbrs/mpl/dt/el_dist_vector.hpp>
+	#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
+	#include <hbrs/mpl/dt/el_dist_matrix/fwd.hpp>
+	#include <hbrs/mpl/dt/el_vector/fwd.hpp>
+	#include <hbrs/mpl/dt/el_dist_vector/fwd.hpp>
 #endif
 
 #include <hbrs/mpl/dt/smr/fwd.hpp>
@@ -42,7 +42,7 @@ struct expand_impl_smr_el_matrix {
 	template<
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, el_matrix_tag >::value
 		>* = nullptr
 	>
 	auto
@@ -57,7 +57,7 @@ struct expand_impl_el_row_vector {
 	template<typename Ring>
 	auto
 	operator()(
-		row_vector<Ring> const& v,
+		el_row_vector<Ring> const& v,
 		matrix_size<El::Int, El::Int> const& sz
 	) const;
 };
@@ -67,7 +67,7 @@ struct expand_impl_el_dist_row_vector {
 	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 	constexpr auto
 	operator()(
-		dist_row_vector<Ring, Columnwise, Rowwise, Wrapping> const& v,
+		el_dist_row_vector<Ring, Columnwise, Rowwise, Wrapping> const& v,
 		matrix_size<El::Int, El::Int> const& sz
 	) const;
 };

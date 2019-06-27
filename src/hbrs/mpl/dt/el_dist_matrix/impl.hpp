@@ -14,10 +14,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_EL_DIST_MATRIX_IMPL_IMPL_HPP
-#define HBRS_MPL_DT_EL_DIST_MATRIX_IMPL_IMPL_HPP
+#ifndef HBRS_MPL_DT_EL_DIST_MATRIX_IMPL_HPP
+#define HBRS_MPL_DT_EL_DIST_MATRIX_IMPL_HPP
 
 #include "fwd.hpp"
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/dt/el_matrix.hpp>
@@ -28,6 +29,7 @@
 #include <boost/hana/integral_constant.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <boost/hana/core/make.hpp>
+#include <boost/assert.hpp>
 #include <El.hpp>
 #include <type_traits>
 #include <initializer_list>
@@ -169,4 +171,5 @@ struct make_impl<hbrs::mpl::el_dist_matrix_tag> {
 
 BOOST_HANA_NAMESPACE_END
 
-#endif // !HBRS_MPL_DT_EL_DIST_MATRIX_IMPL_IMPL_HPP
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
+#endif // !HBRS_MPL_DT_EL_DIST_MATRIX_IMPL_HPP

@@ -22,6 +22,7 @@
 
 #include <hbrs/mpl/dt/el_matrix.hpp>
 #include <hbrs/mpl/fn/at.hpp>
+#include <hbrs/mpl/fn/absolute.hpp>
 #include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN

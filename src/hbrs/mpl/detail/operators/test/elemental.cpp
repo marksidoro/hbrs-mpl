@@ -35,10 +35,14 @@
 
 #include <hbrs/mpl/detail/test.hpp>
 #include <hbrs/mpl/detail/gather.hpp>
-#include <hbrs/mpl/dt/el_matrix.hpp>
-#include <hbrs/mpl/dt/el_vector.hpp>
-#include <hbrs/mpl/dt/el_dist_matrix.hpp>
-#include <hbrs/mpl/dt/el_dist_vector.hpp>
+
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+	#include <hbrs/mpl/dt/el_matrix.hpp>
+	#include <hbrs/mpl/dt/el_vector.hpp>
+	#include <hbrs/mpl/dt/el_dist_matrix.hpp>
+	#include <hbrs/mpl/dt/el_dist_vector.hpp>
+#endif
+
 #include <hbrs/mpl/dt/ctsav.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>
 #include <hbrs/mpl/dt/sm.hpp>
@@ -75,10 +79,9 @@
 #include <hbrs/mpl/fn/times.hpp>
 #include <hbrs/mpl/fn/sum.hpp>
 #include <boost/hana/pair.hpp>
-#include <El.hpp>
 #include <boost/format.hpp>
 
-#include "../../data.hpp"
+#include <hbrs/mpl/detail/test.hpp>
 
 namespace utf = boost::unit_test;
 namespace tt = boost::test_tools;
@@ -87,14 +90,15 @@ namespace tt = boost::test_tools;
 
 BOOST_AUTO_TEST_SUITE(elemental_test)
 
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+
 using hbrs::mpl::detail::environment_fixture;
 BOOST_TEST_GLOBAL_FIXTURE(environment_fixture);
 
 BOOST_AUTO_TEST_CASE(matrix_m_n_size) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	matrix<double> a0{2,4};
+	el_matrix<double> a0{2,4};
 	
 	auto const a0_size = (*size)(a0);
 	auto const a0_m = (*m)(a0_size);
@@ -112,7 +116,6 @@ BOOST_AUTO_TEST_CASE(matrix_m_n_size) {
 
 BOOST_AUTO_TEST_CASE(vector_size_at) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
 	El::Matrix<double> rnd_rv;
 	El::Uniform(rnd_rv, 1, 5);
@@ -122,10 +125,10 @@ BOOST_AUTO_TEST_CASE(vector_size_at) {
 	
 	std::vector<double> rnd{{1., 2., 3., 4., 5. }};
 	
-	auto rv1 = make_row_vector(rnd_rv);
-	auto rv2 = make_row_vector(rnd.data(), rnd.size());
-	auto cv1 = make_column_vector(rnd_cv);
-	auto cv2 = make_column_vector(rnd.data(), rnd.size());
+	auto rv1 = make_el_row_vector(rnd_rv);
+	auto rv2 = make_el_row_vector(rnd.data(), rnd.size());
+	auto cv1 = make_el_column_vector(rnd_cv);
+	auto cv2 = make_el_column_vector(rnd.data(), rnd.size());
 	
 	BOOST_TEST((*size)(rv1) == rnd_rv.Width());
 	BOOST_TEST((*size)(rv2) == rnd.size());
@@ -146,9 +149,8 @@ BOOST_AUTO_TEST_CASE(vector_size_at) {
 
 BOOST_AUTO_TEST_CASE(matrix_make) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto a1 = hbrs::mpl::make_el_matrix(
+	auto a1 = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.
@@ -168,7 +170,7 @@ BOOST_AUTO_TEST_CASE(matrix_make) {
 		}
 	}
 	
-	auto a2 = hbrs::mpl::make_el_matrix(
+	auto a2 = make_el_matrix(
 		std::initializer_list<double>{
 			1.,4.,
 			2.,5.,
@@ -193,21 +195,21 @@ BOOST_AUTO_TEST_CASE(matrix_make) {
 
 BOOST_AUTO_TEST_CASE(matrix_svd, * utf::tolerance(_TOL)) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
+	using hbrs::mpl::decompose_mode;
 	
 	auto const a3 = make_sm(
-		make_ctsav(test::mat_g), 
-		make_matrix_size(test::mat_g_m, test::mat_g_n), 
+		make_ctsav(detail::mat_g), 
+		make_matrix_size(detail::mat_g_m, detail::mat_g_n), 
 		row_major_c
 	);
 	
 	auto const a3_size = (*size)(a3);
 	auto const a3_m = (*m)(a3_size);
 	auto const a3_n = (*n)(a3_size);
-	BOOST_TEST(a3_m == test::mat_g_m);
-	BOOST_TEST(a3_n == test::mat_g_n);
+	BOOST_TEST(a3_m == detail::mat_g_m);
+	BOOST_TEST(a3_n == detail::mat_g_n);
 	
-	matrix<double> a4 = hbrs::mpl::make_el_matrix(a3);
+	el_matrix<double> a4 = make_el_matrix(a3);
 	
 	for(std::size_t i = 0; i < a3_m; ++i) {
 		for(std::size_t j = 0; j < a3_n; ++j) {
@@ -220,12 +222,12 @@ BOOST_AUTO_TEST_CASE(matrix_svd, * utf::tolerance(_TOL)) {
 		}
 	}
 	
-	elemental::detail::svd_impl_matrix{}(a4, mpl::decompose_mode::complete);
-	auto const svd1 = (*svd)(a4, mpl::decompose_mode::complete);
+	detail::svd_impl_el_matrix{}(a4, decompose_mode::complete);
+	auto const svd1 = (*svd)(a4, decompose_mode::complete);
 	
 	static_assert(std::is_same<
 		decltype(svd1),
-		mpl::svd_result<matrix<double>, matrix<double>, matrix<double>> const
+		svd_result<el_matrix<double>, el_matrix<double>, el_matrix<double>> const
 	>::value, "");
 	
 	auto && svd1_u = (*at)(svd1, svd_u{});
@@ -252,9 +254,8 @@ BOOST_AUTO_TEST_CASE(matrix_svd, * utf::tolerance(_TOL)) {
 
 BOOST_AUTO_TEST_CASE(matrix_multiply_1, * utf::tolerance(_TOL)) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,
 			3.,4.,
@@ -264,7 +265,7 @@ BOOST_AUTO_TEST_CASE(matrix_multiply_1, * utf::tolerance(_TOL)) {
 		row_major_c
 	);
 	
-	auto const b = hbrs::mpl::make_el_matrix(
+	auto const b = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.
@@ -273,7 +274,7 @@ BOOST_AUTO_TEST_CASE(matrix_multiply_1, * utf::tolerance(_TOL)) {
 		row_major_c
 	);
 	
-	auto const c = hbrs::mpl::make_el_matrix(
+	auto const c = make_el_matrix(
 		std::initializer_list<double>{
 			 9., 12., 15.,
 			19., 26., 33.,
@@ -283,14 +284,13 @@ BOOST_AUTO_TEST_CASE(matrix_multiply_1, * utf::tolerance(_TOL)) {
 		row_major_c
 	);
 	
-	elemental::detail::multiply_impl_matrix_matrix{}(a, b);
-	matrix<double> rc0 = (*multiply)(a, b);
+	detail::multiply_impl_el_matrix_el_matrix{}(a, b);
+	el_matrix<double> rc0 = (*multiply)(a, b);
 	
 	HBRS_MPL_TEST_MMEQ(c, rc0, false);
 }
 
 BOOST_AUTO_TEST_CASE(dist_matrix_svd_1, * utf::tolerance(_TOL)) {
-	using namespace hbrs::mpl;
 	using namespace hbrs::mpl;
 	
 	// Ref.: https://github.com/elemental/Elemental/blob/master/tests/lapack_like/SVD.cpp
@@ -344,7 +344,6 @@ BOOST_AUTO_TEST_CASE(dist_matrix_svd_1, * utf::tolerance(_TOL)) {
 
 BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	typedef double Real;
 	
 	auto copy = [](auto x) { return x; };
@@ -352,10 +351,10 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	El::Grid grid{El::mpi::COMM_WORLD};
 	
 	// generate and distribute test matrix
-	dist_matrix<Real, El::VC, El::STAR, El::ELEMENT> const b{
-		hbrs::mpl::make_el_dist_matrix(
+	el_dist_matrix<Real, El::VC, El::STAR, El::ELEMENT> const b{
+		make_el_dist_matrix(
 			grid,
-			hbrs::mpl::make_el_matrix(
+			make_el_matrix(
 				std::initializer_list<double>{
 					1.,2.,3.,
 					4.,5.,6.,
@@ -372,10 +371,10 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	//TODO: Split this big monolithic test into multiple test functions
 	
 	/////////////////////////// columns ///////////////////////////
-	mpl::expression<
-		mpl::columns_t,
+	expression<
+		columns_t,
 		std::tuple<
-			dist_matrix<Real, El::VC, El::STAR, El::ELEMENT> const &
+			el_dist_matrix<Real, El::VC, El::STAR, El::ELEMENT> const &
 		>
 	> columns_expr0 = (*columns)(b);
 	
@@ -386,7 +385,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	// Sum up columns
 	auto sums_dmat = (*sum)(columns(b));
 	{
-		auto const expected = hbrs::mpl::make_el_row_vector(
+		auto const expected = make_el_row_vector(
 			std::initializer_list<double>{
 				12.,15.,18.,
 			}
@@ -401,12 +400,12 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	El::mpi::Barrier();
 	BOOST_TEST_PASSPOINT();
 	
-	auto d_local = hbrs::mpl::make_el_matrix(
+	auto d_local = make_el_matrix(
 		make_sm(
-			make_ctsav(test::mat_g), make_matrix_size(hana::size_c<test::mat_g_m>, hana::size_c<test::mat_g_n>), row_major_c
+			make_ctsav(detail::mat_g), make_matrix_size(hana::size_c<detail::mat_g_m>, hana::size_c<detail::mat_g_n>), row_major_c
 		)
 	);
-	auto d_dist = hbrs::mpl::make_el_dist_matrix(grid, d_local);
+	auto d_dist = make_el_dist_matrix(grid, d_local);
 	auto sums_dmat2 = (*sum)(columns(d_dist));
 	{
 		auto const expected = (*sum)(columns(d_local));
@@ -418,7 +417,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	/////////////////////////// column mean ///////////////////////////
 	auto column_mean_dmat = (*mean)(columns(b));
 	{
-		auto const expected = hbrs::mpl::make_el_row_vector(
+		auto const expected = make_el_row_vector(
 			std::initializer_list<double>{
 				4.,5.,6.,
 			}
@@ -434,11 +433,11 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	BOOST_TEST_PASSPOINT();
 	/////////////////////////// expand ///////////////////////////
 	
-	mpl::expression<
-		mpl::expand_t,
+	expression<
+		expand_t,
 		std::tuple<
-			dist_row_vector<Real, El::STAR, El::STAR, El::ELEMENT> const&,
-			mpl::matrix_size<El::Int, El::Int> const&
+			el_dist_row_vector<Real, El::STAR, El::STAR, El::ELEMENT> const&,
+			matrix_size<El::Int, El::Int> const&
 		>
 	> expand_expr0 = (*expand)(column_mean_dmat, make_matrix_size(3,3));
 	
@@ -452,7 +451,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	
 	auto minus_dmat = (*minus)(b, expand(column_mean_dmat, (*size)(b)));
 	{
-		auto const expected = hbrs::mpl::make_el_matrix(
+		auto const expected = make_el_matrix(
 			std::initializer_list<double>{
 				-3.,-3.,-3.,
 				0.,0.,0.,
@@ -487,12 +486,13 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	/////////////////////////// svd ///////////////////////////
 	
 	struct svd_result {
-		dist_matrix<Real, El::MC, El::MR> u;
-		dist_matrix<Real, El::STAR, El::STAR> s;
-		dist_matrix<Real, El::MC, El::MR> v;
+		el_dist_matrix<Real, El::MC, El::MR> u;
+		el_dist_matrix<Real, El::STAR, El::STAR> s;
+		el_dist_matrix<Real, El::MC, El::MR> v;
 	};
 	
-	auto usv = (*svd)(minus_dmat, mpl::decompose_mode::economy);
+	using hbrs::mpl::decompose_mode;
+	auto usv = (*svd)(minus_dmat, decompose_mode::economy);
 	svd_result usv_{
 		(*at)(usv, svd_u{}),
 		(*at)(usv, svd_s{}),
@@ -500,16 +500,16 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	};
 	
 	{
-		dist_matrix<Real, El::MC, El::MR> rec_dmat /* reconstructed */ = (*multiply)((*multiply)(usv_.u, usv_.s), (*transpose)(usv_.v));
+		el_dist_matrix<Real, El::MC, El::MR> rec_dmat /* reconstructed */ = (*multiply)((*multiply)(usv_.u, usv_.s), (*transpose)(usv_.v));
 		HBRS_MPL_TEST_MMEQ(minus_dmat, rec_dmat, false);
 	}
 	
 	El::mpi::Barrier();
 	BOOST_TEST_PASSPOINT();
 	
-	auto c = hbrs::mpl::make_el_dist_matrix(
+	auto c = make_el_dist_matrix(
 		grid,
-		hbrs::mpl::make_el_matrix(
+		make_el_matrix(
 			std::initializer_list<double>{
 				1.,2.,3.,
 				4.,5.,6.,
@@ -520,7 +520,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 		)
 	);
 	
-	auto usv2 = (*svd)(c, mpl::decompose_mode::economy);
+	auto usv2 = (*svd)(c, decompose_mode::economy);
 	{
 		auto rec_dmat /* reconstructed */ = (*multiply)((*multiply)(usv2.u(), usv2.s()), (*transpose)(usv2.v()));
 		HBRS_MPL_TEST_MMEQ(c, rec_dmat, false);
@@ -532,7 +532,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	
 	auto diag_dmat = (*diag)(b);
 	{
-		auto const expected = hbrs::mpl::make_el_column_vector(std::initializer_list<double>{1., 5., 9.});
+		auto const expected = make_el_column_vector(std::initializer_list<double>{1., 5., 9.});
 		HBRS_MPL_TEST_VVEQ(expected, diag_dmat, false);
 	}
 	
@@ -544,7 +544,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	/////////////////////////// transform ///////////////////////////
 	auto transform_dmat = (*transform)(copy(b), [](auto a) { return a * 2; });
 	{
-		auto const expected = hbrs::mpl::make_el_matrix(
+		auto const expected = make_el_matrix(
 			std::initializer_list<double>{
 				2.,4.,6.,
 				8.,10.,12.,
@@ -565,7 +565,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	
 	auto transform_dist_cv = (*transform)(diag(b), [](auto a) { return a * 3; });
 	{
-		auto const expected = hbrs::mpl::make_el_column_vector(std::initializer_list<double>{3., 15., 27.});
+		auto const expected = make_el_column_vector(std::initializer_list<double>{3., 15., 27.});
 		
 		HBRS_MPL_TEST_VVEQ(expected, transform_dist_cv, false);
 	}
@@ -578,7 +578,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	/////////////////////////// divide ///////////////////////////
 	auto divide_dist_cv = (*divide)( copy(transform_dist_cv), 3);
 	{
-		auto const expected = hbrs::mpl::make_el_column_vector(std::initializer_list<double>{1.,5.,9.});
+		auto const expected = make_el_column_vector(std::initializer_list<double>{1.,5.,9.});
 		
 		HBRS_MPL_TEST_VVEQ(expected, divide_dist_cv, false);
 	}
@@ -602,9 +602,8 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 
 BOOST_AUTO_TEST_CASE(matrix_multiply_2, * utf::tolerance(_TOL)) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			1.,0.,0.,
 			0.,1.,0.,
@@ -614,17 +613,16 @@ BOOST_AUTO_TEST_CASE(matrix_multiply_2, * utf::tolerance(_TOL)) {
 		row_major_c
 	);
 	
-	elemental::detail::multiply_impl_matrix_matrix{}(a, elemental::detail::multiply_impl_matrix_matrix{}(a, a));
-	matrix<double> const rb0 = (*multiply)(a, multiply(a, a));
+	detail::multiply_impl_el_matrix_el_matrix{}(a, detail::multiply_impl_el_matrix_el_matrix{}(a, a));
+	el_matrix<double> const rb0 = (*multiply)(a, multiply(a, a));
 	
 	HBRS_MPL_TEST_MMEQ(a, rb0, false);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_multiply_3) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.
@@ -637,7 +635,7 @@ BOOST_AUTO_TEST_CASE(matrix_multiply_3) {
 	auto const a_m = (*m)(a_sz);
 	auto const a_n = (*n)(a_sz);
 	
-	auto const b = hbrs::mpl::make_el_matrix(
+	auto const b = make_el_matrix(
 		std::initializer_list<double>{
 			 7.,  8.,
 			 9., 10.,
@@ -651,7 +649,7 @@ BOOST_AUTO_TEST_CASE(matrix_multiply_3) {
 	auto const b_m = (*m)(b_sz);
 	auto const b_n = (*n)(b_sz);
 	
-	auto const c = hbrs::mpl::make_el_matrix(
+	auto const c = make_el_matrix(
 		std::initializer_list<double>{
 			 58.,  64.,
 			139., 154.
@@ -670,9 +668,8 @@ BOOST_AUTO_TEST_CASE(matrix_multiply_3) {
 
 BOOST_AUTO_TEST_CASE(matrix_multiply_4) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.
@@ -685,7 +682,7 @@ BOOST_AUTO_TEST_CASE(matrix_multiply_4) {
 	auto const a_m = (*m)(a_sz);
 	auto const a_n = (*n)(a_sz);
 	
-	auto const b = hbrs::mpl::make_el_matrix(
+	auto const b = make_el_matrix(
 		std::initializer_list<double>{
 			 2.,  4.,  6.,
 			 8., 10., 12.
@@ -704,9 +701,8 @@ BOOST_AUTO_TEST_CASE(matrix_multiply_4) {
 
 BOOST_AUTO_TEST_CASE(matrix_vector_multiply) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			1.,-1.,2.,
 			0.,-3.,1.
@@ -750,9 +746,8 @@ BOOST_AUTO_TEST_CASE(matrix_vector_multiply) {
 
 BOOST_AUTO_TEST_CASE(matrix_divide) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			2.,  4.,  6.,
 			8., 10., 12.
@@ -765,7 +760,7 @@ BOOST_AUTO_TEST_CASE(matrix_divide) {
 	auto const a_m = (*m)(a_sz);
 	auto const a_n = (*n)(a_sz);
 	
-	auto const b = hbrs::mpl::make_el_matrix(
+	auto const b = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.
@@ -791,10 +786,9 @@ BOOST_AUTO_TEST_CASE(matrix_divide) {
 
 BOOST_AUTO_TEST_CASE(matrix_plus_1) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	matrix<double> a11{2,3};
-	matrix<double> a12{2,3};
+	el_matrix<double> a11{2,3};
+	el_matrix<double> a12{2,3};
 	auto const a11_m = (*m)(size(a11));
 	auto const a11_n = (*n)(size(a11));
 	
@@ -825,9 +819,8 @@ BOOST_AUTO_TEST_CASE(matrix_plus_1) {
 
 BOOST_AUTO_TEST_CASE(matrix_plus_2) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.
@@ -840,7 +833,7 @@ BOOST_AUTO_TEST_CASE(matrix_plus_2) {
 	auto const a_m = (*m)(a_sz);
 	auto const a_n = (*n)(a_sz);
 	
-	auto const b = hbrs::mpl::make_el_matrix(
+	auto const b = make_el_matrix(
 		std::initializer_list<double>{
 			11.,12.,13.,
 			14.,15.,16.
@@ -849,7 +842,7 @@ BOOST_AUTO_TEST_CASE(matrix_plus_2) {
 		row_major_c
 	);
 	
-	auto const c = hbrs::mpl::make_el_matrix(
+	auto const c = make_el_matrix(
 		std::initializer_list<double>{
 			10.,10.,10.,
 			10.,10.,10.
@@ -882,9 +875,8 @@ BOOST_AUTO_TEST_CASE(matrix_plus_2) {
 
 BOOST_AUTO_TEST_CASE(matrix_minus) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			11.,12.,13.,
 			14.,15.,16.
@@ -897,7 +889,7 @@ BOOST_AUTO_TEST_CASE(matrix_minus) {
 	auto const a_m = (*m)(a_sz);
 	auto const a_n = (*n)(a_sz);
 	
-	auto const b = hbrs::mpl::make_el_matrix(
+	auto const b = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.
@@ -906,7 +898,7 @@ BOOST_AUTO_TEST_CASE(matrix_minus) {
 		row_major_c
 	);
 	
-	auto const c = hbrs::mpl::make_el_matrix(
+	auto const c = make_el_matrix(
 		std::initializer_list<double>{
 			10.,10.,10.,
 			10.,10.,10.
@@ -939,24 +931,23 @@ BOOST_AUTO_TEST_CASE(matrix_minus) {
 
 BOOST_AUTO_TEST_CASE(matrix_vertcat) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
 	auto const z = make_sm(
-		make_ctsav(test::mat_h), 
-		make_matrix_size(test::mat_h_m, test::mat_h_n), 
+		make_ctsav(detail::mat_h), 
+		make_matrix_size(detail::mat_h_m, detail::mat_h_n), 
 		row_major_c
 	);
 	
-	auto const a = hbrs::mpl::make_el_matrix(z);
+	auto const a = make_el_matrix(z);
 	
 	auto a_r0 = (*at)(a, 0);
 	auto a_r1 = (*at)(a, 1);
 	auto a_r2 = (*at)(a, 2);
 	
-	elemental::detail::vertcat_impl_smr_smr{}(a_r0, a_r1);
-	elemental::detail::vertcat_impl_matrix_smr{}(elemental::detail::vertcat_impl_smr_smr{}(a_r0, a_r1), a_r2);
+	detail::vertcat_impl_smr_el_matrix_smr_el_matrix{}(a_r0, a_r1);
+	detail::vertcat_impl_el_matrix_smr_el_matrix{}(detail::vertcat_impl_smr_el_matrix_smr_el_matrix{}(a_r0, a_r1), a_r2);
 	
-	auto b = (*mpl::vertcat)(mpl::vertcat(a_r0, a_r1), a_r2);
+	auto b = (*vertcat)(vertcat(a_r0, a_r1), a_r2);
 	auto const a_m = (*m)(size(a));
 	auto const a_n = (*n)(size(a));
 	
@@ -975,23 +966,22 @@ BOOST_AUTO_TEST_CASE(matrix_vertcat) {
 
 BOOST_AUTO_TEST_CASE(matrix_expand) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
 	auto const z = make_sm(
-		make_ctsav(test::mat_h), 
-		make_matrix_size(test::mat_h_m, test::mat_h_n), 
+		make_ctsav(detail::mat_h), 
+		make_matrix_size(detail::mat_h_m, detail::mat_h_n), 
 		row_major_c
 	);
 	
-	auto const a = hbrs::mpl::make_el_matrix(z);
+	auto const a = make_el_matrix(z);
 	auto const a_m = (*m)(size(a));
 	auto const a_n = (*n)(size(a));
 	
 	auto a_r0 = (*at)(a, 0);
 	auto sz = matrix_size<El::Int, El::Int>{a_m*2, a_n*3};
 	
-	elemental::detail::expand_impl_smr{}(a_r0, sz);
-	auto b = (*mpl::expand)(a_r0, sz);
+	detail::expand_impl_smr_el_matrix{}(a_r0, sz);
+	auto b = (*expand)(a_r0, sz);
 	auto const b_m = (*m)(size(b));
 	auto const b_n = (*n)(size(b));
 	
@@ -1000,18 +990,17 @@ BOOST_AUTO_TEST_CASE(matrix_expand) {
 	
 	for(El::Int i = 0; i < b_m; ++i) {
 		for(El::Int j = 0; j < b_n; ++j) {
-			BOOST_TEST((*at)(b, make_matrix_index(i,j)) == (*at)(a, mpl::matrix_index<El::Int, El::Int>(0,j%a_n)));
+			BOOST_TEST((*at)(b, make_matrix_index(i,j)) == (*at)(a, matrix_index<El::Int, El::Int>(0,j%a_n)));
 		}
 	}
 }
 
 BOOST_AUTO_TEST_CASE(vector_expand) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
 	El::Matrix<double> rnd_rv;
 	El::Uniform(rnd_rv, 1, 5);
-	auto rv = make_row_vector(rnd_rv);
+	auto rv = make_el_row_vector(rnd_rv);
 	auto rv_sz = (*size)(rv);
 	
 	auto const m1_sz = matrix_size<El::Int, El::Int>{1,   rv_sz};
@@ -1044,34 +1033,33 @@ BOOST_AUTO_TEST_CASE(vector_expand) {
 	
 	for(El::Int i = 0; i < m1_m; ++i) {
 		for(El::Int j = 0; j < m1_n; ++j) {
-			BOOST_TEST((*at)(rv, j % m1_n) == (*at)(m1, mpl::matrix_index<El::Int, El::Int>{i, j}));
+			BOOST_TEST((*at)(rv, j % m1_n) == (*at)(m1, matrix_index<El::Int, El::Int>{i, j}));
 		}
 	}
 	
 	for(El::Int i = 0; i < m2_m; ++i) {
 		for(El::Int j = 0; j < m2_n; ++j) {
-			BOOST_TEST((*at)(rv, j % m1_n) == (*at)(m2, mpl::matrix_index<El::Int, El::Int>{i, j}));
+			BOOST_TEST((*at)(rv, j % m1_n) == (*at)(m2, matrix_index<El::Int, El::Int>{i, j}));
 		}
 	}
 	
 	for(El::Int i = 0; i < m3_m; ++i) {
 		for(El::Int j = 0; j < m3_n; ++j) {
-			BOOST_TEST((*at)(rv, j % m1_n) == (*at)(m3, mpl::matrix_index<El::Int, El::Int>{i, j}));
+			BOOST_TEST((*at)(rv, j % m1_n) == (*at)(m3, matrix_index<El::Int, El::Int>{i, j}));
 		}
 	}
 	
 	for(El::Int i = 0; i < m4_m; ++i) {
 		for(El::Int j = 0; j < m4_n; ++j) {
-			BOOST_TEST((*at)(rv, j % m1_n) == (*at)(m4, mpl::matrix_index<El::Int, El::Int>{i, j}));
+			BOOST_TEST((*at)(rv, j % m1_n) == (*at)(m4, matrix_index<El::Int, El::Int>{i, j}));
 		}
 	}
 }
 
 BOOST_AUTO_TEST_CASE(matrix_column_sum) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.,
@@ -1081,7 +1069,7 @@ BOOST_AUTO_TEST_CASE(matrix_column_sum) {
 		row_major_c
 	);
 	
-	auto const b = hbrs::mpl::make_el_row_vector(
+	auto const b = make_el_row_vector(
 		std::initializer_list<double>{
 			12.,15.,18.
 		}
@@ -1093,9 +1081,8 @@ BOOST_AUTO_TEST_CASE(matrix_column_sum) {
 
 BOOST_AUTO_TEST_CASE(matrix_row_sum) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.,
@@ -1105,7 +1092,7 @@ BOOST_AUTO_TEST_CASE(matrix_row_sum) {
 		row_major_c
 	);
 	
-	auto const b = hbrs::mpl::make_el_column_vector(
+	auto const b = make_el_column_vector(
 		std::initializer_list<double>{
 			6.,
 			15.,
@@ -1119,9 +1106,8 @@ BOOST_AUTO_TEST_CASE(matrix_row_sum) {
 
 BOOST_AUTO_TEST_CASE(matrix_mean) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto a = hbrs::mpl::make_el_matrix(
+	auto a = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.
@@ -1133,11 +1119,11 @@ BOOST_AUTO_TEST_CASE(matrix_mean) {
 	auto a_m = (*m)(size(a));
 	auto a_n = (*n)(size(a));
 	
-	elemental::detail::mean_impl_smcs_matrix{}((*columns)(a));
+	detail::mean_impl_smcs_el_matrix{}((*columns)(a));
 	auto cm = (*mean)(columns(a));
 	auto cm_sz = (*size)(cm);
 	
-	elemental::detail::mean_impl_smrs_matrix{}((*rows)(a));
+	detail::mean_impl_smrs_el_matrix{}((*rows)(a));
 	auto rm = (*mean)(rows(a));
 	auto rm_sz = (*size)(rm);
 	
@@ -1164,7 +1150,7 @@ BOOST_AUTO_TEST_CASE(matrix_mean) {
 		BOOST_TEST((*at)(cm, j) == cm_);
 	}
 	
-	auto orm = hbrs::mpl::make_el_matrix(
+	auto orm = make_el_matrix(
 		std::initializer_list<double>{
 			2.0,
 			5.0
@@ -1179,7 +1165,7 @@ BOOST_AUTO_TEST_CASE(matrix_mean) {
 		BOOST_TEST((*at)(rm, i) == (*at)(orm, make_matrix_index((El::Int)i, (El::Int)0)));
 	}
 	
-	auto ocm = hbrs::mpl::make_el_matrix(
+	auto ocm = make_el_matrix(
 		std::initializer_list<double>{
 			2.5, 3.5, 4.5
 		},
@@ -1198,9 +1184,8 @@ BOOST_AUTO_TEST_CASE(matrix_mean) {
 
 BOOST_AUTO_TEST_CASE(matrix_transform) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.
@@ -1213,7 +1198,7 @@ BOOST_AUTO_TEST_CASE(matrix_transform) {
 	auto const a_m = (*m)(a_sz);
 	auto const a_n = (*n)(a_sz);
 	
-	auto const b = hbrs::mpl::make_el_matrix(
+	auto const b = make_el_matrix(
 		std::initializer_list<double>{
 			 2.,  4.,  6.,
 			 8., 10., 12.
@@ -1228,7 +1213,7 @@ BOOST_AUTO_TEST_CASE(matrix_transform) {
 	
 	std::function<double(double)> f = [](double d) -> double { return 2.*d; };
 	
-	elemental::detail::transform_impl_matrix{}(a, f);
+	detail::transform_impl_el_matrix{}(a, f);
 	auto d = (*transform)(a, f);
 	auto d_sz = (*size)(d);
 	BOOST_TEST(b_sz == d_sz);
@@ -1240,22 +1225,20 @@ BOOST_AUTO_TEST_CASE(matrix_transform) {
 	}
 }
 
-BOOST_AUTO_TEST_CASE(power) {
-	using namespace hbrs::mpl;
+BOOST_AUTO_TEST_CASE(power_) {
 	using namespace hbrs::mpl;
 	
 	El::Complex<double> c1 = {2., 0.};
 	El::Int i1 = 2;
 	El::Complex<double> c2 = {4., 0.};
 	
-	BOOST_TEST((*mpl::power)(c1, i1) == c2);
+	BOOST_TEST((*power)(c1, i1) == c2);
 }
 
 BOOST_AUTO_TEST_CASE(smr_absolute) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			-1.,2.,-3.
 		},
@@ -1269,7 +1252,7 @@ BOOST_AUTO_TEST_CASE(smr_absolute) {
 	std::vector<double> const b {{ 1.,  2., 3. }};
 	auto const b_sz = (*size)(b);
 	
-	mpl::detail::absolute_impl_smr{}(c);
+	detail::absolute_impl_smr{}(c);
 	auto d = (*absolute)(c);
 	auto d_sz = (*size)(d);
 	BOOST_TEST(b_sz == d_sz);
@@ -1280,9 +1263,8 @@ BOOST_AUTO_TEST_CASE(smr_absolute) {
 
 BOOST_AUTO_TEST_CASE(matrix_absolute) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			-1.,2.,-3.,
 			4.,-5.,6.
@@ -1295,7 +1277,7 @@ BOOST_AUTO_TEST_CASE(matrix_absolute) {
 	auto const a_m = (*m)(a_sz);
 	auto const a_n = (*n)(a_sz);
 	
-	auto const b = hbrs::mpl::make_el_matrix(
+	auto const b = make_el_matrix(
 		std::initializer_list<double>{
 			 1., 2., 3.,
 			 4., 5., 6.
@@ -1308,7 +1290,7 @@ BOOST_AUTO_TEST_CASE(matrix_absolute) {
 	auto const b_m = (*m)(b_sz);
 	auto const b_n = (*n)(b_sz);
 	
-	elemental::detail::absolute_impl_matrix{}(a);
+	detail::absolute_impl_el_matrix{}(a);
 	auto d = (*absolute)(a);
 	auto d_sz = (*size)(d);
 	BOOST_TEST(b_sz == d_sz);
@@ -1322,10 +1304,9 @@ BOOST_AUTO_TEST_CASE(matrix_absolute) {
 
 BOOST_AUTO_TEST_CASE(matrix_select) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	using hbrs::mpl::select;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.,
@@ -1335,7 +1316,7 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 		row_major_c
 	);
 	
-	auto const b = hbrs::mpl::make_el_matrix(
+	auto const b = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.,
@@ -1344,7 +1325,7 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 		row_major_c
 	);
 	
-	auto const c = hbrs::mpl::make_el_matrix(
+	auto const c = make_el_matrix(
 		std::initializer_list<double>{
 			4.,5.,6.,
 			7.,8.,9.
@@ -1353,7 +1334,7 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 		row_major_c
 	);
 	
-	auto const d = hbrs::mpl::make_el_matrix(
+	auto const d = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,
 			4.,5.,
@@ -1363,7 +1344,7 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 		row_major_c
 	);
 	
-	auto const e = hbrs::mpl::make_el_matrix(
+	auto const e = make_el_matrix(
 		std::initializer_list<double>{
 			2.,3.,
 			5.,6.,
@@ -1373,31 +1354,31 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 		row_major_c
 	);
 	
-	elemental::detail::select_impl_matrix{}(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
-	matrix<double const> rb0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
-	matrix<double const> rc0 = (*select)(a, make_range(make_matrix_index(1,0), make_matrix_index(2,2)));
-	matrix<double const> rd0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(2,1)));
-	matrix<double const> re0 = (*select)(a, make_range(make_matrix_index(0,1), make_matrix_index(2,2)));
+	detail::select_impl_el_matrix{}(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
+	el_matrix<double const> rb0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
+	el_matrix<double const> rc0 = (*select)(a, make_range(make_matrix_index(1,0), make_matrix_index(2,2)));
+	el_matrix<double const> rd0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(2,1)));
+	el_matrix<double const> re0 = (*select)(a, make_range(make_matrix_index(0,1), make_matrix_index(2,2)));
 	
-	matrix<double const> rb1 = (*select)(a, std::make_pair(El::IR(0,2), El::IR(0,3)));
-	matrix<double const> rc1 = (*select)(a, std::make_pair(El::IR(1,3), El::IR(0,3)));
-	matrix<double const> rd1 = (*select)(a, std::make_pair(El::IR(0,3), El::IR(0,2)));
-	matrix<double const> re1 = (*select)(a, std::make_pair(El::IR(0,3), El::IR(1,3)));
+	el_matrix<double const> rb1 = (*select)(a, std::make_pair(El::IR(0,2), El::IR(0,3)));
+	el_matrix<double const> rc1 = (*select)(a, std::make_pair(El::IR(1,3), El::IR(0,3)));
+	el_matrix<double const> rd1 = (*select)(a, std::make_pair(El::IR(0,3), El::IR(0,2)));
+	el_matrix<double const> re1 = (*select)(a, std::make_pair(El::IR(0,3), El::IR(1,3)));
 	
-	matrix<double const> rb2 = (*select)(a, std::make_pair(make_matrix_index(0,0), make_matrix_size(2,3)));
-	matrix<double const> rc2 = (*select)(a, std::make_pair(make_matrix_index(1,0), make_matrix_size(2,3)));
-	matrix<double const> rd2 = (*select)(a, std::make_pair(make_matrix_index(0,0), make_matrix_size(3,2)));
-	matrix<double const> re2 = (*select)(a, std::make_pair(make_matrix_index(0,1), make_matrix_size(3,2)));
+	el_matrix<double const> rb2 = (*select)(a, std::make_pair(make_matrix_index(0,0), make_matrix_size(2,3)));
+	el_matrix<double const> rc2 = (*select)(a, std::make_pair(make_matrix_index(1,0), make_matrix_size(2,3)));
+	el_matrix<double const> rd2 = (*select)(a, std::make_pair(make_matrix_index(0,0), make_matrix_size(3,2)));
+	el_matrix<double const> re2 = (*select)(a, std::make_pair(make_matrix_index(0,1), make_matrix_size(3,2)));
 	
-	matrix<double const> rb3 = (*select)(std::move(a), std::make_pair(El::IR(0,2), El::IR(0,3)));
-	matrix<double const> rc3 = (*select)(std::move(a), std::make_pair(El::IR(1,3), El::IR(0,3)));
-	matrix<double const> rd3 = (*select)(std::move(a), std::make_pair(El::IR(0,3), El::IR(0,2)));
-	matrix<double const> re3 = (*select)(std::move(a), std::make_pair(El::IR(0,3), El::IR(1,3)));
+	el_matrix<double const> rb3 = (*select)(std::move(a), std::make_pair(El::IR(0,2), El::IR(0,3)));
+	el_matrix<double const> rc3 = (*select)(std::move(a), std::make_pair(El::IR(1,3), El::IR(0,3)));
+	el_matrix<double const> rd3 = (*select)(std::move(a), std::make_pair(El::IR(0,3), El::IR(0,2)));
+	el_matrix<double const> re3 = (*select)(std::move(a), std::make_pair(El::IR(0,3), El::IR(1,3)));
 	
-	matrix<double> rb4 = (*select)(matrix<double>{a}, std::make_pair(El::IR(0,2), El::IR(0,3)));
-	matrix<double> rc4 = (*select)(matrix<double>{a}, std::make_pair(El::IR(1,3), El::IR(0,3)));
-	matrix<double> rd4 = (*select)(matrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(0,2)));
-	matrix<double> re4 = (*select)(matrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(1,3)));
+	el_matrix<double> rb4 = (*select)(el_matrix<double>{a}, std::make_pair(El::IR(0,2), El::IR(0,3)));
+	el_matrix<double> rc4 = (*select)(el_matrix<double>{a}, std::make_pair(El::IR(1,3), El::IR(0,3)));
+	el_matrix<double> rd4 = (*select)(el_matrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(0,2)));
+	el_matrix<double> re4 = (*select)(el_matrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(1,3)));
 	
 	HBRS_MPL_TEST_MMEQ(b, rb0, false);
 	HBRS_MPL_TEST_MMEQ(c, rc0, false);
@@ -1427,14 +1408,13 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 
 BOOST_AUTO_TEST_CASE(dist_matrix_select) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	using hbrs::mpl::select;
 	
 	El::Grid grid{El::mpi::COMM_WORLD};
 	
-	auto const a = hbrs::mpl::make_el_dist_matrix(
+	auto const a = make_el_dist_matrix(
 		grid,
-		hbrs::mpl::make_el_matrix(
+		make_el_matrix(
 			std::initializer_list<double>{
 				1.,2.,3.,
 				4.,5.,6.,
@@ -1445,9 +1425,9 @@ BOOST_AUTO_TEST_CASE(dist_matrix_select) {
 			)
 	);
 	
-	auto const b = hbrs::mpl::make_el_dist_matrix(
+	auto const b = make_el_dist_matrix(
 		grid,
-		hbrs::mpl::make_el_matrix(
+		make_el_matrix(
 			std::initializer_list<double>{
 				1.,2.,3.,
 				4.,5.,6.,
@@ -1457,9 +1437,9 @@ BOOST_AUTO_TEST_CASE(dist_matrix_select) {
 		)
 	);
 	
-	auto const c = hbrs::mpl::make_el_dist_matrix(
+	auto const c = make_el_dist_matrix(
 		grid,
-		hbrs::mpl::make_el_matrix(
+		make_el_matrix(
 			std::initializer_list<double>{
 				4.,5.,6.,
 				7.,8.,9.
@@ -1469,9 +1449,9 @@ BOOST_AUTO_TEST_CASE(dist_matrix_select) {
 		)
 	);
 	
-	auto const d = hbrs::mpl::make_el_dist_matrix(
+	auto const d = make_el_dist_matrix(
 		grid,
-		hbrs::mpl::make_el_matrix(
+		make_el_matrix(
 			std::initializer_list<double>{
 				1.,2.,
 				4.,5.,
@@ -1482,9 +1462,9 @@ BOOST_AUTO_TEST_CASE(dist_matrix_select) {
 		)
 	);
 	
-	auto const e = hbrs::mpl::make_el_dist_matrix(
+	auto const e = make_el_dist_matrix(
 		grid,
-		hbrs::mpl::make_el_matrix(
+		make_el_matrix(
 			std::initializer_list<double>{
 				2.,3.,
 				5.,6.,
@@ -1495,7 +1475,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_select) {
 		)
 	);
 	
-	elemental::detail::select_impl_matrix{}(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
+	detail::select_impl_el_matrix{}(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
 	auto const rb0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
 	auto const rc0 = (*select)(a, make_range(make_matrix_index(1,0), make_matrix_index(2,2)));
 	auto const rd0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(2,1)));
@@ -1508,10 +1488,10 @@ BOOST_AUTO_TEST_CASE(dist_matrix_select) {
 	auto const rc2 = (*select)(a, std::make_pair(make_matrix_index(1,0), make_matrix_size(2,3)));
 	auto const rd2 = (*select)(a, std::make_pair(make_matrix_index(0,0), make_matrix_size(3,2)));
 	auto const re2 = (*select)(a, std::make_pair(make_matrix_index(0,1), make_matrix_size(3,2)));
-	auto       rb3 = (*select)(dist_matrix<double>{a}, std::make_pair(El::IR(0,2), El::IR(0,3)));
-	auto       rc3 = (*select)(dist_matrix<double>{a}, std::make_pair(El::IR(1,3), El::IR(0,3)));
-	auto       rd3 = (*select)(dist_matrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(0,2)));
-	auto       re3 = (*select)(dist_matrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(1,3)));
+	auto       rb3 = (*select)(el_dist_matrix<double>{a}, std::make_pair(El::IR(0,2), El::IR(0,3)));
+	auto       rc3 = (*select)(el_dist_matrix<double>{a}, std::make_pair(El::IR(1,3), El::IR(0,3)));
+	auto       rd3 = (*select)(el_dist_matrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(0,2)));
+	auto       re3 = (*select)(el_dist_matrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(1,3)));
 	
 	
 	HBRS_MPL_TEST_MMEQ(b, rb0, false);
@@ -1535,33 +1515,32 @@ BOOST_AUTO_TEST_CASE(dist_matrix_select) {
 
 BOOST_AUTO_TEST_CASE(column_vector_select) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	using hbrs::mpl::select;
 	
-	auto const a = hbrs::mpl::make_el_column_vector(
+	auto const a = make_el_column_vector(
 		std::initializer_list<double>{
 			1.,2.,3.,4.,5.,6.,7.,8.,9.
 		}
 	);
 	
-	auto const b = hbrs::mpl::make_el_column_vector(
+	auto const b = make_el_column_vector(
 		std::initializer_list<double>{
 			1.,2.,3.,4.,5.,6.,
 		}
 	);
 	
-	auto const c = hbrs::mpl::make_el_column_vector(
+	auto const c = make_el_column_vector(
 		std::initializer_list<double>{
 			4.,5.,6.,7.,8.,9.
 		}
 	);
 	
-	elemental::detail::select_impl_column_vector{}(a, make_range(0,5));
-	column_vector<double> rb0 = (*select)(a, make_range(0,5));
-	column_vector<double> rc0 = (*select)(a, make_range(3,8));
+	detail::select_impl_el_column_vector{}(a, make_range(0,5));
+	el_column_vector<double> rb0 = (*select)(a, make_range(0,5));
+	el_column_vector<double> rc0 = (*select)(a, make_range(3,8));
 	
-	column_vector<double> rb1 = (*select)(a, El::IR(0,6));
-	column_vector<double> rc1 = (*select)(a, El::IR(3,9));
+	el_column_vector<double> rb1 = (*select)(a, El::IR(0,6));
+	el_column_vector<double> rc1 = (*select)(a, El::IR(3,9));
 	
 	HBRS_MPL_TEST_VVEQ(b, rb0, false);
 	HBRS_MPL_TEST_VVEQ(c, rc0, false);
@@ -1571,33 +1550,32 @@ BOOST_AUTO_TEST_CASE(column_vector_select) {
 
 BOOST_AUTO_TEST_CASE(dist_column_vector_select) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	using hbrs::mpl::select;
 	
 	El::Grid grid{El::mpi::COMM_WORLD};
 	
-	auto const a = hbrs::mpl::make_el_dist_column_vector(
+	auto const a = make_el_dist_column_vector(
 		grid,
 		std::initializer_list<double>{
 			1.,2.,3.,4.,5.,6.,7.,8.,9.
 		}
 	);
 	
-	auto const b = hbrs::mpl::make_el_dist_column_vector(
+	auto const b = make_el_dist_column_vector(
 		grid,
 		std::initializer_list<double>{
 			1.,2.,3.,4.,5.,6.,
 		}
 	);
 	
-	auto const c = hbrs::mpl::make_el_dist_column_vector(
+	auto const c = make_el_dist_column_vector(
 		grid,
 		std::initializer_list<double>{
 			4.,5.,6.,7.,8.,9.
 		}
 	);
 	
-	elemental::detail::select_impl_dist_vector{}(a, make_range(0,5));
+	detail::select_impl_el_dist_vector{}(a, make_range(0,5));
 	auto const rb0 = (*select)(a, make_range(0,5));
 	auto const rc0 = (*select)(a, make_range(3,8));
 	auto const rb1 = (*select)(a, El::IR(0,6));
@@ -1615,9 +1593,8 @@ BOOST_AUTO_TEST_CASE(dist_column_vector_select) {
 
 BOOST_AUTO_TEST_CASE(matrix_columns) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.
@@ -1630,7 +1607,7 @@ BOOST_AUTO_TEST_CASE(matrix_columns) {
 	auto const a_m = (*m)(a_sz);
 	auto const a_n = (*n)(a_sz);
 	
-	auto b = (*mpl::columns)(a);
+	auto b = (*columns)(a);
 	auto const b_sz = (*size)(b);
 	BOOST_TEST(b_sz == a_n);
 	
@@ -1645,9 +1622,8 @@ BOOST_AUTO_TEST_CASE(matrix_columns) {
 
 BOOST_AUTO_TEST_CASE(matrix_rows) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.
@@ -1660,7 +1636,7 @@ BOOST_AUTO_TEST_CASE(matrix_rows) {
 	auto const a_m = (*m)(a_sz);
 	auto const a_n = (*n)(a_sz);
 	
-	auto b = (*mpl::rows)(a);
+	auto b = (*rows)(a);
 	auto const b_sz = (*size)(b);
 	BOOST_TEST(b_sz == a_m);
 	
@@ -1675,9 +1651,8 @@ BOOST_AUTO_TEST_CASE(matrix_rows) {
 
 BOOST_AUTO_TEST_CASE(matrix_indices) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,4.,5.,6.
 		},
@@ -1688,7 +1663,7 @@ BOOST_AUTO_TEST_CASE(matrix_indices) {
 	auto const a_m = (*m)(a_sz);
 	auto const a_n = (*n)(a_sz);
 	
-	auto const b = hbrs::mpl::make_el_matrix(
+	auto const b = make_el_matrix(
 		std::initializer_list<double>{
 			1.,
 			2.,
@@ -1707,11 +1682,11 @@ BOOST_AUTO_TEST_CASE(matrix_indices) {
 	std::vector<double> const c {{ 0.,1.,2.,3.,4.,5. }};
 	auto const c_sz = (*size)(c);
 	
-	auto d = (*indices)(at(mpl::rows(a), 0));
+	auto d = (*indices)(at(rows(a), 0));
 	auto const d_sz = (*size)(d);
 	BOOST_TEST(d_sz == c_sz);
 	
-	auto e = (*indices)(at(mpl::columns(b), 0));
+	auto e = (*indices)(at(columns(b), 0));
 	auto const e_sz = (*size)(e);
 	BOOST_TEST(e_sz == c_sz);
 	
@@ -1723,14 +1698,13 @@ BOOST_AUTO_TEST_CASE(matrix_indices) {
 
 BOOST_AUTO_TEST_CASE(matrix_fold1) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	namespace hana = boost::hana;
 	
-	matrix<double> zero{2,2};
+	el_matrix<double> zero{2,2};
 	
-	mpl::zas<
-		mpl::smc<
-			matrix<double>,
+	zas<
+		smc<
+			el_matrix<double>,
 			El::Int
 		>,
 		boost::integer_range<El::Int>
@@ -1740,7 +1714,7 @@ BOOST_AUTO_TEST_CASE(matrix_fold1) {
 		return { (*first)(i) + (*first)(j), (*second)(i) + (*second)(j) };
 	};
 	
-	hana::pair<El::Int,El::Int> p1 = elemental::detail::fold1_impl_zas_smc_matrix_irange{}(z1, f1);
+	hana::pair<El::Int,El::Int> p1 = detail::fold1_impl_zas_smc_el_matrix_irange{}(z1, f1);
 	
 	hana::pair<El::Int,El::Int> p2 = (*fold1)(z1, f1);
 	BOOST_TEST((*equal)(p2,hana::make_pair(0,1)));
@@ -1748,9 +1722,8 @@ BOOST_AUTO_TEST_CASE(matrix_fold1) {
 
 BOOST_AUTO_TEST_CASE(matrix_transform_zip_fold1) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,4.,5.,6.,
 			6.,5.,4.,3.,2.,1.
@@ -1767,14 +1740,14 @@ BOOST_AUTO_TEST_CASE(matrix_transform_zip_fold1) {
 	};
 	
 	std::vector<zas<
-		smc<matrix<double> const&, El::Int>,
+		smc<el_matrix<double> const&, El::Int>,
 		boost::integer_range<El::Int>
-	>> zipped_cols_seq = (*transform)(mpl::columns(a), zip_with_idx);
+	>> zipped_cols_seq = (*transform)(columns(a), zip_with_idx);
 	
 	std::vector<zas<
-		smr<matrix<double> const&, El::Int>,
+		smr<el_matrix<double> const&, El::Int>,
 		boost::integer_range<El::Int>
-	>> zipped_rows_seq = (*transform)(mpl::rows(a), zip_with_idx);
+	>> zipped_rows_seq = (*transform)(rows(a), zip_with_idx);
 	
 	BOOST_TEST(zipped_cols_seq.size() == a_n);
 	BOOST_TEST(zipped_rows_seq.size() == a_m);
@@ -1812,12 +1785,11 @@ BOOST_AUTO_TEST_CASE(matrix_transform_zip_fold1) {
 
 BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	namespace hana = boost::hana;
 	
 	static constexpr auto a = make_sm(
-		make_ctsav(test::mat_g),
-		make_matrix_size(hana::size_c<test::mat_g_m>, hana::size_c<test::mat_g_n>),
+		make_ctsav(detail::mat_g),
+		make_matrix_size(hana::size_c<detail::mat_g_m>, hana::size_c<detail::mat_g_n>),
 		row_major_c
 	);
 	
@@ -1825,15 +1797,15 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 	static constexpr auto a_m = (*m)(a_sz);
 	static constexpr auto a_n = (*n)(a_sz);
 	
-	matrix<double> b = hbrs::mpl::make_el_matrix(a);
+	el_matrix<double> b = make_el_matrix(a);
 	
-	elemental::detail::pca_impl_matrix{}(b, true);
+	detail::pca_impl_el_matrix{}(b, true);
 	
 	pca_result<
-		matrix<double>,
-		matrix<double>,
-		hbrs::mpl::el_column_vector<double>,
-		hbrs::mpl::el_row_vector<double>
+		el_matrix<double>,
+		el_matrix<double>,
+		el_column_vector<double>,
+		el_row_vector<double>
 	> r = (*pca)(b, true);
 	
 	auto && r_coeff = (*at)(r, pca_coeff{});
@@ -1852,7 +1824,7 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 	HBRS_MPL_TEST_MMEQ(b, rcst, false);
 	HBRS_MPL_TEST_MMEQ(a, b, false);
 
-	auto const e_coeff = hbrs::mpl::make_el_matrix(
+	auto const e_coeff = make_el_matrix(
 		std::initializer_list<double>{
 			-0.067799985695474,  -0.646018286568728,   0.567314540990512,   0.506179559977706,
 			-0.678516235418647,  -0.019993340484099,  -0.543969276583817,   0.493268092159296,
@@ -1863,7 +1835,7 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 		row_major_c
 	);
 	
-	auto const e_score = hbrs::mpl::make_el_matrix(
+	auto const e_score = make_el_matrix(
 		std::initializer_list<double>{
 			+36.821825999449707,  -6.870878154227366,  -4.590944457629756,   0.396652582713917,
 			+29.607273420710953,   4.610881963526309,  -2.247578163663929,  -0.395843536696505,
@@ -1883,7 +1855,7 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 		row_major_c
 	);
 	
-	auto const e_latent = hbrs::mpl::make_el_column_vector(
+	auto const e_latent = make_el_column_vector(
 		std::initializer_list<double>{
 			5.177968780739056*100,
 			0.674964360487231*100,
@@ -1892,7 +1864,7 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 		}
 	);
 	
-	auto const e_mean = hbrs::mpl::make_el_row_vector(
+	auto const e_mean = make_el_row_vector(
 		std::initializer_list<double>{
 			7.461538461538462,  48.153846153846153,  11.769230769230770,  30.000000000000000
 		}
@@ -1914,10 +1886,9 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 
 BOOST_AUTO_TEST_CASE(matrix_diag) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	using hbrs::mpl::select;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.,
@@ -1927,7 +1898,7 @@ BOOST_AUTO_TEST_CASE(matrix_diag) {
 		row_major_c
 	);
 	
-	auto const b = hbrs::mpl::make_el_column_vector(
+	auto const b = make_el_column_vector(
 		std::initializer_list<double>{
 			1.,
 			5.,
@@ -1935,8 +1906,8 @@ BOOST_AUTO_TEST_CASE(matrix_diag) {
 		}
 	);
 	
-	elemental::detail::diag_impl_matrix{}(a);
-	hbrs::mpl::el_column_vector<double> rb0 = (*diag)(a);
+	detail::diag_impl_el_matrix{}(a);
+	el_column_vector<double> rb0 = (*diag)(a);
 	
 	HBRS_MPL_TEST_VVEQ(b, rb0, false);
 }
@@ -1944,9 +1915,8 @@ BOOST_AUTO_TEST_CASE(matrix_diag) {
 
 BOOST_AUTO_TEST_CASE(column_vector_transform) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_column_vector(
+	auto const a = make_el_column_vector(
 		std::initializer_list<double>{
 			1.,
 			2.,
@@ -1957,7 +1927,7 @@ BOOST_AUTO_TEST_CASE(column_vector_transform) {
 		}
 	);
 	
-	auto const b = hbrs::mpl::make_el_column_vector(
+	auto const b = make_el_column_vector(
 		std::initializer_list<double>{
 			 2.,
 			 4.,
@@ -1970,23 +1940,22 @@ BOOST_AUTO_TEST_CASE(column_vector_transform) {
 	
 	std::function<double(double)> f = [](double d) -> double { return 2.*d; };
 	
-	elemental::detail::transform_impl_vector{}(a, f);
-	column_vector<double> rb0 = (*transform)(a, f);
+	detail::transform_impl_el_vector{}(a, f);
+	el_column_vector<double> rb0 = (*transform)(a, f);
 	
 	HBRS_MPL_TEST_VVEQ(b, rb0, false);
 }
 
 BOOST_AUTO_TEST_CASE(row_vector_transform) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_row_vector(
+	auto const a = make_el_row_vector(
 		std::initializer_list<double>{
 			1., 2., 3., 4., 5., 6.
 		}
 	);
 	
-	auto const b = hbrs::mpl::make_el_row_vector(
+	auto const b = make_el_row_vector(
 		std::initializer_list<double>{
 			 2., 4., 6., 8., 10., 12.
 		}
@@ -1994,17 +1963,16 @@ BOOST_AUTO_TEST_CASE(row_vector_transform) {
 	
 	std::function<double(double)> f = [](double d) -> double { return 2.*d; };
 	
-	elemental::detail::transform_impl_vector{}(a, f);
-	row_vector<double> rb0 = (*transform)(a, f);
+	detail::transform_impl_el_vector{}(a, f);
+	el_row_vector<double> rb0 = (*transform)(a, f);
 	
 	HBRS_MPL_TEST_VVEQ(b, rb0, false);
 }
 
 BOOST_AUTO_TEST_CASE(column_vector_divide) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_column_vector(
+	auto const a = make_el_column_vector(
 		std::initializer_list<double>{
 			 2.,
 			 4.,
@@ -2015,7 +1983,7 @@ BOOST_AUTO_TEST_CASE(column_vector_divide) {
 		}
 	);
 	
-	auto const b = hbrs::mpl::make_el_column_vector(
+	auto const b = make_el_column_vector(
 		std::initializer_list<double>{
 			1.,
 			2.,
@@ -2026,17 +1994,16 @@ BOOST_AUTO_TEST_CASE(column_vector_divide) {
 		}
 	);
 	
-	elemental::detail::divide_impl_vector_scalar{}(a, 2.);
-	column_vector<double> rb0 = (*divide)(a, 2.);
+	detail::divide_impl_el_vector_scalar{}(a, 2.);
+	el_column_vector<double> rb0 = (*divide)(a, 2.);
 	
 	HBRS_MPL_TEST_VVEQ(b, rb0, false);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_times) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto const a = hbrs::mpl::make_el_matrix(
+	auto const a = make_el_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.,
@@ -2046,7 +2013,7 @@ BOOST_AUTO_TEST_CASE(matrix_times) {
 		row_major_c
 	);
 	
-	auto const b = hbrs::mpl::make_el_matrix(
+	auto const b = make_el_matrix(
 		std::initializer_list<double>{
 			2.,2.,2.,
 			2.,2.,2.,
@@ -2056,7 +2023,7 @@ BOOST_AUTO_TEST_CASE(matrix_times) {
 		row_major_c
 	);
 	
-	auto const c = hbrs::mpl::make_el_matrix(
+	auto const c = make_el_matrix(
 		std::initializer_list<double>{
 			2.,4.,6.,
 			8.,10.,12.,
@@ -2066,21 +2033,20 @@ BOOST_AUTO_TEST_CASE(matrix_times) {
 		row_major_c
 	);
 	
-	elemental::detail::times_impl_matrix_matrix{}(a, b);
-	matrix<double> rc0 = (*times)(a, b);
+	detail::times_impl_el_matrix_el_matrix{}(a, b);
+	el_matrix<double> rc0 = (*times)(a, b);
 	
 	HBRS_MPL_TEST_MMEQ(c, rc0, false);
 }
 
 BOOST_AUTO_TEST_CASE(dist_matrix_times) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
 	El::Grid grid{El::mpi::COMM_WORLD};
 	
-	auto const a = hbrs::mpl::make_el_dist_matrix(
+	auto const a = make_el_dist_matrix(
 		grid,
-		hbrs::mpl::make_el_matrix(
+		make_el_matrix(
 			std::initializer_list<double>{
 				1.,2.,3.,
 				4.,5.,6.,
@@ -2091,16 +2057,16 @@ BOOST_AUTO_TEST_CASE(dist_matrix_times) {
 		)
 	);
 	
-	auto const b = hbrs::mpl::make_el_dist_row_vector(
+	auto const b = make_el_dist_row_vector(
 		grid,
 		std::initializer_list<double>{
 			2.,2.,2.,
 		}
 	);
 	
-	auto const c = hbrs::mpl::make_el_dist_matrix(
+	auto const c = make_el_dist_matrix(
 		grid,
-		hbrs::mpl::make_el_matrix(
+		make_el_matrix(
 			std::initializer_list<double>{
 				2.,4.,6.,
 				8.,10.,12.,
@@ -2117,11 +2083,11 @@ BOOST_AUTO_TEST_CASE(dist_matrix_times) {
 
 BOOST_AUTO_TEST_CASE(matrix_pca_filter, * utf::tolerance(_TOL)) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
+	
 	
 	static constexpr auto a = make_sm(
-		make_ctsav(test::mat_g),
-		make_matrix_size(hana::size_c<test::mat_g_m>, hana::size_c<test::mat_g_n>),
+		make_ctsav(detail::mat_g),
+		make_matrix_size(hana::size_c<detail::mat_g_m>, hana::size_c<detail::mat_g_n>),
 		row_major_c
 	);
 	
@@ -2129,14 +2095,14 @@ BOOST_AUTO_TEST_CASE(matrix_pca_filter, * utf::tolerance(_TOL)) {
 	static constexpr auto a_m = (*m)(a_sz);
 	static constexpr auto a_n = (*n)(a_sz);
 	
-	auto const b = hbrs::mpl::make_el_matrix(a);
+	auto const b = make_el_matrix(a);
 	std::vector<bool> const keep(std::min((std::size_t)a_m, (std::size_t)a_n), true);
 	
-	elemental::detail::pca_filter_impl_matrix{}(b, keep);
+	detail::pca_filter_impl_el_matrix{}(b, keep);
 	
 	pca_filter_result<
-		matrix<double>,
-		hbrs::mpl::el_column_vector<double>
+		el_matrix<double>,
+		el_column_vector<double>
 	> rslt = (*pca_filter)(b, keep);
 	
 	auto && data   = (*at)(rslt, pca_filter_data{});
@@ -2146,4 +2112,5 @@ BOOST_AUTO_TEST_CASE(matrix_pca_filter, * utf::tolerance(_TOL)) {
 	BOOST_TEST((*size)(latent) == (El::Int) a_n);
 }
 
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
 BOOST_AUTO_TEST_SUITE_END()
