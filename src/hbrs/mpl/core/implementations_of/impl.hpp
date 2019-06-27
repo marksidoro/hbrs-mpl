@@ -19,22 +19,24 @@
 
 #include "fwd.hpp"
 
+#include <boost/hana/flatten.hpp>
 #include <boost/hana/basic_tuple.hpp>
 #include <boost/hana/type.hpp>
 
-#define HBRS_MPL_MAP_FUNCTION_IMPLEMENTATIONS(f_type, f_impls)                                                         \
+#define HBRS_MPL_MAP_FUNCTION_IMPLEMENTATIONS(f_type, ...)                                                             \
 	HBRS_MPL_NAMESPACE_BEGIN                                                                                           \
+	namespace hana = boost::hana;                                                                                      \
 	template <>                                                                                                        \
 	struct implementations_of_impl<f_type> {                                                                           \
 		static constexpr auto                                                                                          \
 		apply(f_type) {                                                                                                \
-			return f_impls;                                                                                            \
+			return hana::flatten(hana::make_tuple(__VA_ARGS__));                                                                         \
 		}                                                                                                              \
 	};                                                                                                                 \
 	HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_MAP_IMPLS(...)                                                                                        \
-	HBRS_MPL_MAP_FUNCTION_IMPLEMENTATIONS(__VA_ARGS__)
+#define HBRS_MPL_MAP_IMPLS(f_type, ...)                                                                                \
+	HBRS_MPL_MAP_FUNCTION_IMPLEMENTATIONS(f_type, __VA_ARGS__)
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
