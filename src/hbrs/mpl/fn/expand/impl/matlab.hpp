@@ -83,7 +83,7 @@ expand_impl_smr_ml_matrix::operator()(
 template<typename Ring>
 auto
 expand_impl_ml_row_vector::operator()(
-	row_vector<Ring> const& v,
+	ml_row_vector<Ring> const& v,
 	matrix_size<int, int> const& sz
 ) const {
 	auto v_sz = (*size)(v);
@@ -101,7 +101,7 @@ expand_impl_ml_row_vector::operator()(
 	bool vert_expand = a_m > 1;
 	bool horz_expand = a_n != v_sz;
 	
-	auto c = make_matrix(hana::type_c<std::decay_t<Ring>>, sz);
+	auto c = make_ml_matrix(hana::type_c<std::decay_t<Ring>>, sz);
 	
 	if ((vert_expand && horz_expand) || vert_expand) {
 		for(int i = 0; i < a_m; ++i) {

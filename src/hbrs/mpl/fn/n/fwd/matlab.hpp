@@ -41,10 +41,10 @@ struct n_impl_emxArray {
 
 struct n_impl_ml_matrix {
 	int const&
-	operator()(hbrs::mpl::ml_matrix<real_T> const& a) const;
+	operator()(ml_matrix<real_T> const& a) const;
 
 	int const&
-	operator()(hbrs::mpl::ml_matrix<boolean_T> const& a) const;
+	operator()(ml_matrix<boolean_T> const& a) const;
 };
 
 #else

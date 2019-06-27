@@ -65,7 +65,7 @@ pca_filter_impl_ml_matrix::operator()(ml_matrix<real_T> const& a, ml_column_vect
 	int n_ = (*n)(sz);
 	
 	auto keep_sz = (*size)(keep);
-	BOOST_ASSERT(keep_sz == m_-1<n_ ? m_-1 : std::min(m_, n_));
+	BOOST_ASSERT(keep_sz == (m_-1<n_ ? m_-1 : std::min(m_, n_)));
 	
 	ml_matrix<real_T> data;
 	ml_column_vector<real_T> latent;

@@ -29,6 +29,7 @@
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
 #include <vector>
+#include <functional>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;

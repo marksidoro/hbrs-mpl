@@ -32,9 +32,9 @@ namespace hana = boost::hana;
 namespace detail {
 
 #ifdef HBRS_MPL_ENABLE_MATLAB
-HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_ml_column_vector, ml_column_vector_tag, length)
-HBRS_MPL_DEF_FO_TRY_METHOD(length_impl_ml_row_vector, ml_row_vector_tag, length)
-HBRS_MPL_DEF_FO_TRY_METHOD(size_impl_ml_matrix, ml_matrix_tag, size)
+HBRS_MPL_DEC_FO_TRY_METHOD(length_impl_ml_column_vector, ml_column_vector_tag, length)
+HBRS_MPL_DEC_FO_TRY_METHOD(length_impl_ml_row_vector, ml_row_vector_tag, length)
+HBRS_MPL_DEC_FO_TRY_METHOD(size_impl_ml_matrix, ml_matrix_tag, size)
 #else
 struct length_impl_ml_column_vector {};
 struct length_impl_ml_row_vector {};

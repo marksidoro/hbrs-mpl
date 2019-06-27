@@ -22,8 +22,12 @@
 #include <hbrs/mpl/dt/range.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>
-#include <hbrs/mpl/dt/ml_matrix.hpp>
-#include <hbrs/mpl/dt/ml_vector.hpp>
+
+#ifdef HBRS_MPL_ENABLE_MATLAB
+	#include <hbrs/mpl/dt/ml_matrix.hpp>
+	#include <hbrs/mpl/dt/ml_vector.hpp>
+#endif
+
 #include <hbrs/mpl/detail/test.hpp>
 
 #include <boost/hana/less.hpp>
@@ -49,7 +53,9 @@
 #include <hbrs/mpl/fn/rows.hpp>
 #include <hbrs/mpl/fn/select.hpp>
 
-#include "../../data.hpp"
+#include <hbrs/mpl/detail/test.hpp>
+
+#ifdef HBRS_MPL_ENABLE_MATLAB
 
 extern "C" {
 	#include <hbrs/mpl/detail/matlab_cxn/impl/samples.h>
@@ -61,22 +67,24 @@ extern "C" {
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-hbrs::mpl::ml_matrix<real_T>
-debug1(hbrs::mpl::ml_matrix<real_T> const& a) {
-	hbrs::mpl::ml_matrix<real_T> b;
+ml_matrix<real_T>
+debug1(ml_matrix<real_T> const& a) {
+	ml_matrix<real_T> b;
 	debug1(&a.data(), &b.data());
 	return b;
 }
 
-hbrs::mpl::ml_matrix<real_T>
-debug2(hbrs::mpl::ml_matrix<real_T> const& a) {
-	hbrs::mpl::ml_matrix<real_T> b;
+ml_matrix<real_T>
+debug2(ml_matrix<real_T> const& a) {
+	ml_matrix<real_T> b;
 	debug2(&a.data(), &b.data());
 	return b;
 }
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_MATLAB
 
 namespace utf = boost::unit_test;
 namespace tt = boost::test_tools;
@@ -85,6 +93,8 @@ namespace tt = boost::test_tools;
 
 BOOST_AUTO_TEST_SUITE(matlab_test)
 
+#ifdef HBRS_MPL_ENABLE_MATLAB
+
 using hbrs::mpl::detail::environment_fixture;
 BOOST_TEST_GLOBAL_FIXTURE(environment_fixture);
 
@@ -92,7 +102,7 @@ BOOST_AUTO_TEST_CASE(matrix_base, * utf::tolerance(_TOL)) {
 	using namespace hbrs::mpl;
 	namespace hana = boost::hana;
 	
-	hbrs::mpl::ml_matrix<real_T> a0{2,4};
+	ml_matrix<real_T> a0{2,4};
 	auto const a0_size = (*size)(a0);
 	auto const a0_m = (*m)(a0_size);
 	auto const a0_n = (*n)(a0_size);
@@ -108,7 +118,7 @@ BOOST_AUTO_TEST_CASE(matrix_base, * utf::tolerance(_TOL)) {
 		}
 	}
 	
-	hbrs::mpl::ml_matrix<real_T> a1{4, 5};
+	ml_matrix<real_T> a1{4, 5};
 	BOOST_TEST((*m)(a1) == 4);
 	BOOST_TEST((*n)(a1) == 5);
 	(*at)(a1, make_matrix_index(0, 2)) = 3;
@@ -119,21 +129,21 @@ BOOST_AUTO_TEST_CASE(matrix_base, * utf::tolerance(_TOL)) {
 	BOOST_TEST((*size)(a1) == make_matrix_size(4,5));
 	BOOST_TEST((*size)(a1[0]) == 5);
 	
-	smr<hbrs::mpl::ml_matrix<double>&, int> r1 = a1[3];
+	smr<ml_matrix<double>&, int> r1 = a1[3];
 	BOOST_TEST(r1[4] == 1337);
 	BOOST_TEST((*at)(r1,4) == 1337);
 	
-	hbrs::mpl::ml_matrix<real_T> a2{};
+	ml_matrix<real_T> a2{};
 	
-	hbrs::mpl::ml_row_vector<real_T> v1{5};
+	ml_row_vector<real_T> v1{5};
 	BOOST_TEST((*size)(v1) == 5);
 	
 	v1[3] = 1337;
 	BOOST_TEST(v1[3] == 1337);
 	BOOST_TEST((*at)(v1, 3) == 1337);
 	
-	smr<hbrs::mpl::ml_matrix<double>, int> v2 = hbrs::mpl::ml_matrix<real_T>{1,1}[0];
-	smr<hbrs::mpl::ml_matrix<double>, int> v3 = std::move(a1)[3];
+	smr<ml_matrix<double>, int> v2 = ml_matrix<real_T>{1,1}[0];
+	smr<ml_matrix<double>, int> v3 = std::move(a1)[3];
 	BOOST_TEST(v3[4] == 1337);
 	BOOST_TEST((*at)(v3, 4) == 1337);
 	BOOST_TEST((*size)(v3) == 5);
@@ -142,9 +152,8 @@ BOOST_AUTO_TEST_CASE(matrix_base, * utf::tolerance(_TOL)) {
 
 BOOST_AUTO_TEST_CASE(matrix_make) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	
-	auto a1 = hbrs::mpl::make_ml_matrix(
+	auto a1 = make_ml_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.
@@ -164,7 +173,7 @@ BOOST_AUTO_TEST_CASE(matrix_make) {
 		}
 	}
 	
-	auto a2 = hbrs::mpl::make_ml_matrix(
+	auto a2 = make_ml_matrix(
 		std::initializer_list<double>{
 			1.,4.,
 			2.,5.,
@@ -191,15 +200,15 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 	namespace hana = boost::hana;
 	
 	auto const a3 = make_sm(
-		make_ctsav(test::mat_g), 
-		make_matrix_size(test::mat_g_m, test::mat_g_n), 
+		make_ctsav(detail::mat_g), 
+		make_matrix_size(detail::mat_g_m, detail::mat_g_n), 
 		row_major_c
 	);
 	auto const a3_size = (*size)(a3);
 	auto const a3_m = (*m)(a3_size);
 	auto const a3_n = (*n)(a3_size);
-	BOOST_TEST(a3_m == test::mat_g_m);
-	BOOST_TEST(a3_n == test::mat_g_n);
+	BOOST_TEST(a3_m == detail::mat_g_m);
+	BOOST_TEST(a3_n == detail::mat_g_n);
 	
 	{
 		cell_0 ds;
@@ -207,8 +216,8 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 		double * a3_ref = ds.f1;
 		
 		auto const a6 = make_sm(
-			make_rtsav(a3_ref, test::mat_g_m * test::mat_g_n), 
-			make_matrix_size(test::mat_g_m, test::mat_g_n), 
+			make_rtsav(a3_ref, detail::mat_g_m * detail::mat_g_n), 
+			make_matrix_size(detail::mat_g_m, detail::mat_g_n), 
 			column_major_c
 		);
 		
@@ -219,7 +228,7 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 		}
 	}
 	
-	hbrs::mpl::ml_matrix<real_T> a4 = hbrs::mpl::make_ml_matrix(a3);
+	ml_matrix<real_T> a4 = make_ml_matrix(a3);
 	auto const a4_size = (*size)(a4);
 	auto const a4_m = (*m)(a4_size);
 	auto const a4_n = (*n)(a4_size);
@@ -231,7 +240,7 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 		}
 	}
 	
-	matlab::detail::pca_impl_level0{}(a4, true);
+	detail::pca_impl_level0_ml_matrix{}(a4, true);
 	auto pca1 = (*pca)(a4, true);
 	
 	auto && pca1_coeff = pca1.coeff();
@@ -321,27 +330,27 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 	HBRS_MPL_TEST_VVEQ(pca1_latent, pca1_lcv, false);
 	HBRS_MPL_TEST_VVEQ(pca1_mean, pca1_mrv, false);
 	
-	hbrs::mpl::ml_matrix<real_T> pca1_cmm{ (int)pca1_c_m, (int)pca1_c_n};
+	ml_matrix<real_T> pca1_cmm{ (int)pca1_c_m, (int)pca1_c_n};
 	for(std::size_t i = 0; i < pca1_c_m; ++i) {
 		for(std::size_t j = 0; j < pca1_c_n; ++j) {
 			pca1_cmm[(int)i][(int)j] = pca1_coeff[(int)i][(int)j];
 		}
 	}
 	
-	hbrs::mpl::ml_matrix<real_T> pca1_smm{ (int)pca1_s_m, (int)pca1_s_n};
+	ml_matrix<real_T> pca1_smm{ (int)pca1_s_m, (int)pca1_s_n};
 	for(std::size_t i = 0; i < pca1_s_m; ++i) {
 		for(std::size_t j = 0; j < pca1_s_n; ++j) {
 			pca1_smm[(int)i][(int)j] = pca1_score[(int)i][(int)j];
 		}
 	}
 	
-	hbrs::mpl::ml_row_vector<real_T> pca1_mmrv{(int)pca1_m_n};
+	ml_row_vector<real_T> pca1_mmrv{(int)pca1_m_n};
 	for(std::size_t i = 0; i < pca1_m_n; ++i) {
 		pca1_mmrv[(int)i] = pca1_mean[(int)i];
 	}
 	
-	hbrs::mpl::ml_matrix<real_T> r_centered = (*multiply)(pca1_smm, transpose(pca1_cmm));
-	hbrs::mpl::ml_matrix<real_T> red2a /*rcst*/ /* reconstructed */ = (*plus)(r_centered, expand(pca1_mmrv, size(r_centered)));
+	ml_matrix<real_T> r_centered = (*multiply)(pca1_smm, transpose(pca1_cmm));
+	ml_matrix<real_T> red2a /*rcst*/ /* reconstructed */ = (*plus)(r_centered, expand(pca1_mmrv, size(r_centered)));
 	
 	HBRS_MPL_TEST_MMEQ(red2a, a3, false);
 }
@@ -351,17 +360,17 @@ BOOST_AUTO_TEST_CASE(matrix_pca_filter, * utf::tolerance(_TOL)) {
 	namespace hana = boost::hana;
 	
 	auto const a3 = make_sm(
-		make_ctsav(test::mat_g), 
-		make_matrix_size(test::mat_g_m, test::mat_g_n), 
+		make_ctsav(detail::mat_g), 
+		make_matrix_size(detail::mat_g_m, detail::mat_g_n), 
 		row_major_c
 	);
 	auto const a3_size = (*size)(a3);
 	auto const a3_m = (*m)(a3_size);
 	auto const a3_n = (*n)(a3_size);
-	BOOST_TEST(a3_m == test::mat_g_m);
-	BOOST_TEST(a3_n == test::mat_g_n);
+	BOOST_TEST(a3_m == detail::mat_g_m);
+	BOOST_TEST(a3_n == detail::mat_g_n);
 	
-	hbrs::mpl::ml_matrix<real_T> a5{ (int)a3_m, (int)a3_n};
+	ml_matrix<real_T> a5{ (int)a3_m, (int)a3_n};
 	for(std::size_t i = 0; i < a3_m; ++i) {
 		for(std::size_t j = 0; j < a3_n; ++j) {
 			a5[(int)i][(int)j] = a3[i][j];
@@ -421,18 +430,18 @@ BOOST_AUTO_TEST_CASE(matrix_plus, * utf::tolerance(_TOL)) {
 	using namespace hbrs::mpl;
 	
 	static constexpr auto a7 = make_sm(
-		make_ctsav(test::mat_i), 
-		make_matrix_size(test::mat_i_m, test::mat_i_n), 
+		make_ctsav(detail::mat_i), 
+		make_matrix_size(detail::mat_i_m, detail::mat_i_n), 
 		row_major_c
 	);
 	static constexpr auto const a7_size = (*size)(a7);
 	static constexpr auto const a7_m = (*m)(a7_size);
 	static constexpr auto const a7_n = (*n)(a7_size);
-	BOOST_TEST(a7_m == test::mat_i_m);
-	BOOST_TEST(a7_n == test::mat_i_n);
+	BOOST_TEST(a7_m == detail::mat_i_m);
+	BOOST_TEST(a7_n == detail::mat_i_n);
 	
-	hbrs::mpl::ml_matrix<real_T> a8{ (int)a7_m, (int)a7_n};
-	hbrs::mpl::ml_matrix<real_T> a9{ (int)a7_m, (int)a7_n};
+	ml_matrix<real_T> a8{ (int)a7_m, (int)a7_n};
+	ml_matrix<real_T> a9{ (int)a7_m, (int)a7_n};
 	for(std::size_t i = 0; i < a7_m; ++i) {
 		for(std::size_t j = 0; j < a7_n; ++j) {
 			a8[(int)i][(int)j] = a7[i][j];
@@ -440,67 +449,66 @@ BOOST_AUTO_TEST_CASE(matrix_plus, * utf::tolerance(_TOL)) {
 		}
 	}
 	
-	hbrs::mpl::ml_matrix<real_T> a10 = (*plus)(a8, a9);
+	ml_matrix<real_T> a10 = (*plus)(a8, a9);
 	for(std::size_t i = 0; i < a7_m; ++i) {
 		for(std::size_t j = 0; j < a7_n; ++j) {
 			BOOST_TEST(a10[(int)i][(int)j] == a7[i][j]+(i+1)*10+(j+1));
 		}
 	}
 	
-	hbrs::mpl::ml_matrix<real_T> a11 = (*plus)(a8, 1337);
+	ml_matrix<real_T> a11 = (*plus)(a8, 1337);
 	for(std::size_t i = 0; i < a7_m; ++i) {
 		for(std::size_t j = 0; j < a7_n; ++j) {
 			BOOST_TEST(a11[(int)i][(int)j] == a8[(int)i][(int)j]+1337);
 		}
 	}
 	
-	hbrs::mpl::ml_matrix<real_T> a12 = matlab::detail::debug1(a8);
+	ml_matrix<real_T> a12 = detail::debug1(a8);
 	for(std::size_t i = 0; i < a7_m; ++i) {
 		for(std::size_t j = 0; j < a7_n; ++j) {
 			BOOST_TEST(a12[(int)i][(int)j] == a8[(int)i][(int)j] + (i+1)*10+(j+1) );
 		}
 	}
 	
-	hbrs::mpl::ml_matrix<real_T> a13 = matlab::detail::debug2(a8);
+	ml_matrix<real_T> a13 = detail::debug2(a8);
 	for(std::size_t i = 0; i < a7_m; ++i) {
 		for(std::size_t j = 0; j < a7_n; ++j) {
 			BOOST_TEST(a13[(int)i][(int)j] == (i+1)*10 + (j+1));
 		}
 	}
 	
-	hbrs::mpl::ml_matrix<real_T> a14{};
+	ml_matrix<real_T> a14{};
 	BOOST_TEST((*m)(a14) == 0);
 	BOOST_TEST((*n)(a14) == 0);
 	
-	hbrs::mpl::ml_matrix<real_T> a15{a13}; //copy ctor test
+	ml_matrix<real_T> a15{a13}; //copy ctor test
 	real_T s1 = a13[0][0];
 	a15[0][0] = a13[0][0]+1337;
 	BOOST_TEST(a13[0][0] == s1);
 	
-	a15 = hbrs::mpl::ml_matrix<real_T>{};
+	a15 = ml_matrix<real_T>{};
 }
 
 
-BOOST_AUTO_TEST_CASE(vertcat) {
-	using namespace hbrs::mpl;
+BOOST_AUTO_TEST_CASE(vertcat_) {
 	using namespace hbrs::mpl;
 	
 	auto const z = make_sm(
-		make_ctsav(test::mat_h), 
-		make_matrix_size(test::mat_h_m, test::mat_h_n), 
+		make_ctsav(detail::mat_h), 
+		make_matrix_size(detail::mat_h_m, detail::mat_h_n), 
 		row_major_c
 	);
 	
-	auto const a = hbrs::mpl::make_ml_matrix(z);
+	auto const a = make_ml_matrix(z);
 	
 	auto a_r0 = a[0];
 	auto a_r1 = a[1];
 	auto a_r2 = a[2];
 	
-	matlab::detail::vertcat_impl_smr_smr{}(a_r0, a_r1);
-	matlab::detail::vertcat_impl_matrix_smr{}(matlab::detail::vertcat_impl_smr_smr{}(a_r0, a_r1), a_r2);
+	detail::vertcat_impl_smr_ml_matrix_smr_ml_matrix{}(a_r0, a_r1);
+	detail::vertcat_impl_ml_matrix_smr_ml_matrix{}(detail::vertcat_impl_smr_ml_matrix_smr_ml_matrix{}(a_r0, a_r1), a_r2);
 	
-	auto b = (*mpl::vertcat)(mpl::vertcat(a_r0, a_r1), a_r2);
+	auto b = (*vertcat)(vertcat(a_r0, a_r1), a_r2);
 	auto const a_m = (*m)(size(a));
 	auto const a_n = (*n)(size(a));
 	
@@ -518,26 +526,25 @@ BOOST_AUTO_TEST_CASE(vertcat) {
 	
 }
 
-BOOST_AUTO_TEST_CASE(expand) {
-	using namespace hbrs::mpl;
+BOOST_AUTO_TEST_CASE(expand_) {
 	using namespace hbrs::mpl;
 	
 	auto const z = make_sm(
-		make_ctsav(test::mat_h), 
-		make_matrix_size(test::mat_h_m, test::mat_h_n), 
+		make_ctsav(detail::mat_h), 
+		make_matrix_size(detail::mat_h_m, detail::mat_h_n), 
 		row_major_c
 	);
 	
-	auto const a = hbrs::mpl::make_ml_matrix(z);
+	auto const a = make_ml_matrix(z);
 	auto const a_m = (*m)(size(a));
 	auto const a_n = (*n)(size(a));
 	
 	auto a_r0 = a[0];
 	auto sz = matrix_size<int,int>{a_m*2, a_n*3};
 	
-	matlab::detail::expand_impl_smr{}(a_r0, sz);
+	detail::expand_impl_smr_ml_matrix{}(a_r0, sz);
 	
-	auto b = (*mpl::expand)(a_r0, sz);
+	auto b = (*expand)(a_r0, sz);
 	auto const b_m = (*m)(size(b));
 	auto const b_n = (*n)(size(b));
 	
@@ -551,11 +558,10 @@ BOOST_AUTO_TEST_CASE(expand) {
 	}
 }
 
-BOOST_AUTO_TEST_CASE(mean) {
-	using namespace hbrs::mpl;
+BOOST_AUTO_TEST_CASE(mean_) {
 	using namespace hbrs::mpl;
 	
-	auto a = hbrs::mpl::make_ml_matrix(
+	auto a = make_ml_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.
@@ -567,10 +573,10 @@ BOOST_AUTO_TEST_CASE(mean) {
 	auto a_m = (*m)(size(a));
 	auto a_n = (*n)(size(a));
 	
-	auto cm = (*mpl::mean)(columns(a));
+	auto cm = (*mean)(columns(a));
 	auto cm_sz = (*size)(cm);
 	
-	auto rm = (*mpl::mean)(rows(a));
+	auto rm = (*mean)(rows(a));
 	auto rm_sz = (*size)(rm);
 	
 	BOOST_TEST(cm_sz == a_n);
@@ -596,7 +602,7 @@ BOOST_AUTO_TEST_CASE(mean) {
 		BOOST_TEST((*at)(cm, j) == cm_);
 	}
 	
-	auto orm = hbrs::mpl::make_ml_matrix(
+	auto orm = make_ml_matrix(
 		std::initializer_list<double>{
 			2.0,
 			5.0
@@ -611,7 +617,7 @@ BOOST_AUTO_TEST_CASE(mean) {
 		BOOST_TEST((*at)(rm, i) == (*at)(orm, make_matrix_index((int)i, (int)0)));
 	}
 	
-	auto ocm = hbrs::mpl::make_ml_matrix(
+	auto ocm = make_ml_matrix(
 		std::initializer_list<double>{
 			2.5, 3.5, 4.5
 		},
@@ -630,10 +636,9 @@ BOOST_AUTO_TEST_CASE(mean) {
 
 BOOST_AUTO_TEST_CASE(matrix_select) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
 	using hbrs::mpl::select;
 	
-	auto const a = hbrs::mpl::make_ml_matrix(
+	auto const a = make_ml_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.,
@@ -643,7 +648,7 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 		row_major_c
 	);
 	
-	auto const b = hbrs::mpl::make_ml_matrix(
+	auto const b = make_ml_matrix(
 		std::initializer_list<double>{
 			1.,2.,3.,
 			4.,5.,6.,
@@ -652,7 +657,7 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 		row_major_c
 	);
 	
-	auto const c = hbrs::mpl::make_ml_matrix(
+	auto const c = make_ml_matrix(
 		std::initializer_list<double>{
 			4.,5.,6.,
 			7.,8.,9.
@@ -661,7 +666,7 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 		row_major_c
 	);
 	
-	auto const d = hbrs::mpl::make_ml_matrix(
+	auto const d = make_ml_matrix(
 		std::initializer_list<double>{
 			1.,2.,
 			4.,5.,
@@ -671,7 +676,7 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 		row_major_c
 	);
 	
-	auto const e = hbrs::mpl::make_ml_matrix(
+	auto const e = make_ml_matrix(
 		std::initializer_list<double>{
 			2.,3.,
 			5.,6.,
@@ -681,7 +686,7 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 		row_major_c
 	);
 	
-	matlab::detail::select_impl_matrix{}(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
+	detail::select_impl_ml_matrix{}(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
 	auto rb0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
 	auto rc0 = (*select)(a, make_range(make_matrix_index(1,0), make_matrix_index(2,2)));
 	auto rd0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(2,1)));
@@ -715,30 +720,30 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 
 BOOST_AUTO_TEST_CASE(matrix_bidiag, * utf::tolerance(_TOL)) {
 	using namespace hbrs::mpl;
-	using namespace hbrs::mpl;
+	using hbrs::mpl::decompose_mode;
 	
 	auto make_dataset = [](auto && m, auto && n, auto && ptr) {
 		return make_sm(make_rtsav(ptr), make_matrix_size(m, n), row_major_c);
 	};
 	
 	std::vector datasets = {
-		make_dataset(test::mat_a_m, test::mat_a_n, test::mat_a),
-		make_dataset(test::mat_g_m, test::mat_g_n, test::mat_g),
-		make_dataset(test::mat_j_m, test::mat_j_n, test::mat_j)
+		make_dataset(detail::mat_a_m, detail::mat_a_n, detail::mat_a),
+		make_dataset(detail::mat_g_m, detail::mat_g_n, detail::mat_g),
+		make_dataset(detail::mat_j_m, detail::mat_j_n, detail::mat_j)
 	};
 	
 	std::size_t dataset_nr = 0;
 	for(auto && dataset : datasets) {
 		++dataset_nr;
 		//TODO: Reenable other modes once implemented!
-		for(auto && mode : { mpl::decompose_mode::complete /*, mpl::decompose_mode::economy, mpl::decompose_mode::zero */ }) {
+		for(auto && mode : { decompose_mode::complete /*, decompose_mode::economy, decompose_mode::zero */ }) {
 			BOOST_TEST_MESSAGE(
 				"dataset nr := " << dataset_nr << 
-				"; mode := " << (mode == mpl::decompose_mode::complete ? "complete" : (mode == mpl::decompose_mode::economy ? "economy" : "zero"))
+				"; mode := " << (mode == decompose_mode::complete ? "complete" : (mode == decompose_mode::economy ? "economy" : "zero"))
 			);
 			
-			auto const a = hbrs::mpl::make_ml_matrix(dataset);
-			bidiag_result<hbrs::mpl::ml_matrix<real_T>, hbrs::mpl::ml_matrix<real_T>, hbrs::mpl::ml_matrix<real_T>>
+			auto const a = make_ml_matrix(dataset);
+			bidiag_result<ml_matrix<real_T>, ml_matrix<real_T>, ml_matrix<real_T>>
 				bg = (*bidiag)(a, mode);
 			
 			//TODO: Add more diagnostics and checks
@@ -753,4 +758,5 @@ BOOST_AUTO_TEST_CASE(matrix_bidiag, * utf::tolerance(_TOL)) {
 	}
 }
 
+#endif // !HBRS_MPL_ENABLE_MATLAB
 BOOST_AUTO_TEST_SUITE_END()

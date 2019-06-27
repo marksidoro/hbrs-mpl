@@ -21,8 +21,8 @@
 #include <hbrs/mpl/core/preprocessor.hpp>
 
 #ifdef HBRS_MPL_ENABLE_MATLAB
-	#include <hbrs/mpl/dt/ml_matrix.hpp>
-	#include <hbrs/mpl/dt/ml_vector.hpp>
+	#include <hbrs/mpl/dt/ml_matrix/fwd.hpp>
+	#include <hbrs/mpl/dt/ml_vector/fwd.hpp>
 #endif
 
 #include <hbrs/mpl/dt/smr/fwd.hpp>
@@ -42,7 +42,7 @@ struct expand_impl_smr_ml_matrix {
 	template<
 		typename Matrix,
 		typename std::enable_if_t< 
-			std::is_same< hana::tag_of_t<Matrix>, hbrs::mpl::ml_matrix_tag >::value
+			std::is_same< hana::tag_of_t<Matrix>, ml_matrix_tag >::value
 		>* = nullptr
 	>
 	auto
@@ -57,9 +57,9 @@ struct expand_impl_ml_row_vector {
 	template<typename Ring>
 	auto
 	operator()(
-		row_vector<Ring> const& v,
+		ml_row_vector<Ring> const& v,
 		matrix_size<int, int> const& sz
-	) const
+	) const;
 };
 
 #else

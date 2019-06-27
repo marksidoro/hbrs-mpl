@@ -18,10 +18,10 @@
 #define HBRS_MPL_FN_COLUMNS_FWD_MATLAB_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/core/preprocessor.hpp>
 
 #ifdef HBRS_MPL_ENABLE_MATLAB
 	#include <hbrs/mpl/dt/ml_matrix/fwd.hpp>
+	#include <hbrs/mpl/dt/smcs/fwd.hpp>
 #endif
 
 #include <boost/hana/tuple.hpp>

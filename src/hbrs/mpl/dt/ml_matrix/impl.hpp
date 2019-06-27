@@ -14,10 +14,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_ML_MATRIX_IMPL_IMPL_HPP
-#define HBRS_MPL_DT_ML_MATRIX_IMPL_IMPL_HPP
+#ifndef HBRS_MPL_DT_ML_MATRIX_IMPL_HPP
+#define HBRS_MPL_DT_ML_MATRIX_IMPL_HPP
 
 #include "fwd.hpp"
+#ifdef HBRS_MPL_ENABLE_MATLAB
 
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
@@ -149,20 +150,14 @@ namespace hana = boost::hana;
 			return (*hbrs::mpl::at)(*ptr_, matrix_index<int,int>{(int)m_, (int)n_});                                   \
 		}                                                                                                              \
 		                                                                                                               \
-		auto                                                                                                           \
-		operator[](int row) & {                                                                                        \
-			return smr<ml_matrix &, int>{*this, row};                                                                  \
-		}                                                                                                              \
+		smr<ml_matrix &, int>                                                                                          \
+		operator[](int row) &;                                                                                         \
 		                                                                                                               \
-		auto                                                                                                           \
-		operator[](int row) const& {                                                                                   \
-			return smr<ml_matrix const&, int>{*this, row};                                                             \
-		}                                                                                                              \
+		smr<ml_matrix const&, int>                                                                                     \
+		operator[](int row) const&;                                                                                    \
 		                                                                                                               \
-		auto                                                                                                           \
-		operator[](int row) && {                                                                                       \
-			return make_smr(std::move(*this), row);                                                                    \
-		}                                                                                                              \
+		smr<ml_matrix, int>                                                                                            \
+		operator[](int row) &&;                                                                                        \
 		                                                                                                               \
 		emxArray_ ## base_type &                                                                                       \
 		data() {                                                                                                       \
@@ -261,4 +256,5 @@ struct make_impl<hbrs::mpl::ml_matrix_tag> {
 
 /* namespace hana */ } /* namespace boost */ }
 
-#endif // !HBRS_MPL_DT_ML_MATRIX_IMPL_IMPL_HPP
+#endif // !HBRS_MPL_ENABLE_MATLAB
+#endif // !HBRS_MPL_DT_ML_MATRIX_IMPL_HPP

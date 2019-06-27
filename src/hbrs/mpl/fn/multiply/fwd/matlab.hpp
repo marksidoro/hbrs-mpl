@@ -17,7 +17,7 @@
 #ifndef HBRS_MPL_FN_MULTIPLY_FWD_MATLAB_HPP
 #define HBRS_MPL_FN_MULTIPLY_FWD_MATLAB_HPP
 
-#include <hbrs/mpl/core/preprocessor.hpp>
+#include <hbrs/mpl/config.hpp>
 
 #ifdef HBRS_MPL_ENABLE_MATLAB
 	#include <hbrs/mpl/dt/ml_matrix/fwd.hpp>

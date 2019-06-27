@@ -14,10 +14,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_ML_VECTOR_IMPL_IMPL_HPP
-#define HBRS_MPL_DT_ML_VECTOR_IMPL_IMPL_HPP
+#ifndef HBRS_MPL_DT_ML_VECTOR_IMPL_HPP
+#define HBRS_MPL_DT_ML_VECTOR_IMPL_HPP
 
 #include "fwd.hpp"
+#ifdef HBRS_MPL_ENABLE_MATLAB
 
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
@@ -123,8 +124,8 @@
 	namespace boost { namespace hana {                                                                                 \
                                                                                                                        \
 	template <>                                                                                                        \
-	struct tag_of< hbrs::mpl::ml_ ## vector_kind< ## _vector<base_type> > {                                            \
-		using type = hbrs::mpl::ml_ ## vector_kind< ## _vector_tag;                                                    \
+	struct tag_of< hbrs::mpl::ml_ ## vector_kind ## _vector<base_type> > {                                             \
+		using type = hbrs::mpl::ml_ ## vector_kind ## _vector_tag;                                                     \
 	};                                                                                                                 \
                                                                                                                        \
 	/* namespace hana */ } /* namespace boost */ }
@@ -146,4 +147,5 @@ struct make_impl<hbrs::mpl::ml_row_vector_tag>;
 
 /* namespace hana */ } /* namespace boost */ }
 
-#endif // !HBRS_MPL_DT_ML_VECTOR_IMPL_IMPL_HPP
+#endif // !HBRS_MPL_ENABLE_MATLAB
+#endif // !HBRS_MPL_DT_ML_VECTOR_IMPL_HPP

@@ -18,8 +18,6 @@
 #define HBRS_MPL_FN_BIDIAG_FWD_MATLAB_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/core/preprocessor.hpp>
-
 #include <hbrs/mpl/dt/decompose_mode/fwd.hpp>
 #include <hbrs/mpl/dt/bidiag_result/fwd.hpp>
 

@@ -28,9 +28,9 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_column_vector, ml_column_vector_tag, at)
-HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_row_vector, ml_row_vector_tag, at)
-HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_matrix, ml_matrix_tag, at)
+HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_ml_column_vector, ml_column_vector_tag, at)
+HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_ml_row_vector, ml_row_vector_tag, at)
+HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_ml_matrix, ml_matrix_tag, at)
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
