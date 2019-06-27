@@ -20,6 +20,7 @@ option(HBRS_MPL_ENABLE_MATLAB                 "Build matlab adapter." ON)
 option(HBRS_MPL_ENABLE_OBJDUMP                "Disassemble executables." OFF)
 option(HBRS_MPL_ENABLE_MEMCHECK               "Run tests and examples with valgrind." OFF)
 option(HBRS_MPL_ENABLE_TESTS                  "Build unit tests." OFF)
+option(HBRS_MPL_ENABLE_BENCHMARKS             "Build benchmarks." OFF)
 
 #################### find all used packages ####################
 
@@ -182,16 +183,29 @@ set(HBRS_MPL_INSTALL_TARGETS_DEFAULT_DESTINATIONS
 
 #################### benchmarks ####################
 
-add_custom_target(benchmarks COMMENT "Run all benchmarks.")
+if(HBRS_MPL_ENABLE_BENCHMARKS)
+    set(_BENCHMARKS_MAYBE_ALL ALL)
+endif()
+
+add_custom_target(benchmarks ${_BENCHMARKS_MAYBE_ALL} COMMENT "Build all benchmarks.")
 
 include(DevTools)
 function(hbrs_mpl_add_benchmark target)
     add_executable(${target} EXCLUDE_FROM_ALL ${ARGN})
     target_link_libraries(${target} hbrs_mpl)
-    maybe_disassemble(${target})
-    maybe_callgrind(${target})
-    maybe_gperftools_profile(${target})
-    maybe_perf(${target})
+    
+    add_custom_target(${target}_disassemble)
+    maybe_disassemble(${target}_disassemble ${target})
+    
+    add_custom_target(${target}_callgrind)
+    maybe_callgrind(${target}_callgrind ${target})
+    
+    add_custom_target(${target}_gperftools_profile)
+    maybe_gperftools_profile(${target}_gperftools_profile ${target})
+    
+    add_custom_target(${target}_perf)
+    maybe_perf(${target}_perf ${target})
+    
     add_dependencies(benchmarks ${target})
 endfunction()
 
@@ -200,10 +214,10 @@ endfunction()
 # CMake's target test does not build but only executes tests
 # Ref.: https://stackoverflow.com/a/736838/6490710
 if(HBRS_MPL_ENABLE_TESTS)
-    set(_MAYBE_ALL ALL)
+    set(_TESTS_MAYBE_ALL ALL)
 endif()
 
-add_custom_target(tests ${_MAYBE_ALL} COMMENT "Build all tests.")
+add_custom_target(tests ${_TESTS_MAYBE_ALL} COMMENT "Build all tests.")
 
 include(DevTools)
 function(hbrs_mpl_add_test target)
