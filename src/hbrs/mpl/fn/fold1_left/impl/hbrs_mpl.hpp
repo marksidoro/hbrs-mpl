@@ -18,8 +18,6 @@
 #define HBRS_MPL_FN_FOLD1_LEFT_IMPL_HBRS_MPL_HPP
 
 #include "../fwd/hbrs_mpl.hpp"
-
-#include <hbrs/mpl/detail/fold1_left.hpp>
 #include <hbrs/mpl/dt/zas.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN

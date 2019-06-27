@@ -34,8 +34,8 @@ template <
 		boost::mpl::if_c<
 			std::is_same< hana::tag_of_t<S>, zas_tag >::value,
 			boost::mpl::and_<
-				test_args<gat_c<0>::apply<std::decay_t<S>>>,
-				test_args<gat_c<1>::apply<std::decay_t<S>>>
+				transform_impl_zas_std_array_vector_irange::test_args<gat_c<0>::apply<std::decay_t<S>>>,
+				transform_impl_zas_std_array_vector_irange::test_args<gat_c<1>::apply<std::decay_t<S>>>
 			>,
 			std::false_type
 		>::type::value

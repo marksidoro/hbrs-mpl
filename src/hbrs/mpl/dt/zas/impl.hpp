@@ -67,7 +67,7 @@ struct zas {
 	
 	constexpr auto
 	length() const {
-		return (*mpl::size)(a_);
+		return (*size)(a_);
 	}
 	
 	template<typename Index>

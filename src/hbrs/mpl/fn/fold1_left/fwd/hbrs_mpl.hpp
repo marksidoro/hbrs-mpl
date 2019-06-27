@@ -19,7 +19,8 @@
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/detail/is_tag_and_is_invokable.hpp>
-#include <hbrs/mpl/dt/zas.hpp>
+#include <hbrs/mpl/detail/fold1_left.hpp>
+#include <hbrs/mpl/dt/zas/fwd.hpp>
 #include <boost/hana/tuple.hpp>
 #include <type_traits>
 

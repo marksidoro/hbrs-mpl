@@ -20,6 +20,7 @@
 #include "../fwd/hbrs_mpl.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
+#include <boost/hana/ext/std/tuple.hpp>
 #include <boost/hana/unpack.hpp>
 #include <type_traits>
 

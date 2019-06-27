@@ -30,17 +30,17 @@ template<typename F>
 struct iterate_impl_helper {
 	template<typename F_>
 	constexpr
-	helper(F_ && f, std::size_t n) : f_{HBRS_MPL_FWD(f)}, n_{n} {}
+	iterate_impl_helper(F_ && f, std::size_t n) : f_{HBRS_MPL_FWD(f)}, n_{n} {}
 	
 	constexpr
-	helper(helper const&) = default;
+	iterate_impl_helper(iterate_impl_helper const&) = default;
 	constexpr
-	helper(helper &&) = default;
+	iterate_impl_helper(iterate_impl_helper &&) = default;
 	
-	constexpr helper&
-	operator=(helper const&) = default;
-	constexpr helper&
-	operator=(helper &&) = default;
+	constexpr iterate_impl_helper&
+	operator=(iterate_impl_helper const&) = default;
+	constexpr iterate_impl_helper&
+	operator=(iterate_impl_helper &&) = default;
 	
 private:
 	template<typename T>

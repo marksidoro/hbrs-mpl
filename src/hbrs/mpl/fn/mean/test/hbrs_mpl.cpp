@@ -43,7 +43,7 @@
 #include <tuple>
 #include <vector>
 
-#include "../data.hpp"
+#include <hbrs/mpl/detail/test.hpp>
 
 BOOST_AUTO_TEST_SUITE(mean_test)
 
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(column_mean_sm_ctsav_icsz) {
 	using namespace hbrs::mpl;
 	
 	auto const a = make_sm(
-		make_ctsav(test::mat_j), make_matrix_size(hana::size_c<test::mat_j_m>, hana::size_c<test::mat_j_n>), row_major_c
+		make_ctsav(detail::mat_j), make_matrix_size(hana::size_c<detail::mat_j_m>, hana::size_c<detail::mat_j_n>), row_major_c
 	);
 	
 	auto a_m = (*m)(size(a));
@@ -84,8 +84,8 @@ BOOST_AUTO_TEST_CASE(column_mean_rtsam) {
 	using namespace hbrs::mpl;
 	
 	auto const a = make_rtsam(
-		std::vector<double>(test::mat_j+0, test::mat_j+test::mat_j_m*test::mat_j_n),
-		make_matrix_size(test::mat_j_m, test::mat_j_n), 
+		std::vector<double>(detail::mat_j+0, detail::mat_j+detail::mat_j_m*detail::mat_j_n),
+		make_matrix_size(detail::mat_j_m, detail::mat_j_n), 
 		row_major_c
 	);
 	

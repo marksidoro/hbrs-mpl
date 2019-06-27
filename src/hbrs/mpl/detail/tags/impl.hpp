@@ -17,6 +17,7 @@
 #ifndef HBRS_MPL_DETAIL_TAGS_IMPL_HPP
 #define HBRS_MPL_DETAIL_TAGS_IMPL_HPP
 
-//BLANK
+#include "impl/boost_range.hpp"
+#include "impl/std.hpp"
 
 #endif // !HBRS_MPL_DETAIL_TAGS_IMPL_HPP

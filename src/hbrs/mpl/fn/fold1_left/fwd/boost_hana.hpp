@@ -19,6 +19,7 @@
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/detail/is_tag_and_is_invokable.hpp>
+#include <hbrs/mpl/detail/fold1_left.hpp>
 #include <boost/hana/tuple.hpp>
 #include <type_traits>
 
@@ -31,7 +32,7 @@ struct fold1_left_impl_hana {
 		typename Sequence,
 		typename F,
 		typename std::enable_if_t< 
-			is_tag_and_is_invokable_trait<fold1_left_t, Sequence &&, hana::tuple_tag, F&& >::value
+			is_tag_and_is_invokable_trait<detail::fold1_left_t, Sequence &&, hana::tuple_tag, F&& >::value
 		>* = nullptr
 	>
 	constexpr decltype(auto)

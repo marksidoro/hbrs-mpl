@@ -53,10 +53,11 @@
 #include <boost/hana/drop_back.hpp>
 #include <boost/hana/value.hpp>
 #include <boost/hana/less_equal.hpp>
+#include <boost/hana/greater_equal.hpp>
 #include <boost/hana/integral_constant.hpp>
 
-#include "../data.hpp"
-#include "../detail.hpp"
+#include <hbrs/mpl/detail/test.hpp>
+#include <hbrs/mpl/detail/not_supported.hpp>
 
 namespace utf = boost::unit_test;
 namespace tt = boost::test_tools;
@@ -72,13 +73,13 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(0.000000001)) {
 	
 	static constexpr auto datasets = hana::make_tuple(
 		make_sm(
-			make_ctsav(test::mat_a), make_matrix_size(hana::size_c<test::mat_a_m>, hana::size_c<test::mat_a_n>), row_major_c
+			make_ctsav(detail::mat_a), make_matrix_size(hana::size_c<detail::mat_a_m>, hana::size_c<detail::mat_a_n>), row_major_c
 		),
 		make_sm(
-			make_ctsav(test::mat_g), make_matrix_size(hana::size_c<test::mat_g_m>, hana::size_c<test::mat_g_n>), row_major_c
+			make_ctsav(detail::mat_g), make_matrix_size(hana::size_c<detail::mat_g_m>, hana::size_c<detail::mat_g_n>), row_major_c
 		),
 		make_sm(
-			make_ctsav(test::mat_j), make_matrix_size(hana::size_c<test::mat_j_m>, hana::size_c<test::mat_j_n>), row_major_c
+			make_ctsav(detail::mat_j), make_matrix_size(hana::size_c<detail::mat_j_m>, hana::size_c<detail::mat_j_n>), row_major_c
 		)
 	);
 	
@@ -104,16 +105,16 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(0.000000001)) {
 			auto funs = hana::drop_back(hana::make_tuple(
 				#ifdef HBRS_MPL_ENABLE_MATLAB
 				[](auto && a, auto mode) {
-					return matlab::detail::svd_impl_level0{}(hbrs::mpl::make_ml_matrix(HBRS_MPL_FWD(a)), mode);
+					return detail::svd_impl_level0_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), mode);
 				},
 				[](auto && a, auto mode) {
-					return matlab::detail::svd_impl_level1{}(hbrs::mpl::make_ml_matrix(HBRS_MPL_FWD(a)), mode);
+					return detail::svd_impl_level1_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), mode);
 				},
 				#endif
 				
 				#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 				[](auto && a, auto mode) {
-					return elemental::detail::svd_impl_matrix{}(hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a)), mode);
+					return detail::svd_impl_el_matrix{}(make_el_matrix(HBRS_MPL_FWD(a)), mode);
 				},
 				[](auto && a, auto mode) {
 					auto sz_ = (*size)(a);
@@ -124,13 +125,13 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(0.000000001)) {
 						(mode == decompose_mode::complete) ||
 						(mode == decompose_mode::zero && hana::value(m_) <= hana::value(n_))
 					) {
-						return hbrs::mpl::detail::not_supported{};
+						return detail::not_supported{};
 					} else {
 						static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
-						return elemental::detail::svd_impl_dist_matrix{}(
-							hbrs::mpl::make_el_dist_matrix(
+						return detail::svd_impl_el_dist_matrix{}(
+							make_el_dist_matrix(
 								grid,
-								hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a))
+								make_el_matrix(HBRS_MPL_FWD(a))
 							),
 							mode
 						);
@@ -209,7 +210,7 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(0.000000001)) {
 				std::size_t f_nr = 0;
 				auto rebuilds = hana::transform(results, [&dataset, &mode, &f_nr](auto && svd_result) {
 					if constexpr(is_not_supported(svd_result)) {
-						return hbrs::mpl::detail::not_supported{};
+						return detail::not_supported{};
 					} else {
 						auto sz_ = (*size)(dataset);
 						auto m_ = (*m)(sz_);

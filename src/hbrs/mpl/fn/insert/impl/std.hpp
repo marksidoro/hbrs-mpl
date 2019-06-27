@@ -28,21 +28,6 @@
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
-
-template<
-	typename Key, typename T, typename Compare, typename Allocator, 
-	typename T1, typename T2,
-	typename std::enable_if_t<
-		(std::is_same<Key, T1>::value || std::is_convertible<T1, Key>::value) && 
-		(std::is_same<T, T2>::value || std::is_convertible<T2, T>::value)
-	>*
->
-constexpr hana::true_
-insert_impl_std_map::args_ok(std::map<Key, T, Compare, Allocator>, std::pair<T1, T2>) { return hana::true_c; }
-
-template<typename M, typename Pair>
-constexpr hana::false_
-insert_impl_std_map::args_ok(M, Pair) { return hana::false_c; }
 	
 template<
 	typename M,
@@ -50,7 +35,7 @@ template<
 	typename std::enable_if_t<
 		std::is_same< hana::tag_of_t<M>, hana::ext::std::map_tag >::value &&
 		std::is_same< hana::tag_of_t<Pair>, hana::ext::std::pair_tag >::value &&
-		decltype(args_ok(std::declval<M>(), std::declval<Pair>())){}
+		decltype(insert_impl_std_map::args_ok(std::declval<M>(), std::declval<Pair>())){}
 	>*
 >
 constexpr decltype(auto)
@@ -72,7 +57,7 @@ template<
 	typename std::enable_if_t<
 		std::is_same< hana::tag_of_t<M>, hana::ext::std::map_tag >::value && 
 		std::is_same< hana::tag_of_t<Pair>, hana::ext::std::pair_tag >::value &&
-		decltype(args_ok(std::declval<M>(), std::declval<Pair>())){}
+		decltype(insert_impl_std_map::args_ok(std::declval<M>(), std::declval<Pair>())){}
 	>*
 >
 constexpr auto

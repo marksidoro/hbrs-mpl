@@ -26,31 +26,31 @@
 #include <hbrs/mpl/dt/rtsav.hpp>
 #include <hbrs/mpl/dt/ctsav.hpp>
 
-#include "../data.hpp"
+#include <hbrs/mpl/detail/test.hpp>
 
 BOOST_AUTO_TEST_SUITE(srv_test)
 
 BOOST_AUTO_TEST_CASE(ctsav_make_size) {
 	using namespace hbrs::mpl;
 	
-	static constexpr auto cav_g = make_ctsav(test::mat_g);
-	static constexpr auto crv_g_sz = hana::size_c<test::mat_g_m*test::mat_g_n>;
+	static constexpr auto cav_g = make_ctsav(detail::mat_g);
+	static constexpr auto crv_g_sz = hana::size_c<detail::mat_g_m*detail::mat_g_n>;
 	static constexpr auto crv_g = make_srv(cav_g);
 	static_assert((*size)(crv_g) == crv_g_sz, "");
-	static_assert(test::mat_g_m*test::mat_g_n == crv_g_sz, "");
+	static_assert(detail::mat_g_m*detail::mat_g_n == crv_g_sz, "");
 }
 
 BOOST_AUTO_TEST_CASE(rtsav_make_size_at) {
 	using namespace hbrs::mpl;
 	
-	auto ra_g = test::mat_g;
-	auto ra_g_length = test::mat_g_m * test::mat_g_n;
+	auto ra_g = detail::mat_g;
+	auto ra_g_length = detail::mat_g_m * detail::mat_g_n;
 	auto rav_g = make_rtsav(ra_g, ra_g_length);
 	
 	auto rrv_g = srv< hbrs::mpl::rtsav<double const> >{rav_g};
 	make_srv(rav_g);
-	BOOST_CHECK((*size)(rrv_g) == test::mat_g_m * test::mat_g_n);
-	BOOST_CHECK(test::mat_g_m*test::mat_g_n == (*size)(rrv_g));
+	BOOST_CHECK((*size)(rrv_g) == detail::mat_g_m * detail::mat_g_n);
+	BOOST_CHECK(detail::mat_g_m*detail::mat_g_n == (*size)(rrv_g));
 	for(std::size_t i = 0; i < ra_g_length; ++i) {
 		BOOST_CHECK(ra_g[i] == rrv_g[i]);
 		BOOST_CHECK(ra_g[i] == (*at)(rrv_g, i));

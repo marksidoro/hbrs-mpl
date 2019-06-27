@@ -25,7 +25,7 @@
 #include <hbrs/mpl/fn/n.hpp>
 #include <hbrs/mpl/fn/at.hpp>
 
-#include "../data.hpp"
+#include <hbrs/mpl/detail/test.hpp>
 
 BOOST_AUTO_TEST_SUITE(rtsam_test)
 
@@ -35,15 +35,15 @@ namespace tt = boost::test_tools;
 BOOST_AUTO_TEST_CASE(m_n_size_assignment) {
 	using namespace hbrs::mpl;
 	
-	auto m1_sz = make_matrix_size(test::mat_g_m, test::mat_g_n);
+	auto m1_sz = make_matrix_size(detail::mat_g_m, detail::mat_g_n);
 	auto m1 = make_rtsam(hana::type_c<double>, m1_sz, row_major_c);
 	
 	auto m1_m = (*m)(size(m1));
 	auto m1_n = (*n)(size(m1));
 	
 	BOOST_TEST((*size)(m1) == m1_sz);
-	BOOST_TEST(m1_m == test::mat_g_m);
-	BOOST_TEST(m1_n == test::mat_g_n);
+	BOOST_TEST(m1_m == detail::mat_g_m);
+	BOOST_TEST(m1_n == detail::mat_g_n);
 	
 	for(std::size_t i = 0; i < m1_m; ++i) {
 		for(std::size_t j = 0; j < m1_n; ++j) {
@@ -51,13 +51,13 @@ BOOST_AUTO_TEST_CASE(m_n_size_assignment) {
 		}
 	}
 	
-	auto m2 = make_rtsam(hana::type_c<double>, make_matrix_size(test::mat_g_m, test::mat_g_n), row_major_c);
+	auto m2 = make_rtsam(hana::type_c<double>, make_matrix_size(detail::mat_g_m, detail::mat_g_n), row_major_c);
 	auto m2_m = (*m)(size(m2));
 	auto m2_n = (*n)(size(m2));
 	
 	for(std::size_t i = 0; i < m2_m; ++i) {
 		for(std::size_t j = 0; j < m2_n; ++j) {
-			(*at)(m2, make_matrix_index(i,j)) = test::mat_g[i * m2_n + j];
+			(*at)(m2, make_matrix_index(i,j)) = detail::mat_g[i * m2_n + j];
 		}
 	}
 	
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(m_n_size_assignment) {
 	
 	for(std::size_t i = 0; i < m2_m; ++i) {
 		for(std::size_t j = 0; j < m2_n; ++j) {
-			BOOST_TEST((*at)(m1, make_matrix_index(i,j)) == test::mat_g[i * m2_n + j]);
+			BOOST_TEST((*at)(m1, make_matrix_index(i,j)) == detail::mat_g[i * m2_n + j]);
 		}
 	}
 	

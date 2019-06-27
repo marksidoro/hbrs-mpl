@@ -46,9 +46,10 @@
 #include <boost/hana/at.hpp>
 #include <boost/hana/length.hpp>
 #include <boost/hana/drop_back.hpp>
+#include <boost/hana/greater_equal.hpp>
 
-#include "../data.hpp"
-#include "../detail.hpp"
+#include <hbrs/mpl/detail/test.hpp>
+#include <hbrs/mpl/detail/not_supported.hpp>
 
 namespace utf = boost::unit_test;
 namespace tt = boost::test_tools;
@@ -63,13 +64,13 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 	
 	static constexpr auto datasets = hana::make_tuple(
 		make_sm(
-			make_ctsav(test::mat_a), make_matrix_size(hana::size_c<test::mat_a_m>, hana::size_c<test::mat_a_n>), row_major_c
+			make_ctsav(detail::mat_a), make_matrix_size(hana::size_c<detail::mat_a_m>, hana::size_c<detail::mat_a_n>), row_major_c
 		),
 		make_sm(
-			make_ctsav(test::mat_g), make_matrix_size(hana::size_c<test::mat_g_m>, hana::size_c<test::mat_g_n>), row_major_c
+			make_ctsav(detail::mat_g), make_matrix_size(hana::size_c<detail::mat_g_m>, hana::size_c<detail::mat_g_n>), row_major_c
 		),
 		make_sm(
-			make_ctsav(test::mat_j), make_matrix_size(hana::size_c<test::mat_j_m>, hana::size_c<test::mat_j_n>), row_major_c
+			make_ctsav(detail::mat_j), make_matrix_size(hana::size_c<detail::mat_j_m>, hana::size_c<detail::mat_j_n>), row_major_c
 		)
 	);
 	
@@ -83,23 +84,23 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 				#ifdef HBRS_MPL_ENABLE_MATLAB
 				[](auto && a, auto economy) {
 					BOOST_TEST_PASSPOINT();
-					return matlab::detail::pca_impl_level0{}(hbrs::mpl::make_ml_matrix(HBRS_MPL_FWD(a)), economy);
+					return detail::pca_impl_level0_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), economy);
 				},
-				//TODO: Fix pca_impl_level1 and pca_impl_level2 and then reenable their tests here!
+				//TODO: Fix pca_impl_level1_ml_matrix and pca_impl_level2_ml_matrix and then reenable their tests here!
 // 				[](auto && a, auto economy) {
 // 					BOOST_TEST_PASSPOINT();
-// 					return matlab::detail::pca_impl_level1{}(hbrs::mpl::make_ml_matrix(HBRS_MPL_FWD(a)), economy);
+// 					return detail::pca_impl_level1_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), economy);
 // 				},
 // 				[](auto && a, auto economy) {
 // 					BOOST_TEST_PASSPOINT();
-// 					return matlab::detail::pca_impl_level2{}(hbrs::mpl::make_ml_matrix(HBRS_MPL_FWD(a)), economy);
+// 					return detail::pca_impl_level2_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), economy);
 // 				},
 				#endif
 				
 				#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 				[](auto && a, auto economy) {
 					BOOST_TEST_PASSPOINT();
-					return elemental::detail::pca_impl_matrix{}(hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a)), economy); 
+					return detail::pca_impl_el_matrix{}(make_el_matrix(HBRS_MPL_FWD(a)), economy); 
 				},
 				[](auto && a, auto economy) {
 					BOOST_TEST_PASSPOINT();
@@ -111,13 +112,13 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 						!economy && hana::value(m_) <= hana::value(n_)
 						/* because this will do a zero svd which equals complete which is not supported by elemental */
 					) {
-						return hbrs::mpl::detail::not_supported{};
+						return detail::not_supported{};
 					} else {
 						static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
-						return elemental::detail::pca_impl_dist_matrix{}(
-							hbrs::mpl::make_el_dist_matrix(
+						return detail::pca_impl_el_dist_matrix{}(
+							make_el_dist_matrix(
 								grid,
-								hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a))
+								make_el_matrix(HBRS_MPL_FWD(a))
 							),
 							economy
 						);
@@ -181,7 +182,7 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 			{
 				auto rebuilds = hana::transform(results, [](auto && pca_result) {
 					if constexpr(is_not_supported(pca_result)) {
-						return hbrs::mpl::detail::not_supported{};
+						return detail::not_supported{};
 					} else {
 						auto && coeff_ =  (*at) (pca_result, pca_coeff{});
 						auto && score_ =  (*at) (pca_result, pca_score{});

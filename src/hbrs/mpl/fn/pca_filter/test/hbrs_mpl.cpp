@@ -48,8 +48,9 @@
 #include <boost/hana/length.hpp>
 #include <boost/hana/drop_back.hpp>
 #include <boost/hana/min.hpp>
+#include <boost/hana/greater_equal.hpp>
 
-#include "../data.hpp"
+#include <hbrs/mpl/detail/test.hpp>
 
 namespace utf = boost::unit_test;
 namespace tt = boost::test_tools;
@@ -64,13 +65,13 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 	
 	static constexpr auto datasets = hana::make_tuple(
 		make_sm(
-			make_ctsav(test::mat_a), make_matrix_size(hana::size_c<test::mat_a_m>, hana::size_c<test::mat_a_n>), row_major_c
+			make_ctsav(detail::mat_a), make_matrix_size(hana::size_c<detail::mat_a_m>, hana::size_c<detail::mat_a_n>), row_major_c
 		),
 		make_sm(
-			make_ctsav(test::mat_g), make_matrix_size(hana::size_c<test::mat_g_m>, hana::size_c<test::mat_g_n>), row_major_c
+			make_ctsav(detail::mat_g), make_matrix_size(hana::size_c<detail::mat_g_m>, hana::size_c<detail::mat_g_n>), row_major_c
 		),
 		make_sm(
-			make_ctsav(test::mat_j), make_matrix_size(hana::size_c<test::mat_j_m>, hana::size_c<test::mat_j_n>), row_major_c
+			make_ctsav(detail::mat_j), make_matrix_size(hana::size_c<detail::mat_j_m>, hana::size_c<detail::mat_j_n>), row_major_c
 		)
 	);
 	
@@ -87,17 +88,17 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 			auto funs = hana::drop_back(hana::make_tuple(
 				#ifdef HBRS_MPL_ENABLE_MATLAB
 				[](auto && a, auto keep) {
-					return matlab::detail::pca_filter_impl{}(hbrs::mpl::make_ml_matrix(HBRS_MPL_FWD(a)), keep);
+					return detail::pca_filter_impl_ml_matrix{}(hbrs::mpl::make_ml_matrix(HBRS_MPL_FWD(a)), keep);
 				},
 				#endif
 				
 				#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 				[](auto && a, auto keep) {
-					return elemental::detail::pca_filter_impl_matrix{}(hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a)), keep);
+					return detail::pca_filter_impl_el_matrix{}(hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a)), keep);
 				},
 				[](auto && a, auto keep) {
 					static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
-					return elemental::detail::pca_filter_impl_matrix{}(
+					return detail::pca_filter_impl_el_matrix{}(
 						hbrs::mpl::make_el_dist_matrix(
 							grid,
 							hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a))

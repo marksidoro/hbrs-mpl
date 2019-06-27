@@ -19,8 +19,6 @@
 
 #include "../fwd/boost_hana.hpp"
 
-#include <hbrs/mpl/detail/fold1_left.hpp>
-
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
@@ -29,7 +27,7 @@ template <
 	typename Sequence,
 	typename F,
 	typename std::enable_if_t< 
-		is_tag_and_is_invokable_trait<fold1_left_t, Sequence &&, hana::tuple_tag, F&& >::value
+		is_tag_and_is_invokable_trait<detail::fold1_left_t, Sequence &&, hana::tuple_tag, F&& >::value
 	>*
 >
 constexpr decltype(auto)

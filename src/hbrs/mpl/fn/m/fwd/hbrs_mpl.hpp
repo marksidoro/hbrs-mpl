@@ -26,8 +26,8 @@
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-HBRS_MPL_DEC_FO_TRY_METHOD(m_impl_matrix_size,        matrix_size_tag,        m)
-HBRS_MPL_DEC_FO_TRY_METHOD(m_impl_matrix_index,       matrix_index_tag,       m)
+HBRS_MPL_DEC_FO_TRY_METHOD(m_impl_matrix_size, matrix_size_tag, m)
+HBRS_MPL_DEC_FO_TRY_METHOD(m_impl_matrix_index, matrix_index_tag, m)
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END

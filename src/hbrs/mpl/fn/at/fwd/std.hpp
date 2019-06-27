@@ -24,6 +24,7 @@
 #include <boost/hana/concept/integral_constant.hpp>
 #include <boost/hana/ext/std/vector.hpp>
 #include <boost/hana/ext/std/tuple.hpp>
+#include <boost/hana/ext/std/array.hpp>
 #include <array>
 #include <vector>
 #include <tuple>

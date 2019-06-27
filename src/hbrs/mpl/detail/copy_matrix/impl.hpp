@@ -100,7 +100,7 @@ copy_matrix_impl(
 	//TODO: replace with transform/? which is storage order agnostic
 	for(std::size_t i = 0; i < from_m; ++i) {
 		for(std::size_t j = 0; j < from_n; ++j) {
-			(*at)(to, mpl::make_matrix_index(i,j)) = (*at)(from, mpl::make_matrix_index(i,j));
+			(*at)(to, make_matrix_index(i,j)) = (*at)(from, make_matrix_index(i,j));
 		}
 	}
 	

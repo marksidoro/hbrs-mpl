@@ -30,7 +30,7 @@
 #include <array>
 #include <vector>
 
-#include "../data.hpp"
+#include <hbrs/mpl/detail/test.hpp>
 
 BOOST_AUTO_TEST_SUITE(sms_test)
 

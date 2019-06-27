@@ -29,7 +29,7 @@ namespace detail {
 template<
 	typename T,
 	typename std::enable_if_t< 
-		std::is_arithmetic<T>::value
+		std::is_arithmetic<std::decay_t<T>>::value
 	>*
 >
 constexpr decltype(auto)

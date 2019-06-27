@@ -20,7 +20,7 @@
 #include "fwd.hpp"
 
 #include <hbrs/mpl/detail/vector.hpp>
-
+HBRS_MPL_DEC_SV(scv)
 HBRS_MPL_DEF_SV(scv)
 
 #endif // !HBRS_MPL_DT_SCV_IMPL_HPP
