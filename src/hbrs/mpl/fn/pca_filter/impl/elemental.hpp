@@ -62,7 +62,7 @@ pca_filter_impl_el_matrix::operator()(Matrix && a, std::function<bool(El::Int)> 
 	auto & mean   =   (*at)(rslt, pca_mean{});
 	
 	// size(keep) == n(size(score))
-	for (El::Int i = 0; i < n(size(score)); ++i) {
+	for (El::Int i = 0; i < (*n)(size(score)); ++i) {
 		if (keep(i) == false) {
 			auto column = score.data()(El::ALL, i);
 			El::Zero(column);

@@ -20,6 +20,7 @@
 #include <hbrs/mpl/config.hpp>
 
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
+	#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
 	#include <hbrs/mpl/dt/el_dist_matrix/fwd.hpp>
 	#include <hbrs/mpl/dt/el_dist_vector/fwd.hpp>
 	#include <hbrs/mpl/fn/expand/fwd.hpp>

@@ -165,7 +165,7 @@ same_size_el(matrix_size<El::Int, El::Int> const& sz, std::pair<El::IR, El::IR> 
 template<typename Ring>
 el_matrix<Ring>
 select_impl_el_matrix::operator()(el_matrix<Ring> && a, std::pair<El::IR, El::IR> const& rng) const {
-	if (same_size_el(size(a), rng)) {
+	if (same_size_el((*size)(a), rng)) {
 		return HBRS_MPL_FWD(a);
 	} else {
 		typedef std::decay_t<Ring> _Ring_;
@@ -178,7 +178,7 @@ select_impl_el_matrix::operator()(el_matrix<Ring> && a, std::pair<El::IR, El::IR
 template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping>
 select_impl_el_matrix::operator()(el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> && a, std::pair<El::IR, El::IR> const& rng) const {
-	if (same_size_el(size(a), rng)) {
+	if (same_size_el((*size)(a), rng)) {
 		return HBRS_MPL_FWD(a);
 	} else {
 		El::DistMatrix<Ring, Columnwise, Rowwise, Wrapping> b{a.data().Grid()};
@@ -215,7 +215,7 @@ template<
 auto
 select_impl_el_dist_vector::operator()(Vector && v, El::IR const& rng) const {
 	return hana::make<hana::tag_of_t<Vector>>(
-		select(
+		(*select)(
 			make_el_dist_matrix(v.data()),
 			std::make_pair(rng, El::ALL)
 		).data()

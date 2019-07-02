@@ -91,7 +91,7 @@ mean_impl_el_dist_matrix_columns::operator()(
 	> const& expr
 ) const {
 	auto const& from = hana::at_c<0>(expr.operands());
-	el_dist_row_vector sums = sum(expr);
+	el_dist_row_vector sums = (*sum)(expr);
 	BOOST_ASSERT(sums.length() == from.n());
 	
 	//TODO: Once sums is converted from "El::STAR, El::STAR" to "El::CIRC, El::CIRC" do only on sums_dmat.Grid().Rank() == 0!

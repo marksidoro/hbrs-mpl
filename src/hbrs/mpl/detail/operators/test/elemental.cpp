@@ -739,7 +739,7 @@ BOOST_AUTO_TEST_CASE(matrix_vector_multiply) {
 	
 	BOOST_TEST(d_sz == c_sz);
 	
-	for(El::Int i = 0; i < c_sz; ++i) {
+	for(El::Int i = 0; i < (signed)c_sz; ++i) {
 		BOOST_TEST((*at)(d, i) == (*at)(c, i));
 	}
 }
@@ -1690,7 +1690,7 @@ BOOST_AUTO_TEST_CASE(matrix_indices) {
 	auto const e_sz = (*size)(e);
 	BOOST_TEST(e_sz == c_sz);
 	
-	for(El::Int i = 0; i < c_sz; ++i) {
+	for(El::Int i = 0; i < (signed)c_sz; ++i) {
 		BOOST_TEST((*at)(d, i) == (*at)(c, i));
 		BOOST_TEST((*at)(e, i) == (*at)(c, i));
 	}
