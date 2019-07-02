@@ -17,6 +17,12 @@
 #ifndef HBRS_MPL_FN_HORZCAT_IMPL_HPP
 #define HBRS_MPL_FN_HORZCAT_IMPL_HPP
 
-//BLANK
+#include "fwd.hpp"
+
+#include <hbrs/mpl/dt/function.hpp>
+
+HBRS_MPL_NAMESPACE_BEGIN
+HBRS_MPL_DEF_F2(horzcat, horzcat_t)
+HBRS_MPL_NAMESPACE_END
 
 #endif // !HBRS_MPL_FN_HORZCAT_IMPL_HPP

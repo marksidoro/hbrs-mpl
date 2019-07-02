@@ -17,6 +17,14 @@
 #ifndef HBRS_MPL_FN_TIMES_IMPL_HPP
 #define HBRS_MPL_FN_TIMES_IMPL_HPP
 
+#include "fwd.hpp"
+
+#include <hbrs/mpl/dt/function.hpp>
+
+HBRS_MPL_NAMESPACE_BEGIN
+HBRS_MPL_DEF_F2(times, times_t)
+HBRS_MPL_NAMESPACE_END
+
 #include "impl/elemental.hpp"
 
 #endif // !HBRS_MPL_FN_TIMES_IMPL_HPP

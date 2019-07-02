@@ -17,6 +17,14 @@
 #ifndef HBRS_MPL_FN_RECURSE_IMPL_HPP
 #define HBRS_MPL_FN_RECURSE_IMPL_HPP
 
+#include "fwd.hpp"
+
+#include <hbrs/mpl/dt/function.hpp>
+
+HBRS_MPL_NAMESPACE_BEGIN
+HBRS_MPL_DEF_F3(recurse, recurse_t)
+HBRS_MPL_NAMESPACE_END
+
 #include "impl/hbrs_mpl.hpp"
 
 #endif // !HBRS_MPL_FN_RECURSE_IMPL_HPP

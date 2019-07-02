@@ -17,6 +17,14 @@
 #ifndef HBRS_MPL_FN_PLUS_IMPL_HPP
 #define HBRS_MPL_FN_PLUS_IMPL_HPP
 
+#include "fwd.hpp"
+
+#include <hbrs/mpl/dt/function.hpp>
+
+HBRS_MPL_NAMESPACE_BEGIN
+HBRS_MPL_DEF_F2(plus, plus_t)
+HBRS_MPL_NAMESPACE_END
+
 #include "impl/matlab.hpp"
 #include "impl/std.hpp"
 #include "impl/boost_hana.hpp"

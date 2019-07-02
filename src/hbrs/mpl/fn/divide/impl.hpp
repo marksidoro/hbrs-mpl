@@ -17,6 +17,14 @@
 #ifndef HBRS_MPL_FN_DIVIDE_IMPL_HPP
 #define HBRS_MPL_FN_DIVIDE_IMPL_HPP
 
+#include "fwd.hpp"
+
+#include <hbrs/mpl/dt/function.hpp>
+
+HBRS_MPL_NAMESPACE_BEGIN
+HBRS_MPL_DEF_F2(divide, divide_t)
+HBRS_MPL_NAMESPACE_END
+
 #include "impl/boost_hana.hpp"
 #include "impl/elemental.hpp"
 #include "impl/std.hpp"

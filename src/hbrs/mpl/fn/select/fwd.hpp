@@ -18,7 +18,7 @@
 #define HBRS_MPL_FN_SELECT_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/dt/function.hpp>
+#include <hbrs/mpl/dt/function/fwd.hpp>
 #include <hbrs/mpl/core/implementations_of.hpp>
 
 /* select() is like view or submatrix or subsequence but does not imply a specific memory mgmt strategy.
@@ -28,7 +28,6 @@
 
 HBRS_MPL_NAMESPACE_BEGIN
 HBRS_MPL_DEC_F2(select, select_t)
-HBRS_MPL_DEF_F2(select, select_t)
 HBRS_MPL_NAMESPACE_END
 
 #include "fwd/elemental.hpp"

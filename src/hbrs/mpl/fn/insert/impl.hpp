@@ -17,6 +17,14 @@
 #ifndef HBRS_MPL_FN_INSERT_IMPL_HPP
 #define HBRS_MPL_FN_INSERT_IMPL_HPP
 
+#include "fwd.hpp"
+
+#include <hbrs/mpl/dt/function.hpp>
+
+HBRS_MPL_NAMESPACE_BEGIN
+HBRS_MPL_DEF_F2(insert, insert_t)
+HBRS_MPL_NAMESPACE_END
+
 #include "impl/std.hpp"
 #include "impl/boost_hana.hpp"
 
