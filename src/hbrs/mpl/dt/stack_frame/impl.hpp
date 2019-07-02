@@ -1,4 +1,4 @@
-/* Copyright (c) 2016 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,15 +14,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef HBRS_MPL_DT_STACK_FRAME_IMPL_HPP
+#define HBRS_MPL_DT_STACK_FRAME_IMPL_HPP
 
-#ifndef HBRS_MPL_DT_STACK_FRAME_HPP
-#define HBRS_MPL_DT_STACK_FRAME_HPP
-
-#include <hbrs/mpl/fwd/dt/stack_frame.hpp>
+#include "fwd.hpp"
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -92,8 +90,8 @@ template <>
 struct make_impl<hbrs::mpl::stack_frame_tag> {
 	template <typename Error, typename Function, typename Arguments>
 	static constexpr hbrs::mpl::stack_frame<
-		std::decay_t<Error>, 
-		std::decay_t<Function>, 
+		std::decay_t<Error>,
+		std::decay_t<Function>,
 		std::decay_t<Arguments>
 	>
 	apply(Error && e, Function && f, Arguments&& args) {
@@ -103,4 +101,4 @@ struct make_impl<hbrs::mpl::stack_frame_tag> {
 
 /* namespace hana */ } /* namespace boost */ }
 
-#endif // !HBRS_MPL_DT_STACK_FRAME_HPP
+#endif // !HBRS_MPL_DT_STACK_FRAME_IMPL_HPP

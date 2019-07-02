@@ -30,6 +30,7 @@
 
 #include <hbrs/mpl/dt/exception.hpp>
 #include <hbrs/mpl/dt/expression.hpp>
+#include <hbrs/mpl/core/annotation.hpp>
 #include <hbrs/mpl/dt/smr.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>
 #include <hbrs/mpl/fn/at.hpp>
@@ -182,7 +183,10 @@ expand_impl_el_dist_row_vector::operator()(
 		));
 	}
 	
-	return make_expression(expand, hana::tuple<decltype(v), decltype(sz)>{v, sz});
+	return add_annotation(
+		make_expression(expand, hana::tuple<decltype(v), decltype(sz)>{v, sz}),
+		delay_evaluation{}
+	);
 }
 
 template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
@@ -203,7 +207,10 @@ expand_impl_el_dist_column_vector::operator()(
 		));
 	}
 	
-	return make_expression(expand, hana::tuple<decltype(v), decltype(sz)>{v, sz});
+	return add_annotation(
+		make_expression(expand, hana::tuple<decltype(v), decltype(sz)>{v, sz}),
+		delay_evaluation{}
+	);
 }
 
 /* namespace detail */ }

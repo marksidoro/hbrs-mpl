@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,13 +14,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef HBRS_MPL_CORE_ANNOTATION_IMPL_HPP
+#define HBRS_MPL_CORE_ANNOTATION_IMPL_HPP
 
-#ifndef HBRS_MPL_CORE_ANNOTATION_HPP
-#define HBRS_MPL_CORE_ANNOTATION_HPP
-
-#include <hbrs/mpl/fwd/core/annotation.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include "fwd.hpp"
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 #include <type_traits>
@@ -103,7 +101,7 @@ struct make_impl<hbrs::mpl::detail::annotated_tag> {
 
 
 
-#include <hbrs/mpl/fwd/core/reference_wrapper.hpp>
+#include <hbrs/mpl/core/reference_wrapper/fwd.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 
@@ -336,5 +334,4 @@ struct remove_annotation_impl<detail::annotated_tag, AnnotationTag> {
 
 HBRS_MPL_NAMESPACE_END
 
-
-#endif // !HBRS_MPL_CORE_ANNOTATION_HPP
+#endif // !HBRS_MPL_CORE_ANNOTATION_IMPL_HPP

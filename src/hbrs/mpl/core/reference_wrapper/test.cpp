@@ -19,7 +19,7 @@
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/core/reference_wrapper.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/front.hpp>

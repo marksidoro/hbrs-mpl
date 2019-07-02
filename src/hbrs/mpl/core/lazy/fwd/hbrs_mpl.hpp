@@ -14,16 +14,26 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_CORE_IS_ERROR_CAUSE_FWD_HPP
-#define HBRS_MPL_CORE_IS_ERROR_CAUSE_FWD_HPP
+#ifndef HBRS_MPL_CORE_LAZY_FWD_HBRS_MPL_HPP
+#define HBRS_MPL_CORE_LAZY_FWD_HBRS_MPL_HPP
 
-#include <hbrs/mpl/config.hpp>
-#include <boost/hana/fwd/core/make.hpp>
-#include <boost/hana/fwd/core/to.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
+#include <boost/hana/tuple.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
-HBRS_MPL_DEC_CF2(is_error_cause)
+namespace detail {
+
+struct lazy_impl {
+	template <typename T>
+	constexpr decltype(auto)
+	operator()(T && t) const;
+};
+
+/* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_CORE_IS_ERROR_CAUSE_FWD_HPP
+#define HBRS_MPL_CORE_LAZY_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                     \
+		hbrs::mpl::detail::lazy_impl{}                                                                                 \
+	)
+
+#endif // !HBRS_MPL_CORE_LAZY_FWD_HBRS_MPL_HPP

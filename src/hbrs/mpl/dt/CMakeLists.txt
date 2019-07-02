@@ -8,8 +8,10 @@
 
 add_subdirectory(ctsam)
 add_subdirectory(ctsav)
+add_subdirectory(error)
 add_subdirectory(escsv)
 add_subdirectory(exception)
+add_subdirectory(expression)
 add_subdirectory(functor)
 add_subdirectory(ml_matrix)
 add_subdirectory(range)

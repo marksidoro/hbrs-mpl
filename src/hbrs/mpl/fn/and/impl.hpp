@@ -20,9 +20,25 @@
 #include "fwd.hpp"
 
 #include <hbrs/mpl/dt/function.hpp>
+#include <hbrs/mpl/core/annotation.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
-HBRS_MPL_DEF_F2(and_, and_t)
+
+template <typename Expr1, typename Expr2>
+constexpr decltype(auto)
+and_t::operator()(Expr1 && e1, Expr2 && e2) const {
+	return call(
+		and_, 
+		HBRS_MPL_FWD(e1),
+		add_annotation(HBRS_MPL_FWD(e2), delay_evaluation{})
+	);
+}
+
+constexpr decltype(auto)
+and_t::operator*() const {
+	return boost::hana::demux(evaluate)(and_);
+}
+
 HBRS_MPL_NAMESPACE_END
 
 #include "impl/boost_hana.hpp"

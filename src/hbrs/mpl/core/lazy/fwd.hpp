@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,16 +14,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#ifndef HBRS_MPL_FWD_FN_LAZY_HPP
-#define HBRS_MPL_FWD_FN_LAZY_HPP
+#ifndef HBRS_MPL_CORE_LAZY_FWD_HPP
+#define HBRS_MPL_CORE_LAZY_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/fwd/dt/function.hpp>
+#include <hbrs/mpl/dt/function.hpp>
+#include <hbrs/mpl/core/implementations_of.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 HBRS_MPL_DEC_F1(lazy, lazy_t)
+HBRS_MPL_DEF_F1(lazy, lazy_t)
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_FWD_FN_LAZY_HPP
+#include "fwd/hbrs_mpl.hpp"
+
+HBRS_MPL_MAP_IMPLS(lazy_t, HBRS_MPL_CORE_LAZY_IMPLS_HBRS_MPL)
+
+#endif // !HBRS_MPL_CORE_LAZY_FWD_HPP

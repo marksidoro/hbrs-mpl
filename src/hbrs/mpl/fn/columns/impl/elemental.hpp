@@ -32,6 +32,7 @@
 #include <hbrs/mpl/fn/n.hpp>
 #include <hbrs/mpl/dt/smcs.hpp>
 #include <hbrs/mpl/dt/expression.hpp>
+#include <hbrs/mpl/core/annotation.hpp>
 
 #include <type_traits>
 #include <vector>
@@ -73,7 +74,10 @@ template <
 >
 constexpr auto
 columns_impl_el_dist_matrix::operator()(DistMatrix && a) const {
-	return make_expression(columns, hana::tuple<decltype(a)>{HBRS_MPL_FWD(a)});
+	return add_annotation(
+		make_expression(columns, hana::tuple<decltype(a)>{HBRS_MPL_FWD(a)}),
+		delay_evaluation{}
+	);
 }
 
 /* namespace detail */ }

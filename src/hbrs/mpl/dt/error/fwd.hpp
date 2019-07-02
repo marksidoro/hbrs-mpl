@@ -1,4 +1,4 @@
-/* Copyright (c) 2016 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,10 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#ifndef HBRS_MPL_FWD_DT_ERROR_HPP
-#define HBRS_MPL_FWD_DT_ERROR_HPP
+#ifndef HBRS_MPL_DT_ERROR_FWD_HPP
+#define HBRS_MPL_DT_ERROR_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <boost/hana/fwd/core/make.hpp>
@@ -40,4 +38,4 @@ constexpr auto to_error = hana::to<error_tag>;
 
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_FWD_DT_ERROR_HPP
+#endif // !HBRS_MPL_DT_ERROR_FWD_HPP

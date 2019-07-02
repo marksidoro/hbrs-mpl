@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,16 +14,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_CORE_IS_ERROR_CAUSE_FWD_HPP
-#define HBRS_MPL_CORE_IS_ERROR_CAUSE_FWD_HPP
+#ifndef HBRS_MPL_CORE_REFERENCE_WRAPPER_HPP
+#define HBRS_MPL_CORE_REFERENCE_WRAPPER_HPP
 
-#include <hbrs/mpl/config.hpp>
-#include <boost/hana/fwd/core/make.hpp>
-#include <boost/hana/fwd/core/to.hpp>
-#include <hbrs/mpl/core/preprocessor.hpp>
+#include "reference_wrapper/fwd.hpp"
+#include "reference_wrapper/impl.hpp"
 
-HBRS_MPL_NAMESPACE_BEGIN
-HBRS_MPL_DEC_CF2(is_error_cause)
-HBRS_MPL_NAMESPACE_END
-
-#endif // !HBRS_MPL_CORE_IS_ERROR_CAUSE_FWD_HPP
+#endif // !HBRS_MPL_CORE_REFERENCE_WRAPPER_HPP

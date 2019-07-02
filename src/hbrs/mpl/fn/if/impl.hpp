@@ -20,9 +20,26 @@
 #include "fwd.hpp"
 
 #include <hbrs/mpl/dt/function.hpp>
+#include <hbrs/mpl/core/annotation.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
-HBRS_MPL_DEF_F3(if_, if_t)
+
+template <typename Condition, typename IfCase, typename ElseCase>
+constexpr decltype(auto)
+if_t::operator()(Condition&& c, IfCase&& i, ElseCase&& e) const {
+	return call(
+		if_, 
+		HBRS_MPL_FWD(c),
+		add_annotation(HBRS_MPL_FWD(i), delay_evaluation{}),
+		add_annotation(HBRS_MPL_FWD(e), delay_evaluation{})
+	);
+}
+
+constexpr decltype(auto)
+if_t::operator*() const {
+	return boost::hana::demux(evaluate)(if_);
+}
+
 HBRS_MPL_NAMESPACE_END
 
 #include "impl/std.hpp"

@@ -14,13 +14,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #define BOOST_TEST_MODULE lazy_test
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
-#include <hbrs/mpl/fn/lazy.hpp>
+#include <hbrs/mpl/core/lazy.hpp>
 #include <boost/hana/integral_constant.hpp>
 #include <boost/hana/equal.hpp>
 #include <boost/hana/tuple.hpp>

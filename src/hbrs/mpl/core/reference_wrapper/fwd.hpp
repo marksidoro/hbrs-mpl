@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,15 +14,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#ifndef HBRS_MPL_FWD_CORE_REFERENCE_WRAPPER_HPP
-#define HBRS_MPL_FWD_CORE_REFERENCE_WRAPPER_HPP
+#ifndef HBRS_MPL_CORE_REFERENCE_WRAPPER_FWD_HPP
+#define HBRS_MPL_CORE_REFERENCE_WRAPPER_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
 #include <boost/hana/fwd/core/make.hpp>
 #include <boost/hana/fwd/core/to.hpp>
-#include <hbrs/mpl/preprocessor/core.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
@@ -42,7 +40,6 @@ struct rvalue_reference_wrapper_tag{};
 constexpr auto make_rvalue_reference_wrapper = hana::make<rvalue_reference_wrapper_tag>;
 constexpr auto to_rvalue_reference_wrapper = hana::to<rvalue_reference_wrapper_tag>;
 
-
 /* namespace detail */ }
 
 HBRS_MPL_DEC_CF1(unwrap_reference)
@@ -52,4 +49,4 @@ HBRS_MPL_DEC_CFV(wrap_references)
 
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_FWD_CORE_REFERENCE_WRAPPER_HPP
+#endif // !HBRS_MPL_CORE_REFERENCE_WRAPPER_FWD_HPP

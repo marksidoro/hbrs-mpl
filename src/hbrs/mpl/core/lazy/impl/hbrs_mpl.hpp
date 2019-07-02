@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,33 +14,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef HBRS_MPL_CORE_LAZY_IMPL_HBRS_MPL_HPP
+#define HBRS_MPL_CORE_LAZY_IMPL_HBRS_MPL_HPP
 
-#ifndef HBRS_MPL_FUSE_HBRS_MPL_FN_LAZY_HPP
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_LAZY_HPP
-
-#include <hbrs/mpl/preprocessor/core.hpp>
-#include <boost/hana/tuple.hpp>
-#include <boost/hana/core/tag_of.hpp>
-#include <type_traits>
+#include "../fwd/hbrs_mpl.hpp"
+#include <hbrs/mpl/core/preprocessor.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace hana = boost::hana;
 namespace detail {
-	
-struct lazy_impl {
-	template <typename T>
-	constexpr decltype(auto)
-	operator()(T && t) const {
-		return HBRS_MPL_FWD(t);
-	}
-};
+
+template <typename T>
+constexpr decltype(auto)
+lazy_impl::operator()(T && t) const {
+	return HBRS_MPL_FWD(t);
+}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FUSE_HBRS_MPL_FN_LAZY_IMPLS boost::hana::make_tuple(                                                  \
-		hbrs::mpl::detail::lazy_impl{}                                                                                 \
-	)
-
-#endif // !HBRS_MPL_FUSE_HBRS_MPL_FN_LAZY_HPP
+#endif // !HBRS_MPL_CORE_LAZY_IMPL_HBRS_MPL_HPP

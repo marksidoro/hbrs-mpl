@@ -4,9 +4,6 @@
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 #
 
-#################### list the subdirectories ####################
+#################### tests ####################
 
-add_subdirectory(annotation)
-add_subdirectory(evaluate)
-add_subdirectory(lazy)
-add_subdirectory(reference_wrapper)
+hbrs_mpl_add_test(core_annotation "test.cpp")

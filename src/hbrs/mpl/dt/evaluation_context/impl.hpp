@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,12 +14,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef HBRS_MPL_DT_EVALUATION_CONTEXT_IMPL_HPP
+#define HBRS_MPL_DT_EVALUATION_CONTEXT_IMPL_HPP
 
-#ifndef HBRS_MPL_DT_EVALUATION_CONTEXT_HPP
-#define HBRS_MPL_DT_EVALUATION_CONTEXT_HPP
-
-#include <hbrs/mpl/fwd/dt/evaluation_context.hpp>
+#include "fwd.hpp"
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 #include <type_traits>
@@ -147,4 +145,4 @@ struct make_impl<hbrs::mpl::evaluation_context_tag> {
 
 /* namespace hana */ } /* namespace boost */ }
 
-#endif // !HBRS_MPL_DT_EVALUATION_CONTEXT_HPP
+#endif // !HBRS_MPL_DT_EVALUATION_CONTEXT_IMPL_HPP

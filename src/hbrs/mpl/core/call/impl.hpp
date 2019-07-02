@@ -20,7 +20,6 @@
 #include "fwd.hpp"
 
 #include <hbrs/mpl/core/implementations_of.hpp>
-#include <hbrs/mpl/core/call.hpp>
 #include <hbrs/mpl/core/reference_wrapper.hpp>
 #include <hbrs/mpl/dt/expression.hpp>
 

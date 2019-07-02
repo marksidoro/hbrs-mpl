@@ -1,4 +1,4 @@
-/* Copyright (c) 2016 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,12 +14,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef HBRS_MPL_CORE_IS_ERROR_IMPL_HPP
+#define HBRS_MPL_CORE_IS_ERROR_IMPL_HPP
 
-#ifndef HBRS_MPL_CORE_IS_ERROR_HPP
-#define HBRS_MPL_CORE_IS_ERROR_HPP
-
-#include <hbrs/mpl/fwd/core/is_error.hpp>
+#include "fwd.hpp"
 #include <hbrs/mpl/dt/error.hpp>
 #include <hbrs/mpl/dt/stack_frame.hpp>
 
@@ -58,4 +56,4 @@ struct is_error_impl<Tag, hana::when<Condition>> : hana::default_ {
 
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_CORE_IS_ERROR_HPP
+#endif // !HBRS_MPL_CORE_IS_ERROR_IMPL_HPP
