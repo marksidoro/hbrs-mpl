@@ -20,17 +20,17 @@
 #include "fwd.hpp"
 
 //TODO: Do not include impls here because else you will run into include cycles problems!
-#include <hbrs/mpl/fwd/fn/preincrement.hpp>
-#include <hbrs/mpl/fwd/fn/predecrement.hpp>
-#include <hbrs/mpl/fwd/fn/postincrement.hpp>
-#include <hbrs/mpl/fwd/fn/postdecrement.hpp>
-#include <hbrs/mpl/fwd/fn/plus.hpp>
-#include <hbrs/mpl/fwd/fn/minus.hpp>
-#include <hbrs/mpl/fwd/fn/multiply.hpp>
-#include <hbrs/mpl/fwd/fn/divide.hpp>
-#include <hbrs/mpl/fwd/fn/greater_equal.hpp>
-#include <hbrs/mpl/fwd/fn/invoke.hpp>
-#include <hbrs/mpl/fwd/fn/at.hpp>
+#include <hbrs/mpl/fn/preincrement/fwd.hpp>
+#include <hbrs/mpl/fn/predecrement/fwd.hpp>
+#include <hbrs/mpl/fn/postincrement/fwd.hpp>
+#include <hbrs/mpl/fn/postdecrement/fwd.hpp>
+#include <hbrs/mpl/fn/plus/fwd.hpp>
+#include <hbrs/mpl/fn/minus/fwd.hpp>
+#include <hbrs/mpl/fn/multiply/fwd.hpp>
+#include <hbrs/mpl/fn/divide/fwd.hpp>
+#include <hbrs/mpl/fn/greater_equal/fwd.hpp>
+#include <hbrs/mpl/fn/invoke/fwd.hpp>
+#include <hbrs/mpl/fn/at/fwd.hpp>
 
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
@@ -253,7 +253,23 @@ HBRS_MPL_NAMESPACE_BEGIN
 
 template <>
 struct wrap_reference_impl<expression_tag> {
-	template <typename T>
+	template <
+		typename T,
+		typename std::enable_if_t< 
+			std::is_lvalue_reference_v<T&&>
+		>* = nullptr
+	>
+	static constexpr decltype(auto)
+	apply(T && t) {
+		return HBRS_MPL_FWD(t);
+	}
+	
+	template <
+		typename T,
+		typename std::enable_if_t< 
+			std::is_rvalue_reference_v<T&&>
+		>* = nullptr
+	>
 	static constexpr auto
 	apply(T && t) {
 		return HBRS_MPL_FWD(t);

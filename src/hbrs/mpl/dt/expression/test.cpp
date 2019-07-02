@@ -20,14 +20,18 @@
 #include <boost/test/unit_test.hpp>
 
 //TODO: Move if, apply and invoke to their own test files!
+
+#include <hbrs/mpl/fn/plus.hpp>
 #include <hbrs/mpl/core/evaluate.hpp>
 #include <hbrs/mpl/fn/if.hpp>
 #include <hbrs/mpl/fn/apply.hpp>
 #include <hbrs/mpl/fn/invoke.hpp>
+
 #include <boost/hana/integral_constant.hpp>
 #include <boost/hana/ext/std/vector.hpp>
 #include <boost/hana/ext/std/array.hpp>
 #include <boost/hana/back.hpp>
+#include <boost/hana/plus.hpp>
 #include <vector>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -1527,6 +1531,8 @@ BOOST_AUTO_TEST_CASE(expression_test_1) {
 			return static_cast<decltype(v)&&>(v);
 		}(std::vector<int>{1,2,3}).empty() == true
 	);
+	
+	hana::int_<5> s103 = evaluate(id(hana::int_c<2>) + id(hana::int_c<3>));
 }
 
 BOOST_AUTO_TEST_SUITE_END()
