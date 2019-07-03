@@ -14,7 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/dt/ml_matrix.hpp>
+#include "impl.hpp"
+#ifdef HBRS_MPL_ENABLE_MATLAB
 
 HBRS_MPL_NAMESPACE_BEGIN
 
@@ -40,3 +41,5 @@ _HBRS_MPL_DEF_ML_MAT1(boolean_T)
 #undef _HBRS_MPL_DEF_ML_MAT1
 
 HBRS_MPL_NAMESPACE_END
+
+#endif // !HBRS_MPL_ENABLE_MATLAB

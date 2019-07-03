@@ -18,12 +18,12 @@
 #define HBRS_MPL_FN_DIVIDE_FWD_ELEMENTAL_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <El.hpp>
 
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 	#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
 	#include <hbrs/mpl/dt/el_vector/fwd.hpp>
 	#include <hbrs/mpl/dt/el_dist_vector/fwd.hpp>
+	#include <El.hpp>
 #endif
 
 #include <boost/hana/tuple.hpp>

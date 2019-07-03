@@ -6,9 +6,12 @@
 
 #################### tests ####################
 
-foreach(name
-    elemental
-    hbrs_mpl
-    matlab)
-    hbrs_mpl_add_test(detail_operators_${name} "${name}.cpp")
-endforeach()
+if (HBRS_MPL_ENABLE_ELEMENTAL)
+    hbrs_mpl_add_test(detail_operators_elemental "elemental.cpp")
+endif()
+
+hbrs_mpl_add_test(detail_operators_hbrs_mpl "hbrs_mpl.cpp")
+
+if (HBRS_MPL_ENABLE_MATLAB)
+    hbrs_mpl_add_test(detail_operators_matlab "matlab.cpp")
+endif()
