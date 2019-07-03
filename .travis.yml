@@ -31,46 +31,39 @@ matrix:
         packages: [ "libmpich-dev", "lynx", "ccache", "libstdc++-8-dev", "libboost1.67-all-dev", "gcc-8", "g++-8" ]
       } }
 
-    # Clang 6.0
-    - env: CC=clang-6.0 CXX=clang++-6.0 BUILD_TYPE=Debug
+    # Clang 7
+    - env: CC=clang-7 CXX=clang++-7 BUILD_TYPE=Debug
       addons: { apt: { 
-        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty-6.0", { sourceline: "ppa:dluxen/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
-        packages: [ "libmpich-dev", "lynx", "ccache", "libstdc++-8-dev", "libboost1.67-all-dev", "clang-6.0" ]
+        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty-7", { sourceline: "ppa:dluxen/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
+        packages: [ "libmpich-dev", "lynx", "ccache", "libstdc++-8-dev", "libboost1.67-all-dev", "clang-7", "libomp-7-dev" ]
       } }
 
-#    # Clang 7.0
-#    - env: CC=clang-7.0 CXX=clang++-7.0 BUILD_TYPE=Debug
-#      addons: { apt: { 
-#        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty-7.0", { sourceline: "ppa:dluxen/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
-#        packages: [ "libmpich-dev", "lynx", "ccache", "libstdc++-8-dev", "libboost1.67-all-dev", "clang-7.0" ]
-#      } }
-
     # Debug
-    - env: CC=clang-6.0 CXX=clang++-6.0 BUILD_TYPE=Debug
+    - env: CC=clang-7 CXX=clang++-7 BUILD_TYPE=Debug
       addons: { apt: { 
-        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty-6.0", { sourceline: "ppa:dluxen/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
-        packages: [ "libmpich-dev", "lynx", "ccache", "libstdc++-8-dev", "libboost1.67-all-dev", "clang-6.0" ]
+        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty-7", { sourceline: "ppa:dluxen/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
+        packages: [ "libmpich-dev", "lynx", "ccache", "libstdc++-8-dev", "libboost1.67-all-dev", "clang-7", "libomp-7-dev" ]
       } }
 
     # MinSizeRel
-    - env: CC=clang-6.0 CXX=clang++-6.0 BUILD_TYPE=MinSizeRel
+    - env: CC=clang-7 CXX=clang++-7 BUILD_TYPE=MinSizeRel
       addons: { apt: { 
-        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty-6.0", { sourceline: "ppa:dluxen/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
-        packages: [ "libmpich-dev", "lynx", "ccache", "libstdc++-8-dev", "libboost1.67-all-dev", "clang-6.0" ]
+        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty-7", { sourceline: "ppa:dluxen/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
+        packages: [ "libmpich-dev", "lynx", "ccache", "libstdc++-8-dev", "libboost1.67-all-dev", "clang-7", "libomp-7-dev" ]
       } }
 
     # RelWithDebInfo
-    - env: CC=clang-6.0 CXX=clang++-6.0 BUILD_TYPE=RelWithDebInfo
+    - env: CC=clang-7 CXX=clang++-7 BUILD_TYPE=RelWithDebInfo
       addons: { apt: { 
-        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty-6.0", { sourceline: "ppa:dluxen/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
-        packages: [ "libmpich-dev", "lynx", "ccache", "libstdc++-8-dev", "libboost1.67-all-dev", "clang-6.0" ]
+        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty-7", { sourceline: "ppa:dluxen/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
+        packages: [ "libmpich-dev", "lynx", "ccache", "libstdc++-8-dev", "libboost1.67-all-dev", "clang-7", "libomp-7-dev" ]
       } }
 
     # Release
-    - env: CC=clang-6.0 CXX=clang++-6.0 BUILD_TYPE=Release
+    - env: CC=clang-7 CXX=clang++-7 BUILD_TYPE=Release
       addons: { apt: { 
-        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty-6.0", { sourceline: "ppa:dluxen/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
-        packages: [ "libmpich-dev", "lynx", "ccache", "libstdc++-8-dev", "libboost1.67-all-dev", "clang-6.0" ]
+        sources: [ "ubuntu-toolchain-r-test", "llvm-toolchain-trusty-7", { sourceline: "ppa:dluxen/boost" }, { sourceline: "ppa:dzombie/ccache" } ],
+        packages: [ "libmpich-dev", "lynx", "ccache", "libstdc++-8-dev", "libboost1.67-all-dev", "clang-7", "libomp-7-dev" ]
       } }
 
 install:
@@ -112,7 +105,7 @@ before_script:
     git clone --depth 1 https://github.com/JM1/hbrs-cmake.git &&
     cd hbrs-cmake &&
     mkdir build && cd build/ &&
-    cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} "-DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX}" -DHBRS_CMAKE_ENABLE_TESTS=OFF .. &&
+    cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} "-DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX}" .. &&
     make -j$(nproc) install &&
     cd ../ && rm -rf build/ &&
     cd ../ && rm -rf hbrs-cmake/
@@ -124,7 +117,7 @@ script:
     (
       cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} "-DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX}" \
         -DMPI_C_COMPILER=/usr/bin/mpicc.mpich -DMPI_CXX_COMPILER=/usr/bin/mpicxx.mpich \
-        -DHBRS_MPL_ENABLE_TESTS=ON -DHBRS_MPL_ENABLE_ELEMENTAL=OFF -DHBRS_MPL_ENABLE_MATLAB=OFF .. ||
+        -DHBRS_MPL_ENABLE_TESTS=ON -DHBRS_MPL_ENABLE_BENCHMARKS=ON -DHBRS_MPL_ENABLE_ELEMENTAL=OFF -DHBRS_MPL_ENABLE_MATLAB=OFF .. ||
           (cat CMakeFiles/CMakeError.log; travis_terminate 1)
     ) &&
     make -j$(nproc) &&
