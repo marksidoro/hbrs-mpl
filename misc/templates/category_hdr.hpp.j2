@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_{{ category|upper }}_{{ component.name|upper }}_HPP
-#define HBRS_MPL_{{ category|upper }}_{{ component.name|upper }}_HPP
+#ifndef HBRS_{{ lib.name|upper }}_{{ category|upper }}_{{ component.name|upper }}_HPP
+#define HBRS_{{ lib.name|upper }}_{{ category|upper }}_{{ component.name|upper }}_HPP
 
 {% if (component / "fwd.hpp").exists() -%}
 #include "{{ component.name }}/fwd.hpp"
@@ -24,4 +24,4 @@
 #include "{{ component.name }}/impl.hpp"
 {%- endif %}
 
-#endif // !HBRS_MPL_{{ category|upper }}_{{ component.name|upper }}_HPP
+#endif // !HBRS_{{ lib.name|upper }}_{{ category|upper }}_{{ component.name|upper }}_HPP

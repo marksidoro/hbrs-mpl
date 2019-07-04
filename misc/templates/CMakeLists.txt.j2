@@ -6,7 +6,7 @@
 {% if impl or impls %}
 #################### build ####################
 
-target_sources(hbrs_mpl PRIVATE
+target_sources(hbrs_{{ lib.name }} PRIVATE
 {%- if impl %}
     {{ impl.name }}
 {%- endif -%}
@@ -20,7 +20,7 @@ target_sources(hbrs_mpl PRIVATE
 #################### benchmarks ####################
 
 {% if benchmark -%}
-hbrs_mpl_add_benchmark(benchmark_{{ category }}_{{ component.name }} "benchmark.cpp")
+hbrs_{{ lib.name }}_add_benchmark(benchmark_{{ category }}_{{ component.name }} "benchmark.cpp")
 {% endif -%}
 
 {%- if benchmarks -%}
@@ -30,7 +30,7 @@ foreach(name
     {{ benchmark.stem }}
 {%- endfor -%}
 )
-    hbrs_mpl_add_benchmark(benchmark_{{ category }}_{{ component.name }}_${name} "${name}.cpp")
+    hbrs_{{ lib.name }}_add_benchmark(benchmark_{{ category }}_{{ component.name }}_${name} "${name}.cpp")
 endforeach()
 
 {% endif -%}
@@ -41,7 +41,7 @@ endforeach()
 #################### tests ####################
 
 {% if test -%}
-hbrs_mpl_add_test({{ category }}_{{ component.name }} "test.cpp")
+hbrs_{{ lib.name }}_add_test({{ category }}_{{ component.name }} "test.cpp")
 {% endif -%}
 
 {%- if tests -%}
@@ -51,7 +51,7 @@ foreach(name
     {{ test.stem }}
 {%- endfor -%}
 )
-    hbrs_mpl_add_test({{ category }}_{{ component.name }}_${name} "${name}.cpp")
+    hbrs_{{ lib.name }}_add_test({{ category }}_{{ component.name }}_${name} "${name}.cpp")
 endforeach()
 {% endif -%}
 

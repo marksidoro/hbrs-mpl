@@ -27,7 +27,7 @@ from pathlib import Path
 from datetime import datetime
 
 if __name__ == '__main__':
-    script_dir = Path(__file__).resolve().parent
+    script_dir = Path(__file__).absolute().parent
     project_dir = script_dir.parent
     categories = ['core', 'detail', 'dt', 'fn' ]
     
@@ -50,116 +50,124 @@ if __name__ == '__main__':
     with open(str(script_dir / 'templates' / 'CMakeLists.txt.j2')) as f:
         tmpl_cmake = Template(f.read())
     
-    for cat in categories:
-        cat_dir = project_dir / 'src/hbrs/mpl/' / cat
-        
-        for cmp_dir in sorted([x for x in cat_dir.iterdir() if x.is_dir()]):
-            # Create component impl level CMakeLists.txt
-            impl_dir = cmp_dir / 'impl'
-            impl_cmake_file = impl_dir / 'CMakeLists.txt'
-            if impl_dir.exists() and not impl_cmake_file.exists():
-                impl_srcs = sorted([x for x in impl_dir.iterdir() if x.is_file() and x.suffix == '.cpp'])
-                if impl_srcs:
-                    print(str(impl_cmake_file))
-                    with open(str(impl_cmake_file), 'w') as f:
-                        f.write(tmpl_cmake.render(
-                            category=cat,
-                            component=cmp_dir,
-                            impls=impl_srcs,
-                            now=datetime.utcnow()
-                        ))
+    for lib_dir in sorted([x for x in (project_dir / 'src/hbrs/').iterdir() if x.is_dir()]):
+        for cat in categories:
+            cat_dir = lib_dir / cat
             
-            # Create component benchmark level CMakeLists.txt
-            bench_dir = cmp_dir / 'benchmark'
-            bench_cmake_file = bench_dir / 'CMakeLists.txt'
-            if bench_dir.exists() and not bench_cmake_file.exists():
-                bench_srcs = sorted([x for x in bench_dir.iterdir() if x.is_file() and x.suffix == '.cpp'])
-                if bench_srcs:
-                    print(str(bench_cmake_file))
-                    with open(str(bench_cmake_file), 'w') as f:
-                        f.write(tmpl_cmake.render(
-                            category=cat,
-                            component=cmp_dir,
-                            benchmarks=bench_srcs,
-                            now=datetime.utcnow()
-                        ))
-            
-            # Create component test level CMakeLists.txt
-            test_dir = cmp_dir / 'test'
-            test_cmake_file = test_dir / 'CMakeLists.txt'
-            if test_dir.exists() and not test_cmake_file.exists():
-                test_srcs = sorted([x for x in test_dir.iterdir() if x.is_file() and x.suffix == '.cpp'])
-                if test_srcs:
-                    print(str(test_cmake_file))
-                    with open(str(test_cmake_file), 'w') as f:
-                        f.write(tmpl_cmake.render(
-                            category=cat,
-                            component=cmp_dir,
-                            tests=test_srcs,
-                            now=datetime.utcnow()
-                        ))
-            
-            # Create component level CMakeLists.txt
-            sub_cmake_file = cmp_dir / 'CMakeLists.txt'
-            sub_dirs = sorted([x for x in cmp_dir.iterdir() if x.is_dir() and (x / 'CMakeLists.txt').exists()])
-            impl_src = cmp_dir / 'impl.cpp'
-            benchmark_src = cmp_dir / 'benchmark.cpp'
-            test_src = cmp_dir / 'test.cpp'
-            if (not sub_cmake_file.exists() and 
-                (sub_dirs or impl_src.exists() or benchmark_src.exists() or test_src.exists())):
-                print(str(sub_cmake_file))
-                with open(str(sub_cmake_file), 'w') as f:
-                    f.write(tmpl_cmake.render(
-                        category=cat,
-                        component=cmp_dir,
-                        sub_dirs=sub_dirs,
-                        impl=impl_src if impl_src.exists() else None,
-                        benchmark=benchmark_src if benchmark_src.exists() else None,
-                        test=test_src if test_src.exists() else None,
-                        now=datetime.utcnow()
-                    ))
-            
-            for sub in [ 'fwd', 'impl' ]:
-                sub_dir = cmp_dir / sub
-                sub_hdr_file = cmp_dir / (sub + '.hpp')
+            for cmp_dir in sorted([x for x in cat_dir.iterdir() if x.is_dir()]):
+                # Create component impl level CMakeLists.txt
+                impl_dir = cmp_dir / 'impl'
+                impl_cmake_file = impl_dir / 'CMakeLists.txt'
+                if impl_dir.exists() and not impl_cmake_file.exists():
+                    impl_srcs = sorted([x for x in impl_dir.iterdir() if x.is_file() and x.suffix == '.cpp'])
+                    if impl_srcs:
+                        print(str(impl_cmake_file))
+                        with open(str(impl_cmake_file), 'w') as f:
+                            f.write(tmpl_cmake.render(
+                                lib=lib_dir,
+                                category=cat,
+                                component=cmp_dir,
+                                impls=impl_srcs,
+                                now=datetime.utcnow()
+                            ))
                 
-                # Create component level headers
-                if not sub_hdr_file.exists():
-                    if sub_dir.exists():
-                        sub_hdrs = sorted([x.name for x in sub_dir.iterdir() if x.is_file() and x.suffix == '.hpp'])
-                    else:
-                        sub_hdrs = []
-                    
-                    print(str(sub_hdr_file))
-                    with open(str(sub_hdr_file), 'w') as f:
-                        f.write(tmpl_cmp_hdr.render(
+                # Create component benchmark level CMakeLists.txt
+                bench_dir = cmp_dir / 'benchmark'
+                bench_cmake_file = bench_dir / 'CMakeLists.txt'
+                if bench_dir.exists() and not bench_cmake_file.exists():
+                    bench_srcs = sorted([x for x in bench_dir.iterdir() if x.is_file() and x.suffix == '.cpp'])
+                    if bench_srcs:
+                        print(str(bench_cmake_file))
+                        with open(str(bench_cmake_file), 'w') as f:
+                            f.write(tmpl_cmake.render(
+                                lib=lib_dir,
+                                category=cat,
+                                component=cmp_dir,
+                                benchmarks=bench_srcs,
+                                now=datetime.utcnow()
+                            ))
+                
+                # Create component test level CMakeLists.txt
+                test_dir = cmp_dir / 'test'
+                test_cmake_file = test_dir / 'CMakeLists.txt'
+                if test_dir.exists() and not test_cmake_file.exists():
+                    test_srcs = sorted([x for x in test_dir.iterdir() if x.is_file() and x.suffix == '.cpp'])
+                    if test_srcs:
+                        print(str(test_cmake_file))
+                        with open(str(test_cmake_file), 'w') as f:
+                            f.write(tmpl_cmake.render(
+                                lib=lib_dir,
+                                category=cat,
+                                component=cmp_dir,
+                                tests=test_srcs,
+                                now=datetime.utcnow()
+                            ))
+                
+                # Create component level CMakeLists.txt
+                sub_cmake_file = cmp_dir / 'CMakeLists.txt'
+                sub_dirs = sorted([x for x in cmp_dir.iterdir() if x.is_dir() and (x / 'CMakeLists.txt').exists()])
+                impl_src = cmp_dir / 'impl.cpp'
+                benchmark_src = cmp_dir / 'benchmark.cpp'
+                test_src = cmp_dir / 'test.cpp'
+                if (not sub_cmake_file.exists() and 
+                    (sub_dirs or impl_src.exists() or benchmark_src.exists() or test_src.exists())):
+                    print(str(sub_cmake_file))
+                    with open(str(sub_cmake_file), 'w') as f:
+                        f.write(tmpl_cmake.render(
+                            lib=lib_dir,
                             category=cat,
                             component=cmp_dir,
-                            sub=sub,
-                            headers=sub_hdrs,
+                            sub_dirs=sub_dirs,
+                            impl=impl_src if impl_src.exists() else None,
+                            benchmark=benchmark_src if benchmark_src.exists() else None,
+                            test=test_src if test_src.exists() else None,
                             now=datetime.utcnow()
                         ))
-           
+                
+                for sub in [ 'fwd', 'impl' ]:
+                    sub_dir = cmp_dir / sub
+                    sub_hdr_file = cmp_dir / (sub + '.hpp')
+                    
+                    # Create component level headers
+                    if not sub_hdr_file.exists():
+                        if sub_dir.exists():
+                            sub_hdrs = sorted([x.name for x in sub_dir.iterdir() if x.is_file() and x.suffix == '.hpp'])
+                        else:
+                            sub_hdrs = []
+                        
+                        print(str(sub_hdr_file))
+                        with open(str(sub_hdr_file), 'w') as f:
+                            f.write(tmpl_cmp_hdr.render(
+                                lib=lib_dir,
+                                category=cat,
+                                component=cmp_dir,
+                                sub=sub,
+                                headers=sub_hdrs,
+                                now=datetime.utcnow()
+                            ))
             
-            # Create category level headers
-            cmp_hdr_file = cmp_dir.with_suffix(cmp_dir.suffix+'.hpp')
-            if not cmp_hdr_file.exists():
-                print(str(cmp_hdr_file))
-                with open(str(cmp_hdr_file), 'w') as f:
-                    f.write(tmpl_cat_hdr.render(
+                
+                # Create category level headers
+                cmp_hdr_file = cmp_dir.with_suffix(cmp_dir.suffix+'.hpp')
+                if not cmp_hdr_file.exists():
+                    print(str(cmp_hdr_file))
+                    with open(str(cmp_hdr_file), 'w') as f:
+                        f.write(tmpl_cat_hdr.render(
+                            lib=lib_dir,
+                            category=cat,
+                            component=cmp_dir,
+                            now=datetime.utcnow()
+                        ))
+                
+            # Create category level CMakeLists.txt
+            cat_cmake_file = cat_dir / 'CMakeLists.txt'
+            cat_dirs = sorted([x for x in cat_dir.iterdir() if x.is_dir() and (x / 'CMakeLists.txt').exists()])
+            if not cat_cmake_file.exists():
+                print(str(cat_cmake_file))
+                with open(str(cat_cmake_file), 'w') as f:
+                    f.write(tmpl_cmake.render(
+                        lib=lib_dir,
                         category=cat,
-                        component=cmp_dir,
+                        sub_dirs=cat_dirs,
                         now=datetime.utcnow()
                     ))
-            
-        # Create category level CMakeLists.txt
-        cat_cmake_file = cat_dir / 'CMakeLists.txt'
-        cat_dirs = sorted([x for x in cat_dir.iterdir() if x.is_dir() and (x / 'CMakeLists.txt').exists()])
-        if not cat_cmake_file.exists():
-            print(str(cat_cmake_file))
-            with open(str(cat_cmake_file), 'w') as f:
-                f.write(tmpl_cmake.render(
-                    category=cat,
-                    sub_dirs=cat_dirs,
-                    now=datetime.utcnow()
-                ))

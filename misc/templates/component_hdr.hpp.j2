@@ -14,8 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_{{ category|upper }}_{{ component.name|upper }}_{{ sub|upper }}_HPP
-#define HBRS_MPL_{{ category|upper }}_{{ component.name|upper }}_{{ sub|upper }}_HPP
+#ifndef HBRS_{{ lib.name|upper }}_{{ category|upper }}_{{ component.name|upper }}_{{ sub|upper }}_HPP
+#define HBRS_{{ lib.name|upper }}_{{ category|upper }}_{{ component.name|upper }}_{{ sub|upper }}_HPP
 
 {% if headers -%}
 {% for hdr in headers -%}
@@ -24,4 +24,4 @@
 {%- else -%}
 //BLANK
 {% endif %}
-#endif // !HBRS_MPL_{{ category|upper }}_{{ component.name|upper }}_{{ sub|upper }}_HPP
+#endif // !HBRS_{{ lib.name|upper }}_{{ category|upper }}_{{ component.name|upper }}_{{ sub|upper }}_HPP
