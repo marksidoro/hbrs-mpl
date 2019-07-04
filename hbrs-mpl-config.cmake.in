@@ -19,6 +19,7 @@ check_required_components(hbrs-mpl)
 
 # NOTE: Keep list of dependencies in sync with packages in CMakeLists.txt!
 include(CMakeFindDependencyMacro)
+# NOTE: hbrs-cmake is only used during build
 #if(@hbrs-cmake_FOUND@)
 #    find_dependency(hbrs-cmake REQUIRED)
 #endif()
@@ -43,8 +44,10 @@ endif()
 if(@Elemental_FOUND@)
     find_dependency(Elemental)
 endif()
-
-
+# NOTE: VALGRIND is only used during build
+#if(@VALGRIND_FOUND@)
+#    find_dependency(VALGRIND)
+#endif()
 
 set(hbrs-mpl_CXX_COMPILER_ID "@CMAKE_CXX_COMPILER_ID@")
 set(hbrs-mpl_CXX_COMPILER_VERSION "@CMAKE_CXX_COMPILER_VERSION@")

@@ -79,7 +79,7 @@ endif()
 
 if(HBRS_MPL_ENABLE_MEMCHECK)
     find_package(VALGRIND)
-    set_package_properties(Elemental PROPERTIES
+    set_package_properties(VALGRIND PROPERTIES
         PURPOSE "Required for tests."
         TYPE REQUIRED)
 endif()
