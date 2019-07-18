@@ -45,14 +45,20 @@ function [U,b,V] = bidiag_level0(A, mode)
     V=eye(n);
     
     for j=1:k
-        [v,beta] = house(b(1:end, j));
-        P = (eye(m)-beta*v*v');
+        [v,beta] = house(b(j:end, j));
+        P = (eye(m-j+1)-beta*v*v');
+        z = zeros(j-1,m-j+1);
+        P = [eye(j-1) z ;
+               z.'    P];
         b = P * b;
         U = P * U;
         
         if j <= k-2
-            [v,beta] = house(b(j,1:end)');
-            P = (eye(n)-beta*v*v');
+            [v,beta] = house(b(j,j+1:end)');
+            P = (eye(n-j)-beta*v*v');
+            z = zeros(j,n-j);
+            P = [eye(j) z ;
+                   z.'  P];
             b = b * P;
             V = V * P;
         end
@@ -66,9 +72,14 @@ end
 
 function [v, beta] = house(x)
     m = length(x);
-    o = x(2:m)' * x(2:m);
-    v = [ 1;
-          x(2:m) ];
+    if m == 1
+        o = 0;
+        v = [1];
+    else
+        o = x(2:m)' * x(2:m);
+        v = [ 1;
+              x(2:m) ];
+    end
     if o == 0 && x(1) >= 0
         beta = 0;
     elseif o == 0 && x(1) < 0
