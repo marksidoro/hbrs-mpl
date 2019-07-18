@@ -13,6 +13,8 @@
 % You should have received a copy of the GNU General Public License
 % along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+% TODO: replace isequal with is_almost_equal to better handle floating point arithmetics
+
 function test()
     pca_filter_test();
     pca_test();
@@ -143,6 +145,8 @@ function svd_test()
         end
 
         for i = 1:funs_sz-1
+            % TODO: test if anything in S except diagonal is zero
+            
             assert(isequal(Us{1,i}, Us{1,i+1}));
             assert(isequal(Ss{1,i}, Ss{1,i+1}));
             assert(isequal(Vs{1,i}, Vs{1,i+1}));
@@ -186,6 +190,7 @@ function bidiag_test()
             for mode = 0:funs_sz-1
                 U = Us{1,i+funs_sz*mode};
                 B = Bs{1,i+funs_sz*mode};
+                % TODO: test if anything in B except diagonal and superdiagonal is zero
                 V = Vs{1,i+funs_sz*mode};
 
                 reconstructed = U * B * V';
