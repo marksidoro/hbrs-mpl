@@ -68,7 +68,7 @@ mat_d[mat_d_m*mat_d_n] = {
 };
 
 inline static constexpr std::size_t
-mat_e_m = 4, mat_e_n = 5;
+mat_e_m = 3, mat_e_n = 5;
 
 inline static constexpr double 
 mat_e[mat_e_m*mat_e_n] = {
