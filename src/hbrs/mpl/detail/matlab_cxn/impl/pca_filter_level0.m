@@ -13,7 +13,7 @@
 % You should have received a copy of the GNU General Public License
 % along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-function [data,latent] = pca_filter_level0(A, filtered)
+function [data,latent] = pca_filter_level0(A, filtered, Economy, Center)
     coder.varsize('A', 'filtered');
 
     [m,n] = size(A);
@@ -23,8 +23,8 @@ function [data,latent] = pca_filter_level0(A, filtered)
         assert(size(filtered, 1) == min([m,n]));
     end
 	
-    [coeff,score,latent,~,~,mu] = pca(A, 'Economy', true);
-		
+    [coeff,score,latent,~,~,mu] = pca(A, 'Economy', Economy, 'Centered', Center);
+    
 %   [m,n] = size(coeff);
 %   for i = 1:n
 %       if filter(i) == false

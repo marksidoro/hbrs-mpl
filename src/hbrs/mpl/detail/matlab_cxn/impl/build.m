@@ -53,11 +53,11 @@ function build(bin_dir, src_dir, build_type)
     end
     
     for fun = {'pca_level0', 'pca_level1', 'pca_level2'}
-        flags = {flags{:}, fun{1}, '-args', {matrix_double_type, bool_type} };
+        flags = {flags{:}, fun{1}, '-args', {matrix_double_type, bool_type, bool_type} };
     end
     
     for fun = {'pca_filter_level0'}
-        flags = {flags{:}, fun{1}, '-args', {matrix_double_type, vector_bool_type} };
+        flags = {flags{:}, fun{1}, '-args', {matrix_double_type, vector_bool_type, bool_type, bool_type} };
     end
     
     flags = { flags{:}, 'transpose_m', '-args', {matrix_double_type}};

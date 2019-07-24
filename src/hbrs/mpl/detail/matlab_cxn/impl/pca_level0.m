@@ -27,14 +27,14 @@
 %  
 %  Error in ==> xzsvdc Line: 421 Column: 89
 
-function [coeff,score,latent,mu] = pca_level0(A, Economy)
+function [coeff,score,latent,mu] = pca_level0(A, Economy, Center)
     coder.varsize('A', 'x');
     
     x = A; % make copy of A in order to keep A constant / untouched
     [m,n] = size(x);
-    [coeff,score,latent,~,~,mu] = pca(x, 'Economy', Economy);
+    [coeff,score,latent,~,~,mu] = pca(x, 'Economy', Economy, 'Centered', Center);
     
     if (~Economy && (m < n)) % equals decompose_mode::complete
-        latent = latent(1:m) % Why is length of latent(1:n) in matlab?
+        latent = latent(1:m); % Why is length of latent(1:n) in matlab?
     end
 end

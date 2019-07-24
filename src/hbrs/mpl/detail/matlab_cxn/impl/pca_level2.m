@@ -7,19 +7,27 @@
 % References:
 %  ${Matlab_ROOT_DIR}/toolbox/stats/stats/pca.m
 
-function [coeff,score,latent,mu] = pca_level2(A, Economy)
+function [coeff,score,latent,mu] = pca_level2(A, Economy, Center)
     coder.varsize('A', 'x');
     
     x = A; % make copy of A in order to keep A constant / untouched
     
     [m,n] = size(x);
     
-    DOF=m-1;
+    DOF=m-Center;
     
-    mu = wnanmean(x, ones(1,m,'like',x));
-	
-    %mu = mean(x);
-    x = bsxfun(@minus,x,mu);
+    if Center
+        % NOTE: If MATLAB cannot find wnanmean, then you have to add its parent folder your search path: 
+        %       ${Matlab_ROOT_DIR}/toolbox/stats/classreg/+classreg/+learning/+internal/
+        mu = wnanmean(x, ones(1,m,'like',x));
+        %mu = mean(x);
+    else
+        mu = zeros(1,n,'like',x);
+    end
+    
+    if Center
+        x = bsxfun(@minus,x,mu);
+    end
     
     if Economy
         [U,S,coeff] = svd(x, 'econ');
@@ -46,15 +54,17 @@ function [coeff,score,latent,mu] = pca_level2(A, Economy)
             % to components of (DOF+1):p.
             
             %score(:, DOF+1:n) = 0;
-            % NOTE: MATLAB Coder generates bounds-violating C code for the line 
-            %       above so we have to workaroud:
-            score_ = zeros(size(score));
-            score_(:,0:DOF) = score(:,0:DOF);
+            % NOTE: this increases the size of score from m*m to m*n if m<n 
+            %       and Economy=false
+            % NOTE: MATLAB Coder generates bounds-violating C code for the
+            %       line above so we have to workaroud:
+            score_ = zeros([m,n]);
+            score_(:,1:DOF) = score(:,1:DOF);
             score = score_;
 
             %latent(DOF+1:n, 1) = 0;
             latent_ = zeros(size(latent));
-            latent_(0:DOF, 1) = latent(0:DOF, 1);
+            latent_(1:DOF, 1) = latent(1:DOF, 1);
             latent = latent_;
         end
     end
