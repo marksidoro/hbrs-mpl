@@ -36,10 +36,14 @@ function [U,b,V] = bidiag_level0(A, mode)
     coder.varsize('A', 'b');
     
     assert(mode == decompose_mode.complete); % no other mode supported yet
-
+    
+    % TODO: Implement decompose_mode.economy and decompose_mode.zero
+    % TODO: Extend algorithm for m < n
+    
     b = A; % make copy of A in order to keep A constant / untouched
 
     [m,n]=size(b);
+    assert(m>=n);
     k=min(m,n);
     U=eye(m);
     V=eye(n);
@@ -72,6 +76,8 @@ end
 
 function [v, beta] = house(x)
     m = length(x);
+    
+    % The original algorithm in [2] does not consider m == 1
     if m == 1
         o = 0;
         v = [1];
