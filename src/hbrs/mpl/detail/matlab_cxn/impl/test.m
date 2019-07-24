@@ -45,18 +45,19 @@ function pca_filter_test()
 
         for i = 1:funs_sz
             fun = funs{1,i};
+            % TODO: test Economy:=false and Center:=false
             
             [data{1,i}, latent{1,i}] = ...
-                fun(dataset, diag(ones(p)));
+                fun(dataset, diag(ones(p)), true, true);
             
             [data{1,i+funs_sz}, latent{1,i+funs_sz}] = ...
-                fun(dataset, diag(zeros(p)));
+                fun(dataset, diag(zeros(p)), true, true);
             
             for j = 1:p
                 filtered = diag(zeros(p));
                 filtered(j) = 1;
                 [data{1,i+funs_sz*(1+j)}, latent{1,i+funs_sz*(1+j)}] = ...
-                    fun(dataset, filtered);
+                    fun(dataset, filtered, true, true);
             end
         end
 
@@ -102,10 +103,11 @@ function pca_test()
 
         for i = 1:funs_sz
             fun = funs{1,i};
+            % TODO: test Center:=false
             [coeffs{1,i},scores{1,i},latents{1,i}] ...
-                = fun(dataset, true);
+                = fun(dataset, true, true);
             [coeffs{1,i+funs_sz},scores{1,i+funs_sz},latents{1,i+funs_sz}] ...
-                = fun(dataset, false);
+                = fun(dataset, false, true);
         end
 
         for i = 1:funs_sz-1
@@ -121,6 +123,7 @@ function pca_test()
 end
 
 function svd_test()
+    tol=eps*10000; % TODO: Meaningful value!
     datasets = samples();
     
     [~, ds_sz ] = size(datasets);
@@ -129,6 +132,7 @@ function svd_test()
     
     for ds_i = 1:ds_sz
         dataset = datasets{1,ds_i};
+        [m,n] = size(dataset);
         
         Us = cell(1,funs_sz*3);
         Ss = cell(1,funs_sz*3);
@@ -143,26 +147,53 @@ function svd_test()
             [Us{1,i+funs_sz*2},Ss{1,i+funs_sz*2},Vs{1,i+funs_sz*2}] ...
                 = fun(dataset, decompose_mode.zero);
         end
+        
+        for i = 1:funs_sz
+            for j = 1:3
+                U = Us{1,i+(j-1)*funs_sz};
+                S = Ss{1,i+(j-1)*funs_sz};
+                V = Vs{1,i+(j-1)*funs_sz};
+                re = U*S*V';
+                
+                E=dataset-re;
+                max_norm_E = max(E,[],'all');
+                disp(['||A - U*S*V^T||_max=', num2str(max_norm_E)]);
+                
+                fro_norm_E = norm(E, 'fro');
+                disp(['||A - U*S*V^T||_F=', num2str(fro_norm_E)]);
+                
+                scaled_residual = norm(E,'fro')/max(m,n)*eps*norm(dataset);
+                disp(['||A - U*S*V^T||_F / max(m,n) * eps * ||A||_2 =', num2str(scaled_residual)]);
+                
+                assert(all(is_almost_equal(dataset, re, tol), 'all'));
+                
+                % test if anything in S except diagonal is zero
+                S_zerod = zeros(size(S),'like',S);
+                S_zerod(1:min(m,n),1:min(m,n)) = S(1:min(m,n),1:min(m,n)) - diag(diag(S));
+                max_norm_S_zerod = max(S_zerod,[],'all');
+                disp(['||S-diag(diag(S))||_max=', num2str(max_norm_S_zerod)]);
+                assert(all(is_almost_equal(S_zerod, zeros(size(S)), tol), 'all'));
+            end
+        end
 
         for i = 1:funs_sz-1
-            % TODO: test if anything in S except diagonal is zero
-            
-            assert(isequal(Us{1,i}, Us{1,i+1}));
-            assert(isequal(Ss{1,i}, Ss{1,i+1}));
-            assert(isequal(Vs{1,i}, Vs{1,i+1}));
+            assert(all(is_almost_equal(Us{1,i}, Us{1,i+1}, tol), 'all'));
+            assert(all(is_almost_equal(Ss{1,i}, Ss{1,i+1}, tol), 'all'));
+            assert(all(is_almost_equal(Vs{1,i}, Vs{1,i+1}, tol), 'all'));
 
-            assert(isequal(Us{1,i+funs_sz}, Us{1,i+funs_sz+1}));
-            assert(isequal(Ss{1,i+funs_sz}, Ss{1,i+funs_sz+1}));
-            assert(isequal(Vs{1,i+funs_sz}, Vs{1,i+funs_sz+1}));
+            assert(all(is_almost_equal(Us{1,i+funs_sz}, Us{1,i+funs_sz+1}, tol), 'all'));
+            assert(all(is_almost_equal(Ss{1,i+funs_sz}, Ss{1,i+funs_sz+1}, tol), 'all'));
+            assert(all(is_almost_equal(Vs{1,i+funs_sz}, Vs{1,i+funs_sz+1}, tol), 'all'));
             
-            assert(isequal(Us{1,i+funs_sz*2}, Us{1,i+funs_sz*2+1}));
-            assert(isequal(Ss{1,i+funs_sz*2}, Ss{1,i+funs_sz*2+1}));
-            assert(isequal(Vs{1,i+funs_sz*2}, Vs{1,i+funs_sz*2+1}));
+            assert(all(is_almost_equal(Us{1,i+funs_sz*2}, Us{1,i+funs_sz*2+1}, tol), 'all'));
+            assert(all(is_almost_equal(Ss{1,i+funs_sz*2}, Ss{1,i+funs_sz*2+1}, tol), 'all'));
+            assert(all(is_almost_equal(Vs{1,i+funs_sz*2}, Vs{1,i+funs_sz*2+1}, tol), 'all'));
         end
     end
 end
 
 function bidiag_test()
+    tol=eps*10000; % TODO: Meaningful value!
     datasets = samples();
     
     [~, ds_sz ] = size(datasets);
@@ -171,6 +202,12 @@ function bidiag_test()
     
     for ds_i = 1:ds_sz
         dataset = datasets{1,ds_i};
+        [m,n] = size(dataset);
+        
+        % TODO: Remove once m<n is implemented!
+        if m<n
+            continue
+        end
         
         Us = cell(1,funs_sz*3);
         Bs = cell(1,funs_sz*3);
@@ -180,21 +217,32 @@ function bidiag_test()
             fun = funs{1,i};
             [Us{1,i},Bs{1,i},Vs{1,i}] ...
                 = fun(dataset, decompose_mode.complete);
-            [Us{1,i+funs_sz},Bs{1,i+funs_sz},Vs{1,i+funs_sz}] ...
-                = fun(dataset, decompose_mode.economy);
-            [Us{1,i+funs_sz*2},Bs{1,i+funs_sz*2},Vs{1,i+funs_sz*2}] ...
-                = fun(dataset, decompose_mode.zero);
+            
+            % TODO: Uncomment once other modes are implemented!
+            %[Us{1,i+funs_sz},Bs{1,i+funs_sz},Vs{1,i+funs_sz}] ...
+            %    = fun(dataset, decompose_mode.economy);
+            %[Us{1,i+funs_sz*2},Bs{1,i+funs_sz*2},Vs{1,i+funs_sz*2}] ...
+            %    = fun(dataset, decompose_mode.zero);
         end
-
+        
         for i = 1:funs_sz
-            for mode = 0:funs_sz-1
-                U = Us{1,i+funs_sz*mode};
-                B = Bs{1,i+funs_sz*mode};
-                % TODO: test if anything in B except diagonal and superdiagonal is zero
-                V = Vs{1,i+funs_sz*mode};
+            for mode = 1:funs_sz
+                if (mode ~= 1) % TODO: Remove once other modes are implemented!
+                    continue 
+                end
+                U = Us{1,i+funs_sz*(mode-1)};
+                B = Bs{1,i+funs_sz*(mode-1)};
+                V = Vs{1,i+funs_sz*(mode-1)};
 
                 reconstructed = U * B * V';
-                assert(isequal(dataset, reconstructed));
+                assert(all(is_almost_equal(dataset, reconstructed, tol), 'all'));
+                
+                % test if anything in B except diagonal and superdiagonal is zero
+                B_zerod = zeros(size(B),'like',B);
+                B_zerod(1:min(m,n),1:min(m,n)) = B(1:min(m,n),1:min(m,n)) - diag(diag(B)) - diag(diag(B,1),1);
+                max_norm_B_zerod = max(B_zerod,[],'all');
+                disp(['||B-diag(diag(B))-diag(diag(B,1),1)||_max=', num2str(max_norm_B_zerod)]);
+                assert(all(is_almost_equal(B_zerod, zeros(size(B)), tol), 'all'));
             end
         end
     end
