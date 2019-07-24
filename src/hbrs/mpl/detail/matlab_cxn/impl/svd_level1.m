@@ -41,10 +41,16 @@ function [U,B,V] = svd_level1(A, mode)
     %   Instead of overwriting A this algorithm stores A, U' and V and
     %   returns them as A U and V.
 
+    if mode ~= decompose_mode.complete
+        [U,B,V] = svd_level0(A, mode);
+        return
+    end
+    
     assert(mode == decompose_mode.complete); % no other mode supported yet
 
     % TODO: Implement decompose_mode.economy and decompose_mode.zero
     % TODO: Extend algorithm for m < n
+    % TODO: Sort singular values in S as nonnegative real numbers listed in decreasing order
 
     [U,B,V] = bidiag_level0(A, mode);
     [m,n] = size(A);
@@ -55,7 +61,7 @@ function [U,B,V] = svd_level1(A, mode)
 
     while q ~= n
         for i=1:n-1
-            if abs(B(i,i+1)) <= 0.0001
+            if abs(B(i,i+1)) <= eps
                 B(i,i+1) = 0;
             end
         end
