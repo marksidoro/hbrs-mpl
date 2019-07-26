@@ -54,7 +54,7 @@ function [coeff,score,latent,mu] = pca_level2(A, Economy, Center)
             % to components of (DOF+1):p.
             
             %score(:, DOF+1:n) = 0;
-            % NOTE: this increases the size of score from m*m to m*n if m<n 
+            % NOTE: this increases the size of score from m*m to m*n if m<n
             %       and Economy=false
             % NOTE: MATLAB Coder generates bounds-violating C code for the
             %       line above so we have to workaroud:
@@ -63,7 +63,9 @@ function [coeff,score,latent,mu] = pca_level2(A, Economy, Center)
             score = score_;
 
             %latent(DOF+1:n, 1) = 0;
-            latent_ = zeros(size(latent));
+            % NOTE: this increases the size of latent from min(m,n) to n if m<n
+            %       and Economy=false
+            latent_ = zeros([n,1]);
             latent_(1:DOF, 1) = latent(1:DOF, 1);
             latent = latent_;
         end

@@ -33,8 +33,4 @@ function [coeff,score,latent,mu] = pca_level0(A, Economy, Center)
     x = A; % make copy of A in order to keep A constant / untouched
     [m,n] = size(x);
     [coeff,score,latent,~,~,mu] = pca(x, 'Economy', Economy, 'Centered', Center);
-    
-    if (~Economy && (m < n)) % equals decompose_mode::complete
-        latent = latent(1:m); % Why is length of latent(1:n) in matlab?
-    end
 end
