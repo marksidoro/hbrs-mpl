@@ -41,21 +41,25 @@ function [U,B,V] = svd_level1(A, mode)
     %   Instead of overwriting A this algorithm stores A, U' and V and
     %   returns them as A U and V.
 
-    if mode ~= decompose_mode.complete
-        [U,B,V] = svd_level0(A, mode);
+    coder.varsize('A', 'x');
+    
+    x = A; % make copy of A in order to keep A constant / untouched
+    
+    [m,n] = size(x);
+    
+    if mode ~= decompose_mode.complete || (m < n)
+        [U,B,V] = svd_level0(x, mode);
         return
     end
     
     assert(mode == decompose_mode.complete); % no other mode supported yet
-
+    assert(m >= n);
+    
     % TODO: Implement decompose_mode.economy and decompose_mode.zero
     % TODO: Extend algorithm for m < n
     % TODO: Sort singular values in S as nonnegative real numbers listed in decreasing order
-
-    [U,B,V] = bidiag_level0(A, mode);
-    [m,n] = size(A);
-    assert(m >= n);
-
+    
+    [U,B,V] = bidiag_level0(x, mode);
     q = 0;
     p = 0;
 
@@ -108,7 +112,8 @@ function [U,B,V] = svd_level1(A, mode)
                     zeroFound = true;
                     if i < n-q
                         for j=i+1:n-q
-                            % The function arguments in the next line are copied from the Matlab implementation of the Book(Link: https://www.cs.cornell.edu/cv/GVL4/M-Files/Chapter%208/Demos/ShowGKsvd.m).
+                            % The function arguments in the next line are copied from the Matlab implementation of the Book
+                            % Ref.: https://www.cs.cornell.edu/cv/GVL4/M-Files/Chapter%208/Demos/ShowGKsvd.m
                             theta = givens(-B(j,j), B(i,j));
                             B = G(i,j,n,theta)' * B;
                             U = U * G(i,j,n,theta);
@@ -126,7 +131,7 @@ function [U,B,V] = svd_level1(A, mode)
 
             if zeroFound
             else
-              [U, B(p+1:n-q, p+1:n-q), V] = svdStep(U, B(p+1:n-q, p+1:n-q), V, p); % Apply Algorithm 8.6.1 to B22
+              [U, B(p+1:n-q, p+1:n-q), V] = svd_step(U, B(p+1:n-q, p+1:n-q), V, p); % Apply Algorithm 8.6.1 to B22
                 % In the book there is another line here that looks
                 % like this:
                 % B = diag(Ip,U,Iq+m-n)' B diag(Ip,V,Iq)
@@ -137,7 +142,7 @@ function [U,B,V] = svd_level1(A, mode)
     end % while q ~= n
 end % function svd
 
-function [U,B,V] = svdStep(U,B,V,p)
+function [U,B,V] = svd_step(U,B,V,p)
     %Algorithm 8.6.1 (Golub-Kahan SVD Step) on page 491
     %   Given a bidiagonal matrix B (which is of real numbers and of the
     %   dimensions m-by-n) having no zeros on its diagonal or superdiagonal,
@@ -162,7 +167,11 @@ function [U,B,V] = svdStep(U,B,V,p)
     %
     % Calculate mu
     T = B' * B;
-    E = eig(T(n-1:n,n-1:n));
+    
+    E_ = eig(T(n-1:n,n-1:n));
+    % Output of eig() is always complex with MATLAB Coder regardless of its inputs.
+    % Ref.: https://de.mathworks.com/help/matlab/ref/eig.html
+    E = real(E_);
     e1 = E(1);
     e2 = E(2);
     if abs(e1 - T(n,n)) < abs(e2 - T(n,n))
@@ -193,7 +202,7 @@ function [U,B,V] = svdStep(U,B,V,p)
             z = B(k,k+2);
         end
     end % for k=1:n-1
-end % function svdStep
+end % function svd_step
 
 function [R] = G(i,k,n,theta)
     %Creates a n-by-n Givens Rotation Matrix
@@ -204,7 +213,6 @@ function [R] = G(i,k,n,theta)
     R(i,k) = theta(1,2);
     R(k,i) = theta(2,1);
     R(k,k) = theta(2,2);
-
 end % function G
 
 function [theta] = givens(a,b)
@@ -226,5 +234,6 @@ function [theta] = givens(a,b)
     %   |       |
     %   --     --
 
-    theta = planerot([a;b])';
+    [G_,~] = planerot([a;b]);
+    theta = G_';
 end % function givens
