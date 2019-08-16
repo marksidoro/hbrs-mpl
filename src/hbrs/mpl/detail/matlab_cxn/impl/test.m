@@ -33,7 +33,7 @@ function pca_filter_test()
         dataset = datasets{1,ds_i};
         [m,n] = size(dataset);
         
-        if m-1<n
+        if m-1<n % and Economy:=true
             p = m-1;
         else
             p = min(m,n);
