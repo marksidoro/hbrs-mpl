@@ -21,6 +21,7 @@
 
 #ifdef HBRS_MPL_ENABLE_MATLAB
 	#include <hbrs/mpl/dt/decompose_mode/fwd.hpp>
+	#include <hbrs/mpl/dt/svd_control/fwd.hpp>
 	#include <hbrs/mpl/dt/svd_result/fwd.hpp>
 	#include <hbrs/mpl/dt/ml_matrix/fwd.hpp>
 #endif
@@ -39,7 +40,10 @@ namespace detail {
 			ml_matrix<real_T> /* S */,                                                                                 \
 			ml_matrix<real_T> /* V */                                                                                  \
 		>                                                                                                              \
-		operator()(ml_matrix<real_T> const& a, decompose_mode mode) const;                                             \
+		operator()(                                                                                                    \
+			ml_matrix<real_T> const& a,                                                                                \
+			svd_control<decompose_mode> const& ctrl                                                                    \
+		) const;                                                                                                       \
 	};
 
 _DEC_SVD(0)

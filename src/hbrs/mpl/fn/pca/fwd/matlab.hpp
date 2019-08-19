@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #ifdef HBRS_MPL_ENABLE_MATLAB
 	#include <hbrs/mpl/dt/ml_matrix/fwd.hpp>
 	#include <hbrs/mpl/dt/ml_vector/fwd.hpp>
+	#include <hbrs/mpl/dt/pca_control/fwd.hpp>
 	#include <hbrs/mpl/dt/pca_result/fwd.hpp>
 	#include <hbrs/mpl/dt/smr/fwd.hpp>
 #endif
@@ -44,7 +45,10 @@ namespace detail {
 			ml_column_vector<real_T>    /* latent*/,                                                                   \
 			smr<ml_matrix<real_T>, int> /* mu */                                                                       \
 		>                                                                                                              \
-		operator()(ml_matrix<real_T> const& a, bool economy) const;                                                    \
+		operator()(                                                                                                    \
+			ml_matrix<real_T> const& a,                                                                                \
+			pca_control<bool,bool> const& ctrl                                                                         \
+		) const;                                                                                                       \
 	};
 
 _DEC_PCA(0)

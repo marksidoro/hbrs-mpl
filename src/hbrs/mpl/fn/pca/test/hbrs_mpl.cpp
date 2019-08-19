@@ -47,6 +47,7 @@
 #include <boost/hana/length.hpp>
 #include <boost/hana/drop_back.hpp>
 #include <boost/hana/greater_equal.hpp>
+#include <boost/hana/cartesian_product.hpp>
 
 #include <hbrs/mpl/detail/test.hpp>
 #include <hbrs/mpl/detail/not_supported.hpp>
@@ -74,142 +75,162 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 		)
 	);
 	
-	std::size_t dataset_nr = 0;
-	hana::for_each(datasets, [&dataset_nr](auto const& dataset) {
+	static constexpr auto dimensions = hana::make_tuple(
+		hana::to_tuple(hana::make_range(hana::size_c<0>, hana::length(datasets))),
+		hana::make_tuple(hana::true_c, hana::false_c) /* economy */,
+		hana::make_tuple(hana::true_c, hana::false_c) /* center */
+	);
+	
+	hana::for_each(hana::cartesian_product(dimensions), [](auto const& cfg) {
+		auto const& dataset_nr = hana::at_c<0>(cfg);
+		auto const& economy = hana::at_c<1>(cfg);
+		auto const& center = hana::at_c<2>(cfg);
+		
 		BOOST_TEST_MESSAGE("dataset_nr=" << dataset_nr);
-		hana::for_each(hana::make_tuple(hana::true_c, hana::false_c), [&dataset](auto economy) {
-			BOOST_TEST_MESSAGE("economy=" << (economy ? "true" : "false"));
+		BOOST_TEST_MESSAGE("economy=" << (economy ? "true" : "false"));
+		BOOST_TEST_MESSAGE("center=" << (center? "true" : "false"));
+		
+		auto const& dataset = hana::at(datasets, dataset_nr);
+		
+		auto funs = hana::drop_back(hana::make_tuple(
+			#ifdef HBRS_MPL_ENABLE_MATLAB
+			[](auto && a, auto economy, auto center) {
+				BOOST_TEST_PASSPOINT();
+				return detail::pca_impl_level0_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), {economy, center});
+			},
+			[](auto && a, auto economy, auto center) {
+				BOOST_TEST_PASSPOINT();
+				return detail::pca_impl_level1_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), {economy, center});
+			},
+			[](auto && a, auto economy, auto center) {
+				BOOST_TEST_PASSPOINT();
+				return detail::pca_impl_level2_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), {economy, center});
+			},
+			#endif
 			
-			auto funs = hana::drop_back(hana::make_tuple(
-				#ifdef HBRS_MPL_ENABLE_MATLAB
-				[](auto && a, auto economy) {
-					BOOST_TEST_PASSPOINT();
-					return detail::pca_impl_level0_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), economy);
-				},
-				//TODO: Fix pca_impl_level1_ml_matrix and pca_impl_level2_ml_matrix and then reenable their tests here!
-// 				[](auto && a, auto economy) {
-// 					BOOST_TEST_PASSPOINT();
-// 					return detail::pca_impl_level1_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), economy);
-// 				},
-// 				[](auto && a, auto economy) {
-// 					BOOST_TEST_PASSPOINT();
-// 					return detail::pca_impl_level2_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), economy);
-// 				},
-				#endif
+			#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+			[](auto && a, auto economy, auto center) {
+				BOOST_TEST_PASSPOINT();
+				return detail::pca_impl_el_matrix{}(make_el_matrix(HBRS_MPL_FWD(a)), {economy, center}); 
+			},
+			[](auto && a, auto economy, auto center) {
+				BOOST_TEST_PASSPOINT();
+				auto sz_ = (*size)(a);
+				auto m_ = (*m)(sz_);
+				auto n_ = (*n)(sz_);
 				
-				#ifdef HBRS_MPL_ENABLE_ELEMENTAL
-				[](auto && a, auto economy) {
-					BOOST_TEST_PASSPOINT();
-					return detail::pca_impl_el_matrix{}(make_el_matrix(HBRS_MPL_FWD(a)), economy); 
-				},
-				[](auto && a, auto economy) {
-					BOOST_TEST_PASSPOINT();
-					auto sz_ = (*size)(a);
+				if constexpr(
+					!economy && hana::value(m_) <= hana::value(n_)
+					/* because this will do a zero svd which equals complete which is not supported by elemental */
+				) {
+					return detail::not_supported{};
+				} else {
+					static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
+					return detail::pca_impl_el_dist_matrix{}(
+						make_el_dist_matrix(
+							grid,
+							make_el_matrix(HBRS_MPL_FWD(a))
+						),
+						{economy, center}
+					);
+				}
+			},
+			#endif
+			"SEQUENCE_TERMINATOR___REMOVED_BY_DROP_BACK"
+		));
+		
+		int fun_nr = 0;
+		auto results = hana::transform(
+			funs,
+			[&dataset, &economy, &center, &fun_nr](auto f) {
+				BOOST_TEST_MESSAGE("calling impl nr " << fun_nr);
+				++fun_nr;
+				return f(dataset, economy, center);
+			}
+		);
+		
+		if constexpr(hana::length(results) >= 2u) {
+			auto compare = [&dataset, &economy, &center, &results](auto i) {
+				using hbrs::mpl::select;
+				
+				auto j = i+hana::ushort_c<1>;
+				auto const& pca_i = hana::at(results, i);
+				auto const& pca_j = hana::at(results, j);
+				
+				//TODO: Take ++j if j not supported!
+				if constexpr(is_supported(pca_i) && is_supported(pca_j)) {
+					auto sz_ = (*size)(dataset);
 					auto m_ = (*m)(sz_);
 					auto n_ = (*n)(sz_);
 					
-					if constexpr(
-						!economy && hana::value(m_) <= hana::value(n_)
-						/* because this will do a zero svd which equals complete which is not supported by elemental */
-					) {
-						return detail::not_supported{};
-					} else {
-						static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
-						return detail::pca_impl_el_dist_matrix{}(
-							make_el_dist_matrix(
-								grid,
-								make_el_matrix(HBRS_MPL_FWD(a))
-							),
-							economy
-						);
-					}
-				},
-				#endif
-				"SEQUENCE_TERMINATOR___REMOVED_BY_DROP_BACK"
-			));
-			
-			auto results = hana::transform(funs, [&dataset, &economy](auto f) { return f(dataset, economy); });
-			
-			if constexpr(hana::length(results) >= 2u) {
-				auto compare = [&dataset, &economy, &results](auto i) {
-					using hbrs::mpl::select;
+					BOOST_TEST_PASSPOINT();
 					
-					auto j = i+hana::ushort_c<1>;
-					auto const& pca_i = hana::at(results, i);
-					auto const& pca_j = hana::at(results, j);
-					
-					//TODO: Take ++j if j not supported!
-					if constexpr(is_supported(pca_i) && is_supported(pca_j)) {
-						auto sz_ = (*size)(dataset);
-						auto m_ = (*m)(sz_);
-						auto n_ = (*n)(sz_);
-						
-						BOOST_TEST_PASSPOINT();
-						
-						BOOST_TEST_MESSAGE("comparing pca_coeff of impl nr " << i << " and " << j);
-						auto const& pca_coeff_i = (*at)(pca_i, pca_coeff{});
-						auto const& pca_coeff_j = (*at)(pca_j, pca_coeff{});
-						if ((m_ < n_) && !economy) {
-							auto rng = std::make_pair(make_matrix_index(0,0), make_matrix_size((int)n_, (int)m_-1 /* TODO: Why n*DOF instead of n*m? */));
-							auto pca_coeff_i_mxn = (*select)(pca_coeff_i, rng);
-							auto pca_coeff_j_mxn = (*select)(pca_coeff_j, rng);
-							HBRS_MPL_TEST_MMEQ(pca_coeff_i_mxn, pca_coeff_j_mxn, true);
-						} else {
-							HBRS_MPL_TEST_MMEQ(pca_coeff_i, pca_coeff_j, true);
-						}
-						
-						BOOST_TEST_MESSAGE("comparing pca_score of impl nr " << i << " and " << j);
-						HBRS_MPL_TEST_MMEQ((*at)(pca_i, pca_score{}),  (*at)(pca_j, pca_score{}), true);
-						BOOST_TEST_MESSAGE("comparing pca_latent of impl nr " << i << " and " << j);
-						HBRS_MPL_TEST_VVEQ((*at)(pca_i, pca_latent{}), (*at)(pca_j, pca_latent{}), false);
-						BOOST_TEST_MESSAGE("comparing pca_mean of impl nr " << i << " and " << j);
-						HBRS_MPL_TEST_VVEQ((*at)(pca_i, pca_mean{}),   (*at)(pca_j, pca_mean{}), false);
-						BOOST_TEST_MESSAGE("comparing impl nr " << i << " and " << j << " done.");
-						
-						BOOST_TEST_PASSPOINT();
-					}
-				};
-				
-				hana::for_each(
-					hana::make_range(
-						hana::size_c<0>, 
-						hana::length(results)-hana::size_c<1>
-					),
-					compare
-				);
-			}
-			
-			{
-				auto rebuilds = hana::transform(results, [](auto && pca_result) {
-					if constexpr(is_not_supported(pca_result)) {
-						return detail::not_supported{};
+					BOOST_TEST_MESSAGE("comparing pca_coeff of impl nr " << i << " and " << j);
+					auto const& pca_coeff_i = (*at)(pca_i, pca_coeff{});
+					auto const& pca_coeff_j = (*at)(pca_j, pca_coeff{});
+					if ((m_ < n_) && !economy) {
+						auto rng = std::make_pair(make_matrix_index(0,0), make_matrix_size((int)n_, (int)m_-1 /* TODO: Why n*DOF instead of n*m? */));
+						auto pca_coeff_i_mxn = (*select)(pca_coeff_i, rng);
+						auto pca_coeff_j_mxn = (*select)(pca_coeff_j, rng);
+						HBRS_MPL_TEST_MMEQ(pca_coeff_i_mxn, pca_coeff_j_mxn, true);
 					} else {
-						auto && coeff_ =  (*at) (pca_result, pca_coeff{});
-						auto && score_ =  (*at) (pca_result, pca_score{});
-	// 					auto && latent_ = (*at) (pca_result, pca_latent{});
-						auto && mean_ =   (*at) (pca_result, pca_mean{});
-						
-						auto centered = (*multiply)(score_, transpose(coeff_));
-						return (*plus)(centered, expand(mean_, size(centered)));
+						HBRS_MPL_TEST_MMEQ(pca_coeff_i, pca_coeff_j, true);
 					}
-				});
-				
-				hana::for_each(
-					hana::make_range(hana::ushort_c<0>, hana::length(results)),
-					[&dataset, &rebuilds](auto i) {
-						BOOST_TEST_MESSAGE("comparing original and reconstructed dataset of impl nr " << i);
-						auto const& rebuild = hana::at(rebuilds, i);
-						
-						if constexpr(is_supported(rebuild)) {
-							HBRS_MPL_TEST_MMEQ(dataset, rebuild, false);
-						}
-					}
-				);
-				BOOST_TEST_MESSAGE("comparing original and reconstructed datasets done.");
-			}
-		});
+					
+					BOOST_TEST_MESSAGE("comparing pca_score of impl nr " << i << " and " << j);
+					HBRS_MPL_TEST_MMEQ((*at)(pca_i, pca_score{}),  (*at)(pca_j, pca_score{}), true);
+					BOOST_TEST_MESSAGE("comparing pca_latent of impl nr " << i << " and " << j);
+					HBRS_MPL_TEST_VVEQ((*at)(pca_i, pca_latent{}), (*at)(pca_j, pca_latent{}), false);
+					BOOST_TEST_MESSAGE("comparing pca_mean of impl nr " << i << " and " << j);
+					HBRS_MPL_TEST_VVEQ((*at)(pca_i, pca_mean{}),   (*at)(pca_j, pca_mean{}), false);
+					BOOST_TEST_MESSAGE("comparing impl nr " << i << " and " << j << " done.");
+					
+					BOOST_TEST_PASSPOINT();
+				} else {
+					BOOST_TEST_MESSAGE("skip comparison of impl nr " << i << " and " << j);
+				}
+			};
+			
+			hana::for_each(
+				hana::make_range(
+					hana::size_c<0>, 
+					hana::length(results)-hana::size_c<1>
+				),
+				compare
+			);
+		}
 		
-		++dataset_nr;
+		{
+			auto rebuilds = hana::transform(results, [](auto && pca_result) {
+				if constexpr(is_not_supported(pca_result)) {
+					return detail::not_supported{};
+				} else {
+					auto && coeff_ =  (*at) (pca_result, pca_coeff{});
+					auto && score_ =  (*at) (pca_result, pca_score{});
+// 					auto && latent_ = (*at) (pca_result, pca_latent{});
+					auto && mean_ =   (*at) (pca_result, pca_mean{});
+					
+					auto centered = (*multiply)(score_, transpose(coeff_));
+					return (*plus)(centered, expand(mean_, size(centered)));
+				}
+			});
+			
+			hana::for_each(
+				hana::make_range(hana::ushort_c<0>, hana::length(results)),
+				[&dataset, &rebuilds](auto i) {
+					
+					auto const& rebuild = hana::at(rebuilds, i);
+					
+					if constexpr(is_supported(rebuild)) {
+						BOOST_TEST_MESSAGE("comparing original and reconstructed dataset of impl nr " << i);
+						HBRS_MPL_TEST_MMEQ(dataset, rebuild, false);
+					} else {
+						BOOST_TEST_MESSAGE("skip comparison of unsupported dataset for impl nr " << i);
+					}
+				}
+			);
+			BOOST_TEST_MESSAGE("comparing original and reconstructed datasets done.");
+		}
 	});
 	
 }

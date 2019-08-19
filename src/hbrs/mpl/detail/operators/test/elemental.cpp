@@ -222,8 +222,8 @@ BOOST_AUTO_TEST_CASE(matrix_svd, * utf::tolerance(_TOL)) {
 		}
 	}
 	
-	detail::svd_impl_el_matrix{}(a4, decompose_mode::complete);
-	auto const svd1 = (*svd)(a4, decompose_mode::complete);
+	detail::svd_impl_el_matrix{}(a4, make_svd_control(decompose_mode::complete));
+	auto const svd1 = (*svd)(a4, make_svd_control(decompose_mode::complete));
 	
 	static_assert(std::is_same<
 		decltype(svd1),
@@ -492,7 +492,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	};
 	
 	using hbrs::mpl::decompose_mode;
-	auto usv = (*svd)(minus_dmat, decompose_mode::economy);
+	auto usv = (*svd)(minus_dmat, make_svd_control(decompose_mode::economy));
 	svd_result usv_{
 		(*at)(usv, svd_u{}),
 		(*at)(usv, svd_s{}),
@@ -520,7 +520,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 		)
 	);
 	
-	auto usv2 = (*svd)(c, decompose_mode::economy);
+	auto usv2 = (*svd)(c, make_svd_control(decompose_mode::economy));
 	{
 		auto rec_dmat /* reconstructed */ = (*multiply)((*multiply)(usv2.u(), usv2.s()), (*transpose)(usv2.v()));
 		HBRS_MPL_TEST_MMEQ(c, rec_dmat, false);
@@ -1799,14 +1799,14 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 	
 	el_matrix<double> b = make_el_matrix(a);
 	
-	detail::pca_impl_el_matrix{}(b, true);
+	detail::pca_impl_el_matrix{}(b, make_pca_control(true,true));
 	
 	pca_result<
 		el_matrix<double>,
 		el_matrix<double>,
 		el_column_vector<double>,
 		el_row_vector<double>
-	> r = (*pca)(b, true);
+	> r = (*pca)(b, make_pca_control(true,true));
 	
 	auto && r_coeff = (*at)(r, pca_coeff{});
 	auto && r_score = (*at)(r, pca_score{});
@@ -2098,12 +2098,12 @@ BOOST_AUTO_TEST_CASE(matrix_pca_filter, * utf::tolerance(_TOL)) {
 	auto const b = make_el_matrix(a);
 	std::vector<bool> const keep(std::min((std::size_t)a_m, (std::size_t)a_n), true);
 	
-	detail::pca_filter_impl_el_matrix{}(b, keep);
+	detail::pca_filter_impl_el_matrix{}(b, keep, make_pca_control(true,true));
 	
 	pca_filter_result<
 		el_matrix<double>,
 		el_column_vector<double>
-	> rslt = (*pca_filter)(b, keep);
+	> rslt = (*pca_filter)(b, keep, make_pca_control(true,true));
 	
 	auto && data   = (*at)(rslt, pca_filter_data{});
 	auto && latent = (*at)(rslt, pca_filter_latent{});

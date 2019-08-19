@@ -14,18 +14,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FN_PCA_FILTER_IMPL_HPP
-#define HBRS_MPL_FN_PCA_FILTER_IMPL_HPP
+#ifndef HBRS_MPL_DT_SVD_CONTROL_HPP
+#define HBRS_MPL_DT_SVD_CONTROL_HPP
 
-#include "fwd.hpp"
+#include "svd_control/fwd.hpp"
+#include "svd_control/impl.hpp"
 
-#include <hbrs/mpl/dt/function.hpp>
-
-HBRS_MPL_NAMESPACE_BEGIN
-HBRS_MPL_DEF_F3(pca_filter, pca_filter_t)
-HBRS_MPL_NAMESPACE_END
-
-#include "impl/matlab.hpp"
-#include "impl/elemental.hpp"
-
-#endif // !HBRS_MPL_FN_PCA_FILTER_IMPL_HPP
+#endif // !HBRS_MPL_DT_SVD_CONTROL_HPP

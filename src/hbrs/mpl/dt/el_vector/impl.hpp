@@ -86,7 +86,7 @@
 	private:                                                                                                           \
 		template<typename Matrix>                                                                                      \
 		decltype(auto)                                                                                                 \
-		static at_(Matrix && m, matrix_index<El::Int, El::Int> const& i) {                                        \
+		static at_(Matrix && m, matrix_index<El::Int, El::Int> const& i) {                                             \
 			BOOST_ASSERT(i.m() >= 0 && i.m() < HBRS_MPL_FWD(m).Height());                                              \
 			BOOST_ASSERT(i.n() >= 0 && i.n() < HBRS_MPL_FWD(m).Width());                                               \
 			                                                                                                           \

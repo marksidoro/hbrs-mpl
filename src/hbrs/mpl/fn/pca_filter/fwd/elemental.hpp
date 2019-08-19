@@ -20,6 +20,7 @@
 #include <hbrs/mpl/config.hpp>
 
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
+	#include <hbrs/mpl/dt/pca_control/fwd.hpp>
 	#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
 	#include <hbrs/mpl/dt/el_dist_matrix/fwd.hpp>
 #endif
@@ -45,7 +46,11 @@ struct pca_filter_impl_el_matrix {
 		>* = nullptr
 	>
 	auto
-	operator()(Matrix && a, std::function<bool(El::Int)> const& keep) const;
+	operator()(
+		Matrix && a,
+		std::function<bool(El::Int)> const& keep,
+		pca_control<bool,bool> const& ctrl
+	) const;
 	
 	template <
 		typename Matrix,
@@ -55,7 +60,11 @@ struct pca_filter_impl_el_matrix {
 		>* = nullptr
 	>
 	auto
-	operator()(Matrix && a, std::vector<bool> const& keep) const;
+	operator()(
+		Matrix && a,
+		std::vector<bool> const& keep,
+		pca_control<bool,bool> const& ctrl
+	) const;
 };
 
 #else

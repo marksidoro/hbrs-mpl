@@ -18,6 +18,7 @@
 #ifdef HBRS_MPL_ENABLE_MATLAB
 
 #include <hbrs/mpl/dt/ml_matrix.hpp>
+#include <hbrs/mpl/dt/svd_control.hpp>
 #include <hbrs/mpl/dt/svd_result.hpp>
 #include <hbrs/mpl/dt/decompose_mode.hpp>
 
@@ -36,14 +37,17 @@ namespace detail {
 		ml_matrix<real_T> /* S */,                                                                                     \
 		ml_matrix<real_T> /* V */                                                                                      \
 	>                                                                                                                  \
-	svd_impl_level ## lvl ## _ml_matrix::operator()(ml_matrix<real_T> const& a, decompose_mode mode) const {           \
+	svd_impl_level ## lvl ## _ml_matrix::operator()(                                                                   \
+		ml_matrix<real_T> const& a,                                                                                    \
+		svd_control<decompose_mode> const& ctrl                                                                        \
+	) const {                                                                                                          \
 		ml_matrix<real_T> u, s, v;                                                                                     \
 		                                                                                                               \
 		svd_level ## lvl(                                                                                              \
 			&a.data(),                                                                                                 \
-			mode == decompose_mode::complete                                                                           \
+			ctrl.decompose_mode() == decompose_mode::complete                                                          \
 				? ::decompose_mode::complete                                                                           \
-				: mode == decompose_mode::economy                                                                      \
+				: ctrl.decompose_mode() == decompose_mode::economy                                                     \
 					? ::decompose_mode::economy                                                                        \
 					: ::decompose_mode::zero,                                                                          \
 			&u.data(),                                                                                                 \

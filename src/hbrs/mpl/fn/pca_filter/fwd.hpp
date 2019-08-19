@@ -22,7 +22,7 @@
 #include <hbrs/mpl/core/implementations_of.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
-HBRS_MPL_DEC_F2(pca_filter, pca_filter_t)
+HBRS_MPL_DEC_F3(pca_filter, pca_filter_t)
 HBRS_MPL_NAMESPACE_END
 
 #include "fwd/elemental.hpp"

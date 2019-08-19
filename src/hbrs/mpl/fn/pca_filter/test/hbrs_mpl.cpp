@@ -49,8 +49,11 @@
 #include <boost/hana/drop_back.hpp>
 #include <boost/hana/min.hpp>
 #include <boost/hana/greater_equal.hpp>
+#include <boost/hana/length.hpp>
+#include <boost/hana/cartesian_product.hpp>
 
 #include <hbrs/mpl/detail/test.hpp>
+#include <hbrs/mpl/detail/not_supported.hpp>
 
 namespace utf = boost::unit_test;
 namespace tt = boost::test_tools;
@@ -75,95 +78,133 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 		)
 	);
 	
-	std::size_t dataset_nr = 0;
-	hana::for_each(datasets, [&dataset_nr](auto const& dataset) {
+	static constexpr auto dimensions = hana::make_tuple(
+		hana::to_tuple(hana::make_range(hana::size_c<0>, hana::length(datasets))),
+		hana::make_tuple(hana::true_c, hana::false_c) /* keep */,
+		hana::make_tuple(hana::true_c, hana::false_c) /* economy */,
+		hana::make_tuple(hana::true_c, hana::false_c) /* center */
+	);
+	
+	hana::for_each(hana::cartesian_product(dimensions), [](auto const& cfg) {
+		auto const& dataset_nr = hana::at_c<0>(cfg);
+		auto const& keep = hana::at_c<1>(cfg);
+		auto const& economy = hana::at_c<2>(cfg);
+		auto const& center = hana::at_c<3>(cfg);
+		
 		BOOST_TEST_MESSAGE("dataset_nr=" << dataset_nr);
-		for(bool keep : { true, false }) {
-			BOOST_TEST_MESSAGE("keep=" << (keep ? "true" : "false"));
+		BOOST_TEST_MESSAGE("keep=" << (keep ? "true" : "false"));
+		BOOST_TEST_MESSAGE("economy=" << (economy ? "true" : "false"));
+		BOOST_TEST_MESSAGE("center=" << (center? "true" : "false"));
+		
+		auto const& dataset = hana::at(datasets, dataset_nr);
+		auto sz_ = (*size)(dataset);
+		auto m_ = (*m)(sz_);
+		auto n_ = (*n)(sz_);
+		
+		auto funs = hana::drop_back(hana::make_tuple(
+			#ifdef HBRS_MPL_ENABLE_MATLAB
+			[](auto && a, auto keep, auto economy, auto center) {
+				return detail::pca_filter_impl_ml_matrix{}(hbrs::mpl::make_ml_matrix(HBRS_MPL_FWD(a)), keep, {economy, center});
+			},
+			#endif
 			
-			auto sz_ = (*size)(dataset);
-			auto m_ = (*m)(sz_);
-			auto n_ = (*n)(sz_);
-			
-			auto funs = hana::drop_back(hana::make_tuple(
-				#ifdef HBRS_MPL_ENABLE_MATLAB
-				[](auto && a, auto keep) {
-					return detail::pca_filter_impl_ml_matrix{}(hbrs::mpl::make_ml_matrix(HBRS_MPL_FWD(a)), keep);
-				},
-				#endif
+			#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+			[](auto && a, auto keep, auto economy, auto center) {
+				return detail::pca_filter_impl_el_matrix{}(hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a)), keep, {economy, center});
+			},
+			[&m_, &n_](auto && a, auto keep, auto economy, auto center) {
+				static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
 				
-				#ifdef HBRS_MPL_ENABLE_ELEMENTAL
-				[](auto && a, auto keep) {
-					return detail::pca_filter_impl_el_matrix{}(hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a)), keep);
-				},
-				[](auto && a, auto keep) {
-					static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
+				if constexpr(
+					!economy && hana::value(m_) <= hana::value(n_)
+					/* because this will do a zero svd which equals complete which is not supported by elemental */
+				) {
+					return detail::not_supported{};
+				} else {
 					return detail::pca_filter_impl_el_matrix{}(
 						hbrs::mpl::make_el_dist_matrix(
 							grid,
 							hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a))
 						),
-						keep
+						keep,
+						{economy, center}
 					);
-				},
-				#endif
-				"SEQUENCE_TERMINATOR___REMOVED_BY_DROP_BACK"
-			));
-			
-			auto results = hana::transform(funs, 
-				[&dataset, &keep, &m_, &n_](auto f) {
-					return f(dataset, std::vector<bool>(m_.value-1<n_.value? m_.value-1 : std::min(m_.value, n_.value), keep));
 				}
-			);
-			
-			if constexpr(hana::length(results) >= 2u) {
-				auto compare = [&results](auto i) {
-					auto j = i+hana::ushort_c<1>;
-					auto const& pca_filter_i = hana::at(results, i);
-					auto const& pca_filter_j = hana::at(results, j);
-					
+			},
+			#endif
+			"SEQUENCE_TERMINATOR___REMOVED_BY_DROP_BACK"
+		));
+		
+		auto DOF = m_.value - (center ? hana::size_c<1> : hana::size_c<0>);
+		std::vector<bool> filter((DOF < n_.value && economy) ? DOF : std::min(m_.value, n_.value), keep);
+		
+		int fun_nr = 0;
+		auto results = hana::transform(funs, [&dataset, &filter, &economy, &center, &fun_nr](auto f) {
+			BOOST_TEST_MESSAGE("calling impl nr " << fun_nr);
+			++fun_nr;
+			return f(dataset, filter, economy, center); }
+		);
+		
+		if constexpr(hana::length(results) >= 2u) {
+			auto compare = [&results](auto i) {
+				auto j = i+hana::ushort_c<1>;
+				auto const& pca_filter_i = hana::at(results, i);
+				auto const& pca_filter_j = hana::at(results, j);
+				
+				//TODO: Take ++j if j not supported!
+				if constexpr(is_supported(pca_filter_i) && is_supported(pca_filter_j)) {
 					BOOST_TEST_MESSAGE("comparing data of impl nr " << i << " and " << j);
 					HBRS_MPL_TEST_MMEQ((*at)(pca_filter_i, pca_filter_data{}),  (*at)(pca_filter_j, pca_filter_data{}), false);
 					BOOST_TEST_MESSAGE("comparing pca_latent of impl nr " << i << " and " << j);
 					HBRS_MPL_TEST_VVEQ((*at)(pca_filter_i, pca_filter_latent{}), (*at)(pca_filter_j, pca_filter_latent{}), false);
 					BOOST_TEST_MESSAGE("comparing impl nr " << i << " and " << j << " done.");
-				};
-				
-				hana::for_each(
-					hana::make_range(
-						hana::size_c<0>, 
-						hana::length(results)-hana::size_c<1>
-					),
-					compare
-				);
-			}
+				} else {
+					BOOST_TEST_MESSAGE("skip comparison of impl nr " << i << " and " << j);
+				}
+			};
 			
-			{
-				hana::for_each(
-					hana::make_range(hana::ushort_c<0>, hana::length(results)),
-					[&dataset, &results, &keep, &m_, &n_](auto i) {
-						
+			hana::for_each(
+				hana::make_range(
+					hana::size_c<0>, 
+					hana::length(results)-hana::size_c<1>
+				),
+				compare
+			);
+		}
+		
+		{
+			hana::for_each(
+				hana::make_range(hana::ushort_c<0>, hana::length(results)),
+				[&dataset, &results, &keep, &m_, &n_, &economy, &center](auto i) {
+					auto const& result = hana::at(results, i);
+					
+					if constexpr(is_not_supported(result)) {
+						BOOST_TEST_MESSAGE("skip comparison of unsupported dataset for impl nr " << i);
+						return detail::not_supported{};
+					} else {
 						BOOST_TEST_MESSAGE("comparing original and reconstructed dataset from impl nr " << i);
-						auto const& result = hana::at(results, i);
-						
 						auto && data_   = (*at)(result, pca_filter_data{});
 						auto && latent_ = (*at)(result, pca_filter_latent{});
 						
 						if (keep) {
 							HBRS_MPL_TEST_MMEQ(dataset, data_, false);
 						} else {
-							auto mean_ = (*expand)(mean(columns(dataset)), size(dataset));
-							HBRS_MPL_TEST_MMEQ(mean_, data_, false);
+							if (center) {
+								auto mean_ = (*expand)(mean(columns(dataset)), size(dataset));
+								HBRS_MPL_TEST_MMEQ(mean_, data_, false);
+							} else {
+								//TODO: Compare if all values of data_ are zero!
+								BOOST_TEST_MESSAGE("... not yet implemented");
+							}
 						}
 						
-						BOOST_TEST((*equal)(size(latent_), (m_-1u)<n_ ? m_-1u : hana::min(m_,n_)));
+						auto DOF = m_ - (center? 1u : 0u);
+						BOOST_TEST((*equal)(size(latent_), (DOF<n_ && !economy) ? n_ : hana::min(DOF,n_)));
 					}
-				);
-				BOOST_TEST_MESSAGE("comparing original and reconstructed datasets done.");
-			}
-		};
-		
-		++dataset_nr;
+				}
+			);
+			BOOST_TEST_MESSAGE("comparing original and reconstructed datasets done.");
+		}
 	});
 	
 }

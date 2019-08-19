@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 
+#include <hbrs/mpl/dt/pca_control.hpp>
 #include <hbrs/mpl/dt/pca_result.hpp>
 #include <hbrs/mpl/dt/srv.hpp>
 #include <hbrs/mpl/dt/range.hpp>
@@ -63,7 +64,10 @@ namespace detail {
 /* C++ code is equivalent to MATLAB code in file src/hbrs/mpl/detail/matlab_cxn/impl/pca_level2.m */
 template <typename Ring>
 auto
-pca_impl_el_matrix::operator()(el_matrix<Ring> const& a, bool economy) const {
+pca_impl_el_matrix::operator()(
+	el_matrix<Ring> const& a,
+	pca_control<bool,bool> const& ctrl
+) const {
 	typedef std::decay_t<Ring> _Ring_;
 	
 	using namespace hana::literals;
@@ -73,16 +77,20 @@ pca_impl_el_matrix::operator()(el_matrix<Ring> const& a, bool economy) const {
 	auto const a_n = (*n)(a_sz);
 	//MATLAB>> [m,n] = size(x);
 	
-	auto const DOF = a_m-1_c;
-	//MATLAB>> DOF=m-1;
+	auto const DOF = a_m - (ctrl.center() ? 1_c : 0_c);
+	//MATLAB>> DOF=m-Center;
 	
-	el_row_vector<_Ring_> mu = (*mean)(columns(a));
-	//MATLAB>> mu = mean(x);
+	el_row_vector<_Ring_> mu = ctrl.center() ? (*mean)(columns(a)) : el_row_vector<_Ring_>{a_n};
+	//MATLAB>> if Center
+	//MATLAB>> 	mu = wnanmean(x, ones(1,m,'like',x));
+	//MATLAB>> else
+	//MATLAB>> 	mu = zeros(1,n,'like',x);
+	//MATLAB>> end
 	
-	auto b = (*minus)(a, (*expand)(mu, a_sz));
+	el_matrix<_Ring_> b = (*minus)(a, (*expand)(mu, a_sz));
 	//MATLAB>> x = bsxfun(@minus,x,mu);
 	
-	auto usv = (*svd)(b, economy ? decompose_mode::economy : decompose_mode::zero);
+	auto usv = (*svd)(b, ctrl.economy() ? decompose_mode::economy : decompose_mode::zero);
 	auto && U = (*at)(usv, svd_u{});
 	el_matrix<_Ring_> S{0,0};
 	{
@@ -121,7 +129,7 @@ pca_impl_el_matrix::operator()(el_matrix<Ring> const& a, bool economy) const {
 	//MATLAB>> latent = S.^2./DOF;
 	
 	if (DOF < a_n) {
-		if (economy) {
+		if (ctrl.economy()) {
 			coeff = (*select)(
 				std::move(coeff),
 				std::make_pair(El::ALL, El::IR(0, DOF))
@@ -137,11 +145,15 @@ pca_impl_el_matrix::operator()(el_matrix<Ring> const& a, bool economy) const {
 				El::IR(0, DOF)
 			);
 		} else {
-			auto score_view = (*select)(score, std::make_pair(El::ALL, El::IR(DOF, a_n)));
-			El::Zero(score_view.data());
+			el_matrix<_Ring_> score_{a_m,a_n};
+			El::Matrix<_Ring_> score_view = score_.data()(El::ALL, El::IR(0,DOF));
+			El::Copy(score.data()(El::ALL, El::IR(0,DOF)), score_view);
+			score = std::move(score_);
 			
-			auto latent_view = (*select)(latent, El::IR(DOF, a_n));
-			El::Zero(latent_view.data());
+			el_column_vector<_Ring_> latent_{a_n};
+			auto latent_view = latent_.data()(El::IR(0,DOF), 0);
+			El::Copy(latent.data()(El::IR(0,DOF), 0), latent_view);
+			latent = std::move(latent_);
 		}
 	}
 	//MATLAB>> if DOF < n
@@ -216,7 +228,10 @@ pca_impl_el_matrix::operator()(el_matrix<Ring> const& a, bool economy) const {
 
 template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 auto
-pca_impl_el_dist_matrix::operator()(el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& a, bool economy) const {
+pca_impl_el_dist_matrix::operator()(
+	el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& a,
+	pca_control<bool,bool> const& ctrl
+) const {
 	typedef std::decay_t<Ring> _Ring_;
 	static_assert(!std::is_reference<Ring>::value && !std::is_const<Ring>::value, "");
 	static_assert(std::is_same<_Ring_, El::Base<_Ring_>>::value, "because S is returned as El::Base<_Ring_>");
@@ -228,16 +243,22 @@ pca_impl_el_dist_matrix::operator()(el_dist_matrix<Ring, Columnwise, Rowwise, Wr
 	auto const a_n = (*n)(a_sz);
 	//MATLAB>> [m,n] = size(x);
 	
-	auto const DOF = a_m-1_c;
-	//MATLAB>> DOF=m-1;
+	auto const DOF = a_m - (ctrl.center() ? 1_c : 0_c);
+	//MATLAB>> DOF=m-Center;
 	
-	auto mu = (*mean)(columns(a));
-	//MATLAB>> mu = mean(x);
+	el_dist_row_vector<_Ring_, El::STAR, El::STAR> mu = ctrl.center() 
+		? (*mean)(columns(a))
+		: el_dist_row_vector<_Ring_, El::STAR, El::STAR>{a.data().Grid(), a_n};
+	//MATLAB>> if Center
+	//MATLAB>> 	mu = wnanmean(x, ones(1,m,'like',x));
+	//MATLAB>> else
+	//MATLAB>> 	mu = zeros(1,n,'like',x);
+	//MATLAB>> end
 	
 	auto b = (*minus)(a, (*expand)(mu, a_sz));
 	//MATLAB>> x = bsxfun(@minus,x,mu);
 	
-	auto usv = (*svd)(b, economy ? decompose_mode::economy : decompose_mode::zero);
+	auto usv = (*svd)(b, ctrl.economy() ? decompose_mode::economy : decompose_mode::zero);
 	
 	auto && U = (*at)(usv, svd_u{});
 	auto && S = (*at)(usv, svd_s{});
@@ -264,7 +285,7 @@ pca_impl_el_dist_matrix::operator()(el_dist_matrix<Ring, Columnwise, Rowwise, Wr
 	//MATLAB>> latent = S.^2./DOF;
 	
 	if (DOF < a_n) {
-		if (economy) {
+		if (ctrl.economy()) {
 			coeff = (*select)(
 				std::move(coeff),
 				std::make_pair(El::ALL, El::IR(0, DOF))
@@ -280,11 +301,15 @@ pca_impl_el_dist_matrix::operator()(el_dist_matrix<Ring, Columnwise, Rowwise, Wr
 				El::IR(0, DOF)
 			);
 		} else {
-			auto score_view = (*select)(score, std::make_pair(El::ALL, El::IR(DOF, a_n)));
-			El::Zero(score_view.data());
+			el_dist_matrix<_Ring_> score_{a.data().Grid(), a_m,a_n};
+			auto score_view = score_.data()(El::ALL, El::IR(0,DOF));
+			El::Copy(score.data()(El::ALL, El::IR(0,DOF)), score_view);
+			score = std::move(score_);
 			
-			auto latent_view = (*select)(latent, El::IR(DOF, a_n));
-			El::Zero(latent_view.data());
+			el_dist_column_vector<_Ring_, El::STAR, El::STAR> latent_{a.data().Grid(), a_n};
+			auto latent_view = latent_.data()(El::IR(0,DOF), 0);
+			El::Copy(latent.data()(El::IR(0,DOF), 0), latent_view);
+			latent = std::move(latent_);
 		}
 	}
 	//MATLAB>> if DOF < n

@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(matrix_base, * utf::tolerance(_TOL)) {
 	auto const a0_m = (*m)(a0_size);
 	auto const a0_n = (*n)(a0_size);
 	{
-		cell_0 ds;
+		cell_1 ds;
 		samples(&ds);
 		std::copy(ds.f4, ds.f4+8, a0.data().data);
 	}
@@ -211,7 +211,7 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 	BOOST_TEST(a3_n == detail::mat_g_n);
 	
 	{
-		cell_0 ds;
+		cell_1 ds;
 		samples(&ds);
 		double * a3_ref = ds.f1;
 		
@@ -240,8 +240,8 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 		}
 	}
 	
-	detail::pca_impl_level0_ml_matrix{}(a4, true);
-	auto pca1 = (*pca)(a4, true);
+	detail::pca_impl_level0_ml_matrix{}(a4, make_pca_control(true, true));
+	auto pca1 = (*pca)(a4, make_pca_control(true, true));
 	
 	auto && pca1_coeff = pca1.coeff();
 	auto && pca1_score = pca1.score();
@@ -379,7 +379,7 @@ BOOST_AUTO_TEST_CASE(matrix_pca_filter, * utf::tolerance(_TOL)) {
 	BOOST_TEST((unsigned) (a5.data().size[0] * a5.data().size[1]) == a3_m * a3_n);
 	
 	std::vector<bool> const keep_all(std::min(a3_m, a3_n), true);
-	auto red1a = (*pca_filter)(a5, keep_all);
+	auto red1a = (*pca_filter)(a5, keep_all, make_pca_control(true,true));
 	for(std::size_t i = 0; i < a3_m; ++i) {
 		for(std::size_t j = 0; j < a3_n; ++j) {
 			BOOST_TEST(a5[(int)i][(int)j] == a3[i][j]);
@@ -394,7 +394,7 @@ BOOST_AUTO_TEST_CASE(matrix_pca_filter, * utf::tolerance(_TOL)) {
 	
 	std::vector<bool> keep_first(std::min(a3_m, a3_n), false);
 	keep_first[0] = true;
-	auto red1b = (*pca_filter)(a5, keep_first);
+	auto red1b = (*pca_filter)(a5, keep_first, make_pca_control(true,true));
 	
 	static constexpr std::size_t const 
 	red1b_ref_m = 13, red1b_ref_n = 4;

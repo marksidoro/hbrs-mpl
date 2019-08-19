@@ -20,15 +20,15 @@
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-template auto svd_impl_el_matrix::operator()(el_matrix<float>               const&, decompose_mode) const;
-template auto svd_impl_el_matrix::operator()(el_matrix<El::Complex<float>>  const&, decompose_mode) const;
-template auto svd_impl_el_matrix::operator()(el_matrix<double>              const&, decompose_mode) const;
-template auto svd_impl_el_matrix::operator()(el_matrix<El::Complex<double>> const&, decompose_mode) const;
+template auto svd_impl_el_matrix::operator()(el_matrix<float>               const&, svd_control<decompose_mode> const&) const;
+template auto svd_impl_el_matrix::operator()(el_matrix<El::Complex<float>>  const&, svd_control<decompose_mode> const&) const;
+template auto svd_impl_el_matrix::operator()(el_matrix<double>              const&, svd_control<decompose_mode> const&) const;
+template auto svd_impl_el_matrix::operator()(el_matrix<El::Complex<double>> const&, svd_control<decompose_mode> const&) const;
 
-template auto svd_impl_el_dist_matrix::operator()(el_dist_matrix<float>               const&, decompose_mode) const;
-template auto svd_impl_el_dist_matrix::operator()(el_dist_matrix<El::Complex<float>>  const&, decompose_mode) const;
-template auto svd_impl_el_dist_matrix::operator()(el_dist_matrix<double>              const&, decompose_mode) const;
-template auto svd_impl_el_dist_matrix::operator()(el_dist_matrix<El::Complex<double>> const&, decompose_mode) const;
+template auto svd_impl_el_dist_matrix::operator()(el_dist_matrix<float>               const&, svd_control<decompose_mode> const&) const;
+template auto svd_impl_el_dist_matrix::operator()(el_dist_matrix<El::Complex<float>>  const&, svd_control<decompose_mode> const&) const;
+template auto svd_impl_el_dist_matrix::operator()(el_dist_matrix<double>              const&, svd_control<decompose_mode> const&) const;
+template auto svd_impl_el_dist_matrix::operator()(el_dist_matrix<El::Complex<double>> const&, svd_control<decompose_mode> const&) const;
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END

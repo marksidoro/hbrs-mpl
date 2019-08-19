@@ -20,6 +20,7 @@
 #include <hbrs/mpl/config.hpp>
 
 #ifdef HBRS_MPL_ENABLE_MATLAB
+	#include <hbrs/mpl/dt/pca_control/fwd.hpp>
 	#include <hbrs/mpl/dt/pca_filter_result/fwd.hpp>
 	#include <hbrs/mpl/dt/ml_matrix/fwd.hpp>
 	#include <hbrs/mpl/dt/ml_vector/fwd.hpp>
@@ -42,25 +43,41 @@ struct pca_filter_impl_ml_matrix {
 		ml_matrix<real_T> /* data */,
 		ml_column_vector<real_T> /* latent*/
 	>
-	operator()(ml_matrix<real_T> const& a, std::vector<bool> const& keep) const;
+	operator()(
+		ml_matrix<real_T> const& a,
+		std::vector<bool> const& keep,
+		pca_control<bool,bool> const& ctrl
+	) const;
 	
 	pca_filter_result<
 		ml_matrix<real_T> /* data */,
 		ml_column_vector<real_T> /* latent*/
 	>
-	operator()(ml_matrix<real_T> const& a, ml_column_vector<boolean_T> const& keep) const;
+	operator()(
+		ml_matrix<real_T> const& a,
+		ml_column_vector<boolean_T> const& keep,
+		pca_control<bool,bool> const& ctrl
+	) const;
 	
 	pca_filter_result<
 		ml_matrix<real_T> /* data */,
 		ml_column_vector<real_T> /* latent*/
 	>
-	operator()(ml_matrix<real_T> const& a, ml_row_vector<boolean_T> const& keep) const = delete /* TODO: implement... */;
+	operator()(
+		ml_matrix<real_T> const& a,
+		ml_row_vector<boolean_T> const& keep,
+		pca_control<bool,bool> const& ctrl
+	) const = delete /* TODO: implement... */;
 	
 	pca_filter_result<
 		ml_matrix<real_T> /* data */,
 		ml_column_vector<real_T> /* latent*/
 	>
-	operator()(ml_matrix<real_T> const& a, std::function<bool(int)> const& keep) const;
+	operator()(
+		ml_matrix<real_T> const& a,
+		std::function<bool(int)> const& keep,
+		pca_control<bool,bool> const& ctrl
+	) const;
 };
 
 #else

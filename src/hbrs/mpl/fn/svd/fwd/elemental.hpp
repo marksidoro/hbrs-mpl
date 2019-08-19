@@ -22,6 +22,7 @@
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 	#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
 	#include <hbrs/mpl/dt/el_dist_matrix/fwd.hpp>
+	#include <hbrs/mpl/dt/svd_control/fwd.hpp>
 	#include <hbrs/mpl/dt/decompose_mode/fwd.hpp>
 #endif
 
@@ -38,13 +39,19 @@ namespace detail {
 struct svd_impl_el_matrix {
 	template <typename Ring>
 	auto
-	operator()(el_matrix<Ring> const& a, decompose_mode mode) const;
+	operator()(
+		el_matrix<Ring> const& a,
+		svd_control<decompose_mode> const& ctrl
+	) const;
 };
 
 struct svd_impl_el_dist_matrix {
 	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 	auto
-	operator()(el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& a, decompose_mode mode) const;
+	operator()(
+		el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& a,
+		svd_control<decompose_mode> const& ctrl
+	) const;
 };
 
 #else
