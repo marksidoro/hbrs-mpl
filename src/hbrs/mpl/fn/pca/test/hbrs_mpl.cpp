@@ -78,42 +78,45 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 	static constexpr auto dimensions = hana::make_tuple(
 		hana::to_tuple(hana::make_range(hana::size_c<0>, hana::length(datasets))),
 		hana::make_tuple(hana::true_c, hana::false_c) /* economy */,
-		hana::make_tuple(hana::true_c, hana::false_c) /* center */
+		hana::make_tuple(hana::true_c, hana::false_c) /* center */,
+		hana::make_tuple(hana::true_c, hana::false_c) /* normalize */
 	);
 	
 	hana::for_each(hana::cartesian_product(dimensions), [](auto const& cfg) {
 		auto const& dataset_nr = hana::at_c<0>(cfg);
 		auto const& economy = hana::at_c<1>(cfg);
 		auto const& center = hana::at_c<2>(cfg);
+		auto const& normalize = hana::at_c<3>(cfg);
 		
 		BOOST_TEST_MESSAGE("dataset_nr=" << dataset_nr);
 		BOOST_TEST_MESSAGE("economy=" << (economy ? "true" : "false"));
 		BOOST_TEST_MESSAGE("center=" << (center? "true" : "false"));
+		BOOST_TEST_MESSAGE("normalize=" << (normalize? "true" : "false"));
 		
 		auto const& dataset = hana::at(datasets, dataset_nr);
 		
 		auto funs = hana::drop_back(hana::make_tuple(
 			#ifdef HBRS_MPL_ENABLE_MATLAB
-			[](auto && a, auto economy, auto center) {
+			[](auto && a, auto economy, auto center, auto normalize) {
 				BOOST_TEST_PASSPOINT();
-				return detail::pca_impl_level0_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), {economy, center});
+				return detail::pca_impl_level0_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), {economy, center, normalize});
 			},
-			[](auto && a, auto economy, auto center) {
+			[](auto && a, auto economy, auto center, auto normalize) {
 				BOOST_TEST_PASSPOINT();
-				return detail::pca_impl_level1_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), {economy, center});
+				return detail::pca_impl_level1_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), {economy, center, normalize});
 			},
-			[](auto && a, auto economy, auto center) {
+			[](auto && a, auto economy, auto center, auto normalize) {
 				BOOST_TEST_PASSPOINT();
-				return detail::pca_impl_level2_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), {economy, center});
+				return detail::pca_impl_level2_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), {economy, center, normalize});
 			},
 			#endif
 			
 			#ifdef HBRS_MPL_ENABLE_ELEMENTAL
-			[](auto && a, auto economy, auto center) {
+			[](auto && a, auto economy, auto center, auto normalize) {
 				BOOST_TEST_PASSPOINT();
-				return detail::pca_impl_el_matrix{}(make_el_matrix(HBRS_MPL_FWD(a)), {economy, center}); 
+				return detail::pca_impl_el_matrix{}(make_el_matrix(HBRS_MPL_FWD(a)), {economy, center, normalize}); 
 			},
-			[](auto && a, auto economy, auto center) {
+			[](auto && a, auto economy, auto center, auto normalize) {
 				BOOST_TEST_PASSPOINT();
 				auto sz_ = (*size)(a);
 				auto m_ = (*m)(sz_);
@@ -131,7 +134,7 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 							grid,
 							make_el_matrix(HBRS_MPL_FWD(a))
 						),
-						{economy, center}
+						{economy, center, normalize}
 					);
 				}
 			},
@@ -142,15 +145,15 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 		int fun_nr = 0;
 		auto results = hana::transform(
 			funs,
-			[&dataset, &economy, &center, &fun_nr](auto f) {
+			[&dataset, &economy, &center, &normalize, &fun_nr](auto f) {
 				BOOST_TEST_MESSAGE("calling impl nr " << fun_nr);
 				++fun_nr;
-				return f(dataset, economy, center);
+				return f(dataset, economy, center, normalize);
 			}
 		);
 		
 		if constexpr(hana::length(results) >= 2u) {
-			auto compare = [&dataset, &economy, &center, &results](auto i) {
+			auto compare = [&dataset, &economy, &center, &normalize, &results](auto i) {
 				using hbrs::mpl::select;
 				
 				auto j = i+hana::ushort_c<1>;

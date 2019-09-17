@@ -6,7 +6,7 @@
 % References:
 %  ${Matlab_ROOT_DIR}/toolbox/stats/stats/pca.m
 
-function [coeff,score,latent,mu] = pca_level1(A, Economy, Center)
+function [coeff,score,latent,mu] = pca_level1(A, Economy, Center, Normalize)
     coder.varsize('A', 'x');
     
     x = A; % make copy of A in order to keep A constant / untouched
@@ -14,7 +14,16 @@ function [coeff,score,latent,mu] = pca_level1(A, Economy, Center)
     [m,n] = size(x);
     
     vWeights = ones(1,m,'like',x);
-    vVariableWeights = ones(1,n,'like',x);
+    
+    if Normalize
+        vVariableWeights = 1./nanvar(x,0,1);
+        % equals to
+        %  vVariableWeights = 1./wnanvar(x,ones(1,m,'like',x),1);
+        % and if weights = [1, ..., 1] then
+        %  vVariableWeights = 1./wnanvar(x,vWeights,1);
+    else
+        vVariableWeights = ones(1,n,'like',x);
+    end
     
     DOF=m-Center;
     

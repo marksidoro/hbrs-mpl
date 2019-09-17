@@ -18,6 +18,7 @@
 #ifdef HBRS_MPL_ENABLE_MATLAB
 
 #include <hbrs/mpl/dt/ml_matrix.hpp>
+#include <hbrs/mpl/dt/ml_vector.hpp>
 
 extern "C" {
 	#include <hbrs/mpl/detail/matlab_cxn/impl/transpose_m.h>
@@ -32,6 +33,16 @@ transpose_impl_ml_matrix::operator()(ml_matrix<real_T> const& a) const {
 	ml_matrix<real_T> b;
 	transpose_m(&a.data(), &b.data());
 	return b;
+}
+
+ml_row_vector<real_T>
+transpose_impl_ml_vector::operator()(ml_column_vector<real_T> const& v) const {
+	return {v};
+}
+
+ml_column_vector<real_T>
+transpose_impl_ml_vector::operator()(ml_row_vector<real_T> const& v) const {
+	return {v};
 }
 
 /* namespace detail */ }

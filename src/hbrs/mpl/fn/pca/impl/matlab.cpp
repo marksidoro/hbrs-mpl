@@ -42,7 +42,7 @@ namespace detail {
 	>                                                                                                                  \
 	pca_impl_level ## lvl ## _ml_matrix::operator()(                                                                   \
 		ml_matrix<real_T> const& a,                                                                                    \
-		pca_control<bool,bool> const& ctrl                                                                             \
+		pca_control<bool,bool,bool> const& ctrl                                                                        \
 	) const {                                                                                                          \
 		ml_matrix<real_T> coeff, score;                                                                                \
 		ml_column_vector<real_T> latent;                                                                               \
@@ -52,6 +52,7 @@ namespace detail {
 			&a.data(),                                                                                                 \
 			ctrl.economy(),                                                                                            \
 			ctrl.center(),                                                                                             \
+			ctrl.normalize(),                                                                                          \
 			&coeff.data(),                                                                                             \
 			&score.data(),                                                                                             \
 			&latent.data(),                                                                                            \

@@ -35,14 +35,14 @@ namespace detail {
 smc<ml_matrix<real_T>, int>
 mean_impl_ml_matrix::operator()(smrs<ml_matrix<real_T>> const& a) const {
 	ml_matrix<real_T> b;
-	mean_m(&a.data().data(), ::row_mean, &b.data());
+	mean_m(&a.data().data(), ::row, &b.data());
 	return {b, 0};
 }
 
 smr<ml_matrix<real_T>, int>
 mean_impl_ml_matrix::operator()(smcs<ml_matrix<real_T>> const& a) const {
 	ml_matrix<real_T> b;
-	mean_m(&a.data().data(), ::column_mean, &b.data());
+	mean_m(&a.data().data(), ::column, &b.data());
 	return {b, 0};
 }
 

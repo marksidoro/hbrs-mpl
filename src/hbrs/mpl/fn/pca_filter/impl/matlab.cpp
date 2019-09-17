@@ -48,12 +48,12 @@ pca_filter_result<
 pca_filter_impl_ml_matrix::operator()(
 	ml_matrix<real_T> const& a,
 	std::vector<bool> const& keep,
-	pca_control<bool,bool> const& ctrl
+	pca_control<bool,bool,bool> const& ctrl
 ) const {
 	auto keep_sz = (*size)(keep);
 	auto filter_sz = boost::numeric_cast<int>(keep_sz);
 	
-	ml_column_vector<boolean_T> filter{filter_sz}; /* row or column vector does not matter */
+	ml_column_vector<boolean_T> filter(filter_sz); /* row or column vector does not matter */
 	
 	for(int i = 0; i < filter_sz; ++i) {
 		filter[i] = keep[i];
@@ -69,7 +69,7 @@ pca_filter_result<
 pca_filter_impl_ml_matrix::operator()(
 	ml_matrix<real_T> const& a,
 	ml_column_vector<boolean_T> const& keep,
-	pca_control<bool,bool> const& ctrl
+	pca_control<bool,bool,bool> const& ctrl
 ) const {
 	auto sz = (*size)(a);
 	int m_ = (*m)(sz);
@@ -88,6 +88,7 @@ pca_filter_impl_ml_matrix::operator()(
 		&keep.data(),
 		ctrl.economy(),
 		ctrl.center(),
+		ctrl.normalize(),
 		&data.data(),
 		&latent.data()
 	);
@@ -142,14 +143,14 @@ pca_filter_result<
 pca_filter_impl_ml_matrix::operator()(
 	ml_matrix<real_T> const& a,
 	std::function<bool(int)> const& keep,
-	pca_control<bool,bool> const& ctrl
+	pca_control<bool,bool,bool> const& ctrl
 ) const {
 	auto sz = (*size)(a);
 	int m_ = (*m)(sz);
 	int n_ = (*n)(sz);
 	
 	int filter_sz = m_-1<n_ ? m_-1 : std::min(m_, n_);
-	ml_column_vector<boolean_T> filter{filter_sz}; /* row or column vector does not matter */
+	ml_column_vector<boolean_T> filter(filter_sz); /* row or column vector does not matter */
 	
 	for(int i = 0; i < filter_sz; ++i) {
 		filter[i] = keep(i);

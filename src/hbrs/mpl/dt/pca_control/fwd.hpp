@@ -24,7 +24,7 @@
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 
-template<typename Economy, typename Center>
+template<typename Economy, typename Center, typename Normalize>
 struct pca_control;
 struct pca_control_tag {};
 constexpr auto make_pca_control = hana::make<pca_control_tag>;

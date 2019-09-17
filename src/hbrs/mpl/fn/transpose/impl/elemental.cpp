@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +31,35 @@ HBRS_MPL_INST_FWDREFS(PROTO, el_matrix<El::Complex<double>>)
 #undef PROTO
 
 #define PROTO(type_spec_1, cv_qual_1, ref_decl_1)                                                                      \
+	template auto transpose_impl_el_vector::operator()(type_spec_1 cv_qual_1 ref_decl_1) const;
+HBRS_MPL_INST_FWDREFS(PROTO, el_column_vector<float>)
+HBRS_MPL_INST_FWDREFS(PROTO, el_column_vector<El::Complex<float>>)
+HBRS_MPL_INST_FWDREFS(PROTO, el_column_vector<double>)
+HBRS_MPL_INST_FWDREFS(PROTO, el_column_vector<El::Complex<double>>)
+HBRS_MPL_INST_FWDREFS(PROTO, el_row_vector<float>)
+HBRS_MPL_INST_FWDREFS(PROTO, el_row_vector<El::Complex<float>>)
+HBRS_MPL_INST_FWDREFS(PROTO, el_row_vector<double>)
+HBRS_MPL_INST_FWDREFS(PROTO, el_row_vector<El::Complex<double>>)
+#undef PROTO
+
+#define PROTO(type_spec_1, cv_qual_1, ref_decl_1)                                                                      \
 	template auto transpose_impl_el_dist_matrix::operator()(type_spec_1 cv_qual_1 ref_decl_1) const;
 HBRS_MPL_INST_FWDREFS(PROTO, el_dist_matrix<float>)
 HBRS_MPL_INST_FWDREFS(PROTO, el_dist_matrix<El::Complex<float>>)
 HBRS_MPL_INST_FWDREFS(PROTO, el_dist_matrix<double>)
 HBRS_MPL_INST_FWDREFS(PROTO, el_dist_matrix<El::Complex<double>>)
+#undef PROTO
+
+#define PROTO(type_spec_1, cv_qual_1, ref_decl_1)                                                                      \
+	template auto transpose_impl_el_dist_vector::operator()(type_spec_1 cv_qual_1 ref_decl_1) const;
+HBRS_MPL_INST_FWDREFS(PROTO, el_dist_column_vector<float>)
+HBRS_MPL_INST_FWDREFS(PROTO, el_dist_column_vector<El::Complex<float>>)
+HBRS_MPL_INST_FWDREFS(PROTO, el_dist_column_vector<double>)
+HBRS_MPL_INST_FWDREFS(PROTO, el_dist_column_vector<El::Complex<double>>)
+HBRS_MPL_INST_FWDREFS(PROTO, el_dist_row_vector<float>)
+HBRS_MPL_INST_FWDREFS(PROTO, el_dist_row_vector<El::Complex<float>>)
+HBRS_MPL_INST_FWDREFS(PROTO, el_dist_row_vector<double>)
+HBRS_MPL_INST_FWDREFS(PROTO, el_dist_row_vector<El::Complex<double>>)
 #undef PROTO
 
 /* namespace detail */ }

@@ -46,7 +46,7 @@ struct pca_filter_impl_ml_matrix {
 	operator()(
 		ml_matrix<real_T> const& a,
 		std::vector<bool> const& keep,
-		pca_control<bool,bool> const& ctrl
+		pca_control<bool,bool,bool> const& ctrl
 	) const;
 	
 	pca_filter_result<
@@ -56,7 +56,7 @@ struct pca_filter_impl_ml_matrix {
 	operator()(
 		ml_matrix<real_T> const& a,
 		ml_column_vector<boolean_T> const& keep,
-		pca_control<bool,bool> const& ctrl
+		pca_control<bool,bool,bool> const& ctrl
 	) const;
 	
 	pca_filter_result<
@@ -66,7 +66,7 @@ struct pca_filter_impl_ml_matrix {
 	operator()(
 		ml_matrix<real_T> const& a,
 		ml_row_vector<boolean_T> const& keep,
-		pca_control<bool,bool> const& ctrl
+		pca_control<bool,bool,bool> const& ctrl
 	) const = delete /* TODO: implement... */;
 	
 	pca_filter_result<
@@ -76,7 +76,7 @@ struct pca_filter_impl_ml_matrix {
 	operator()(
 		ml_matrix<real_T> const& a,
 		std::function<bool(int)> const& keep,
-		pca_control<bool,bool> const& ctrl
+		pca_control<bool,bool,bool> const& ctrl
 	) const;
 };
 

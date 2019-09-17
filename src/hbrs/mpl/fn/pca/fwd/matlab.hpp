@@ -47,7 +47,7 @@ namespace detail {
 		>                                                                                                              \
 		operator()(                                                                                                    \
 			ml_matrix<real_T> const& a,                                                                                \
-			pca_control<bool,bool> const& ctrl                                                                         \
+			pca_control<bool,bool,bool> const& ctrl                                                                    \
 		) const;                                                                                                       \
 	};
 

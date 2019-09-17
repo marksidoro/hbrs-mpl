@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@ HBRS_MPL_NAMESPACE_END
 #include "fwd/elemental.hpp"
 #include "fwd/matlab.hpp"
 
+//TODO: (a) Describe input matrix X and its properties (e.g. rows of X correspond to observations and columns correspond to variables) or  
+//      (b) Wrap input matrix in wrapper data structure, which describes meanings of rows and columns
 HBRS_MPL_MAP_IMPLS(pca_t, HBRS_MPL_FN_PCA_IMPLS_ELEMENTAL, HBRS_MPL_FN_PCA_IMPLS_MATLAB)
 
 #endif // !HBRS_MPL_FN_PCA_FWD_HPP

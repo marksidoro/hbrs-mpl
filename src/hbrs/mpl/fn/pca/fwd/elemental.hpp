@@ -37,7 +37,7 @@ struct pca_impl_el_matrix {
 	auto
 	operator()(
 		el_matrix<Ring> const& a,
-		pca_control<bool,bool> const& ctrl
+		pca_control<bool,bool,bool> const& ctrl
 	) const;
 };
 
@@ -47,7 +47,7 @@ struct pca_impl_el_dist_matrix {
 	auto
 	operator()(
 		el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& a,
-		pca_control<bool,bool> const& ctrl
+		pca_control<bool,bool,bool> const& ctrl
 	) const;
 };
 

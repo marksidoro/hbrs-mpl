@@ -26,24 +26,27 @@
 
 HBRS_MPL_NAMESPACE_BEGIN
 
-template<typename Economy, typename Center>
+template<typename Economy, typename Center, typename Normalize>
 struct pca_control {
 	template<
 		typename Economy_ = Economy,
 		typename Center_ = Center,
+		typename Normalize_ = Normalize,
 		typename std::enable_if_t<
-			std::is_default_constructible<Economy_>::value &&
-			std::is_default_constructible<Center_>::value
+			std::is_default_constructible_v<Economy_> &&
+			std::is_default_constructible_v<Center_> &&
+			std::is_default_constructible_v<Normalize_>
 		>* = nullptr
 	>
 	constexpr
 	pca_control() {}
 	
-	template<typename Economy_, typename Center_>
+	template<typename Economy_, typename Center_, typename Normalize_>
 	constexpr 
-	pca_control(Economy_ && e, Center_ && c)
+	pca_control(Economy_ && e, Center_ && c, Normalize_ && n)
 	: economy_{HBRS_MPL_FWD(e)},
-	  center_{HBRS_MPL_FWD(c)}
+	  center_{HBRS_MPL_FWD(c)},
+	  normalize_{HBRS_MPL_FWD(n)}
 	{}
 	
 	constexpr 
@@ -74,29 +77,40 @@ struct pca_control {
 	constexpr decltype(auto)
 	center() && { return HBRS_MPL_FWD(center_); };
 	
+	constexpr decltype(auto)
+	normalize() & { return (normalize_); };
+	
+	constexpr decltype(auto)
+	normalize() const& { return (normalize_); };
+	
+	constexpr decltype(auto)
+	normalize() && { return HBRS_MPL_FWD(normalize_); };
+	
 private:
 	Economy economy_;
 	Center center_;
+	Normalize normalize_;
 };
 
 HBRS_MPL_NAMESPACE_END
 
 namespace boost { namespace hana {
 
-template <typename Economy, typename Center>
-struct tag_of< hbrs::mpl::pca_control<Economy, Center> > {
+template <typename Economy, typename Center, typename Normalize>
+struct tag_of< hbrs::mpl::pca_control<Economy, Center, Normalize> > {
 	using type = hbrs::mpl::pca_control_tag;
 };
 
 template <>
 struct make_impl<hbrs::mpl::pca_control_tag> {
-	template <typename Economy, typename Center>
+	template <typename Economy, typename Center, typename Normalize>
 	static constexpr hbrs::mpl::pca_control<
 		std::decay_t<Economy>,
-		std::decay_t<Center>
+		std::decay_t<Center>,
+		std::decay_t<Normalize>
 	>
-	apply(Economy && e, Center && c) {
-		return { HBRS_MPL_FWD(e), HBRS_MPL_FWD(c) };
+	apply(Economy && e, Center && c, Normalize && n) {
+		return { HBRS_MPL_FWD(e), HBRS_MPL_FWD(c), HBRS_MPL_FWD(n) };
 	}
 };
 

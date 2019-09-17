@@ -82,7 +82,8 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 		hana::to_tuple(hana::make_range(hana::size_c<0>, hana::length(datasets))),
 		hana::make_tuple(hana::true_c, hana::false_c) /* keep */,
 		hana::make_tuple(hana::true_c, hana::false_c) /* economy */,
-		hana::make_tuple(hana::true_c, hana::false_c) /* center */
+		hana::make_tuple(hana::true_c, hana::false_c) /* center */,
+		hana::make_tuple(hana::true_c, hana::false_c) /* normalize */
 	);
 	
 	hana::for_each(hana::cartesian_product(dimensions), [](auto const& cfg) {
@@ -90,11 +91,13 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 		auto const& keep = hana::at_c<1>(cfg);
 		auto const& economy = hana::at_c<2>(cfg);
 		auto const& center = hana::at_c<3>(cfg);
+		auto const& normalize = hana::at_c<3>(cfg);
 		
 		BOOST_TEST_MESSAGE("dataset_nr=" << dataset_nr);
 		BOOST_TEST_MESSAGE("keep=" << (keep ? "true" : "false"));
 		BOOST_TEST_MESSAGE("economy=" << (economy ? "true" : "false"));
 		BOOST_TEST_MESSAGE("center=" << (center? "true" : "false"));
+		BOOST_TEST_MESSAGE("normalize=" << (normalize? "true" : "false"));
 		
 		auto const& dataset = hana::at(datasets, dataset_nr);
 		auto sz_ = (*size)(dataset);
@@ -103,16 +106,16 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 		
 		auto funs = hana::drop_back(hana::make_tuple(
 			#ifdef HBRS_MPL_ENABLE_MATLAB
-			[](auto && a, auto keep, auto economy, auto center) {
-				return detail::pca_filter_impl_ml_matrix{}(hbrs::mpl::make_ml_matrix(HBRS_MPL_FWD(a)), keep, {economy, center});
+			[](auto && a, auto keep, auto economy, auto center, auto normalize) {
+				return detail::pca_filter_impl_ml_matrix{}(hbrs::mpl::make_ml_matrix(HBRS_MPL_FWD(a)), keep, {economy, center, normalize});
 			},
 			#endif
 			
 			#ifdef HBRS_MPL_ENABLE_ELEMENTAL
-			[](auto && a, auto keep, auto economy, auto center) {
-				return detail::pca_filter_impl_el_matrix{}(hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a)), keep, {economy, center});
+			[](auto && a, auto keep, auto economy, auto center, auto normalize) {
+				return detail::pca_filter_impl_el_matrix{}(hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a)), keep, {economy, center, normalize});
 			},
-			[&m_, &n_](auto && a, auto keep, auto economy, auto center) {
+			[&m_, &n_](auto && a, auto keep, auto economy, auto center, auto normalize) {
 				static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
 				
 				if constexpr(
@@ -127,7 +130,7 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 							hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a))
 						),
 						keep,
-						{economy, center}
+						{economy, center, normalize}
 					);
 				}
 			},
@@ -139,10 +142,10 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 		std::vector<bool> filter((DOF < n_.value && economy) ? DOF : std::min(m_.value, n_.value), keep);
 		
 		int fun_nr = 0;
-		auto results = hana::transform(funs, [&dataset, &filter, &economy, &center, &fun_nr](auto f) {
+		auto results = hana::transform(funs, [&dataset, &filter, &economy, &center, &normalize, &fun_nr](auto f) {
 			BOOST_TEST_MESSAGE("calling impl nr " << fun_nr);
 			++fun_nr;
-			return f(dataset, filter, economy, center); }
+			return f(dataset, filter, economy, center, normalize); }
 		);
 		
 		if constexpr(hana::length(results) >= 2u) {
@@ -175,7 +178,7 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 		{
 			hana::for_each(
 				hana::make_range(hana::ushort_c<0>, hana::length(results)),
-				[&dataset, &results, &keep, &m_, &n_, &economy, &center](auto i) {
+				[&dataset, &results, &keep, &m_, &n_, &economy, &center, &normalize](auto i) {
 					auto const& result = hana::at(results, i);
 					
 					if constexpr(is_not_supported(result)) {

@@ -7,20 +7,25 @@
 % References:
 %  ${Matlab_ROOT_DIR}/toolbox/stats/stats/pca.m
 
-function [coeff,score,latent,mu] = pca_level2(A, Economy, Center)
+function [coeff,score,latent,mu] = pca_level2(A, Economy, Center, Normalize)
     coder.varsize('A', 'x');
     
     x = A; % make copy of A in order to keep A constant / untouched
     
     [m,n] = size(x);
     
+    if Normalize
+        vVariableWeights = 1./var(x,0);
+        % code equals:
+        %  vVariableWeights = 1./wnanvar(x,ones(1,m,'like',x),1)
+    else
+        vVariableWeights = ones(1,n,'like',x);
+    end
+    
     DOF=m-Center;
     
     if Center
-        % NOTE: If MATLAB cannot find wnanmean, then you have to add its parent folder your search path: 
-        %       ${Matlab_ROOT_DIR}/toolbox/stats/classreg/+classreg/+learning/+internal/
-        mu = wnanmean(x, ones(1,m,'like',x));
-        %mu = mean(x);
+        mu = mean(x);
     else
         mu = zeros(1,n,'like',x);
     end
@@ -29,10 +34,19 @@ function [coeff,score,latent,mu] = pca_level2(A, Economy, Center)
         x = bsxfun(@minus,x,mu);
     end
     
+    PhiSqrt = sqrt(vVariableWeights);
+    if Normalize
+        x = bsxfun(@times, x, PhiSqrt);
+    end
+    
     if Economy
         [U,S,coeff] = svd(x, 'econ');
     else
         [U,S,coeff] = svd(x, 0);
+    end
+    
+    if Normalize
+        coeff = bsxfun(@times, coeff, 1./PhiSqrt');
     end
     
     S = diag(S);

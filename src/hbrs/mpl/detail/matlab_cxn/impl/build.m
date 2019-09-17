@@ -34,7 +34,7 @@ function build(bin_dir, src_dir, build_type)
     flags = { flags{:}, 'noop'};
     
     matrix_double_type = coder.typeof(double(0), [Inf Inf]);
-    mean_mode_type = coder.newtype('mean_mode');
+    matrix_dim_type = coder.newtype('matrix_dim');
     double_type = coder.typeof(double(0));
     bool_type = coder.typeof(logical(true));
     decompose_mode_type = coder.newtype('decompose_mode');
@@ -45,23 +45,32 @@ function build(bin_dir, src_dir, build_type)
     matrix_index_type = coder.cstructname(matrix_index_type ,'emxArrayIndex');
     
     for fun = {'bidiag_level0' }
-        flags = {flags{:}, fun{1}, '-args', {matrix_double_type, decompose_mode_type} };
+        flags = {flags{:}, fun{1}, '-args', ...
+            {matrix_double_type, decompose_mode_type} 
+        };
     end
     
     for fun = {'svd_level0', 'svd_level1' }
-        flags = {flags{:}, fun{1}, '-args', {matrix_double_type, decompose_mode_type} };
+        flags = {flags{:}, fun{1}, '-args', ...
+            {matrix_double_type, decompose_mode_type}
+        };
     end
     
     for fun = {'pca_level0', 'pca_level1', 'pca_level2'}
-        flags = {flags{:}, fun{1}, '-args', {matrix_double_type, bool_type, bool_type} };
+        flags = {flags{:}, fun{1}, '-args', ...
+            {matrix_double_type, bool_type, bool_type, bool_type}
+        };
     end
     
     for fun = {'pca_filter_level0'}
-        flags = {flags{:}, fun{1}, '-args', {matrix_double_type, vector_bool_type, bool_type, bool_type} };
+        flags = {flags{:}, fun{1}, '-args', ...
+            {matrix_double_type, vector_bool_type, bool_type, bool_type, bool_type} ...
+        };
     end
     
     flags = { flags{:}, 'transpose_m', '-args', {matrix_double_type}};
-    flags = { flags{:}, 'mean_m', '-args', {matrix_double_type, mean_mode_type}};
+    flags = { flags{:}, 'mean_m', '-args', {matrix_double_type, matrix_dim_type}};
+    flags = { flags{:}, 'variance_m', '-args', {matrix_double_type, double_type, matrix_dim_type}};
     flags = { flags{:}, 'multiply_mm', '-args', {matrix_double_type, matrix_double_type}};
     flags = { flags{:}, 'plus_mm', '-args', {matrix_double_type, matrix_double_type}};
     flags = { flags{:}, 'plus_ms', '-args', {matrix_double_type, double_type}};

@@ -57,7 +57,7 @@ auto
 pca_filter_impl_el_matrix::operator()(
 	Matrix && a,
 	std::function<bool(El::Int)> const& keep,
-	pca_control<bool,bool> const& ctrl
+	pca_control<bool,bool,bool> const& ctrl
 ) const {
 	
 	auto a_sz = (*size)(a);
@@ -101,7 +101,7 @@ auto
 pca_filter_impl_el_matrix::operator()(
 	Matrix && a,
 	std::vector<bool> const& keep,
-	pca_control<bool,bool> const& ctrl
+	pca_control<bool,bool,bool> const& ctrl
 ) const {
 	auto a_sz = (*size)(a);
 	auto a_m = (*m)(a_sz);

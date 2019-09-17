@@ -121,6 +121,53 @@ template <
 	typename RingL, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap WrappingL,
 	typename RingR, El::Dist ColumnwiseR, El::Dist RowwiseR, El::DistWrap WrappingR,
 	typename std::enable_if_t<
+		std::is_convertible_v<RingR, RingL>
+	>*
+>
+decltype(auto)
+times_impl_el_dist_matrix_expand_expr_el_dist_matrix::operator()(
+	el_dist_matrix<RingL, ColumnwiseL, RowwiseL, WrappingL> & lhs,
+	expression<
+		expand_t,
+		std::tuple<
+			el_dist_column_vector<RingR, ColumnwiseR, RowwiseR, WrappingR> const&,
+			matrix_size<El::Int, El::Int> const&
+		>
+	> rhs
+) const {
+	auto const& from = hana::at_c<0>(rhs.operands());
+	auto const& to_size = hana::at_c<1>(rhs.operands());
+	
+	auto lhs_sz = (*size)(lhs);
+	auto rhs_sz = to_size;
+	auto lhs_m = (*m)(lhs_sz);
+	auto lhs_n = (*n)(lhs_sz);
+	auto rhs_m = (*m)(rhs_sz);
+	auto rhs_n = (*n)(rhs_sz);
+	
+	if ( (lhs_m != rhs_m) || (lhs_n != rhs_n)) {
+		BOOST_THROW_EXCEPTION((
+			incompatible_matrices_exception{}
+			<< errinfo_el_matrix_sizes{{lhs_sz, rhs_sz}}
+		));
+	}
+	
+	//TODO: Replace with faster alg
+	BOOST_ASSERT(from.length() == lhs.m());
+	
+	for(El::Int j = 0; j < lhs_n; ++j) {
+		for(El::Int i = 0; i < lhs_m; ++i) {
+			lhs.data().Set(i,j, lhs.data().Get(i,j) * from.data().Get(i,0));
+		}
+	}
+	
+	return lhs;
+}
+
+template <
+	typename RingL, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap WrappingL,
+	typename RingR, El::Dist ColumnwiseR, El::Dist RowwiseR, El::DistWrap WrappingR,
+	typename std::enable_if_t<
 		boost::mpl::is_not_void_<std::common_type_t<RingL, RingR>>::value
 	>*
 >
@@ -139,6 +186,27 @@ times_impl_el_dist_matrix_expand_expr_el_dist_matrix::operator()(
 	return (*this)(el_dist_matrix<RingL, ColumnwiseL, RowwiseL, WrappingL>{lhs}, rhs);
 }
 
+template <
+	typename RingL, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap WrappingL,
+	typename RingR, El::Dist ColumnwiseR, El::Dist RowwiseR, El::DistWrap WrappingR,
+	typename std::enable_if_t<
+		boost::mpl::is_not_void_<std::common_type_t<RingL, RingR>>::value
+	>*
+>
+auto
+times_impl_el_dist_matrix_expand_expr_el_dist_matrix::operator()(
+	el_dist_matrix<RingL, ColumnwiseL, RowwiseL, WrappingL> const& lhs,
+	expression<
+		expand_t,
+		std::tuple<
+			el_dist_column_vector<RingR, ColumnwiseR, RowwiseR, WrappingR> const&,
+			matrix_size<El::Int, El::Int> const&
+		>
+	> rhs
+) const {
+	//TODO: Implement more efficiently: no double assignment, first for copying and second for assignment above.
+	return (*this)(el_dist_matrix<RingL, ColumnwiseL, RowwiseL, WrappingL>{lhs}, rhs);
+}
 
 template <
 	typename RingL, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap WrappingL,
@@ -154,6 +222,28 @@ times_impl_el_dist_matrix_expand_expr_el_dist_matrix::operator()(
 		expand_t,
 		std::tuple<
 			el_dist_row_vector<RingR, ColumnwiseR, RowwiseR, WrappingR> const&,
+			matrix_size<El::Int, El::Int> const&
+		>
+	> rhs
+) const {
+	(*this)(lhs, rhs);
+	return HBRS_MPL_FWD(lhs);
+}
+
+template <
+	typename RingL, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap WrappingL,
+	typename RingR, El::Dist ColumnwiseR, El::Dist RowwiseR, El::DistWrap WrappingR,
+	typename std::enable_if_t<
+		boost::mpl::is_not_void_<std::common_type_t<RingL, RingR>>::value
+	>*
+>
+auto
+times_impl_el_dist_matrix_expand_expr_el_dist_matrix::operator()(
+	el_dist_matrix<RingL, ColumnwiseL, RowwiseL, WrappingL> && lhs,
+	expression<
+		expand_t,
+		std::tuple<
+			el_dist_column_vector<RingR, ColumnwiseR, RowwiseR, WrappingR> const&,
 			matrix_size<El::Int, El::Int> const&
 		>
 	> rhs

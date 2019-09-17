@@ -74,6 +74,17 @@ divide_impl_el_matrix_scalar::operator()(el_matrix<Ring> a, Ring const& b) const
 	return a;
 }
 
+template <
+	typename Scalar,
+	typename std::enable_if_t<
+		std::is_arithmetic_v<Scalar>
+	>*
+>
+auto
+divide_impl_el_complex_scalar::operator()(El::Complex<Scalar> const& a, Scalar const& b) const {
+	return a/b;
+}
+
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 

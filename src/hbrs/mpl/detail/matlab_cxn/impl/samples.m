@@ -1,4 +1,4 @@
-% Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+% Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
 % 
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -36,6 +36,9 @@ function [DS] = samples()
         [ 1     2
           3     4
           5     6
-          7     8 ] ...
+          7     8 ], ...
+        [ 12.0  -51.0   4.0
+          06.0  167.0 -68.0
+          -4.0   24.0 -41.0 ] ...
    };
 end

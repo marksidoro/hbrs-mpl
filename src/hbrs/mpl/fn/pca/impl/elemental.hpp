@@ -41,6 +41,7 @@
 #include <hbrs/mpl/fn/svd.hpp>
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/fn/divide.hpp>
+#include <hbrs/mpl/fn/rdivide.hpp>
 #include <hbrs/mpl/fn/transform.hpp>
 #include <hbrs/mpl/fn/power.hpp>
 #include <hbrs/mpl/fn/first.hpp>
@@ -56,17 +57,28 @@
 #include <hbrs/mpl/fn/times.hpp>
 #include <hbrs/mpl/fn/select.hpp>
 #include <hbrs/mpl/fn/diag.hpp>
+#include <hbrs/mpl/fn/variance.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
+namespace {
+
+template<typename Matrix>
+decltype(auto)
+ones(Matrix && m) {
+	El::Ones(m.data(), m.data().Height(), m.data().Width());
+	return HBRS_MPL_FWD(m);
+}
+
+/* unnamed namespace */ }
 
 /* C++ code is equivalent to MATLAB code in file src/hbrs/mpl/detail/matlab_cxn/impl/pca_level2.m */
 template <typename Ring>
 auto
 pca_impl_el_matrix::operator()(
 	el_matrix<Ring> const& a,
-	pca_control<bool,bool> const& ctrl
+	pca_control<bool,bool,bool> const& ctrl
 ) const {
 	typedef std::decay_t<Ring> _Ring_;
 	
@@ -76,6 +88,17 @@ pca_impl_el_matrix::operator()(
 	auto const a_m = (*m)(a_sz);
 	auto const a_n = (*n)(a_sz);
 	//MATLAB>> [m,n] = size(x);
+	
+	el_row_vector<_Ring_> vw = ctrl.normalize()
+		? (*rdivide)(1., variance(columns(a), 0))
+		: ones(el_row_vector<_Ring_>{a_n});
+	//MATLAB>> if Normalize
+	//MATLAB>>     vVariableWeights = 1./var(x,0);
+	//MATLAB>>     % code equals:
+	//MATLAB>>     %  vVariableWeights = 1./wnanvar(x,ones(1,m,'like',x),1)
+	//MATLAB>> else
+	//MATLAB>>     vVariableWeights = ones(1,n,'like',x);
+	//MATLAB>> end
 	
 	auto const DOF = a_m - (ctrl.center() ? 1_c : 0_c);
 	//MATLAB>> DOF=m-Center;
@@ -87,10 +110,20 @@ pca_impl_el_matrix::operator()(
 	//MATLAB>> 	mu = zeros(1,n,'like',x);
 	//MATLAB>> end
 	
-	el_matrix<_Ring_> b = (*minus)(a, (*expand)(mu, a_sz));
-	//MATLAB>> x = bsxfun(@minus,x,mu);
+	el_matrix<_Ring_> && cntr = ctrl.center() ? (*minus)(a, (*expand)(mu, a_sz)) : el_matrix<_Ring_>{a};
+	//MATLAB>> if Center
+	//MATLAB>>     x = bsxfun(@minus,x,mu);
+	//MATLAB>> end
 	
-	auto usv = (*svd)(b, ctrl.economy() ? decompose_mode::economy : decompose_mode::zero);
+	auto sqrt = [](auto x) { return power(x, 1./2.); };
+	auto phi_sqrt = transform(vw, sqrt);
+	el_matrix<_Ring_> && stdz = ctrl.normalize() ? (*times)(cntr, expand(phi_sqrt, a_sz)) : cntr;
+	//MATLAB>> PhiSqrt = sqrt(vVariableWeights);
+	//MATLAB>> if Normalize
+	//MATLAB>>     x = bsxfun(@times, x, PhiSqrt);
+	//MATLAB>> end
+	
+	auto usv = (*svd)(stdz, ctrl.economy() ? decompose_mode::economy : decompose_mode::zero);
 	auto && U = (*at)(usv, svd_u{});
 	el_matrix<_Ring_> S{0,0};
 	{
@@ -111,6 +144,14 @@ pca_impl_el_matrix::operator()(
 	//MATLAB>> 	[U,S,coeff] = svd(x, 'econ');
 	//MATLAB>> else
 	//MATLAB>> 	[U,S,coeff] = svd(x, 0);
+	//MATLAB>> end
+	
+	coeff = ctrl.normalize()
+		? (*times)(coeff, expand( rdivide(1., transpose(phi_sqrt)), size(coeff)) )
+		: coeff;
+	
+	//MATLAB>> if Normalize
+	//MATLAB>>     coeff = bsxfun(@times, coeff, 1./PhiSqrt');
 	//MATLAB>> end
 	
 	auto Sd = (*diag)(S);
@@ -230,7 +271,7 @@ template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrap
 auto
 pca_impl_el_dist_matrix::operator()(
 	el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& a,
-	pca_control<bool,bool> const& ctrl
+	pca_control<bool,bool,bool> const& ctrl
 ) const {
 	typedef std::decay_t<Ring> _Ring_;
 	static_assert(!std::is_reference<Ring>::value && !std::is_const<Ring>::value, "");
@@ -242,6 +283,17 @@ pca_impl_el_dist_matrix::operator()(
 	auto const a_m = (*m)(a_sz);
 	auto const a_n = (*n)(a_sz);
 	//MATLAB>> [m,n] = size(x);
+	
+	el_dist_row_vector<_Ring_, El::STAR, El::STAR> vw = ctrl.normalize()
+		? (*rdivide)(1., variance(columns(a), 0))
+		: ones(el_dist_row_vector<_Ring_, El::STAR, El::STAR>{a.data().Grid(), a_n});
+	//MATLAB>> if Normalize
+	//MATLAB>>     vVariableWeights = 1./var(x,0);
+	//MATLAB>>     % code equals:
+	//MATLAB>>     %  vVariableWeights = 1./wnanvar(x,ones(1,m,'like',x),1)
+	//MATLAB>> else
+	//MATLAB>>     vVariableWeights = ones(1,n,'like',x);
+	//MATLAB>> end
 	
 	auto const DOF = a_m - (ctrl.center() ? 1_c : 0_c);
 	//MATLAB>> DOF=m-Center;
@@ -255,10 +307,20 @@ pca_impl_el_dist_matrix::operator()(
 	//MATLAB>> 	mu = zeros(1,n,'like',x);
 	//MATLAB>> end
 	
-	auto b = (*minus)(a, (*expand)(mu, a_sz));
-	//MATLAB>> x = bsxfun(@minus,x,mu);
+	auto && cntr = ctrl.center() ? (*minus)(a, (*expand)(mu, a_sz)) : el_dist_matrix<_Ring_, Columnwise, Rowwise, Wrapping>{a};
+	//MATLAB>> if Center
+	//MATLAB>>     x = bsxfun(@minus,x,mu);
+	//MATLAB>> end
 	
-	auto usv = (*svd)(b, ctrl.economy() ? decompose_mode::economy : decompose_mode::zero);
+	auto sqrt = [](auto x) { return power(x, 1./2.); };
+	auto phi_sqrt = transform(vw, sqrt);
+	auto && stdz = ctrl.normalize() ? (*times)(cntr, expand(phi_sqrt, a_sz)) : cntr;
+	//MATLAB>> PhiSqrt = sqrt(vVariableWeights);
+	//MATLAB>> if Normalize
+	//MATLAB>>     x = bsxfun(@times, x, PhiSqrt);
+	//MATLAB>> end
+	
+	auto usv = (*svd)(stdz, ctrl.economy() ? decompose_mode::economy : decompose_mode::zero);
 	
 	auto && U = (*at)(usv, svd_u{});
 	auto && S = (*at)(usv, svd_s{});
@@ -267,6 +329,13 @@ pca_impl_el_dist_matrix::operator()(
 	//MATLAB>> 	[U,S,coeff] = svd(x, 'econ');
 	//MATLAB>> else
 	//MATLAB>> 	[U,S,coeff] = svd(x, 0);
+	//MATLAB>> end
+	
+	coeff = ctrl.normalize()
+		? (*times)(coeff, expand( rdivide(1., transpose(phi_sqrt)), size(coeff)) )
+		: coeff;
+	//MATLAB>> if Normalize
+	//MATLAB>>     coeff = bsxfun(@times, coeff, 1./PhiSqrt');
 	//MATLAB>> end
 	
 	auto Sd = (*diag)(S);

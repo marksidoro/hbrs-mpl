@@ -45,19 +45,32 @@ function pca_filter_test()
 
         for i = 1:funs_sz
             fun = funs{1,i};
-            % TODO: test Economy:=false and Center:=false
+            % TODO: test other cases, e.g. Economy:=false,
+            %       Center:=false or Normalize := false
             
             [data{1,i}, latent{1,i}] = ...
-                fun(dataset, diag(ones(p)), true, true);
+                fun(dataset, diag(ones(p)), ...
+                    true, ... % Economy
+                    true, ... % Center
+                    true ... % Normalize
+                );
             
             [data{1,i+funs_sz}, latent{1,i+funs_sz}] = ...
-                fun(dataset, diag(zeros(p)), true, true);
+                fun(dataset, diag(zeros(p)), ...
+                    true, ... % Economy
+                    true, ... % Center
+                    true ... % Normalize
+                );
             
             for j = 1:p
                 filtered = diag(zeros(p));
                 filtered(j) = 1;
                 [data{1,i+funs_sz*(1+j)}, latent{1,i+funs_sz*(1+j)}] = ...
-                    fun(dataset, filtered, true, true);
+                    fun(dataset, filtered, ...
+                        true, ... % Economy
+                        true, ... % Center
+                        true ... % Normalize
+                    );
             end
         end
 
@@ -103,11 +116,19 @@ function pca_test()
 
         for i = 1:funs_sz
             fun = funs{1,i};
-            % TODO: test Center:=false
-            [coeffs{1,i},scores{1,i},latents{1,i}] ...
-                = fun(dataset, true, true);
-            [coeffs{1,i+funs_sz},scores{1,i+funs_sz},latents{1,i+funs_sz}] ...
-                = fun(dataset, false, true);
+            % TODO: test other cases, e.g. Center:=false or Normalize := false
+            [coeffs{1,i},scores{1,i},latents{1,i}] = ...
+                fun(dataset, ...
+                    true, ... % Economy
+                    true, ... % Center
+                    true ... % Normalize
+                );
+            [coeffs{1,i+funs_sz},scores{1,i+funs_sz},latents{1,i+funs_sz}] = ...
+                fun(dataset, ...
+                    false, ... % Economy
+                    true, ... % Center
+                    true... % Normalize
+                );
         end
 
         for i = 1:funs_sz-1

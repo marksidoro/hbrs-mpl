@@ -21,6 +21,7 @@
 
 #ifdef HBRS_MPL_ENABLE_MATLAB
 	#include <hbrs/mpl/dt/ml_matrix/fwd.hpp>
+	#include <hbrs/mpl/dt/ml_vector/fwd.hpp>
 #endif
 
 #include <boost/hana/tuple.hpp>
@@ -36,15 +37,25 @@ struct transpose_impl_ml_matrix {
 	operator()(ml_matrix<real_T> const& a) const;
 };
 
+struct transpose_impl_ml_vector {
+	ml_row_vector<real_T>
+	operator()(ml_column_vector<real_T> const& v) const;
+	
+	ml_column_vector<real_T>
+	operator()(ml_row_vector<real_T> const& v) const;
+};
+
 #else
 struct transpose_impl_ml_matrix {};
+struct transpose_impl_ml_vector {};
 #endif
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
 #define HBRS_MPL_FN_TRANSPOSE_IMPLS_MATLAB boost::hana::make_tuple(                                                    \
-		hbrs::mpl::detail::transpose_impl_ml_matrix{}                                                                  \
+		hbrs::mpl::detail::transpose_impl_ml_matrix{},                                                                 \
+		hbrs::mpl::detail::transpose_impl_ml_vector{}                                                                  \
 	)
 
 #endif // !HBRS_MPL_FN_TRANSPOSE_FWD_MATLAB_HPP

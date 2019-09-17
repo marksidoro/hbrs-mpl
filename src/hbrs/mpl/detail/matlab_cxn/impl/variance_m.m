@@ -1,4 +1,4 @@
-% Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+% Copyright (c) 2019 Jakob Meng, <jakobmeng@web.de>
 % 
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -13,9 +13,16 @@
 % You should have received a copy of the GNU General Public License
 % along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-classdef mean_mode < int32
-    enumeration
-        row_mean(1),
-        column_mean(2)
+function [b] = variance_m(A, weight, dim)
+    coder.varsize('A');
+    
+    switch(dim)
+        case matrix_dim.column
+            b = var(A, weight, 1);
+        case matrix_dim.row
+            b = var(A, weight, 2);
+        otherwise
+            assert(false);
+            b = [];
     end
 end

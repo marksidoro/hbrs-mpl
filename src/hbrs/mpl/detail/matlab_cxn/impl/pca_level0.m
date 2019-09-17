@@ -27,10 +27,17 @@
 %  
 %  Error in ==> xzsvdc Line: 421 Column: 89
 
-function [coeff,score,latent,mu] = pca_level0(A, Economy, Center)
+function [coeff,score,latent,mu] = pca_level0(A, Economy, Center, Normalize)
     coder.varsize('A', 'x');
     
     x = A; % make copy of A in order to keep A constant / untouched
-    [m,n] = size(x);
-    [coeff,score,latent,~,~,mu] = pca(x, 'Economy', Economy, 'Centered', Center);
+    [~,n] = size(x);
+    
+    if Normalize
+        [coeff,score,latent,~,~,mu] = pca(x, 'Economy', Economy, ...
+            'Centered', Center, 'VariableWeights', 'variance');
+    else
+        [coeff,score,latent,~,~,mu] = pca(x, 'Economy', Economy, ...
+            'Centered', Center, 'VariableWeights', ones(1,n,'like',x));
+    end
 end

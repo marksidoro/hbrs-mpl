@@ -1,4 +1,4 @@
-% Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+% Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
 % 
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@ function [b] = mean_m(A, dim)
     coder.varsize('A');
     
     switch(dim)
-        case mean_mode.column_mean
+        case matrix_dim.column
             b = mean(A, 1);
-        case mean_mode.row_mean
+        case matrix_dim.row
             b = mean(A, 2);
         otherwise
             assert(false);

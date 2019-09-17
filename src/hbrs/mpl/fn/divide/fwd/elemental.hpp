@@ -75,19 +75,32 @@ struct divide_impl_el_matrix_scalar {
 	operator()(el_matrix<Ring> a, Ring const& b) const;
 };
 
+struct divide_impl_el_complex_scalar {
+	template <
+		typename Scalar,
+		typename std::enable_if_t<
+			std::is_arithmetic_v<Scalar>
+		>* = nullptr
+	>
+	auto
+	operator()(El::Complex<Scalar> const& a, Scalar const& b) const;
+};
+
 #else
 struct divide_impl_el_vector_scalar {};
 struct divide_impl_el_dist_vector_scalar {};
 struct divide_impl_el_matrix_scalar {};
+struct divide_impl_el_complex_scalar {};
 #endif
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_DIVIDE_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                        \
-		hbrs::mpl::detail::divide_impl_el_vector_scalar{},                                                                \
-		hbrs::mpl::detail::divide_impl_el_dist_vector_scalar{},                                                           \
-		hbrs::mpl::detail::divide_impl_el_matrix_scalar{}                                                                 \
+#define HBRS_MPL_FN_DIVIDE_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                    \
+		hbrs::mpl::detail::divide_impl_el_vector_scalar{},                                                             \
+		hbrs::mpl::detail::divide_impl_el_dist_vector_scalar{},                                                        \
+		hbrs::mpl::detail::divide_impl_el_matrix_scalar{},                                                             \
+		hbrs::mpl::detail::divide_impl_el_complex_scalar{}                                                             \
 	)
 
 #endif // !HBRS_MPL_FN_DIVIDE_FWD_ELEMENTAL_HPP

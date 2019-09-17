@@ -36,7 +36,7 @@
 	template<typename Sequence>                                                                                        \
 	struct cname {                                                                                                     \
 		template<                                                                                                      \
-			typename Sequence_,                                                                                        \
+			typename Sequence_ = Sequence,                                                                             \
 			typename std::enable_if_t<                                                                                 \
 				detail::is_braces_constructible<Sequence, Sequence_&&>::value &&                                       \
 				!std::is_base_of<cname, std::remove_reference_t<Sequence_> >::value                                    \

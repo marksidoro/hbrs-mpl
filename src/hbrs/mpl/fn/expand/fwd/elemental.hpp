@@ -62,7 +62,15 @@ struct expand_impl_el_row_vector {
 	) const;
 };
 
-//TODO: Add expand_impl_el_column_vector
+struct expand_impl_el_column_vector {
+	template<typename Ring>
+	auto
+	operator()(
+		el_column_vector<Ring> const& v,
+		matrix_size<El::Int, El::Int> const& sz
+	) const;
+};
+
 struct expand_impl_el_dist_row_vector {
 	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 	constexpr auto
@@ -72,12 +80,21 @@ struct expand_impl_el_dist_row_vector {
 	) const;
 };
 
-//TODO: Add expand_impl_el_dist_column_vector
+struct expand_impl_el_dist_column_vector {
+	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
+	constexpr auto
+	operator()(
+		el_dist_column_vector<Ring, Columnwise, Rowwise, Wrapping> const& v,
+		matrix_size<El::Int, El::Int> const& sz
+	) const;
+};
 
 #else
-struct expand_impl_smr_el_matrix {};
-struct expand_impl_el_row_vector {};
-struct expand_impl_el_dist_row_vector {};
+struct expand_impl_smr_el_matrix{};
+struct expand_impl_el_row_vector{};
+struct expand_impl_el_column_vector{};
+struct expand_impl_el_dist_row_vector{};
+struct expand_impl_el_dist_column_vector{};
 #endif
 
 /* namespace detail */ }
@@ -86,7 +103,9 @@ HBRS_MPL_NAMESPACE_END
 #define HBRS_MPL_FN_EXPAND_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                    \
 		hbrs::mpl::detail::expand_impl_smr_el_matrix{},                                                                \
 		hbrs::mpl::detail::expand_impl_el_row_vector{},                                                                \
-		hbrs::mpl::detail::expand_impl_el_dist_row_vector{}                                                            \
+		hbrs::mpl::detail::expand_impl_el_column_vector{},                                                             \
+		hbrs::mpl::detail::expand_impl_el_dist_row_vector{},                                                           \
+		hbrs::mpl::detail::expand_impl_el_dist_column_vector{}                                                         \
 	)
 
 #endif // !HBRS_MPL_FN_EXPAND_FWD_ELEMENTAL_HPP

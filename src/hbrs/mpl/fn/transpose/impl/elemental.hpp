@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,9 @@
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/dt/el_matrix.hpp>
+#include <hbrs/mpl/dt/el_vector.hpp>
 #include <hbrs/mpl/dt/el_dist_matrix.hpp>
+#include <hbrs/mpl/dt/el_dist_vector.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
@@ -44,7 +46,29 @@ transpose_impl_el_matrix::operator()(Matrix && m) const {
 	return make_el_matrix(std::move(b));
 }
 
-
+template<
+	typename Vector,
+	typename std::enable_if_t<
+		std::is_same_v< hana::tag_of_t<Vector>, el_column_vector_tag > ||
+		std::is_same_v< hana::tag_of_t<Vector>, el_row_vector_tag >
+	>*
+>
+auto
+transpose_impl_el_vector::operator()(Vector && v) const {
+	typedef decltype(v.at(0)) Ring;
+	typedef std::decay_t<Ring> _Ring_;
+	
+	El::Matrix<_Ring_> b;
+	El::Transpose(HBRS_MPL_FWD(v).data(), b);
+	
+	return hana::make<
+		std::conditional_t<
+			std::is_same_v< hana::tag_of_t<Vector>, el_column_vector_tag >,
+			el_row_vector_tag,
+			el_column_vector_tag
+		>
+	>(std::move(b));
+}
 
 template<
 	typename DistMatrix,
@@ -61,6 +85,30 @@ transpose_impl_el_dist_matrix::operator()(DistMatrix && m) const {
 	Transposed b{m.data().Grid()};
 	El::Transpose(HBRS_MPL_FWD(m).data(), b);
 	return make_el_dist_matrix(std::move(b));
+}
+
+template<
+	typename DistVector,
+	typename std::enable_if_t<
+		std::is_same_v< hana::tag_of_t<DistVector>, el_dist_column_vector_tag > ||
+		std::is_same_v< hana::tag_of_t<DistVector>, el_dist_row_vector_tag >
+	>*
+>
+auto
+transpose_impl_el_dist_vector::operator()(DistVector && v) const {
+	typedef decltype(v.data()) ElDistMatrix;
+	typedef std::decay_t<ElDistMatrix> _ElDistMatrix_;
+	typedef typename _ElDistMatrix_::transType Transposed;
+	
+	Transposed b{v.data().Grid()};
+	El::Transpose(HBRS_MPL_FWD(v).data(), b);
+	return hana::make<
+		std::conditional_t<
+			std::is_same_v< hana::tag_of_t<DistVector>, el_dist_column_vector_tag >,
+			el_dist_row_vector_tag,
+			el_dist_column_vector_tag
+		>
+	>(std::move(b));
 }
 
 /* namespace detail */ }

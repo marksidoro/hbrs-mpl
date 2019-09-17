@@ -24,13 +24,15 @@
 #include <boost/hana/core/to.hpp>
 #include <hbrs/mpl/fn/at.hpp>
 #include <algorithm>
+#include <initializer_list>
 
 #define _HBRS_MPL_DEF_ML_VEC1(vector_kind, base_type)                                                                  \
 	HBRS_MPL_NAMESPACE_BEGIN                                                                                           \
                                                                                                                        \
 	template<>                                                                                                         \
 	struct ml_ ## vector_kind ## _vector<base_type> {                                                                  \
-		                                                                                                               \
+		friend struct ml_column_vector<base_type>;                                                                     \
+		friend struct ml_row_vector<base_type>;                                                                        \
 		                                                                                                               \
 		ml_ ## vector_kind ## _vector()                                                                                \
 		: ptr_{nullptr, nullptr} {                                                                                     \
@@ -42,7 +44,19 @@
 		ml_ ## vector_kind ## _vector(int size)                                                                        \
 		: ptr_{emxCreateND_ ## base_type(1, &size), emxDestroyArray_ ## base_type} {}                                  \
 		                                                                                                               \
-		ml_ ## vector_kind ## _vector(ml_ ## vector_kind ## _vector const& rhs) : ml_ ## vector_kind ## _vector() {    \
+		/* TODO: Do we really want to allow construction of column vectors from row vectors and vice versa? */         \
+		ml_ ## vector_kind ## _vector(ml_column_vector<base_type> const& rhs) : ml_ ## vector_kind ## _vector() {      \
+			copy_from(rhs);                                                                                            \
+		}                                                                                                              \
+		                                                                                                               \
+		/* TODO: Do we really want to allow construction of column vectors from row vectors and vice versa? */         \
+		ml_ ## vector_kind ## _vector(ml_row_vector<base_type> const& rhs) : ml_ ## vector_kind ## _vector() {         \
+			copy_from(rhs);                                                                                            \
+		}                                                                                                              \
+		                                                                                                               \
+	private:                                                                                                           \
+		template<typename T>                                                                                           \
+		void copy_from(T const& rhs) {                                                                                 \
 			if (rhs.ptr_ == nullptr) { return; }                                                                       \
 			                                                                                                           \
 			auto && v = (*rhs.ptr_);                                                                                   \
@@ -56,6 +70,13 @@
                                                                                                                        \
 				std::copy(v.data, v.data + sz, (*ptr_).data);                                                          \
 			}                                                                                                          \
+		}                                                                                                              \
+		                                                                                                               \
+	public:                                                                                                            \
+		                                                                                                               \
+		ml_ ## vector_kind ## _vector(std::initializer_list<base_type> const& data)                                    \
+		: ml_ ## vector_kind ## _vector(data.size()) {                                                                 \
+			std::copy(data.begin(), data.end(), (*ptr_).data);                                                         \
 		}                                                                                                              \
 		                                                                                                               \
 		ml_ ## vector_kind ## _vector(ml_ ## vector_kind ## _vector && rhs) : ml_ ## vector_kind ## _vector() {        \

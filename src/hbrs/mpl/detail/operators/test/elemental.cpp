@@ -95,6 +95,9 @@ BOOST_AUTO_TEST_SUITE(elemental_test)
 using hbrs::mpl::detail::environment_fixture;
 BOOST_TEST_GLOBAL_FIXTURE(environment_fixture);
 
+//TODO: Implement rdivide tests
+//TODO: Implement transpose tests for el_dist_row_vector/el_dist_column_vector
+
 BOOST_AUTO_TEST_CASE(matrix_m_n_size) {
 	using namespace hbrs::mpl;
 	
@@ -995,7 +998,7 @@ BOOST_AUTO_TEST_CASE(matrix_expand) {
 	}
 }
 
-BOOST_AUTO_TEST_CASE(vector_expand) {
+BOOST_AUTO_TEST_CASE(row_vector_expand) {
 	using namespace hbrs::mpl;
 	
 	El::Matrix<double> rnd_rv;
@@ -1052,6 +1055,67 @@ BOOST_AUTO_TEST_CASE(vector_expand) {
 	for(El::Int i = 0; i < m4_m; ++i) {
 		for(El::Int j = 0; j < m4_n; ++j) {
 			BOOST_TEST((*at)(rv, j % m1_n) == (*at)(m4, matrix_index<El::Int, El::Int>{i, j}));
+		}
+	}
+}
+
+BOOST_AUTO_TEST_CASE(column_vector_expand) {
+	using namespace hbrs::mpl;
+	
+	El::Matrix<double> rnd_rv;
+	El::Uniform(rnd_rv, 5, 1);
+	auto rv = make_el_column_vector(rnd_rv);
+	auto rv_sz = (*size)(rv);
+	
+	auto const m1_sz = matrix_size<El::Int, El::Int>{rv_sz,   1};
+	auto const m2_sz = matrix_size<El::Int, El::Int>{rv_sz,   1*2};
+	auto const m3_sz = matrix_size<El::Int, El::Int>{rv_sz*2, 1};
+	auto const m4_sz = matrix_size<El::Int, El::Int>{rv_sz*2, 1*2};
+	
+	auto m1_m = (*m)(m1_sz);
+	auto m1_n = (*n)(m1_sz);
+	auto m2_m = (*m)(m2_sz);
+	auto m2_n = (*n)(m2_sz);
+	auto m3_m = (*m)(m3_sz);
+	auto m3_n = (*n)(m3_sz);
+	auto m4_m = (*m)(m4_sz);
+	auto m4_n = (*n)(m4_sz);
+	
+	auto m1 = (*expand)(rv, m1_sz);
+	auto m2 = (*expand)(rv, m2_sz);
+	auto m3 = (*expand)(rv, m3_sz);
+	auto m4 = (*expand)(rv, m4_sz);
+	
+	BOOST_TEST((*m)(size(m1)) == m1_m);
+	BOOST_TEST((*n)(size(m1)) == m1_n);
+	BOOST_TEST((*m)(size(m2)) == m2_m);
+	BOOST_TEST((*n)(size(m2)) == m2_n);
+	BOOST_TEST((*m)(size(m3)) == m3_m);
+	BOOST_TEST((*n)(size(m3)) == m3_n);
+	BOOST_TEST((*m)(size(m4)) == m4_m);
+	BOOST_TEST((*n)(size(m4)) == m4_n);
+	
+	for(El::Int i = 0; i < m1_m; ++i) {
+		for(El::Int j = 0; j < m1_n; ++j) {
+			BOOST_TEST((*at)(rv, i % m1_m) == (*at)(m1, matrix_index<El::Int, El::Int>{i, j}));
+		}
+	}
+	
+	for(El::Int i = 0; i < m2_m; ++i) {
+		for(El::Int j = 0; j < m2_n; ++j) {
+			BOOST_TEST((*at)(rv, i % m1_m) == (*at)(m2, matrix_index<El::Int, El::Int>{i, j}));
+		}
+	}
+	
+	for(El::Int i = 0; i < m3_m; ++i) {
+		for(El::Int j = 0; j < m3_n; ++j) {
+			BOOST_TEST((*at)(rv, i % m1_m) == (*at)(m3, matrix_index<El::Int, El::Int>{i, j}));
+		}
+	}
+	
+	for(El::Int i = 0; i < m4_m; ++i) {
+		for(El::Int j = 0; j < m4_n; ++j) {
+			BOOST_TEST((*at)(rv, i % m1_m) == (*at)(m4, matrix_index<El::Int, El::Int>{i, j}));
 		}
 	}
 }
@@ -1799,14 +1863,14 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 	
 	el_matrix<double> b = make_el_matrix(a);
 	
-	detail::pca_impl_el_matrix{}(b, make_pca_control(true,true));
+	detail::pca_impl_el_matrix{}(b, make_pca_control(true, true, false));
 	
 	pca_result<
 		el_matrix<double>,
 		el_matrix<double>,
 		el_column_vector<double>,
 		el_row_vector<double>
-	> r = (*pca)(b, make_pca_control(true,true));
+	> r = (*pca)(b, make_pca_control(true, true, false));
 	
 	auto && r_coeff = (*at)(r, pca_coeff{});
 	auto && r_score = (*at)(r, pca_score{});
@@ -2060,7 +2124,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_times) {
 	auto const b = make_el_dist_row_vector(
 		grid,
 		std::initializer_list<double>{
-			2.,2.,2.,
+			2.,2.,2.
 		}
 	);
 	
@@ -2077,8 +2141,33 @@ BOOST_AUTO_TEST_CASE(dist_matrix_times) {
 		)
 	);
 	
+	auto const d = make_el_dist_column_vector(
+		grid,
+		std::initializer_list<double>{
+			3.,
+			3.,
+			3.
+		}
+	);
+	
+	auto const e = make_el_dist_matrix(
+		grid,
+		make_el_matrix(
+			std::initializer_list<double>{
+				3.,6.,9.,
+				12.,15.,18.,
+				21.,24.,27.
+			},
+			make_matrix_size(3,3),
+			row_major_c
+		)
+	);
+	
 	auto rc0 = (*times)(a, expand(b, size(a)));
 	HBRS_MPL_TEST_MMEQ(c, rc0, false);
+	
+	auto re0 = (*times)(a, expand(d, size(a)));
+	HBRS_MPL_TEST_MMEQ(e, re0, false);
 }
 
 BOOST_AUTO_TEST_CASE(matrix_pca_filter, * utf::tolerance(_TOL)) {
@@ -2098,12 +2187,12 @@ BOOST_AUTO_TEST_CASE(matrix_pca_filter, * utf::tolerance(_TOL)) {
 	auto const b = make_el_matrix(a);
 	std::vector<bool> const keep(std::min((std::size_t)a_m, (std::size_t)a_n), true);
 	
-	detail::pca_filter_impl_el_matrix{}(b, keep, make_pca_control(true,true));
+	detail::pca_filter_impl_el_matrix{}(b, keep, make_pca_control(true, true, false));
 	
 	pca_filter_result<
 		el_matrix<double>,
 		el_column_vector<double>
-	> rslt = (*pca_filter)(b, keep, make_pca_control(true,true));
+	> rslt = (*pca_filter)(b, keep, make_pca_control(true, true, false));
 	
 	auto && data   = (*at)(rslt, pca_filter_data{});
 	auto && latent = (*at)(rslt, pca_filter_latent{});
