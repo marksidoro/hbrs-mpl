@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 
-#include <hbrs/mpl/dt/subsequence.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
 #include <hbrs/mpl/dt/smr.hpp>
 
@@ -99,31 +98,19 @@ struct submatrix {
 	template<typename Index>
 	constexpr auto
 	operator[](Index && i) & {
-		return make_subsequence(
-			smr<submatrix &, std::decay_t<Index>>{*this, HBRS_MPL_FWD(i)},
-			(*n)(o_),
-			(*n)(sz_)
-		);
+		return smr<submatrix &, std::decay_t<Index>>{*this, HBRS_MPL_FWD(i)};
 	}
 	
 	template<typename Index>
 	constexpr auto
 	operator[](Index && i) const& {
-		return make_subsequence(
-			smr<submatrix const&, std::decay_t<Index>>{*this, HBRS_MPL_FWD(i)},
-			(*n)(o_),
-			(*n)(sz_)
-		);
+		return smr<submatrix const&, std::decay_t<Index>>{*this, HBRS_MPL_FWD(i)};
 	}
 	
 	template<typename Index>
 	constexpr auto
 	operator[](Index && i) && {
-		return make_subsequence(
-			make_smr(std::move(*this), HBRS_MPL_FWD(i)),
-			(*n)(o_),
-			(*n)(sz_)
-		);
+		return make_smr(std::move(*this), HBRS_MPL_FWD(i));
 	}
 	
 private:
