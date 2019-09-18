@@ -229,19 +229,6 @@ struct submatrix {
 		return make_smr(std::move(*this), HBRS_MPL_FWD(i));
 	}
 	
-	decltype(auto)
-	operator()(range<std::size_t,std::size_t> const& rows, std::size_t const column) const {
-		return select(*this, std::make_pair(rows, column));
-	}
-	decltype(auto)
-	operator()(std::size_t const row, range<std::size_t,std::size_t> const& columns) const {
-		return select(*this, std::make_pair(row, columns));
-	}
-	decltype(auto)
-	operator()(range<std::size_t,std::size_t> const& rows, range<std::size_t,std::size_t> const& columns) & {
-		return select(*this, std::make_pair(rows, columns));
-	}
-
 private:
 	Matrix mat_;
 	Offset const o_;
