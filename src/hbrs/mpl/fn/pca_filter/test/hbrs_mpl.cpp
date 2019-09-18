@@ -142,7 +142,7 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 		std::vector<bool> filter((DOF < n_.value && economy) ? DOF : std::min(m_.value, n_.value), keep);
 		
 		int fun_nr = 0;
-		auto results = hana::transform(funs, [&dataset, &filter, &economy, &center, &normalize, &fun_nr](auto f) {
+		auto results = hana::transform(funs, [&](auto f) {
 			BOOST_TEST_MESSAGE("calling impl nr " << fun_nr);
 			++fun_nr;
 			return f(dataset, filter, economy, center, normalize); }
@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 		{
 			hana::for_each(
 				hana::make_range(hana::ushort_c<0>, hana::length(results)),
-				[&dataset, &results, &keep, &m_, &n_, &economy, &center, &normalize](auto i) {
+				[&](auto i) {
 					auto const& result = hana::at(results, i);
 					
 					if constexpr(is_not_supported(result)) {
