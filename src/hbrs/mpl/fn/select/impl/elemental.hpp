@@ -156,7 +156,7 @@ select_impl_el_matrix::operator()(el_dist_matrix<Ring, Columnwise, Rowwise, Wrap
 	return {El::LockedView(a.data(), hana::first(rng), hana::second(rng))};
 }
 
-static bool
+[[maybe_unused]] static bool
 same_size_el(matrix_size<El::Int, El::Int> const& sz, std::pair<El::IR, El::IR> const& rng) {
 	return hana::first(rng).beg == 0 && hana::first(rng).end == sz.m() &&
 		hana::second(rng).beg == 0 && hana::second(rng).end == sz.n();
