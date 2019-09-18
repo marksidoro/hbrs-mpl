@@ -89,18 +89,27 @@ transpose_impl_matrix::impl(Matrix const& M, hana::basic_type<Ring>) const {
 	return result;
 }
 
-
-template<typename Ring>
-decltype(auto)
+template<
+	typename Ring,
+	typename std::enable_if_t<
+		!std::is_const_v< std::remove_reference_t<Ring> >
+	>*
+>
+rtsarv<Ring>
 transpose_impl_rtsacv::operator()(rtsacv<Ring> const& v) const {
-	return rtsarv(v);
+	return {v.data()};
 }
 
 
-template<typename Ring>
-decltype(auto)
+template<
+	typename Ring,
+	typename std::enable_if_t<
+		!std::is_const_v< std::remove_reference_t<Ring> >
+	>*
+>
+rtsacv<Ring>
 transpose_impl_rtsarv::operator()(rtsarv<Ring> const& v) const {
-	return v.transpose();
+	return {v.data()};
 }
 
 /* namespace detail */ }

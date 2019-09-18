@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,8 @@
 #include <hbrs/mpl/dt/scv/fwd.hpp>
 #include <hbrs/mpl/dt/ctsam/fwd.hpp>
 #include <hbrs/mpl/dt/rtsam/fwd.hpp>
+#include <hbrs/mpl/dt/rtsacv/fwd.hpp>
+#include <hbrs/mpl/dt/rtsarv/fwd.hpp>
 #include <hbrs/mpl/dt/zas/fwd.hpp>
 #include <boost/hana/tuple.hpp>
 
@@ -55,6 +57,8 @@ HBRS_MPL_DEC_FO_TRY_METHOD(size_impl_srv,      srv_tag,      size)
 HBRS_MPL_DEC_FO_TRY_METHOD(size_impl_scv,      scv_tag,      size)
 HBRS_MPL_DEC_FO_TRY_METHOD(size_impl_ctsam,    ctsam_tag,    size)
 HBRS_MPL_DEC_FO_TRY_METHOD(size_impl_rtsam,    rtsam_tag,    size)
+HBRS_MPL_DEC_FO_TRY_METHOD(size_impl_rtsacv,   rtsacv_tag,   length)
+HBRS_MPL_DEC_FO_TRY_METHOD(size_impl_rtsarv,   rtsarv_tag,   length)
 HBRS_MPL_DEC_FO_TRY_METHOD(size_impl_zas,      zas_tag,      length)
 
 /* namespace detail */ }
@@ -75,6 +79,8 @@ HBRS_MPL_NAMESPACE_END
 		hbrs::mpl::detail::size_impl_scv{},                                                                            \
 		hbrs::mpl::detail::size_impl_ctsam{},                                                                          \
 		hbrs::mpl::detail::size_impl_rtsam{},                                                                          \
+		hbrs::mpl::detail::size_impl_rtsacv{},                                                                         \
+		hbrs::mpl::detail::size_impl_rtsarv{},                                                                         \
 		hbrs::mpl::detail::size_impl_zas{}                                                                             \
 	)
 

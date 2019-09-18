@@ -21,7 +21,6 @@
 #include "fwd.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
-#include <hbrs/mpl/dt/range.hpp>
 #include <hbrs/mpl/fn/multiply.hpp>
 #include <hbrs/mpl/fn/divide.hpp>
 #include <vector>
@@ -30,16 +29,15 @@
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 #include <boost/hana/type.hpp>
-#include <boost/assert.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 
 template<typename /* type of vector entries */ Ring>
 //TODO: Merge with rtsarv
 struct rtsacv {
-	explicit rtsacv(std::vector<Ring> data) : data_{data} {}
+	rtsacv(std::vector<Ring> data) : data_{data} {}
 	
-	rtsacv(std::size_t size) : data_(size, Ring{0}) {}
+	explicit rtsacv(std::size_t size) : data_(size, Ring{0}) {}
 
 	rtsacv(rtsacv const&) = default;
 	rtsacv(rtsacv &&) = default;
@@ -55,29 +53,23 @@ struct rtsacv {
 	}
 
 	decltype(auto)
-	data() const {
-		return data_;
-	}
-
-	decltype(auto)
-	at(std::size_t const i) {
+	at(std::size_t i) {
 		return data_.at(i);
 	}
 	
 	decltype(auto)
-	at(std::size_t const i) const {
+	at(std::size_t i) const {
 		return data_.at(i);
 	}
+	
+	decltype(auto)
+	data() & { return (data_); };
 
-	auto
-	operator() (range<std::size_t,std::size_t> const& r) const {
-		rtsacv<Ring> v (r.last() - r.first() + 1);
-		for (std::size_t i{0}; i < v.length(); ++i) {
-			v.at(i) = at(i + r.first());
-		}
-		return v;
-	}
+	decltype(auto)
+	data() const& { return (data_); };
 
+	decltype(auto)
+	data() && { return HBRS_MPL_FWD(data_); };
 private:
 	std::vector<Ring> data_;
 };
@@ -89,15 +81,15 @@ operator*(Ring const& s, rtsacv<Ring> const& v) {
 }
 
 template<
-	typename T1,
-	typename T2,
+	typename LHS,
+	typename RHS,
 	typename std::enable_if_t<
-		std::is_same_v< hana::tag_of_t<T1>, submatrix_tag > && std::is_same_v< hana::tag_of_t<T2>, rtsacv_tag >
+		std::is_same_v< hana::tag_of_t<LHS>, submatrix_tag > && std::is_same_v< hana::tag_of_t<RHS>, rtsacv_tag >
 	>* = nullptr
 >
 decltype(auto)
-operator*(T1 && t1, T2 && t2) {
-	return multiply(HBRS_MPL_FWD(t1), HBRS_MPL_FWD(t2));
+operator*(LHS && lhs, RHS && rhs) {
+	return multiply(HBRS_MPL_FWD(lhs), HBRS_MPL_FWD(rhs));
 }
 
 template<typename Ring>
@@ -123,10 +115,15 @@ struct make_impl<hbrs::mpl::rtsacv_tag> {
 		return {size};
 	}
 	
-	template <typename Ring>
-	static hbrs::mpl::rtsacv<std::remove_const_t<Ring>>
-	apply(std::vector<Ring> data, std::size_t size) {
-		return {data, size};
+	template <
+		typename Ring,
+		typename std::enable_if_t<
+			!std::is_const_v< std::remove_reference_t<Ring> >
+		>* = nullptr
+	>
+	static hbrs::mpl::rtsacv<Ring>
+	apply(std::vector<Ring> data) {
+		return {data};
 	}
 };
 

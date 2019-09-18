@@ -20,9 +20,12 @@
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
-#include <hbrs/mpl/dt/rtsam.hpp>
-#include <hbrs/mpl/dt/submatrix.hpp>
-#include <hbrs/mpl/dt/range.hpp>
+#include <hbrs/mpl/dt/rtsam/fwd.hpp>
+#include <hbrs/mpl/dt/rtsacv/fwd.hpp>
+#include <hbrs/mpl/dt/rtsarv/fwd.hpp>
+#include <hbrs/mpl/dt/submatrix/fwd.hpp>
+#include <hbrs/mpl/dt/range/fwd.hpp>
+#include <hbrs/mpl/fn/multiply.hpp>
 
 #include <boost/hana/ext/std/pair.hpp>
 #include <boost/hana/core/tag_of.hpp>
@@ -88,13 +91,28 @@ struct select_impl_rtsam_range_range {
 	decltype(auto)
 	operator()(rtsam<Ring,Order>& M, std::pair<range<std::size_t, std::size_t>, range<std::size_t, std::size_t>> const& ranges) const;
 };
+
+struct select_impl_rtsacv_range {
+	template<typename Ring>
+	auto
+	operator() (rtsacv<Ring> const& v, range<std::size_t,std::size_t> const& r) const;
+};
+
+struct select_impl_rtsarv_range {
+	template<typename Ring>
+	auto
+	operator() (rtsarv<Ring> const& v, range<std::size_t,std::size_t> const& r) const;
+};
+
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
 #define HBRS_MPL_FN_SELECT_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                     \
 		hbrs::mpl::detail::select_impl_matrix_range_size{},                                                            \
 		hbrs::mpl::detail::select_impl_matrix_size_range{},                                                            \
-		hbrs::mpl::detail::select_impl_rtsam_range_range{}                                                             \
+		hbrs::mpl::detail::select_impl_rtsam_range_range{},                                                            \
+		hbrs::mpl::detail::select_impl_rtsacv_range{},                                                                 \
+		hbrs::mpl::detail::select_impl_rtsarv_range{}                                                                  \
 	)
 
 #endif // !HBRS_MPL_FN_SELECT_FWD_HBRS_MPL_HPP

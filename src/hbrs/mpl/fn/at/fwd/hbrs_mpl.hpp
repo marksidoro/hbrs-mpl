@@ -34,6 +34,8 @@
 #include <hbrs/mpl/dt/scv/fwd.hpp>
 #include <hbrs/mpl/dt/ctsam/fwd.hpp>
 #include <hbrs/mpl/dt/rtsam/fwd.hpp>
+#include <hbrs/mpl/dt/rtsacv/fwd.hpp>
+#include <hbrs/mpl/dt/rtsarv/fwd.hpp>
 #include <hbrs/mpl/dt/zas/fwd.hpp>
 #include <hbrs/mpl/dt/bidiag_result/fwd.hpp>
 #include <hbrs/mpl/dt/svd_result/fwd.hpp>
@@ -60,6 +62,8 @@ HBRS_MPL_DEC_FO_TRY_METHOD(at_impl_srv,      srv_tag,      at)
 HBRS_MPL_DEC_FO_TRY_METHOD(at_impl_scv,      scv_tag,      at)
 HBRS_MPL_DEC_FO_TRY_METHOD(at_impl_ctsam,    ctsam_tag,    at)
 HBRS_MPL_DEC_FO_TRY_METHOD(at_impl_rtsam,    rtsam_tag,    at)
+HBRS_MPL_DEC_FO_TRY_METHOD(at_impl_rtsacv,   rtsacv_tag,   at)
+HBRS_MPL_DEC_FO_TRY_METHOD(at_impl_rtsarv,   rtsarv_tag,   at)
 HBRS_MPL_DEC_FO_TRY_METHOD(at_impl_zas,      zas_tag,      at)
 
 #define _HBRS_MPL_DEC_FO_NAMED_AT(impl_t, tag_t, named_t, method)                                                      \
@@ -105,6 +109,8 @@ HBRS_MPL_NAMESPACE_END
 		hbrs::mpl::detail::at_impl_scv{},                                                                              \
 		hbrs::mpl::detail::at_impl_ctsam{},                                                                            \
 		hbrs::mpl::detail::at_impl_rtsam{},                                                                            \
+		hbrs::mpl::detail::at_impl_rtsacv{},                                                                           \
+		hbrs::mpl::detail::at_impl_rtsarv{},                                                                           \
 		hbrs::mpl::detail::at_impl_bidiag_u{},                                                                         \
 		hbrs::mpl::detail::at_impl_bidiag_b{},                                                                         \
 		hbrs::mpl::detail::at_impl_bidiag_v{},                                                                         \

@@ -172,16 +172,16 @@ multiply_impl_rtsarv_matrix::operator()(rtsarv<Ring> const& v, submatrix<rtsam<R
 
 template<
 	typename Ring,
-	typename RVector,
+	typename RowVector,
 	typename Matrix
 >
 decltype(auto)
-multiply_impl_rtsarv_matrix::impl(RVector const& v, Matrix const& M, hana::basic_type<Ring>) const {
-	BOOST_ASSERT(v.length() == (*m)((*size)(M)));
-
-	rtsarv<Ring> result((*n)((*size)(M)));
-	for (std::size_t i {0}; i < result.length(); ++i) {
-		result.at(i) = v * M(range<std::size_t,std::size_t>(std::size_t{0}, (*m)((*size)(M)) - 1), i);
+multiply_impl_rtsarv_matrix::impl(RowVector const& v, Matrix const& m_, hana::basic_type<Ring>) const {
+	BOOST_ASSERT((*size)(v) == (*m)(size(m_)));
+	
+	rtsarv<Ring> result{ (*n)(size(m_)) };
+	for (std::size_t i = 0; i < (*size)(result); ++i) {
+		result.at(i) = v * select(m_, std::make_pair(range<std::size_t,std::size_t>(0u, (*m)((*size)(m_)) - 1), i));
 	}
 	return result;
 }
@@ -210,15 +210,15 @@ multiply_impl_matrix_rtsacv::operator()(submatrix<rtsam<Ring,Order>&, Offset,Siz
 template<
 	typename Ring,
 	typename Matrix,
-	typename CVector
+	typename ColumnVector
 >
 decltype(auto)
-multiply_impl_matrix_rtsacv::impl(Matrix const& M, CVector const& v, hana::basic_type<Ring>) const {
-	BOOST_ASSERT((*n)((*size)(M)) == v.length());
-
-	rtsacv<Ring> result((*m)((*size)(M)));
-	for (std::size_t i {0}; i < result.length(); ++i) {
-		result.at(i) = M(i, range<std::size_t,std::size_t>(std::size_t{0}, (*n)((*size)(M)) - 1)) * v;
+multiply_impl_matrix_rtsacv::impl(Matrix const& m_, ColumnVector const& v, hana::basic_type<Ring>) const {
+	BOOST_ASSERT((*n)(size(m_)) == (*size)(v));
+	
+	rtsacv<Ring> result{ (*m)(size(m_)) };
+	for (std::size_t i = 0; i < (*size)(result); ++i) {
+		result.at(i) = select(m_, std::make_pair(i, range<std::size_t,std::size_t>(0u, (*n)((*size)(m_)) - 1))) * v;
 	}
 	return result;
 }

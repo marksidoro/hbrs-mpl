@@ -27,6 +27,7 @@
 #include <hbrs/mpl/dt/house_result.hpp>
 #include <hbrs/mpl/fn/multiply.hpp>
 #include <hbrs/mpl/fn/divide.hpp>
+#include <hbrs/mpl/fn/select.hpp>
 #include <hbrs/mpl/fn/transpose.hpp>
 #include <cmath>
 
@@ -41,10 +42,10 @@ namespace detail {
 template<typename Ring>
 decltype(auto)
 house_impl::operator()(rtsacv<Ring> const& x) {
-	auto const m {x.length()}; // copy for readability
+	auto const m_ {x.length()}; // copy for readability
 
 	/* x2m is a temporary which is written x(2:m) in the book and is equivalent to x(range(1,m-1)) in this code */
-	auto const x2m {x(range<std::size_t,std::size_t>(std::size_t{1}, m-1))};
+	auto const x2m {select(x, range<std::size_t,std::size_t>{1u, m_-1u})};
 	auto const sigma {transpose(x2m) * x2m};
 
 	/* The vector ni is the vector x with the value 1 in its first row */

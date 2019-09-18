@@ -55,7 +55,6 @@ struct multiply_impl_rtsacv_rtsarv {
 };
 
 struct multiply_impl_matrix_matrix {
-
 	template<
 		typename Ring,
 		storage_order Order
@@ -101,7 +100,6 @@ private:
 };
 
 struct multiply_impl_rtsarv_matrix {
-
 	template<
 		typename Ring,
 		storage_order Order
@@ -121,15 +119,14 @@ struct multiply_impl_rtsarv_matrix {
 private:
 	template<
 		typename Ring,
-		typename RVector,
+		typename RowVector,
 		typename Matrix
 	>
 	decltype(auto)
-	impl(RVector const& vp, Matrix const& Mp, hana::basic_type<Ring>) const;
+	impl(RowVector const& vp, Matrix const& Mp, hana::basic_type<Ring>) const;
 };
 
 struct multiply_impl_matrix_rtsacv {
-
 	template<
 		typename Ring,
 		storage_order Order
@@ -150,10 +147,10 @@ private:
 	template<
 		typename Ring,
 		typename Matrix,
-		typename CVector
+		typename ColumnVector
 	>
 	decltype(auto)
-	impl(Matrix const& M, CVector const& v, hana::basic_type<Ring>) const;
+	impl(Matrix const& M, ColumnVector const& v, hana::basic_type<Ring>) const;
 };
 
 struct multiply_impl_rtsam_ring {

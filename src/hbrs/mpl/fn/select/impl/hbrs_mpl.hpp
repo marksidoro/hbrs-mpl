@@ -20,9 +20,14 @@
 
 #include "../fwd/hbrs_mpl.hpp"
 
+#include <hbrs/mpl/dt/rtsam.hpp>
+#include <hbrs/mpl/dt/submatrix.hpp>
+#include <hbrs/mpl/dt/range.hpp>
 #include <hbrs/mpl/dt/rtsacv.hpp>
 #include <hbrs/mpl/dt/rtsarv.hpp>
 #include <hbrs/mpl/fn/transpose.hpp>
+#include <hbrs/mpl/fn/at.hpp>
+#include <hbrs/mpl/fn/size.hpp>
 #include <cmath>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -112,6 +117,27 @@ select_impl_rtsam_range_range::operator()(rtsam<Ring,Order>& M, std::pair<range<
 	return submatrix<rtsam<Ring,Order>&, matrix_index<std::size_t, std::size_t>, matrix_size<std::size_t, std::size_t>>
 		{M, make_matrix_index(rows.first(), columns.first()), make_matrix_size(rows.last() - rows.first() + 1, columns.last() - columns.first() + 1)};
 }
+
+template<typename Ring>
+auto
+select_impl_rtsacv_range::operator() (rtsacv<Ring> const& v, range<std::size_t,std::size_t> const& r) const {
+	rtsacv<Ring> v2 {r.last() - r.first() + 1u };
+	for (std::size_t i = 0; i < (*size)(v2); ++i) {
+		(*at)(v2, i) = (*at)(v, i + r.first());
+	}
+	return v;
+}
+
+template<typename Ring>
+auto
+select_impl_rtsarv_range::operator() (rtsarv<Ring> const& v, range<std::size_t,std::size_t> const& r) const {
+	rtsarv<Ring> v2 {r.last() - r.first() + 1u };
+	for (std::size_t i = 0; i < (*size)(v2); ++i) {
+		(*at)(v2, i) = (*at)(v, i + r.first());
+	}
+	return v;
+}
+
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 

@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,8 @@
 #include <hbrs/mpl/dt/scv.hpp>
 #include <hbrs/mpl/dt/ctsam.hpp>
 #include <hbrs/mpl/dt/rtsam.hpp>
+#include <hbrs/mpl/dt/rtsacv.hpp>
+#include <hbrs/mpl/dt/rtsarv.hpp>
 #include <hbrs/mpl/dt/zas.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -54,6 +56,8 @@ HBRS_MPL_DEF_FO_TRY_METHOD(size_impl_srv,      srv_tag,      size)
 HBRS_MPL_DEF_FO_TRY_METHOD(size_impl_scv,      scv_tag,      size)
 HBRS_MPL_DEF_FO_TRY_METHOD(size_impl_ctsam,    ctsam_tag,    size)
 HBRS_MPL_DEF_FO_TRY_METHOD(size_impl_rtsam,    rtsam_tag,    size)
+HBRS_MPL_DEF_FO_TRY_METHOD(size_impl_rtsacv,   rtsacv_tag,   length)
+HBRS_MPL_DEF_FO_TRY_METHOD(size_impl_rtsarv,   rtsarv_tag,   length)
 HBRS_MPL_DEF_FO_TRY_METHOD(size_impl_zas,      zas_tag,      length)
 
 /* namespace detail */ }

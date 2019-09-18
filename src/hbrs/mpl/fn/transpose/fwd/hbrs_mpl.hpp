@@ -78,14 +78,24 @@ private:
 };
 
 struct transpose_impl_rtsacv {
-	template<typename Ring>
-	decltype(auto)
+	template<
+		typename Ring,
+		typename std::enable_if_t<
+			!std::is_const_v< std::remove_reference_t<Ring> >
+		>* = nullptr
+	>
+	rtsarv<Ring>
     operator()(rtsacv<Ring> const& v) const;
 };
 
 struct transpose_impl_rtsarv {
-	template<typename Ring>
-	decltype(auto)
+	template<
+		typename Ring,
+		typename std::enable_if_t<
+			!std::is_const_v< std::remove_reference_t<Ring> >
+		>* = nullptr
+	>
+	rtsacv<Ring>
     operator()(rtsarv<Ring> const& v) const;
 };
 

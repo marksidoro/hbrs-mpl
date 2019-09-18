@@ -35,6 +35,8 @@
 #include <hbrs/mpl/dt/scv.hpp>
 #include <hbrs/mpl/dt/ctsam.hpp>
 #include <hbrs/mpl/dt/rtsam.hpp>
+#include <hbrs/mpl/dt/rtsacv.hpp>
+#include <hbrs/mpl/dt/rtsarv.hpp>
 #include <hbrs/mpl/dt/zas.hpp>
 #include <hbrs/mpl/dt/bidiag_result.hpp>
 #include <hbrs/mpl/dt/svd_result.hpp>
@@ -59,6 +61,8 @@ HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_srv,      srv_tag,      at)
 HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_scv,      scv_tag,      at)
 HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_ctsam,    ctsam_tag,    at)
 HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_rtsam,    rtsam_tag,    at)
+HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_rtsacv,   rtsacv_tag,   at)
+HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_rtsarv,   rtsarv_tag,   at)
 HBRS_MPL_DEF_FO_TRY_METHOD(at_impl_zas,      zas_tag,      at)
 
 #define _HBRS_MPL_DEF_FO_NAMED_AT(impl_t, tag_t, named_t, method)                                                      \
