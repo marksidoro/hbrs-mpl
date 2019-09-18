@@ -25,11 +25,13 @@
 #include <hbrs/mpl/dt/smr.hpp>
 #include <hbrs/mpl/dt/rtsacv.hpp>
 #include <hbrs/mpl/dt/rtsarv.hpp>
+#include <hbrs/mpl/dt/submatrix.hpp>
 #include <hbrs/mpl/dt/range.hpp>
 #include <hbrs/mpl/dt/storage_order.hpp>
 #include <hbrs/mpl/dt/givens_rotation.hpp>
 #include <hbrs/mpl/fn/m.hpp>
 #include <hbrs/mpl/fn/n.hpp>
+#include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/minus.hpp>
 #include <hbrs/mpl/fn/multiply.hpp>
 #include <hbrs/mpl/fn/select.hpp>
@@ -63,19 +65,6 @@ struct rtsam {
 	}
 	
 	rtsam(std::size_t m, std::size_t n) : data_(m * n, Ring{0}), size_{m,n} {}
-
-	explicit rtsam(submatrix<rtsam<Ring,Order>&, matrix_index<std::size_t,std::size_t>, matrix_size<std::size_t,std::size_t>> const& M)
-	: rtsam(M.size()) {
-		for (std::size_t i{0}; i < m(size()); ++i) {
-			for (std::size_t j{0}; j < n(size()); ++j) {
-				at(make_matrix_index(i,j)) = M.at(make_matrix_index(i,j));
-			}
-		}
-	}
-
-    explicit rtsam(rtsacv<Ring> const& v) : data_ {v.data()}, size_{v.m(), 1} {}
-
-    explicit rtsam(rtsarv<Ring> const& v) : data_ {v.data()}, size_{1, v.n()} {}
 	
 	rtsam(rtsam const&) = default;
 	rtsam(rtsam &&) = default;
@@ -84,7 +73,8 @@ struct rtsam {
 	operator=(rtsam const&) = default;
 	rtsam&
 	operator=(rtsam &&) = default;
-
+	
+	//TODO: Move to new implementation of assign() function
 	/*
 	 * Chapter 5.1.9 (Applying Givens Rotations) on page 241
 	 * A = G(i,k,theta)^T * A
@@ -119,7 +109,8 @@ struct rtsam {
 		}
 		return *this;
 	}
-
+	
+	//TODO: Move to new implementation of assign() function
 	/*
 	 * Chapter 5.1.9 (Applying Givens Rotations) on page 241
 	 * A = A * G(i,k,theta)
@@ -189,7 +180,8 @@ struct rtsam {
 	auto
 	operator[](Index && i) && { return make_smr(std::move(*this), HBRS_MPL_FWD(i)); }
 	
-    // Several operator() functions to return submatrices.
+	//TODO: Drop operator() code and replace usage with select() calls!
+	// Several operator() functions to return submatrices.
 	decltype(auto)
 	operator()(range<std::size_t,std::size_t> const& rows, std::size_t const column) const {
 		return select(*this, std::make_pair(rows, column));
@@ -280,6 +272,55 @@ struct make_impl<hbrs::mpl::rtsam_tag> {
 	static hbrs::mpl::rtsam<std::remove_const_t<Ring>, Order>
 	apply(std::vector<Ring> data, hbrs::mpl::matrix_size<std::size_t, std::size_t> sz, hbrs::mpl::storage_order_<Order>) {
 		return {data, sz};
+	}
+	
+	//TODO: Drop because unused!
+	template <
+		typename Ring,
+		hbrs::mpl::storage_order Order
+	>
+	static auto
+	apply(
+		hbrs::mpl::submatrix<
+			hbrs::mpl::rtsam<Ring,Order> &,
+			hbrs::mpl::matrix_index<std::size_t,std::size_t>,
+			hbrs::mpl::matrix_size<std::size_t,std::size_t>
+		> const& sm
+	) {
+		using namespace hbrs::mpl;
+		using hbrs::mpl::at;
+		using hbrs::mpl::size;
+		rtsam<std::remove_const_t<Ring>, Order> mat{ (*size)(sm) };
+		
+		if constexpr(Order == storage_order::row_major) {
+			for (std::size_t i = 0; i < (*m)(size(sm)); ++i) {
+				for (std::size_t j = 0; j < (*n)(size(sm)); ++j) {
+					(*at)(mat, make_matrix_index(i,j)) = (*at)(sm, make_matrix_index(i,j));
+				}
+			}
+		} else {
+			for (std::size_t j = 0; j < (*n)(size(sm)); ++j) {
+				for (std::size_t i = 0; i < (*m)(size(sm)); ++i) {
+					(*at)(mat, make_matrix_index(i,j)) = (*at)(sm, make_matrix_index(i,j));
+				}
+			}
+		}
+		
+		return mat;
+	}
+	
+	//TODO: Drop because unused!
+	template <typename Ring>
+	static hbrs::mpl::rtsam<Ring, hbrs::mpl::storage_order::column_major>
+	apply(hbrs::mpl::rtsacv<Ring> const& v) {
+		return {v.data(), {v.length(), 1}};
+	}
+	
+	//TODO: Drop because unused!
+	template <typename Ring>
+	static hbrs::mpl::rtsam<Ring, hbrs::mpl::storage_order::row_major>
+	apply(hbrs::mpl::rtsarv<Ring> const& v) {
+		return {v.data(), {1, v.length()}};
 	}
 };
 
