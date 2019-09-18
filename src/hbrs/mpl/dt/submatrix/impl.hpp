@@ -31,8 +31,9 @@
 #include <hbrs/mpl/fn/n.hpp>
 #include <hbrs/mpl/fn/plus.hpp>
 #include <hbrs/mpl/fn/less_equal.hpp>
+#include <hbrs/mpl/fn/not_equal.hpp>
 #include <hbrs/mpl/fn/select.hpp>
-
+#include <hbrs/mpl/dt/exception.hpp>
 #include <type_traits>
 
 #include <boost/assert.hpp>
@@ -41,7 +42,6 @@ HBRS_MPL_NAMESPACE_BEGIN
 
 template<typename Matrix, typename Offset, typename Size>
 struct submatrix {
-	
 	template<typename Matrix_, typename Offset_, typename Size_>
 	constexpr 
 	submatrix(Matrix_ && mat, Offset_ && o, Size_ && sz)
@@ -66,33 +66,50 @@ struct submatrix {
 	submatrix(submatrix const&) = default;
 	constexpr 
 	submatrix(submatrix &&) = default;
-
-	//TODO: Only enable if Matrix is non-const(-ref)
-	//TODO: Handle this->data_ == M.data_
+	
+	//TODO: Move to new implementation of assign() function and only enable for specific datatypes, e.g. if Matrix is rtsam
 	submatrix&
-	operator=(submatrix const& M) {
-		BOOST_ASSERT((*m)(sz_) == M.size().m());
-		BOOST_ASSERT((*n)(sz_) == M.size().n());
-		for (std::size_t i {0}; i < M.size().m(); ++i) {
-			for (std::size_t j {0}; j < M.size().n(); ++j) {
-				at(make_matrix_index(i,j)) = M.at(make_matrix_index(i,j));
+	operator=(submatrix const& m_) {
+		using hbrs::mpl::size;
+		BOOST_ASSERT(&m_.mat_ != &this->mat_);
+		//TODO: Handle &m_.mat_ == &this->mat_
+		
+		BOOST_ASSERT((*m)(sz_) == (*m)(size(m_)));
+		BOOST_ASSERT((*n)(sz_) == (*n)(size(m_)));
+		
+		//TODO: Optimize for column_major/row_major
+		for (std::size_t i = 0; i < (*m)(size(m_)); ++i) {
+			for (std::size_t j = 0; j < (*n)(size(m_)); ++j) {
+				at(make_matrix_index(i,j)) = m_.at(make_matrix_index(i,j));
 			}
 		}
+		
 		return *this;
 	}
 
+	//TODO: Implement move assignment operator!
+	constexpr submatrix&
+	operator=(submatrix &&) = delete;
+	
+	//TODO: Move to new implementation of assign() function and only enable for specific datatypes, e.g. if Matrix is rtsam
 	submatrix&
-	operator=(std::decay_t<Matrix> const& M) {
-		BOOST_ASSERT((*m)(sz_) == M.size().m());
-		BOOST_ASSERT((*n)(sz_) == M.size().n());
-		for (std::size_t i {0}; i < M.size().m(); ++i) {
-			for (std::size_t j {0}; j < M.size().n(); ++j) {
-				at(make_matrix_index(i,j)) = M.at(make_matrix_index(i,j));
+	operator=(std::decay_t<Matrix> const& m_) {
+		using hbrs::mpl::size;
+		if ((*not_equal)(sz_, size(m_))) {
+			BOOST_THROW_EXCEPTION(incompatible_matrices_exception{});
+		}
+		
+		//TODO: Optimize for column_major/row_major
+		for (std::size_t i = 0; i < m(size(m_)); ++i) {
+			for (std::size_t j = 0; j < n(size(m_)); ++j) {
+				at(make_matrix_index(i,j)) = m_.at(make_matrix_index(i,j));
 			}
 		}
+		
 		return *this;
 	}
 
+	//TODO: Move to new implementation of assign() function
 	/*
 	 * Chapter 5.1.9 (Applying Givens Rotations) on page 241
 	 * A = G(i,k,theta)^T * A
@@ -129,6 +146,7 @@ struct submatrix {
 		return *this;
 	}
 
+	//TODO: Move to new implementation of assign() function
 	/*
 	 * Chapter 5.1.9 (Applying Givens Rotations) on page 241
 	 * A = A * G(i,k,theta)
