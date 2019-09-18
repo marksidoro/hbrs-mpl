@@ -76,7 +76,7 @@ bidiag_impl_householder::operator()(rtsam<Ring,Order> const& A, int econ) {
 			range<std::size_t,std::size_t> const j1n    {j + 1         , n-1};
 
 			//Use Algorithm 5.1.1 to compute the householder vector.
-			auto const h {house(A(jm, j))};
+			auto const h {house(select(A, std::make_pair(jm, j)))};
 			auto& ni {h.ni()};
 			auto& beta {h.beta()};
 
@@ -88,7 +88,7 @@ bidiag_impl_householder::operator()(rtsam<Ring,Order> const& A, int econ) {
 			 */
 
 			/* Ajmjn is equivalent to A(j:m,j:n) in the book */
-			auto Ajmjn {A(jm, jn)};
+			auto Ajmjn {select(A, std::make_pair(jm, jn))};
 			/* Ajmjn = (identity<Ring,Order>(m - j) - beta * ni * transpose(ni)) * Ajmjn; // mathematical notation */
 			Ajmjn = Ajmjn - (beta * ni) * (transpose(ni) * Ajmjn);
 			/*
@@ -98,15 +98,15 @@ bidiag_impl_householder::operator()(rtsam<Ring,Order> const& A, int econ) {
 			 */
 
 			auto Ui {identity<Ring,Order>(m)};
-			Ui(jm,jm) = identity<Ring,Order>(m - j) - beta * (ni * transpose(ni));
+			select(Ui, std::make_pair(jm,jm)) = identity<Ring,Order>(m - j) - beta * (ni * transpose(ni));
 			U = Ui * U;
 
 			if (j + 1 <= n - 2) {
-				auto const h {house(transpose(A(j, j1n)))};
+				auto const h {house(transpose(select(A, std::make_pair(j, j1n))))};
 				auto& ni {h.ni()};
 				auto& beta {h.beta()};
 
-				auto Ajmj1n {A(jm, j1n)}; // equivalent to A(j:m,j+1:n)
+				auto Ajmj1n {select(A, std::make_pair(jm, j1n))}; // equivalent to A(j:m,j+1:n)
 				/* Ajmj1n = Ajmj1n * (identity<Ring,Order>(n-1 - j) - beta * ni * transpose(ni)); // mathematical notation */
 				Ajmj1n = Ajmj1n - (Ajmj1n * ni) * transpose(beta * ni);
 				/*
@@ -115,7 +115,7 @@ bidiag_impl_householder::operator()(rtsam<Ring,Order> const& A, int econ) {
 				 * do that.
 				 */
 
-				auto Vjmj1n {V(jn, j1n)};
+				auto Vjmj1n {select(V, std::make_pair(jn, j1n))};
 				Vjmj1n = Vjmj1n - (Vjmj1n * ni) * transpose(beta * ni);
 			}
 		}

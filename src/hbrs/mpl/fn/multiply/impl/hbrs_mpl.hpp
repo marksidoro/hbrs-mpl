@@ -29,6 +29,7 @@
 #include <hbrs/mpl/fn/m.hpp>
 #include <hbrs/mpl/fn/n.hpp>
 #include <hbrs/mpl/fn/size.hpp>
+#include <hbrs/mpl/fn/select.hpp>
 #include <cmath>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -132,7 +133,17 @@ multiply_impl_matrix_matrix::impl(Matrix1 const& M1, Matrix2 const& M2, hana::ba
 	rtsam<_Ring_, storage_order::row_major> result {(*m)((*size)(M1)), (*n)((*size)(M2))};
 	for (std::size_t i {0}; i < (*m)((*size)(result)); ++i) {
 		for (std::size_t j {0}; j < (*n)((*size)(result)); ++j) {
-			result.at(make_matrix_index(i, j)) = M1(i, range<std::size_t,std::size_t>(std::size_t{0}, (*n)((*size)(M1)) - 1)) * M2(range<std::size_t,std::size_t>(std::size_t{0}, (*m)((*size)(M2)) - 1), j);
+			result.at(make_matrix_index(i, j)) =
+				select(
+					M1,
+					std::make_pair(
+						i,
+						range<std::size_t,std::size_t>(std::size_t{0}, (*n)((*size)(M1)) - 1)
+					)
+				) * select(
+					M2,
+					std::make_pair(range<std::size_t,std::size_t>(std::size_t{0}, (*m)((*size)(M2)) - 1), j)
+				);
 		}
 	}
 	return result;

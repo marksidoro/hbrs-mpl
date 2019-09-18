@@ -185,7 +185,7 @@ template<
 void
 svd_impl::svd_step(rtsam<Ring,Order>& B, std::size_t const p, std::size_t const q, rtsam<Ring,Order>& U, rtsam<Ring,Order>& V) {
 	range<std::size_t,std::size_t> const pq { p, n(size(B))-1 - q }; // The range for B22 rows and columns
-	auto B22 {B(pq, pq)};
+	auto B22 {select(B, std::make_pair(pq, pq))};
 
 	/* Let mu be the eigenvalue of the trailing 2-by-2 submatrix of
 	 * T=B'B that is closer to tnn.
@@ -195,7 +195,7 @@ svd_impl::svd_step(rtsam<Ring,Order>& B, std::size_t const p, std::size_t const 
 	/* auto const T {transpose(B22) * B22}; */ // FIXME
 	auto                                 T   { transpose(B22) * B22 };
 	range<std::size_t,std::size_t> const T22 { m(size(T)) - 2, m(size(T)) - 1 };
-	auto                           const l   { eigenvalueOf2x2Matrix(T(T22, T22)) };
+	auto                           const l   { eigenvalueOf2x2Matrix(select(T, std::make_pair(T22, T22))) };
 	double                         const tnn { T[m(size(T))-1][m(size(T))-1] };
 	auto                           const mu  { std::abs(l.at(0) - tnn) < std::abs(l.at(1) - tnn) ? l.at(0) : l.at(1) };
 
