@@ -18,9 +18,7 @@
 #ifndef HBRS_MPL_FN_GIVENS_IMPL_HBRS_MPL_HPP
 #define HBRS_MPL_FN_GIVENS_IMPL_HBRS_MPL_HPP
 
-#include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/core/preprocessor.hpp>
-#include <hbrs/mpl/fn/givens.hpp>
+#include "../fwd/hbrs_mpl.hpp"
 #include <cmath>
 #include <array>
 
@@ -40,19 +38,19 @@ namespace detail {
  *
  * Return an array that contains c and s with c on index 0 and s on index 1
  */
-decltype(auto)
-givens_impl::operator()(double const a, double const b) const {
+auto
+givens_impl::operator()(double a, double b) const {
 	std::array<double, 2> cs;
 	if (b == 0) {
 		cs.at(0) = 1;
 		cs.at(1) = 0;
 	} else {
 		if (std::abs(b) > std::abs(a)) {
-			auto const tau = -a / b;
+			auto tau = -a / b;
 			cs.at(1) = 1 / std::sqrt(1 + tau * tau);
 			cs.at(0) = cs.at(1) * tau;
 		} else {
-			auto const tau = -b / a;
+			auto tau = -b / a;
 			cs.at(0) = 1 / std::sqrt(1 + tau * tau);
 			cs.at(1) = cs.at(0) * tau;
 		}

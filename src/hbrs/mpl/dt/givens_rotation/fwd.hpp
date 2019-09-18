@@ -31,7 +31,7 @@ struct givens_rotation_tag{};
 constexpr auto make_givens_rotation = hana::make<givens_rotation_tag>;
 constexpr auto to_givens_rotation = hana::to<givens_rotation_tag>;
 
-template<typename T1, typename T2>
+template<typename LHS, typename RHS>
 struct givens_rotation_expression;
 
 HBRS_MPL_NAMESPACE_END

@@ -31,53 +31,76 @@ HBRS_MPL_NAMESPACE_BEGIN
 
 template<typename /* type of matrix entries */ Ring>
 struct givens_rotation {
-	givens_rotation(std::size_t const i, std::size_t const k, std::array<Ring, 2> const theta) : i_{i}, k_{k}, theta_{theta} {}
-
-	decltype(auto)
-	i() const {
-		return i_;
-	}
-
-	decltype(auto)
-	k() const {
-		return k_;
-	}
-
-	decltype(auto)
-	theta() const {
-		return (theta_);
-	}
+	givens_rotation(std::size_t i, std::size_t k, std::array<Ring, 2> theta)
+	: i_{i}, k_{k}, theta_{theta} {}
+	
+	constexpr decltype(auto)
+	i() & { return (i_); };
+	
+	constexpr decltype(auto)
+	i() const& { return (i_); };
+	
+	constexpr decltype(auto)
+	i() && { return HBRS_MPL_FWD(i_); };
+	
+	constexpr decltype(auto)
+	k() & { return (k_); };
+	
+	constexpr decltype(auto)
+	k() const& { return (k_); };
+	
+	constexpr decltype(auto)
+	k() && { return HBRS_MPL_FWD(k_); };
+	
+	constexpr decltype(auto)
+	theta() & { return (theta_); };
+	
+	constexpr decltype(auto)
+	theta() const& { return (theta_); };
+	
+	constexpr decltype(auto)
+	theta() && { return HBRS_MPL_FWD(theta_); };
+	
 private:
-	std::size_t i_, k_;
+	std::size_t i_;
+	std::size_t k_;
 	std::array<Ring, 2> theta_;
 };
 
 template<typename Ring>
-auto
-G(std::size_t const i, std::size_t const k, std::array<Ring, 2> const theta) {
-	return givens_rotation{i,k,theta};
+givens_rotation<Ring>
+G(std::size_t i, std::size_t k, std::array<Ring, 2> theta) {
+	return {i, k, theta};
 }
 
 namespace detail {
 
-template<typename T1, typename T2>
+template<typename LHS, typename RHS>
 struct givens_rotation_expression {
-	template<typename T1_, typename T2_>
+	template<typename LHS_ = LHS, typename RHS_ = RHS>
 	constexpr
-	givens_rotation_expression(T1_ && t1, T2_ && t2) : t1_{HBRS_MPL_FWD(t1)}, t2_{HBRS_MPL_FWD(t2)} {}
-
+	givens_rotation_expression(LHS_ && lhs, RHS_ && rhs) : lhs_{HBRS_MPL_FWD(lhs)}, rhs_{HBRS_MPL_FWD(rhs)} {}
+	
 	constexpr decltype(auto)
-	t1() const {
-		return (t1_);
-	}
-
+	lhs() & { return (lhs_); };
+	
 	constexpr decltype(auto)
-	t2() const {
-		return (t2_);
-	}
+	lhs() const& { return (lhs_); };
+	
+	constexpr decltype(auto)
+	lhs() && { return HBRS_MPL_FWD(lhs_); };
+	
+	constexpr decltype(auto)
+	rhs() & { return (rhs_); };
+	
+	constexpr decltype(auto)
+	rhs() const& { return (rhs_); };
+	
+	constexpr decltype(auto)
+	rhs() && { return HBRS_MPL_FWD(rhs_); };
 private:
-	T1 t1_;
-	T2 t2_;
+	LHS lhs_;
+	RHS rhs_;
 };
 
 /* namespace detail */ }
@@ -93,10 +116,15 @@ struct tag_of< hbrs::mpl::givens_rotation<Ring> > {
 
 template <>
 struct make_impl<hbrs::mpl::givens_rotation_tag> {
-	template <typename Ring>
+	template <
+		typename Ring,
+		typename std::enable_if_t<
+			!std::is_const_v< std::remove_reference_t<Ring> >
+		>* = nullptr
+	>
 	static hbrs::mpl::givens_rotation<Ring>
-	apply(hana::basic_type<Ring>, std::size_t i, std::size_t k, std::array<Ring, 2> theta) {
-		return {i,k,theta};
+	apply(std::size_t i, std::size_t k, std::array<Ring, 2> theta) {
+		return {i, k, theta};
 	}
 };
 

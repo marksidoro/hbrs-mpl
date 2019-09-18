@@ -126,13 +126,13 @@ struct submatrix {
 	template<typename Ring>
 	submatrix&
 	operator=(detail::givens_rotation_expression<givens_rotation<Ring> const&, submatrix<Matrix,Offset,Size> const&> const& e) {
-		if (&(e.t2()) != this) {
-			*this = e.t2();
+		if (&(e.rhs()) != this) {
+			*this = e.rhs();
 		}
 
-		auto i     {e.t1().i()};
-		auto k     {e.t1().k()};
-		auto theta {e.t1().theta()};
+		auto i     {e.lhs().i()};
+		auto k     {e.lhs().k()};
+		auto theta {e.lhs().theta()};
 
 		BOOST_ASSERT(i < (*m)(sz_));
 		BOOST_ASSERT(k < (*m)(sz_));
@@ -163,13 +163,13 @@ struct submatrix {
 	template<typename Ring>
 	submatrix&
 	operator=(detail::givens_rotation_expression<submatrix<Matrix,Offset,Size> const&, givens_rotation<Ring> const&> const& e) {
-		if (&(e.t1()) != this) {
-			*this = e.t1();
+		if (&(e.lhs()) != this) {
+			*this = e.lhs();
 		}
 
-		auto i     {e.t2().i()};
-		auto k     {e.t2().k()};
-		auto theta {e.t2().theta()};
+		auto i     {e.rhs().i()};
+		auto k     {e.rhs().k()};
+		auto theta {e.rhs().theta()};
 
 		BOOST_ASSERT(i < (*n)(sz_));
 		BOOST_ASSERT(k < (*n)(sz_));
@@ -236,17 +236,17 @@ private:
 };
 
 template<
-	typename T1,
-	typename T2,
+	typename LHS,
+	typename RHS,
 	typename std::enable_if_t<
-		(std::is_same_v< hana::tag_of_t<T1>, submatrix_tag       > && std::is_same_v< hana::tag_of_t<T2>, submatrix_tag       >) ||
-		(std::is_same_v< hana::tag_of_t<T1>, submatrix_tag       > && std::is_same_v< hana::tag_of_t<T2>, givens_rotation_tag >) ||
-		(std::is_same_v< hana::tag_of_t<T1>, givens_rotation_tag > && std::is_same_v< hana::tag_of_t<T2>, submatrix_tag       >)
+		(std::is_same_v< hana::tag_of_t<LHS>, submatrix_tag       > && std::is_same_v< hana::tag_of_t<RHS>, submatrix_tag       >) ||
+		(std::is_same_v< hana::tag_of_t<LHS>, submatrix_tag       > && std::is_same_v< hana::tag_of_t<RHS>, givens_rotation_tag >) ||
+		(std::is_same_v< hana::tag_of_t<LHS>, givens_rotation_tag > && std::is_same_v< hana::tag_of_t<RHS>, submatrix_tag       >)
 	>* = nullptr
 >
 decltype(auto)
-operator*(T1 && t1, T2 && t2) {
-	return multiply(HBRS_MPL_FWD(t1), HBRS_MPL_FWD(t2));
+operator*(LHS && lhs, RHS && rhs) {
+	return multiply(HBRS_MPL_FWD(lhs), HBRS_MPL_FWD(rhs));
 }
 
 HBRS_MPL_NAMESPACE_END

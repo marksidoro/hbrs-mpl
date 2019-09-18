@@ -19,22 +19,20 @@
 #define HBRS_MPL_FN_GIVENS_FWD_HBRS_MPL_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/core/preprocessor.hpp>
-#include <hbrs/mpl/fn/givens/fwd.hpp>
+#include <boost/hana/tuple.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace hana = boost::hana;
 namespace detail {
 struct givens_impl {
-	decltype(auto)
-	operator()(double const a, double const b) const;
+	auto
+	operator()(double a, double b) const;
 };
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
 #define HBRS_MPL_FN_GIVENS_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                     \
-		hbrs::mpl::detail::givens_impl{}                                                                          \
+		hbrs::mpl::detail::givens_impl{}                                                                               \
 	)
 
 #endif // !HBRS_MPL_FN_GIVENS_FWD_HBRS_MPL_HPP
