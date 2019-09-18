@@ -1,34 +1,35 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
- * 
+/* Copyright (c) 2019 Jakob Meng, <jakobmeng@web.de>
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FN_NOT_EQUAL_FWD_HPP
-#define HBRS_MPL_FN_NOT_EQUAL_FWD_HPP
+#ifndef HBRS_MPL_FN_NOT_EQUAL_IMPL_HBRS_MPL_HPP
+#define HBRS_MPL_FN_NOT_EQUAL_IMPL_HBRS_MPL_HPP
 
-#include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/dt/function/fwd.hpp>
-#include <hbrs/mpl/core/implementations_of.hpp>
+#include "../fwd/hbrs_mpl.hpp"
+
+#include <hbrs/mpl/detail/function_object.hpp>
+#include <hbrs/mpl/dt/matrix_size.hpp>
+#include <hbrs/mpl/dt/matrix_index.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
-HBRS_MPL_DEC_F2(not_equal, not_equal_t)
+namespace detail {
+
+HBRS_MPL_DEF_FO_TRY_OPERATOR(not_equal_impl_matrix_size, matrix_size_tag, HBRS_MPL_OPERATOR_NOT_EQUAL, not_equal)
+HBRS_MPL_DEF_FO_TRY_OPERATOR(not_equal_impl_matrix_index, matrix_index_tag, HBRS_MPL_OPERATOR_NOT_EQUAL, not_equal)
+
+/* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#include "fwd/boost_hana.hpp"
-#include "fwd/hbrs_mpl.hpp"
-#include "fwd/std.hpp"
-
-HBRS_MPL_MAP_IMPLS(not_equal_t, HBRS_MPL_FN_NOT_EQUAL_IMPLS_BOOST_HANA, HBRS_MPL_FN_NOT_EQUAL_IMPLS_HBRS_MPL, HBRS_MPL_FN_NOT_EQUAL_IMPLS_STD)
-
-#endif // !HBRS_MPL_FN_NOT_EQUAL_FWD_HPP
+#endif // !HBRS_MPL_FN_NOT_EQUAL_IMPL_HBRS_MPL_HPP

@@ -26,6 +26,7 @@ HBRS_MPL_DEF_F2(not_equal, not_equal_t)
 HBRS_MPL_NAMESPACE_END
 
 #include "impl/std.hpp"
+#include "impl/hbrs_mpl.hpp"
 #include "impl/boost_hana.hpp"
 
 #endif // !HBRS_MPL_FN_NOT_EQUAL_IMPL_HPP
