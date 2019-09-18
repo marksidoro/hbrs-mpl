@@ -273,55 +273,6 @@ struct make_impl<hbrs::mpl::rtsam_tag> {
 	apply(std::vector<Ring> data, hbrs::mpl::matrix_size<std::size_t, std::size_t> sz, hbrs::mpl::storage_order_<Order>) {
 		return {data, sz};
 	}
-	
-	//TODO: Drop because unused!
-	template <
-		typename Ring,
-		hbrs::mpl::storage_order Order
-	>
-	static auto
-	apply(
-		hbrs::mpl::submatrix<
-			hbrs::mpl::rtsam<Ring,Order> &,
-			hbrs::mpl::matrix_index<std::size_t,std::size_t>,
-			hbrs::mpl::matrix_size<std::size_t,std::size_t>
-		> const& sm
-	) {
-		using namespace hbrs::mpl;
-		using hbrs::mpl::at;
-		using hbrs::mpl::size;
-		rtsam<std::remove_const_t<Ring>, Order> mat{ (*size)(sm) };
-		
-		if constexpr(Order == storage_order::row_major) {
-			for (std::size_t i = 0; i < (*m)(size(sm)); ++i) {
-				for (std::size_t j = 0; j < (*n)(size(sm)); ++j) {
-					(*at)(mat, make_matrix_index(i,j)) = (*at)(sm, make_matrix_index(i,j));
-				}
-			}
-		} else {
-			for (std::size_t j = 0; j < (*n)(size(sm)); ++j) {
-				for (std::size_t i = 0; i < (*m)(size(sm)); ++i) {
-					(*at)(mat, make_matrix_index(i,j)) = (*at)(sm, make_matrix_index(i,j));
-				}
-			}
-		}
-		
-		return mat;
-	}
-	
-	//TODO: Drop because unused!
-	template <typename Ring>
-	static hbrs::mpl::rtsam<Ring, hbrs::mpl::storage_order::column_major>
-	apply(hbrs::mpl::rtsacv<Ring> const& v) {
-		return {v.data(), {v.length(), 1}};
-	}
-	
-	//TODO: Drop because unused!
-	template <typename Ring>
-	static hbrs::mpl::rtsam<Ring, hbrs::mpl::storage_order::row_major>
-	apply(hbrs::mpl::rtsarv<Ring> const& v) {
-		return {v.data(), {1, v.length()}};
-	}
 };
 
 /* namespace hana */ } /* namespace boost */ }
