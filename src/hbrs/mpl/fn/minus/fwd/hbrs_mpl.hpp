@@ -30,34 +30,27 @@ namespace detail {
 struct minus_impl_rtsam {
 	template<
 		typename Ring,
-		storage_order Order
+		storage_order Order1,
+		storage_order Order2
 	>
 	decltype(auto)
-	operator()(rtsam<Ring,Order> const& M1, rtsam<Ring,Order> const& M2) const;
+	operator()(rtsam<Ring,Order1> const& m1, rtsam<Ring,Order2> const& m2) const;
 
 	template<
 		typename Ring,
-		storage_order Order,
+		storage_order Order1,
+		storage_order Order2,
 		typename Offset,
 		typename Size
 	>
 	decltype(auto)
-	operator()(submatrix<rtsam<Ring,Order>&, Offset, Size> const& M1, rtsam<Ring,Order> const& M2) const;
-
-private:
-	template<
-		typename Ring,
-		typename Matrix1,
-		typename Matrix2
-	>
-	decltype(auto)
-	impl(Matrix1 const& Mp1, Matrix2 const& Mp2, hana::basic_type<Ring>) const;
+	operator()(submatrix<rtsam<Ring,Order1>&, Offset, Size> const& m1, rtsam<Ring,Order2> const& m2) const;
 };
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_MINUS_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                     \
+#define HBRS_MPL_FN_MINUS_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                      \
 		hbrs::mpl::detail::minus_impl_rtsam{}                                                                          \
 	)
 

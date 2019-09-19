@@ -22,6 +22,12 @@
 
 #include <hbrs/mpl/dt/rtsam.hpp>
 #include <hbrs/mpl/dt/submatrix.hpp>
+#include <hbrs/mpl/fn/at.hpp>
+#include <hbrs/mpl/fn/size.hpp>
+#include <hbrs/mpl/fn/m.hpp>
+#include <hbrs/mpl/fn/n.hpp>
+#include <hbrs/mpl/fn/equal.hpp>
+#include <hbrs/mpl/fn/minus.hpp>
 #include <cmath>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -30,42 +36,50 @@ namespace detail {
 
 template<
 	typename Ring,
-	storage_order Order
+	typename Matrix1,
+	typename Matrix2
 >
-decltype(auto)
-minus_impl_rtsam::operator()(rtsam<Ring,Order> const& M1, rtsam<Ring,Order> const& M2) const {
-	return impl(M1,M2,hana::type_c<Ring>);
+static auto
+minus_rtsam_impl(Matrix1 const& m1, Matrix2 const& m2, hana::basic_type<Ring>) {
+	auto m1_sz = (*size)(m1);
+	auto m1_m = (*m)(m1_sz);
+	auto m1_n = (*n)(m1_sz);
+	auto m2_sz = (*size)(m2);
+	
+	BOOST_ASSERT((*equal)(m1_sz, m2_sz));
+
+	typedef std::decay_t<Ring> _Ring_;
+	//TODO: Choose best storage order
+	rtsam<_Ring_, storage_order::row_major> result {m1_m, m1_n};
+	//TODO: Optimize for loop to storage order of matrices
+	for (std::size_t i = 0; i < m1_m; ++i) {
+		for (std::size_t j = 0; j < m1_n; ++j) {
+			(*at)(result, make_matrix_index(i, j)) = (*minus)(at(m1, make_matrix_index(i, j)), at(m2, make_matrix_index(i, j)));
+		}
+	}
+	return result;
 }
 
 template<
 	typename Ring,
-	storage_order Order,
+	storage_order Order1,
+	storage_order Order2
+>
+decltype(auto)
+minus_impl_rtsam::operator()(rtsam<Ring,Order1> const& m1, rtsam<Ring,Order2> const& m2) const {
+	return minus_rtsam_impl(m1,m2,hana::type_c<Ring>);
+}
+
+template<
+	typename Ring,
+	storage_order Order1,
+	storage_order Order2,
 	typename Offset,
 	typename Size
 >
 decltype(auto)
-minus_impl_rtsam::operator()(submatrix<rtsam<Ring,Order>&, Offset, Size> const& M1, rtsam<Ring,Order> const& M2) const {
-	return impl(M1,M2,hana::type_c<Ring>);
-}
-
-template<
-	typename Ring,
-	typename Matrix1,
-	typename Matrix2
->
-decltype(auto)
-minus_impl_rtsam::impl(Matrix1 const& M1, Matrix2 const& M2, hana::basic_type<Ring>) const {
-	BOOST_ASSERT((*m)((*size)(M1)) == (*m)((*size)(M2)));
-	BOOST_ASSERT((*n)((*size)(M1)) == (*n)((*size)(M2)));
-
-	typedef std::decay_t<Ring> _Ring_;
-	rtsam<_Ring_, storage_order::row_major> result {M1.size().m(), M1.size().n()};
-	for (std::size_t i {0}; i < M1.size().m(); ++i) {
-		for (std::size_t j {0}; j < M1.size().n(); ++j) {
-			result.at(make_matrix_index(i, j)) = M1.at(make_matrix_index(i, j)) - M2.at(make_matrix_index(i, j));
-		}
-	}
-	return result;
+minus_impl_rtsam::operator()(submatrix<rtsam<Ring,Order1>&, Offset, Size> const& m1, rtsam<Ring,Order2> const& m2) const {
+	return minus_rtsam_impl(m1,m2,hana::type_c<Ring>);
 }
 
 /* namespace detail */ }
