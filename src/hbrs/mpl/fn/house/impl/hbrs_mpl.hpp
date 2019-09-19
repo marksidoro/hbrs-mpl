@@ -29,6 +29,7 @@
 #include <hbrs/mpl/fn/divide.hpp>
 #include <hbrs/mpl/fn/select.hpp>
 #include <hbrs/mpl/fn/transpose.hpp>
+#include <type_traits>
 #include <cmath>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -42,6 +43,7 @@ namespace detail {
 template<typename Ring>
 decltype(auto)
 house_impl::operator()(rtsacv<Ring> const& x) {
+	typedef std::decay_t<Ring> _Ring_;
 	auto const m_ {x.length()}; // copy for readability
 
 	/* x2m is a temporary which is written x(2:m) in the book and is equivalent to x(range(1,m-1)) in this code */
@@ -49,7 +51,7 @@ house_impl::operator()(rtsacv<Ring> const& x) {
 	auto const sigma {transpose(x2m) * x2m};
 
 	/* The vector ni is the vector x with the value 1 in its first row */
-	auto result{make_house_result(x, 0.)};
+	auto result = make_house_result(x, _Ring_(0));
 	auto& ni  {result.ni  ()};
 	auto& beta{result.beta()};
 
