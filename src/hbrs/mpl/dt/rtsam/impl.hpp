@@ -151,33 +151,28 @@ struct rtsam {
 	decltype(auto)
 	order() const { return storage_order_c<Order>; }
 	
-	template<typename Index>
 	decltype(auto)
-	at(Index && i) {
+	at(matrix_index<std::size_t, std::size_t> const& i) {
 		return data_.at(
-			detail::translate_index(size_, HBRS_MPL_FWD(i), storage_order_c<Order>)
+			detail::translate_index(size_, i, storage_order_c<Order>)
 		);
 	}
 	
-	template<typename Index>
 	decltype(auto)
-	at(Index && i) const {
+	at(matrix_index<std::size_t, std::size_t> const& i) const {
 		return data_.at(
-			detail::translate_index(size_, HBRS_MPL_FWD(i), storage_order_c<Order>)
+			detail::translate_index(size_, i, storage_order_c<Order>)
 		);
 	}
 	
-	template<typename Index>
 	auto
-	operator[](Index && i) & { return smr<rtsam &, std::decay_t<Index>>{*this, HBRS_MPL_FWD(i)}; }
+	operator[](std::size_t i) & { return smr<rtsam &, std::size_t>{*this, i}; }
 	
-	template<typename Index>
 	auto
-	operator[](Index && i) const& { return smr<rtsam const&, std::decay_t<Index>>{*this, HBRS_MPL_FWD(i)}; }
+	operator[](std::size_t i) const& { return smr<rtsam const&, std::size_t>{*this, i}; }
 	
-	template<typename Index>
 	auto
-	operator[](Index && i) && { return make_smr(std::move(*this), HBRS_MPL_FWD(i)); }
+	operator[](std::size_t i) && { return make_smr(std::move(*this), i); }
 private:
 	std::vector<Ring> data_;
 	matrix_size<std::size_t, std::size_t> size_;
