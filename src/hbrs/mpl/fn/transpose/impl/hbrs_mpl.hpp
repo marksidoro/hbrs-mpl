@@ -42,7 +42,6 @@ transpose_impl_srv::operator()(Vector && v) const {
 	return make_scv(HBRS_MPL_FWD(v));
 }
 
-
 template <
 	typename Vector,
 	typename std::enable_if_t<
@@ -54,14 +53,30 @@ transpose_impl_scv::operator()(Vector && v) const {
 	return make_srv(HBRS_MPL_FWD(v));
 }
 
+template<typename Matrix, typename Ring, storage_order Order>
+static auto
+transpose_rtsam_impl(Matrix const& m_, hana::basic_type<Ring>, storage_order_<Order>) {
+	typedef std::decay_t<Ring> _Ring_;
+	rtsam<
+		_Ring_,
+		Order == storage_order::row_major ? storage_order::column_major : storage_order::row_major
+	> transposed { (*n)(size(m_)), (*m)(size(m_)) };
+	
+	for (std::size_t i = 0; i < (*m)(size(transposed)); ++i) {
+		for (std::size_t j = 0; j < (*n)(size(transposed)); ++j) {
+			transposed.at(make_matrix_index(i, j)) = (*at)(m_, make_matrix_index(j, i));
+		}
+	}
+	return transposed;
+}
 
 template<
 	typename Ring,
 	storage_order Order
 >
 decltype(auto)
-transpose_impl_matrix::operator()(rtsam<Ring,Order> const& M) const {
-	return impl(M, hana::type_c<Ring>);
+transpose_impl_rtsam::operator()(rtsam<Ring,Order> const& m_) const {
+	return transpose_rtsam_impl(m_, hana::type_c<Ring>, storage_order_c<Order>);
 }
 
 template<
@@ -71,22 +86,8 @@ template<
 	typename Size
 >
 decltype(auto)
-transpose_impl_matrix::operator()(submatrix<rtsam<Ring,Order>&, Offset,Size> const& M) const {
-	return impl(M, hana::type_c<Ring>);
-}
-
-template<typename Ring, typename Matrix>
-decltype(auto)
-transpose_impl_matrix::impl(Matrix const& M, hana::basic_type<Ring>) const {
-	typedef std::decay_t<Ring> _Ring_;
-	rtsam<_Ring_, storage_order::row_major> result {M.size().n(), M.size().m()};
-	//TODO: Implement code to choose best storage_order
-	for (std::size_t i {0}; i < m(size(result)); ++i) {
-		for (std::size_t j {0}; j < n(size(result)); ++j) {
-			result.at(make_matrix_index(i, j)) = M.at(make_matrix_index(j, i));
-		}
-	}
-	return result;
+transpose_impl_rtsam::operator()(submatrix<rtsam<Ring,Order>&, Offset,Size> const& m_) const {
+	return transpose_rtsam_impl(m_, hana::type_c<Ring>, storage_order_c<Order>);
 }
 
 template<
@@ -99,7 +100,6 @@ rtsarv<Ring>
 transpose_impl_rtsacv::operator()(rtsacv<Ring> const& v) const {
 	return {v.data()};
 }
-
 
 template<
 	typename Ring,

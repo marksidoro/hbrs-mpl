@@ -53,14 +53,13 @@ struct transpose_impl_scv {
 	operator()(Vector && v) const;
 };
 
-struct transpose_impl_matrix {
-//TODO: Rename to e.g. transpose_impl_rtsam
+struct transpose_impl_rtsam {
 	template<
 		typename Ring,
 		storage_order Order
 	>
     decltype(auto)
-    operator()(rtsam<Ring,Order> const& M) const;
+    operator()(rtsam<Ring,Order> const& m_) const;
 
 	template<
 		typename Ring,
@@ -69,12 +68,7 @@ struct transpose_impl_matrix {
 		typename Size
 	>
 	decltype(auto)
-	operator()(submatrix<rtsam<Ring,Order>&, Offset,Size> const& M) const;
-
-private:
-	template<typename Ring, typename Matrix>
-	decltype(auto)
-	impl(Matrix const& Mp, hana::basic_type<Ring>) const;
+	operator()(submatrix<rtsam<Ring,Order>&, Offset,Size> const& m_) const;
 };
 
 struct transpose_impl_rtsacv {
@@ -105,7 +99,7 @@ HBRS_MPL_NAMESPACE_END
 #define HBRS_MPL_FN_TRANSPOSE_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                  \
 		hbrs::mpl::detail::transpose_impl_srv{},                                                                       \
 		hbrs::mpl::detail::transpose_impl_scv{},                                                                       \
-		hbrs::mpl::detail::transpose_impl_matrix{},                                                                    \
+		hbrs::mpl::detail::transpose_impl_rtsam{},                                                                     \
 		hbrs::mpl::detail::transpose_impl_rtsacv{},                                                                    \
 		hbrs::mpl::detail::transpose_impl_rtsarv{}                                                                     \
 	)
