@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 		int fun_nr = 0;
 		auto results = hana::transform(
 			funs,
-			[&dataset, &economy, &center, &normalize, &fun_nr](auto f) {
+			[&](auto f) {
 				BOOST_TEST_MESSAGE("calling impl nr " << fun_nr);
 				++fun_nr;
 				return f(dataset, economy, center, normalize);
@@ -153,7 +153,7 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 		);
 		
 		if constexpr(hana::length(results) >= 2u) {
-			auto compare = [&dataset, &economy, &center, &normalize, &results](auto i) {
+			auto compare = [&](auto i) {
 				using hbrs::mpl::select;
 				
 				auto j = i+hana::ushort_c<1>;
@@ -220,7 +220,7 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(0.000000001)) {
 			
 			hana::for_each(
 				hana::make_range(hana::ushort_c<0>, hana::length(results)),
-				[&dataset, &rebuilds](auto i) {
+				[&](auto i) {
 					
 					auto const& rebuild = hana::at(rebuilds, i);
 					
