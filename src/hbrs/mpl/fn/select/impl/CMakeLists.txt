@@ -8,4 +8,5 @@
 
 target_sources(hbrs_mpl PRIVATE
     elemental.cpp
+    hbrs_mpl.cpp
     matlab.cpp)

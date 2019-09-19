@@ -25,25 +25,28 @@
 #include <hbrs/mpl/dt/rtsarv/fwd.hpp>
 #include <hbrs/mpl/dt/submatrix/fwd.hpp>
 #include <hbrs/mpl/dt/range/fwd.hpp>
-#include <hbrs/mpl/fn/multiply.hpp>
-
 #include <boost/hana/ext/std/pair.hpp>
 #include <boost/hana/core/tag_of.hpp>
-
 #include <type_traits>
-#include <utility>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct select_impl_matrix_range_size {
+struct select_impl_rtsam_range_index {
 	template<
 		typename Ring,
 		storage_order Order
 	>
 	decltype(auto)
-	operator()(rtsam<Ring,Order> const& M, std::pair<range<std::size_t,std::size_t>, std::size_t> const& range) const;
+	operator()(
+		rtsam<Ring,Order> const& a,
+		std::pair<
+			range<std::size_t,std::size_t>,
+			std::size_t
+		> const& rng
+	) const;
+	
 	template<
 		typename Ring,
 		storage_order Order,
@@ -51,21 +54,28 @@ struct select_impl_matrix_range_size {
 		typename Size
 	>
 	decltype(auto)
-	operator()(submatrix<rtsam<Ring,Order>&,Offset,Size> const& M, std::pair<range<std::size_t,std::size_t>, std::size_t> const& range) const;
-
-private:
-	template<typename Matrix, typename Range, typename Ring>
-	decltype(auto)
-	impl(Matrix const& M, Range const& range, hana::basic_type<Ring>) const;
+	operator()(
+		submatrix<rtsam<Ring,Order>&,Offset,Size> const& a,
+		std::pair<
+			range<std::size_t,std::size_t>,
+			std::size_t
+		> const& rng
+	) const;
 };
 
-struct select_impl_matrix_size_range {
+struct select_impl_rtsam_index_range {
 	template<
 		typename Ring,
 		storage_order Order
 	>
 	decltype(auto)
-	operator()(rtsam<Ring,Order> const& M, std::pair<std::size_t, range<std::size_t,std::size_t>> const& range) const;
+	operator()(
+		rtsam<Ring,Order> const& a,
+		std::pair<
+			std::size_t,
+			range<std::size_t,std::size_t>
+		> const& rng
+	) const;
 
 	template<
 		typename Ring,
@@ -74,42 +84,51 @@ struct select_impl_matrix_size_range {
 		typename Size
 	>
 	decltype(auto)
-	operator()(submatrix<rtsam<Ring,Order>&, Offset,Size> const& M, std::pair<std::size_t, range<std::size_t,std::size_t>> const& range) const;
-
-private:
-	template<
-		typename Ring,
-		typename Matrix,
-		typename Range
-	>
-	decltype(auto)
-	impl(Matrix const& M, Range const& range, hana::basic_type<Ring>) const;
+	operator()(
+		submatrix<rtsam<Ring,Order>&, Offset,Size> const& a,
+		std::pair<
+			std::size_t,
+			range<std::size_t,std::size_t>
+		> const& rng
+	) const;
 };
 
 struct select_impl_rtsam_range_range {
 	template<typename Ring, storage_order Order>
-	decltype(auto)
-	operator()(rtsam<Ring,Order>& M, std::pair<range<std::size_t, std::size_t>, range<std::size_t, std::size_t>> const& ranges) const;
+	auto
+	operator()(
+		rtsam<Ring,Order>& a,
+		std::pair<
+			range<std::size_t, std::size_t>,
+			range<std::size_t, std::size_t>
+		> const& rngs
+	) const;
 };
 
 struct select_impl_rtsacv_range {
 	template<typename Ring>
 	auto
-	operator() (rtsacv<Ring> const& v, range<std::size_t,std::size_t> const& r) const;
+	operator() (
+		rtsacv<Ring> const& v,
+		range<std::size_t,std::size_t> const& rng
+	) const;
 };
 
 struct select_impl_rtsarv_range {
 	template<typename Ring>
 	auto
-	operator() (rtsarv<Ring> const& v, range<std::size_t,std::size_t> const& r) const;
+	operator() (
+		rtsarv<Ring> const& v,
+		range<std::size_t,std::size_t> const& rng
+	) const;
 };
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
 #define HBRS_MPL_FN_SELECT_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                     \
-		hbrs::mpl::detail::select_impl_matrix_range_size{},                                                            \
-		hbrs::mpl::detail::select_impl_matrix_size_range{},                                                            \
+		hbrs::mpl::detail::select_impl_rtsam_range_index{},                                                            \
+		hbrs::mpl::detail::select_impl_rtsam_index_range{},                                                            \
 		hbrs::mpl::detail::select_impl_rtsam_range_range{},                                                            \
 		hbrs::mpl::detail::select_impl_rtsacv_range{},                                                                 \
 		hbrs::mpl::detail::select_impl_rtsarv_range{}                                                                  \
