@@ -1,5 +1,4 @@
-/* Copyright (c) 2019 Abdullah Güntepe, <abdullah@guentepe.com>
- * Copyright (c) 2019 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,19 +14,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FN_ALMOST_EQUAL_FWD_HPP
-#define HBRS_MPL_FN_ALMOST_EQUAL_FWD_HPP
+#ifndef HBRS_MPL_DT_ALMOST_EQUAL_CONTROL_FWD_HPP
+#define HBRS_MPL_DT_ALMOST_EQUAL_CONTROL_FWD_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/dt/function/fwd.hpp>
+#include <boost/hana/fwd/core/make.hpp>
+#include <boost/hana/fwd/core/to.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
-HBRS_MPL_DEC_F3(almost_equal, almost_equal_t)
+namespace hana = boost::hana;
+
+template<typename MaxULPsDiff, typename AlmostZeroPrecision>
+struct almost_equal_control;
+struct almost_equal_control_tag {};
+constexpr auto make_almost_equal_control = hana::make<almost_equal_control_tag>;
+constexpr auto to_almost_equal_control = hana::to<almost_equal_control_tag>;
+
 HBRS_MPL_NAMESPACE_END
 
-#include "fwd/hbrs_mpl.hpp"
-#include "fwd/std.hpp"
-
-HBRS_MPL_MAP_IMPLS(almost_equal_t, HBRS_MPL_FN_ALMOST_EQUAL_IMPLS_HBRS_MPL, HBRS_MPL_FN_ALMOST_EQUAL_IMPLS_STD)
-
-#endif // !HBRS_MPL_FN_ALMOST_EQUAL_FWD_HPP
+#endif // !HBRS_MPL_DT_ALMOST_EQUAL_CONTROL_FWD_HPP

@@ -19,21 +19,29 @@
 #define HBRS_MPL_FN_ALMOST_EQUAL_FWD_HBRS_MPL_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/dt/matrix_index/fwd.hpp>
 #include <hbrs/mpl/dt/storage_order/fwd.hpp>
 #include <hbrs/mpl/dt/rtsam/fwd.hpp>
-
+#include <hbrs/mpl/dt/almost_equal_control/fwd.hpp>
 #include <boost/hana/tuple.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 struct almost_equal_impl_rtsam {
+	//TODO: Join both functions
 	bool
-	operator()(rtsam<double,storage_order::row_major> const& M1, rtsam<double,storage_order::row_major> const& M2) const;
+	operator()(
+		rtsam<double,storage_order::row_major> const& lhs,
+		rtsam<double,storage_order::row_major> const& rhs,
+		almost_equal_control<int,int> const& ctrl
+	) const;
 
 	bool
-	operator()(rtsam<double,storage_order::column_major> const& M1, rtsam<double,storage_order::column_major> const& M2) const;
+	operator()(
+		rtsam<double,storage_order::column_major> const& lhs,
+		rtsam<double,storage_order::column_major> const& rhs,
+		almost_equal_control<int,int> const& ctrl
+	) const;
 };
 
 /* namespace detail */ }

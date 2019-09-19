@@ -32,6 +32,7 @@
 #include <hbrs/mpl/fn/bidiag.hpp>
 #include <hbrs/mpl/fn/givens.hpp>
 #include <hbrs/mpl/fn/almost_equal.hpp>
+#include <hbrs/mpl/dt/almost_equal_control.hpp>
 #include <hbrs/mpl/fn/select.hpp>
 #include <hbrs/mpl/fn/multiply.hpp>
 #include <cmath>
@@ -61,6 +62,9 @@ decltype(auto)
 svd_impl::operator()(rtsam<Ring,Order> const& A, int econ) {
 	BOOST_ASSERT(m(size(A)) >= n(size(A)));
 
+	//TODO: Make almost_equal_control customizable
+	almost_equal_control<int,int> aeq_ctrl{147,2};
+	
 	//Use Algorithm 5.4.2 to compute the bidiagonalization.
 	auto UAV {bidiag(A, bidiag_control<decompose_mode>{ decompose_mode::complete })};
 	svd_result UBV {make_svd_result(UAV.u(), UAV.b(), UAV.v())};
@@ -76,7 +80,8 @@ svd_impl::operator()(rtsam<Ring,Order> const& A, int econ) {
 
 	while (q != n) {
 		for (std::size_t i {0}; i < n - 1; ++i) {
-			if (almost_equal(0., B[i][i+1])) {
+			
+			if (almost_equal(0., B[i][i+1], aeq_ctrl)) {
 				B[i][i+1] = 0;
 			}
 		}

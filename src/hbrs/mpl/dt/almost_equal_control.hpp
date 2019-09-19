@@ -1,5 +1,4 @@
-/* Copyright (c) 2019 Abdullah Güntepe, <abdullah@guentepe.com>
- * Copyright (c) 2019 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,9 +14,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FN_ALMOST_EQUAL_IMPL_STD_HPP
-#define HBRS_MPL_FN_ALMOST_EQUAL_IMPL_STD_HPP
+#ifndef HBRS_MPL_DT_ALMOST_EQUAL_CONTROL_HPP
+#define HBRS_MPL_DT_ALMOST_EQUAL_CONTROL_HPP
 
-#include "../fwd/std.hpp"
+#include "almost_equal_control/fwd.hpp"
+#include "almost_equal_control/impl.hpp"
 
-#endif // !HBRS_MPL_FN_ALMOST_EQUAL_IMPL_STD_HPP
+#endif // !HBRS_MPL_DT_ALMOST_EQUAL_CONTROL_HPP

@@ -90,11 +90,12 @@ BOOST_AUTO_TEST_CASE(svd_matrix) {
 	auto CSVD{svd(C,0)};
 	auto DSVD{svd(D,0)};
 
-	auto AA   {ASVD.u() * ASVD.s() * transpose(ASVD.v())};
-	BOOST_TEST((*almost_equal)(AA, A));
-	BOOST_TEST((*almost_equal)(CSVD.u() * CSVD.s() * transpose(CSVD.v()), C));
-	auto DD   {DSVD.u() * DSVD.s() * transpose(DSVD.v())};
-	BOOST_TEST((*almost_equal)(DD, D));
+	auto rA = ASVD.u() * ASVD.s() * transpose(ASVD.v());
+	HBRS_MPL_TEST_MMEQ(A, rA, false);
+	auto rC = CSVD.u() * CSVD.s() * transpose(CSVD.v());
+	HBRS_MPL_TEST_MMEQ(C, rC, false);
+	auto rD   = DSVD.u() * DSVD.s() * transpose(DSVD.v());
+	HBRS_MPL_TEST_MMEQ(D, rD, false);
 }
 
 using hbrs::mpl::detail::environment_fixture;

@@ -7,6 +7,7 @@
 #################### list the subdirectories ####################
 
 add_subdirectory(absolute)
+add_subdirectory(almost_equal)
 add_subdirectory(append)
 add_subdirectory(apply)
 add_subdirectory(apply_at)

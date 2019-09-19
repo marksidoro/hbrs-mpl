@@ -19,8 +19,7 @@
 #define HBRS_MPL_FN_ALMOST_EQUAL_FWD_STD_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/core/preprocessor.hpp>
-
+#include <hbrs/mpl/dt/almost_equal_control/fwd.hpp>
 #include <boost/hana/tuple.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -28,11 +27,7 @@ namespace detail {
 
 struct almost_equal_impl_double {
 	bool
-	operator()(double const a, double const b) const;
-
-private:
-	bool
-	almost_zero(double const x) const;
+	operator()(double a, double b, almost_equal_control<int,int> const& ctrl) const;
 };
 
 /* namespace detail */ }
