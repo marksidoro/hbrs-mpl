@@ -24,7 +24,6 @@
 #include <hbrs/mpl/dt/matrix_index.hpp>
 #include <hbrs/mpl/dt/smr.hpp>
 #include <hbrs/mpl/dt/givens_rotation.hpp>
-
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/m.hpp>
@@ -123,26 +122,37 @@ struct submatrix {
 	 *
 	 * Apply the Givens roation on A and return A.
 	 */
-	template<typename Ring>
+	template<
+		typename Ring,
+		typename std::enable_if_t<
+			!std::is_const_v<std::remove_reference_t<Ring>>
+		>* = nullptr
+	>
 	submatrix&
-	operator=(detail::givens_rotation_expression<givens_rotation<Ring> const&, submatrix<Matrix,Offset,Size> const&> const& e) {
+	operator=(
+		detail::givens_rotation_expression<
+			givens_rotation<Ring> const&,
+			submatrix<Matrix,Offset,Size> const&
+		> const& e
+	) {
 		if (&(e.rhs()) != this) {
 			*this = e.rhs();
 		}
 
-		auto i     {e.lhs().i()};
-		auto k     {e.lhs().k()};
-		auto theta {e.lhs().theta()};
+		decltype(auto) i     = e.lhs().i();
+		decltype(auto) k     = e.lhs().k();
+		decltype(auto) theta = e.lhs().theta();
 
 		BOOST_ASSERT(i < (*m)(sz_));
 		BOOST_ASSERT(k < (*m)(sz_));
 
-		for (std::size_t j {0}; j <= (*n)(sz_) - 1; ++j) {
-			double const tau1 {at(make_matrix_index(i, j))};
-			double const tau2 {at(make_matrix_index(k, j))};
-			at(make_matrix_index(i, j)) = theta.at(0) * tau1 - theta.at(1) * tau2;
-			at(make_matrix_index(k, j)) = theta.at(1) * tau1 + theta.at(0) * tau2;
+		for (std::size_t j = 0; j <= (*n)(sz_) - 1; ++j) {
+			auto tau1 = at(make_matrix_index(i, j));
+			auto tau2 = at(make_matrix_index(k, j));
+			at(make_matrix_index(i, j)) = theta.c() * tau1 - theta.s() * tau2;
+			at(make_matrix_index(k, j)) = theta.s() * tau1 + theta.c() * tau2;
 		}
+		
 		return *this;
 	}
 
@@ -160,26 +170,37 @@ struct submatrix {
 	 *
 	 * Apply the Givens roation on A and return A.
 	 */
-	template<typename Ring>
+	template<
+		typename Ring,
+		typename std::enable_if_t<
+			!std::is_const_v<std::remove_reference_t<Ring>>
+		>* = nullptr
+	>
 	submatrix&
-	operator=(detail::givens_rotation_expression<submatrix<Matrix,Offset,Size> const&, givens_rotation<Ring> const&> const& e) {
+	operator=(
+		detail::givens_rotation_expression<
+			submatrix<Matrix,Offset,Size> const&,
+			givens_rotation<Ring> const&
+		> const& e
+	) {
 		if (&(e.lhs()) != this) {
 			*this = e.lhs();
 		}
 
-		auto i     {e.rhs().i()};
-		auto k     {e.rhs().k()};
-		auto theta {e.rhs().theta()};
+		decltype(auto) i     = e.rhs().i();
+		decltype(auto) k     = e.rhs().k();
+		decltype(auto) theta = e.rhs().theta();
 
 		BOOST_ASSERT(i < (*n)(sz_));
 		BOOST_ASSERT(k < (*n)(sz_));
 
-		for (std::size_t j {0}; j <= (*m)(sz_) - 1; ++j) {
-			auto const tau1 {at(make_matrix_index(j, i))};
-			auto const tau2 {at(make_matrix_index(j, k))};
-			at(make_matrix_index(j, i)) = theta.at(0) * tau1 - theta.at(1) * tau2;
-			at(make_matrix_index(j, k)) = theta.at(1) * tau1 + theta.at(0) * tau2;
+		for (std::size_t j = 0; j <= (*m)(sz_) - 1; ++j) {
+			auto tau1 = at(make_matrix_index(j, i));
+			auto tau2 = at(make_matrix_index(j, k));
+			at(make_matrix_index(j, i)) = theta.c() * tau1 - theta.s() * tau2;
+			at(make_matrix_index(j, k)) = theta.s() * tau1 + theta.c() * tau2;
 		}
+		
 		return *this;
 	}
 

@@ -204,7 +204,7 @@ svd_impl::svd_step(B_& B, std::size_t const p, std::size_t const q, U_& U, V_& V
 	auto y { T[0][0] - mu };
 	auto z { T[0][1] };
 
-	std::array<double, 2> theta;
+	givens_result<double, double> theta;
 	for (std::size_t k {0}; k < n(size(B22))-1; ++k) {
 		// Determine c = cos(theta) and s = sin(theta) such that
 		theta = givens(y, z);

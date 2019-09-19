@@ -19,12 +19,14 @@
 #define HBRS_MPL_FN_GIVENS_FWD_HBRS_MPL_HPP
 
 #include <hbrs/mpl/config.hpp>
+#include <hbrs/mpl/dt/givens_result.hpp>
 #include <boost/hana/tuple.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
+
 struct givens_impl {
-	auto
+	givens_result<double, double>
 	operator()(double a, double b) const;
 };
 

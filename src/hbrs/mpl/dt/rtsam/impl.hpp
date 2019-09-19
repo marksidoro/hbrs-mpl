@@ -87,25 +87,37 @@ struct rtsam {
 	 *
 	 * Apply the Givens roation on A and return A.
 	 */
+	template<
+		typename Ring_ = Ring,
+		typename std::enable_if_t<
+			std::is_same_v<Ring_, Ring> && !std::is_const_v<std::remove_reference_t<Ring_>>
+		>* = nullptr
+	>
 	rtsam&
-	operator=(detail::givens_rotation_expression<givens_rotation<Ring> const&, rtsam<Ring,Order> const&> const& e) {
+	operator=(
+		detail::givens_rotation_expression<
+			givens_rotation<Ring_> const&,
+			rtsam<Ring_,Order> const&
+		> const& e
+	) {
 		if (&(e.rhs()) != this) {
 			*this = e.rhs();
 		}
 
-		auto i     {e.lhs().i()};
-		auto k     {e.lhs().k()};
-		auto theta {e.lhs().theta()};
+		decltype(auto) i     = e.lhs().i();
+		decltype(auto) k     = e.lhs().k();
+		decltype(auto) theta = e.lhs().theta();
 
-		BOOST_ASSERT(i < m(size()));
-		BOOST_ASSERT(k < m(size()));
+		BOOST_ASSERT(i < (*m)(size_));
+		BOOST_ASSERT(k < (*m)(size_));
 
-		for (std::size_t j {0}; j <= n(size()) - 1; ++j) {
-			double const tau1 {at(make_matrix_index(i, j))};
-			double const tau2 {at(make_matrix_index(k, j))};
-			at(make_matrix_index(i, j)) = theta.at(0) * tau1 - theta.at(1) * tau2;
-			at(make_matrix_index(k, j)) = theta.at(1) * tau1 + theta.at(0) * tau2;
+		for (std::size_t j = 0; j <= (*n)(size_) - 1; ++j) {
+			auto tau1 = at(make_matrix_index(i, j));
+			auto tau2 = at(make_matrix_index(k, j));
+			at(make_matrix_index(i, j)) = theta.c() * tau1 - theta.s() * tau2;
+			at(make_matrix_index(k, j)) = theta.s() * tau1 + theta.c() * tau2;
 		}
+		
 		return *this;
 	}
 	
@@ -123,25 +135,37 @@ struct rtsam {
 	 *
 	 * Apply the Givens roation on A and return A.
 	 */
+	template<
+		typename Ring_ = Ring,
+		typename std::enable_if_t<
+			std::is_same_v<Ring_, Ring> && !std::is_const_v<std::remove_reference_t<Ring_>>
+		>* = nullptr
+	>
 	rtsam&
-	operator=(detail::givens_rotation_expression<rtsam<Ring,Order> const&, givens_rotation<Ring> const&> const& e) {
+	operator=(
+		detail::givens_rotation_expression<
+			rtsam<Ring_,Order> const&,
+			givens_rotation<Ring_> const&
+		> const& e
+	) {
 		if (&(e.lhs()) != this) {
 			*this = e.lhs();
 		}
 
-		auto i     {e.rhs().i()};
-		auto k     {e.rhs().k()};
-		auto theta {e.rhs().theta()};
+		decltype(auto) i     = e.rhs().i();
+		decltype(auto) k     = e.rhs().k();
+		decltype(auto) theta = e.rhs().theta();
 
-		BOOST_ASSERT(i < n(size()));
-		BOOST_ASSERT(k < n(size()));
+		BOOST_ASSERT(i < (*n)(size_));
+		BOOST_ASSERT(k < (*n)(size_));
 
-		for (std::size_t j {0}; j <= m(size()) - 1; ++j) {
-			auto const tau1 {at(make_matrix_index(j, i))};
-			auto const tau2 {at(make_matrix_index(j, k))};
-			at(make_matrix_index(j, i)) = theta.at(0) * tau1 - theta.at(1) * tau2;
-			at(make_matrix_index(j, k)) = theta.at(1) * tau1 + theta.at(0) * tau2;
+		for (std::size_t j = 0; j <= (*m)(size_) - 1; ++j) {
+			auto tau1 = at(make_matrix_index(j, i));
+			auto tau2 = at(make_matrix_index(j, k));
+			at(make_matrix_index(j, i)) = theta.c() * tau1 - theta.s() * tau2;
+			at(make_matrix_index(j, k)) = theta.s() * tau1 + theta.c() * tau2;
 		}
+		
 		return *this;
 	}
 

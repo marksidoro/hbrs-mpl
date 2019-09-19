@@ -21,6 +21,7 @@
 #include "fwd.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
+#include <hbrs/mpl/dt/givens_result.hpp>
 #include <array>
 
 #include <boost/hana/core/make.hpp>
@@ -31,7 +32,7 @@ HBRS_MPL_NAMESPACE_BEGIN
 
 template<typename /* type of matrix entries */ Ring>
 struct givens_rotation {
-	givens_rotation(std::size_t i, std::size_t k, std::array<Ring, 2> theta)
+	givens_rotation(std::size_t i, std::size_t k, givens_result<Ring,Ring> theta)
 	: i_{i}, k_{k}, theta_{theta} {}
 	
 	constexpr decltype(auto)
@@ -64,12 +65,12 @@ struct givens_rotation {
 private:
 	std::size_t i_;
 	std::size_t k_;
-	std::array<Ring, 2> theta_;
+	givens_result<Ring,Ring> theta_;
 };
 
 template<typename Ring>
 givens_rotation<Ring>
-G(std::size_t i, std::size_t k, std::array<Ring, 2> theta) {
+G(std::size_t i, std::size_t k, givens_result<Ring,Ring> theta) {
 	return {i, k, theta};
 }
 
@@ -123,7 +124,7 @@ struct make_impl<hbrs::mpl::givens_rotation_tag> {
 		>* = nullptr
 	>
 	static hbrs::mpl::givens_rotation<Ring>
-	apply(std::size_t i, std::size_t k, std::array<Ring, 2> theta) {
+	apply(std::size_t i, std::size_t k, hbrs::mpl::givens_result<Ring,Ring> theta) {
 		return {i, k, theta};
 	}
 };
