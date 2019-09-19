@@ -1,5 +1,4 @@
-/* Copyright (c) 2019 Abdullah Güntepe, <abdullah@guentepe.com>
- * Copyright (c) 2019 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,27 +14,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FN_DIVIDE_IMPL_HBRS_MPL_HPP
-#define HBRS_MPL_FN_DIVIDE_IMPL_HBRS_MPL_HPP
+#ifndef HBRS_MPL_DT_BIDIAG_CONTROL_FWD_HPP
+#define HBRS_MPL_DT_BIDIAG_CONTROL_FWD_HPP
 
-#include "../fwd/hbrs_mpl.hpp"
-
-#include <hbrs/mpl/dt/rtsacv.hpp>
-#include <hbrs/mpl/fn/multiply.hpp>
-#include <hbrs/mpl/fn/divide.hpp>
-#include <type_traits>
+#include <hbrs/mpl/config.hpp>
+#include <boost/hana/fwd/core/make.hpp>
+#include <boost/hana/fwd/core/to.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
-namespace detail {
+namespace hana = boost::hana;
 
-template<typename Ring>
-decltype(auto)
-divide_impl_rtsacv_scalar::operator()(rtsacv<Ring> const& v, Ring const& d) const {
-	typedef std::decay_t<Ring> _Ring_;
-	return multiply(divide(_Ring_(1), d), v);
-}
+template<typename DecomposeMode>
+struct bidiag_control;
+struct bidiag_control_tag {};
+constexpr auto make_bidiag_control = hana::make<bidiag_control_tag>;
+constexpr auto to_bidiag_control = hana::to<bidiag_control_tag>;
 
-/* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_FN_DIVIDE_IMPL_HBRS_MPL_HPP
+#endif // !HBRS_MPL_DT_BIDIAG_CONTROL_FWD_HPP

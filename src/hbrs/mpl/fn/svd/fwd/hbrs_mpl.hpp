@@ -35,12 +35,9 @@ struct svd_impl {
 	operator()(rtsam<Ring,Order> const& A, int econ);
 
 private:
-	template<
-		typename Ring,
-		storage_order Order
-	>
+	template<typename B_, typename U_, typename V_>
 	void
-	svd_step(rtsam<Ring,Order>& B, std::size_t const p, std::size_t const q, rtsam<Ring,Order>& U, rtsam<Ring,Order>& V);
+	svd_step(B_& B, std::size_t const p, std::size_t const q, U_& U, V_& V);
 
 	template<
 		typename Ring,

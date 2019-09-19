@@ -19,34 +19,28 @@
 #define HBRS_MPL_FN_BIDIAG_FWD_HBRS_MPL_HPP
 
 #include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/core/preprocessor.hpp>
+#include <hbrs/mpl/dt/decompose_mode/fwd.hpp>
+#include <hbrs/mpl/dt/bidiag_control/fwd.hpp>
 #include <hbrs/mpl/dt/storage_order/fwd.hpp>
 #include <hbrs/mpl/dt/rtsam/fwd.hpp>
-#include <cmath>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-struct bidiag_impl_householder {
+struct bidiag_impl_rtsam {
 	template<
 		typename Ring,
 		storage_order Order
 	>
-	decltype(auto)
-	operator()(rtsam<Ring,Order> const& A, int econ);
-private:
-	template<
-		typename Ring,
-		storage_order Order
-	>
-	rtsam<Ring,Order>
-	identity(std::size_t const size);
+	auto
+	operator()(rtsam<Ring,Order> const& x, bidiag_control<decompose_mode> const& ctrl) const;
 };
+
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
 #define HBRS_MPL_FN_BIDIAG_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                     \
-        hbrs::mpl::detail::bidiag_impl_householder{}                                                                   \
+        hbrs::mpl::detail::bidiag_impl_rtsam{}                                                                         \
 	)
 
 #endif // !HBRS_MPL_FN_BIDIAG_FWD_HBRS_MPL_HPP

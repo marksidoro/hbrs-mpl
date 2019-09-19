@@ -26,7 +26,7 @@ HBRS_MPL_NAMESPACE_BEGIN
 
 namespace detail {
 
-struct divide_impl_rtsacv_ring {
+struct divide_impl_rtsacv_scalar {
 	template<typename Ring>
 	decltype(auto)
 	operator()(rtsacv<Ring> const& v, Ring const& d) const;
@@ -36,7 +36,7 @@ struct divide_impl_rtsacv_ring {
 HBRS_MPL_NAMESPACE_END
 
 #define HBRS_MPL_FN_DIVIDE_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                     \
-		hbrs::mpl::detail::divide_impl_rtsacv_ring{}                                                                   \
+		hbrs::mpl::detail::divide_impl_rtsacv_scalar{}                                                                 \
 	)
 
 #endif // !HBRS_MPL_FN_DIVIDE_FWD_HBRS_MPL_HPP

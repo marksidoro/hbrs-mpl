@@ -62,7 +62,7 @@ svd_impl::operator()(rtsam<Ring,Order> const& A, int econ) {
 	BOOST_ASSERT(m(size(A)) >= n(size(A)));
 
 	//Use Algorithm 5.4.2 to compute the bidiagonalization.
-	auto UAV {bidiag(A, econ)};
+	auto UAV {bidiag(A, bidiag_control<decompose_mode>{ decompose_mode::complete })};
 	svd_result UBV {make_svd_result(UAV.u(), UAV.b(), UAV.v())};
 
 	auto& U {UBV.u()};
@@ -178,12 +178,9 @@ svd_impl::operator()(rtsam<Ring,Order> const& A, int econ) {
  * the submatrix. Also p and q are necessary for the calculation of U
  * and V.
  */
-template<
-	typename Ring,
-	storage_order Order
->
+template<typename B_, typename U_, typename V_>
 void
-svd_impl::svd_step(rtsam<Ring,Order>& B, std::size_t const p, std::size_t const q, rtsam<Ring,Order>& U, rtsam<Ring,Order>& V) {
+svd_impl::svd_step(B_& B, std::size_t const p, std::size_t const q, U_& U, V_& V) {
 	range<std::size_t,std::size_t> const pq { p, n(size(B))-1 - q }; // The range for B22 rows and columns
 	auto B22 {select(B, std::make_pair(pq, pq))};
 

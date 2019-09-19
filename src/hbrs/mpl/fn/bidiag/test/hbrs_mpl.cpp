@@ -16,63 +16,62 @@
  */
 
 
-#define BOOST_TEST_MODULE bidiag_test
+#define BOOST_TEST_MODULE fn_bidiag_hbrs_mpl_test
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
 #include <hbrs/mpl/fn/bidiag.hpp>
-#include <hbrs/mpl/fn/almost_equal.hpp>
 #include <hbrs/mpl/fn/multiply.hpp>
+#include <hbrs/mpl/fn/transpose.hpp>
 #include <hbrs/mpl/dt/storage_order.hpp>
 #include <hbrs/mpl/dt/rtsam.hpp>
 
-#include <iostream>
+#include <hbrs/mpl/detail/test.hpp>
 
-BOOST_AUTO_TEST_SUITE(bidiag_test)
+namespace utf = boost::unit_test;
+namespace tt = boost::test_tools;
 
-BOOST_AUTO_TEST_CASE(bidiag_test1) {
+#define _TOL 0.000000001
+
+BOOST_AUTO_TEST_SUITE(fn_bidiag_hbrs_mpl_test)
+
+using hbrs::mpl::detail::environment_fixture;
+BOOST_TEST_GLOBAL_FIXTURE(environment_fixture);
+
+//TODO: Refactor like fn_variance_hbrs_mpl_test
+BOOST_AUTO_TEST_CASE(rtsam_, * utf::tolerance(_TOL)) {
 	using namespace hbrs::mpl;
-
-	rtsam<double, storage_order::row_major> A (4, 4);
-	A.at(make_matrix_index(0, 0)) = 16;
-	A.at(make_matrix_index(0, 1)) = 2;
-	A.at(make_matrix_index(0, 2)) = 3;
-	A.at(make_matrix_index(0, 3)) = 13;
-
-	A.at(make_matrix_index(1, 0)) = 5;
-	A.at(make_matrix_index(1, 1)) = 11;
-	A.at(make_matrix_index(1, 2)) = 10;
-	A.at(make_matrix_index(1, 3)) = 8;
-
-	A.at(make_matrix_index(2, 0)) = 9;
-	A.at(make_matrix_index(2, 1)) = 7;
-	A.at(make_matrix_index(2, 2)) = 6;
-	A.at(make_matrix_index(2, 3)) = 12;
-
-	A.at(make_matrix_index(3, 0)) = 4;
-	A.at(make_matrix_index(3, 1)) = 14;
-	A.at(make_matrix_index(3, 2)) = 15;
-	A.at(make_matrix_index(3, 3)) = 1;
-
+	using hbrs::mpl::decompose_mode;
+	
+	rtsam<double, storage_order::row_major> A {
+		{ 16,  2,  3, 13,
+		   5, 11, 10,  8,
+		   9,  7,  6, 12,
+		   4, 14, 15,  1},
+		make_matrix_size(4, 4)
+	};
+	
 	rtsam<double, storage_order::row_major> A2 {
 		{ 2,  2,  3,
 		  9,  8,  1,
 		 15,100,  7,
 		 99,  1,  2,
-		  5,  7,  3}, make_matrix_size(5,3)};
+		  5,  7,  3},
+		make_matrix_size(5,3)
+	};
 
-	auto B  {bidiag(A ,0)};
-	auto B2 {bidiag(A ,0)};
-	auto B3 {bidiag(A2,0)};
+	auto B  = bidiag(A , make_bidiag_control(decompose_mode::complete));
+	auto B2 = bidiag(A , make_bidiag_control(decompose_mode::complete));
+	auto B3 = bidiag(A2, make_bidiag_control(decompose_mode::complete));
 
-	auto C  {  B.u() *  B.b() * transpose( B.v()) };
-	auto C2 { B2.u() * B2.b() * transpose(B2.v()) };
-	auto C3 { B3.u() * B3.b() * transpose(B3.v()) };
+	auto C  =  B.u() *  B.b() * transpose( B.v());
+	auto C2 = B2.u() * B2.b() * transpose(B2.v());
+	auto C3 = B3.u() * B3.b() * transpose(B3.v());
 
-	BOOST_TEST( almost_equal(C , A ) );
-	BOOST_TEST( almost_equal(C2, A ) );
-	BOOST_TEST( almost_equal(C3, A2) );
+	HBRS_MPL_TEST_MMEQ(C, A, false);
+	HBRS_MPL_TEST_MMEQ(C2, A, false);
+	HBRS_MPL_TEST_MMEQ(C3, A2, false);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

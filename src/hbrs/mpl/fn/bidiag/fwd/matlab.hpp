@@ -19,6 +19,7 @@
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/dt/decompose_mode/fwd.hpp>
+#include <hbrs/mpl/dt/bidiag_control/fwd.hpp>
 #include <hbrs/mpl/dt/bidiag_result/fwd.hpp>
 
 #ifdef HBRS_MPL_ENABLE_MATLAB
@@ -42,7 +43,7 @@ namespace detail {
 			ml_matrix<real_T> /* B */,                                                                                 \
 			ml_matrix<real_T> /* V */                                                                                  \
 		>                                                                                                              \
-		operator()(ml_matrix<real_T> const& a, decompose_mode mode) const;                                             \
+		operator()(ml_matrix<real_T> const& a, bidiag_control<decompose_mode> const& ctrl) const;                      \
 	};
 
 _DEC_BIDIAG(0)
