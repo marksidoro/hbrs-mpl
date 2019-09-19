@@ -38,7 +38,7 @@ namespace detail {
 
 template<typename Ring>
 auto
-multiply_impl_rtsacv_ring::operator()(rtsacv<Ring> v, Ring const& s) const {
+multiply_impl_rtsacv_scalar::operator()(rtsacv<Ring> v, Ring const& s) const {
 	for (std::size_t i {0}; i < v.length(); ++i) {
 		v.at(i) *= s;
 	}
@@ -48,7 +48,7 @@ multiply_impl_rtsacv_ring::operator()(rtsacv<Ring> v, Ring const& s) const {
 
 template<typename Ring>
 decltype(auto)
-multiply_impl_ring_rtsacv::operator()(Ring const& s, rtsacv<Ring> v) const {
+multiply_impl_scalar_rtsacv::operator()(Ring const& s, rtsacv<Ring> v) const {
 	return multiply(v,s);
 }
 
@@ -80,10 +80,11 @@ multiply_impl_rtsacv_rtsarv::operator()(rtsacv<Ring> const& v1, rtsarv<Ring> con
 
 template<
 	typename Ring,
-	storage_order Order
+	storage_order Order1,
+	storage_order Order2
 >
 decltype(auto)
-multiply_impl_matrix_matrix::operator()(rtsam<Ring,Order> const& M1, rtsam<Ring,Order> const& M2) const {
+multiply_impl_matrix_matrix::operator()(rtsam<Ring,Order1> const& M1, rtsam<Ring,Order2> const& M2) const {
 	return impl(M1,M2, hana::type_c<Ring>);
 }
 
@@ -100,12 +101,13 @@ multiply_impl_matrix_matrix::operator()(submatrix<rtsam<Ring,Order>&, Offset,Siz
 
 template<
 	typename Ring,
-	storage_order Order,
+	storage_order Order1,
+	storage_order Order2,
 	typename Offset,
 	typename Size
 >
 decltype(auto)
-multiply_impl_matrix_matrix::operator()(rtsam<Ring,Order> const& M1, submatrix<rtsam<Ring,Order>&, Offset,Size> const& M2) const {
+multiply_impl_matrix_matrix::operator()(rtsam<Ring,Order1> const& M1, submatrix<rtsam<Ring,Order2>&, Offset,Size> const& M2) const {
 	return impl(M1,M2, hana::type_c<Ring>);
 }
 
@@ -229,7 +231,7 @@ template<
 	storage_order Order
 >
 decltype(auto)
-multiply_impl_rtsam_ring::operator()(rtsam<Ring,Order> M, Ring const& d) const {
+multiply_impl_rtsam_scalar::operator()(rtsam<Ring,Order> M, Ring const& d) const {
 	for (std::size_t i {0}; i < (*m)((*size)(M)); ++i) {
 		for (std::size_t j {0}; j < (*n)((*size)(M)); ++j) {
 			M.at(make_matrix_index(i,j)) = M.at(make_matrix_index(i,j)) * d;
@@ -244,7 +246,7 @@ template<
 	storage_order Order
 >
 decltype(auto)
-multiply_impl_ring_rtsam::operator()(Ring const& d, rtsam<Ring,Order> M) const {
+multiply_impl_scalar_rtsam::operator()(Ring const& d, rtsam<Ring,Order> M) const {
 	return multiply(M,d);
 }
 

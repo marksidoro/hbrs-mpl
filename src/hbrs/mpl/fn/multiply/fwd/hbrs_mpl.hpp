@@ -30,13 +30,13 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 namespace detail {
 
-struct multiply_impl_rtsacv_ring {
+struct multiply_impl_rtsacv_scalar {
 	template<typename Ring>
 	auto
 	operator()(rtsacv<Ring> v, Ring const& s) const;
 };
 
-struct multiply_impl_ring_rtsacv {
+struct multiply_impl_scalar_rtsacv {
 	template<typename Ring>
 	decltype(auto)
 	operator()(Ring const& s, rtsacv<Ring> v) const;
@@ -57,10 +57,11 @@ struct multiply_impl_rtsacv_rtsarv {
 struct multiply_impl_matrix_matrix {
 	template<
 		typename Ring,
-		storage_order Order
+		storage_order Order1,
+		storage_order Order2
 	>
 	decltype(auto)
-	operator()(rtsam<Ring,Order> const& M1, rtsam<Ring,Order> const& M2) const;
+	operator()(rtsam<Ring,Order1> const& M1, rtsam<Ring,Order2> const& M2) const;
 
 	template<
 		typename Ring,
@@ -73,12 +74,13 @@ struct multiply_impl_matrix_matrix {
 
 	template<
 		typename Ring,
-		storage_order Order,
+		storage_order Order1,
+		storage_order Order2,
 		typename Offset,
 		typename Size
 	>
 	decltype(auto)
-	operator()(rtsam<Ring,Order> const& M1, submatrix<rtsam<Ring,Order>&, Offset,Size> const& M2) const;
+	operator()(rtsam<Ring,Order1> const& M1, submatrix<rtsam<Ring,Order2>&, Offset,Size> const& M2) const;
 
 	template<
 		typename Ring,
@@ -153,7 +155,7 @@ private:
 	impl(Matrix const& M, ColumnVector const& v, hana::basic_type<Ring>) const;
 };
 
-struct multiply_impl_rtsam_ring {
+struct multiply_impl_rtsam_scalar {
 	template<
 		typename Ring,
 		storage_order Order
@@ -162,7 +164,7 @@ struct multiply_impl_rtsam_ring {
 	operator()(rtsam<Ring,Order> M, Ring const& d) const;
 };
 
-struct multiply_impl_ring_rtsam {
+struct multiply_impl_scalar_rtsam {
 	template<
 		typename Ring,
 		storage_order Order
@@ -211,15 +213,15 @@ struct multiply_impl_matrix_givens_rotation {
 HBRS_MPL_NAMESPACE_END
 
 #define HBRS_MPL_FN_MULTIPLY_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                   \
-		hbrs::mpl::detail::multiply_impl_rtsacv_ring{},                                                                \
-		hbrs::mpl::detail::multiply_impl_ring_rtsacv{},                                                                \
+		hbrs::mpl::detail::multiply_impl_rtsacv_scalar{},                                                                \
+		hbrs::mpl::detail::multiply_impl_scalar_rtsacv{},                                                                \
 		hbrs::mpl::detail::multiply_impl_rtsarv_rtsacv{},                                                              \
 		hbrs::mpl::detail::multiply_impl_rtsacv_rtsarv{},                                                              \
 		hbrs::mpl::detail::multiply_impl_matrix_matrix{},                                                              \
 		hbrs::mpl::detail::multiply_impl_rtsarv_matrix{},                                                              \
 		hbrs::mpl::detail::multiply_impl_matrix_rtsacv{},                                                              \
-		hbrs::mpl::detail::multiply_impl_rtsam_ring{},                                                                 \
-		hbrs::mpl::detail::multiply_impl_ring_rtsam{},                                                                 \
+		hbrs::mpl::detail::multiply_impl_rtsam_scalar{},                                                                 \
+		hbrs::mpl::detail::multiply_impl_scalar_rtsam{},                                                                 \
 		hbrs::mpl::detail::multiply_impl_givens_rotation_matrix{},                                                     \
 		hbrs::mpl::detail::multiply_impl_matrix_givens_rotation{}                                                      \
 	)
