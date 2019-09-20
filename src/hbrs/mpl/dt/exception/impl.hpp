@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "fwd.hpp"
 
 #include <hbrs/mpl/dt/matrix_size.hpp>
+#include <hbrs/mpl/dt/decompose_mode.hpp>
 #include <boost/exception/all.hpp>
 #include <stdexcept>
 #include <string>
@@ -36,6 +37,7 @@ struct incompatible_matrix_vector_exception : virtual exception {};
 struct incompatible_matrices_exception : virtual exception {};
 struct mpi_exception : virtual exception {};
 struct io_exception : virtual exception {};
+struct not_supported_exception : virtual exception {};
 
 struct mpi_error_info {
 	mpi_error_info(int code);

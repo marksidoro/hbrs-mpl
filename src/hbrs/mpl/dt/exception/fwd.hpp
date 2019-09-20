@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 #include <hbrs/mpl/config.hpp>
 #include <hbrs/mpl/dt/matrix_size/fwd.hpp>
+#include <hbrs/mpl/dt/decompose_mode/fwd.hpp>
 #include <boost/exception/error_info.hpp>
 #include <boost/system/error_code.hpp>
 #include <tuple>
@@ -39,6 +40,7 @@ struct incompatible_matrix_vector_exception;
 struct incompatible_matrices_exception;
 struct mpi_exception;
 struct io_exception;
+struct not_supported_exception;
 
 typedef boost::error_info<struct errinfo_sequence_size_, std::size_t > errinfo_sequence_size;
 typedef boost::error_info<
@@ -89,6 +91,8 @@ typedef boost::error_info<struct errinfo_ml_vector_size_, int >
 typedef boost::error_info<struct errinfo_ml_matrix_size_, matrix_size<int, int> >
 	errinfo_ml_matrix_size;
 #endif
+	
+typedef boost::error_info<struct errinfo_decompose_mode_, decompose_mode> errinfo_decompose_mode;
 
 HBRS_MPL_NAMESPACE_END
 
