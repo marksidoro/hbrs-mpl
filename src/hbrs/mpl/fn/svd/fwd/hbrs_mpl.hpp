@@ -19,41 +19,35 @@
 #define HBRS_MPL_FN_SVD_FWD_HBRS_MPL_HPP
 
 #include <hbrs/mpl/config.hpp>
+#include <hbrs/mpl/dt/svd_control/fwd.hpp>
+#include <hbrs/mpl/dt/decompose_mode/fwd.hpp>
 #include <hbrs/mpl/dt/storage_order/fwd.hpp>
 #include <hbrs/mpl/dt/rtsam/fwd.hpp>
-#include <hbrs/mpl/dt/submatrix/fwd.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-struct svd_impl {
-	template<
-		typename Ring,
-		storage_order Order
-	>
-	decltype(auto)
-	operator()(rtsam<Ring,Order> const& A, int econ);
-
-private:
-	template<typename B_, typename U_, typename V_>
-	void
-	svd_step(B_& B, std::size_t const p, std::size_t const q, U_& U, V_& V);
-
+struct svd_impl_rtsam {
 	template<
 		typename Ring,
 		storage_order Order,
-		typename Offset,
-		typename Size
+		typename std::enable_if_t<
+			// TODO: Drop this restriction to double once almost_equal has been implemented for other arithmetic types
+			std::is_same_v< std::decay_t<Ring>, double >
+		>* = nullptr
 	>
-	auto const
-	eigenvalueOf2x2Matrix(submatrix<rtsam<Ring,Order>&, Offset,Size> const& A);
+	auto
+	operator()(
+		rtsam<Ring,Order> const& a,
+		svd_control<decompose_mode> const& ctrl
+	) const;
 };
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
 #define HBRS_MPL_FN_SVD_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                        \
-		hbrs::mpl::detail::svd_impl{}                                                                                  \
+		hbrs::mpl::detail::svd_impl_rtsam{}                                                                            \
 	)
 
 #endif // !HBRS_MPL_FN_SVD_FWD_HBRS_MPL_HPP

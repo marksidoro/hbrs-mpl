@@ -34,7 +34,7 @@
 #include <hbrs/mpl/fn/svd.hpp>
 #include <hbrs/mpl/fn/transpose.hpp>
 #include <hbrs/mpl/fn/select.hpp>
-#include <hbrs/mpl/fn/almost_equal.hpp>
+
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 	#include <hbrs/mpl/dt/el_matrix.hpp>
 	#include <hbrs/mpl/dt/el_dist_matrix.hpp>
@@ -42,6 +42,7 @@
 #ifdef HBRS_MPL_ENABLE_MATLAB
 	#include <hbrs/mpl/dt/ml_matrix.hpp>
 #endif
+
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/transform.hpp>
 #include <boost/hana/for_each.hpp>
@@ -65,38 +66,6 @@ namespace utf = boost::unit_test;
 namespace tt = boost::test_tools;
 
 BOOST_AUTO_TEST_SUITE(svd_test)
-
-BOOST_AUTO_TEST_CASE(svd_matrix) {
-	using namespace hbrs::mpl;
-	rtsam<double, storage_order::row_major> A{
-		{1, 2, 3,
-		 4, 5, 6,
-		 7, 8, 9}, make_matrix_size(3,3)};
-	//     Matrix B{{1, 2, 3, 4,
-	//               5, 6, 7, 8,
-	//               9, 10, 11, 12}, 3};
-	rtsam<double, storage_order::row_major> C{
-		{1, 2,  3,
-		 4, 5,  6,
-		 7, 8,  9,
-		10, 11, 12}, make_matrix_size(4,3)};
-	rtsam<double, storage_order::row_major> D{
-		{1, 0,  0,  0,
-		 0, 6,  7,  0,
-		 0, 0, 11, 12,
-		 0, 0,  0,  0}, make_matrix_size(4,4)};
-			  
-	auto ASVD{svd(A,0)};
-	auto CSVD{svd(C,0)};
-	auto DSVD{svd(D,0)};
-
-	auto rA = ASVD.u() * ASVD.s() * transpose(ASVD.v());
-	HBRS_MPL_TEST_MMEQ(A, rA, false);
-	auto rC = CSVD.u() * CSVD.s() * transpose(CSVD.v());
-	HBRS_MPL_TEST_MMEQ(C, rC, false);
-	auto rD   = DSVD.u() * DSVD.s() * transpose(DSVD.v());
-	HBRS_MPL_TEST_MMEQ(D, rD, false);
-}
 
 using hbrs::mpl::detail::environment_fixture;
 BOOST_TEST_GLOBAL_FIXTURE(environment_fixture);
@@ -485,6 +454,46 @@ reasons for test failures:
 
 
  */
+}
+
+BOOST_AUTO_TEST_CASE(svd_rtsam, * utf::tolerance(0.000000001)) {
+	using namespace hbrs::mpl;
+	using hbrs::mpl::decompose_mode;
+	
+	rtsam<double, storage_order::row_major> A{
+		{1, 2, 3,
+		 4, 5, 6,
+		 7, 8, 9},
+		make_matrix_size(3,3)
+	};
+
+	rtsam<double, storage_order::row_major> C{
+		{1, 2,  3,
+		 4, 5,  6,
+		 7, 8,  9,
+		10, 11, 12},
+		make_matrix_size(4,3)
+	};
+
+	rtsam<double, storage_order::row_major> D{
+		{1, 0,  0,  0,
+		 0, 6,  7,  0,
+		 0, 0, 11, 12,
+		 0, 0,  0,  0},
+		 make_matrix_size(4,4)
+	};
+	
+	auto ASVD = svd(A, make_svd_control(decompose_mode::complete));
+	auto CSVD = svd(C, make_svd_control(decompose_mode::complete));
+	auto DSVD = svd(D, make_svd_control(decompose_mode::complete));
+
+	auto rA = ASVD.u() * ASVD.s() * transpose(ASVD.v());
+	auto rC = CSVD.u() * CSVD.s() * transpose(CSVD.v());
+	auto rD = DSVD.u() * DSVD.s() * transpose(DSVD.v());
+	
+	HBRS_MPL_TEST_MMEQ(A, rA, false);
+	HBRS_MPL_TEST_MMEQ(C, rC, false);
+	HBRS_MPL_TEST_MMEQ(D, rD, false);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
