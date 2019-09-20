@@ -1,5 +1,4 @@
-/* Copyright (c) 2019 Abdullah Güntepe, <abdullah@guentepe.com>
- * Copyright (c) 2019 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,27 +14,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FN_HOUSE_FWD_HBRS_MPL_HPP
-#define HBRS_MPL_FN_HOUSE_FWD_HBRS_MPL_HPP
-
-#include <hbrs/mpl/config.hpp>
-#include <hbrs/mpl/dt/rtsacv/fwd.hpp>
-#include <boost/hana/tuple.hpp>
+#include "hbrs_mpl.hpp"
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-struct house_impl_rtsacv {
-	template<typename Ring>
-	auto
-	operator()(rtsacv<Ring> const& x);
-};
+template
+auto
+house_impl_rtsacv::operator()(rtsacv<float> const&);
+
+template
+auto
+house_impl_rtsacv::operator()(rtsacv<double> const&);
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#define HBRS_MPL_FN_HOUSE_IMPLS_HBRS_MPL boost::hana::make_tuple(                                                      \
-		hbrs::mpl::detail::house_impl_rtsacv{}                                                                         \
-	)
-
-#endif // !HBRS_MPL_FN_HOUSE_FWD_HBRS_MPL_HPP
