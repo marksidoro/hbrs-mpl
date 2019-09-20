@@ -33,6 +33,7 @@
 #include <hbrs/mpl/fn/not_equal.hpp>
 #include <hbrs/mpl/fn/select.hpp>
 #include <hbrs/mpl/dt/exception.hpp>
+#include <hbrs/mpl/dt/rtsam/fwd.hpp>
 #include <type_traits>
 
 #include <boost/assert.hpp>
@@ -73,8 +74,11 @@ struct submatrix {
 		BOOST_ASSERT(&m_.mat_ != &this->mat_);
 		//TODO: Handle &m_.mat_ == &this->mat_
 		
-		BOOST_ASSERT((*m)(sz_) == (*m)(size(m_)));
-		BOOST_ASSERT((*n)(sz_) == (*n)(size(m_)));
+		if ((*not_equal)(sz_, size(m_))) {
+			BOOST_THROW_EXCEPTION((
+				incompatible_matrices_exception{} << errinfo_matrix_sizes{{sz_, size(m_)}}
+			));
+		}
 		
 		//TODO: Optimize for column_major/row_major
 		for (std::size_t i = 0; i < (*m)(size(m_)); ++i) {
@@ -91,11 +95,19 @@ struct submatrix {
 	operator=(submatrix &&) = delete;
 	
 	//TODO: Move to new implementation of assign() function and only enable for specific datatypes, e.g. if Matrix is rtsam
+	template<
+		typename Matrix_ = Matrix,
+		typename std::enable_if_t<
+			(std::is_same_v<hana::tag_of_t<Matrix>, rtsam_tag> && std::is_same_v<hana::tag_of_t<Matrix_>, rtsam_tag>)
+		>* = nullptr
+	>
 	submatrix&
-	operator=(std::decay_t<Matrix> const& m_) {
+	operator=(Matrix_ const& m_) {
 		using hbrs::mpl::size;
 		if ((*not_equal)(sz_, size(m_))) {
-			BOOST_THROW_EXCEPTION(incompatible_matrices_exception{});
+			BOOST_THROW_EXCEPTION((
+				incompatible_matrices_exception{} << errinfo_matrix_sizes{{sz_, size(m_)}}
+			));
 		}
 		
 		//TODO: Optimize for column_major/row_major
