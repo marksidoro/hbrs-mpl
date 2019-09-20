@@ -34,6 +34,7 @@
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/minus.hpp>
 #include <hbrs/mpl/fn/multiply.hpp>
+#include <hbrs/mpl/fn/not_equal.hpp>
 #include <hbrs/mpl/detail/translate_index.hpp>
 #include <hbrs/mpl/dt/exception.hpp>
 
@@ -72,6 +73,31 @@ struct rtsam {
 	operator=(rtsam const&) = default;
 	rtsam&
 	operator=(rtsam &&) = default;
+	
+	//TODO: Move to new implementation of assign() function
+	template<
+		storage_order Order_ = Order,
+		typename std::enable_if_t<
+			Order != Order_
+		>* = nullptr
+	>
+	rtsam&
+	operator=(rtsam<Ring, Order_> const& m_) {
+		using hbrs::mpl::size;
+		if ((*not_equal)(size_, size(m_))) {
+			BOOST_THROW_EXCEPTION((
+				incompatible_matrices_exception{} << errinfo_matrix_sizes{{size_, size(m_)}}
+			));
+		}
+		
+		for (std::size_t i = 0; i < (*m)(size_); ++i) {
+			for (std::size_t j = 0; j < (*n)(size_); ++j) {
+				at(make_matrix_index(i,j)) = m_.at(make_matrix_index(i,j));
+			}
+		}
+		
+		return *this;
+	}
 	
 	//TODO: Move to new implementation of assign() function
 	/*
