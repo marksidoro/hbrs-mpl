@@ -19,8 +19,10 @@
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-template auto bidiag_impl_rtsam::operator()(rtsam<float,  storage_order::row_major> const&, bidiag_control<decompose_mode> const&) const;
-template auto bidiag_impl_rtsam::operator()(rtsam<double, storage_order::row_major> const&, bidiag_control<decompose_mode> const&) const;
+template auto bidiag_impl_rtsam::operator()(rtsam<float,  storage_order::row_major   > const&, bidiag_control<decompose_mode> const&) const;
+template auto bidiag_impl_rtsam::operator()(rtsam<float,  storage_order::column_major> const&, bidiag_control<decompose_mode> const&) const;
+template auto bidiag_impl_rtsam::operator()(rtsam<double, storage_order::row_major   > const&, bidiag_control<decompose_mode> const&) const;
+template auto bidiag_impl_rtsam::operator()(rtsam<double, storage_order::column_major> const&, bidiag_control<decompose_mode> const&) const;
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
