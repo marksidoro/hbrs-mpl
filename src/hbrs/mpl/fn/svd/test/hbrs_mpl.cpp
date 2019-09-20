@@ -145,16 +145,16 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(0.000000001)) {
 		auto funs = hana::drop_back(hana::make_tuple(
 			#ifdef HBRS_MPL_ENABLE_MATLAB
 			[](auto && a, auto mode) {
-				return detail::svd_impl_level0_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), mode);
+				return detail::svd_impl_level0_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), {mode});
 			},
 			[](auto && a, auto mode) {
-				return detail::svd_impl_level1_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), mode);
+				return detail::svd_impl_level1_ml_matrix{}(make_ml_matrix(HBRS_MPL_FWD(a)), {mode});
 			},
 			#endif
 			
 			#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 			[](auto && a, auto mode) {
-				return detail::svd_impl_el_matrix{}(make_el_matrix(HBRS_MPL_FWD(a)), mode);
+				return detail::svd_impl_el_matrix{}(make_el_matrix(HBRS_MPL_FWD(a)), {mode});
 			},
 			[](auto && a, auto mode) {
 				auto sz_ = (*size)(a);
@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(0.000000001)) {
 							grid,
 							make_el_matrix(HBRS_MPL_FWD(a))
 						),
-						mode
+						{mode}
 					);
 				}
 			},
