@@ -306,20 +306,8 @@ pca_impl_el_matrix::operator()(
 	
 	auto usv = (*svd)(stdz, ctrl.economy() ? decompose_mode::economy : decompose_mode::zero);
 	auto && U = (*at)(usv, svd_u{});
-	el_matrix<_Ring_> S{0,0};
-	{
-		auto && S_ = (*at)(usv, svd_s{});
-		
-		typedef decltype(S_.at({0,0})) S__Ring;
-		typedef std::decay_t<S__Ring> _S__Ring_;
-		
-		if constexpr (std::is_same_v<_S__Ring_, _Ring_>) {
-			S = std::move(S_);
-		} else {
-			// if Ring := El::Complex<double>, then Ring_of_S_ is Base<El::Complex<double>> a.k.a. double
-			El::Copy(S_, S);
-		}
-	}
+	//TODO: Make this work for Ring is El::Complex<...>
+	auto && S = (*at)(usv, svd_s{});
 	
 	auto && coeff = (*at)(usv, svd_v{});
 	//MATLAB>> if Economy
