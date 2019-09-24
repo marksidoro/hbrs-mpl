@@ -22,6 +22,7 @@
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/dt/givens_result.hpp>
+#include <hbrs/mpl/detail/is_braces_constructible.hpp>
 #include <array>
 
 #include <boost/hana/core/make.hpp>
@@ -78,7 +79,14 @@ namespace detail {
 
 template<typename LHS, typename RHS>
 struct givens_rotation_expression {
-	template<typename LHS_ = LHS, typename RHS_ = RHS>
+	template<
+		typename LHS_ = LHS,
+		typename RHS_ = RHS,
+		typename std::enable_if_t<
+			detail::is_braces_constructible_v<LHS, LHS_> &&
+			detail::is_braces_constructible_v<RHS, RHS_>
+		>* = nullptr
+	>
 	constexpr
 	givens_rotation_expression(LHS_ && lhs, RHS_ && rhs) : lhs_{HBRS_MPL_FWD(lhs)}, rhs_{HBRS_MPL_FWD(rhs)} {}
 	

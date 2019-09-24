@@ -21,6 +21,7 @@
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 
+#include <hbrs/mpl/detail/is_braces_constructible.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
 #include <hbrs/mpl/dt/smr.hpp>
 #include <hbrs/mpl/dt/givens_rotation.hpp>
@@ -43,7 +44,16 @@ HBRS_MPL_NAMESPACE_BEGIN
 
 template<typename Matrix, typename Offset, typename Size>
 struct submatrix {
-	template<typename Matrix_, typename Offset_, typename Size_>
+	template<
+		typename Matrix_ = Matrix,
+		typename Offset_ = Offset,
+		typename Size_ = Size,
+		typename std::enable_if_t<
+			detail::is_braces_constructible_v<Matrix, Matrix_> &&
+			detail::is_braces_constructible_v<Offset, Offset_> &&
+			detail::is_braces_constructible_v<Size, Size_>
+		>* = nullptr
+	>
 	constexpr 
 	submatrix(Matrix_ && mat, Offset_ && o, Size_ && sz)
 	: mat_{HBRS_MPL_FWD(mat)}, o_{HBRS_MPL_FWD(o)}, sz_{HBRS_MPL_FWD(sz)}

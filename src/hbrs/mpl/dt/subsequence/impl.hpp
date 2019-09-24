@@ -20,6 +20,7 @@
 #include "fwd.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
+#include <hbrs/mpl/detail/is_braces_constructible.hpp>
 
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/fn/size.hpp>
@@ -32,7 +33,16 @@ HBRS_MPL_NAMESPACE_BEGIN
 template<typename Sequence, typename Offset, typename Size>
 struct subsequence {
 	
-	template<typename Sequence_, typename Offset_, typename Size_>
+	template<
+		typename Sequence_ = Sequence,
+		typename Offset_ = Offset,
+		typename Size_ = Size,
+		typename std::enable_if_t<
+			detail::is_braces_constructible_v<Sequence, Sequence_> &&
+			detail::is_braces_constructible_v<Offset, Offset_> &&
+			detail::is_braces_constructible_v<Size, Size_>
+		>* = nullptr
+	>
 	constexpr 
 	subsequence(Sequence_ && seq, Offset_ && o, Size_ && sz)
 	: seq_{HBRS_MPL_FWD(seq)}, o_{HBRS_MPL_FWD(o)}, sz_{HBRS_MPL_FWD(sz)}

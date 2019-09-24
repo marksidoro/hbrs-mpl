@@ -22,6 +22,7 @@
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
+#include <hbrs/mpl/detail/is_braces_constructible.hpp>
 #include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -39,7 +40,14 @@ struct almost_equal_control {
 	constexpr
 	almost_equal_control() {}
 	
-	template<typename MaxULPsDiff_, typename AlmostZeroPrecision_>
+	template<
+		typename MaxULPsDiff_ = MaxULPsDiff,
+		typename AlmostZeroPrecision_ = AlmostZeroPrecision,
+		typename std::enable_if_t<
+			detail::is_braces_constructible_v<MaxULPsDiff, MaxULPsDiff_> &&
+			detail::is_braces_constructible_v<AlmostZeroPrecision, AlmostZeroPrecision_>
+		>* = nullptr
+	>
 	constexpr 
 	almost_equal_control(MaxULPsDiff_ && d, AlmostZeroPrecision_ && p)
 	: max_ulps_diff_{HBRS_MPL_FWD(d)}, almost_zero_precision_{HBRS_MPL_FWD(p)}

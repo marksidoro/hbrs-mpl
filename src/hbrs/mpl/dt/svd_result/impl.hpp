@@ -22,6 +22,7 @@
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
+#include <hbrs/mpl/detail/is_braces_constructible.hpp>
 #include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -41,9 +42,18 @@ struct svd_result {
 	constexpr
 	svd_result() {}
 	
-	template<typename U_, typename S_, typename V_>
+	template<
+		typename U_ = U,
+		typename S_ = S,
+		typename V_ = V,
+		typename std::enable_if_t<
+			detail::is_braces_constructible_v<U, U_> &&
+			detail::is_braces_constructible_v<S, S_> &&
+			detail::is_braces_constructible_v<V, V_>
+		>* = nullptr
+	>
 	constexpr 
-	svd_result(U_ && u, S_ && s, V_ && v) 
+	svd_result(U_ && u, S_ && s, V_ && v)
 	: u_{HBRS_MPL_FWD(u)}, s_{HBRS_MPL_FWD(s)}, v_{HBRS_MPL_FWD(v)}
 	{}
 	

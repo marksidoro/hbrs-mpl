@@ -22,6 +22,7 @@
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
+#include <hbrs/mpl/detail/is_braces_constructible.hpp>
 #include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -41,7 +42,16 @@ struct pca_control {
 	constexpr
 	pca_control() {}
 	
-	template<typename Economy_, typename Center_, typename Normalize_>
+	template<
+		typename Economy_ = Economy,
+		typename Center_ = Center,
+		typename Normalize_ = Normalize,
+		typename std::enable_if_t<
+			detail::is_braces_constructible_v<Economy, Economy_> &&
+			detail::is_braces_constructible_v<Center, Center_> &&
+			detail::is_braces_constructible_v<Normalize, Normalize_>
+		>* = nullptr
+	>
 	constexpr 
 	pca_control(Economy_ && e, Center_ && c, Normalize_ && n)
 	: economy_{HBRS_MPL_FWD(e)},

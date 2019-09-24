@@ -47,7 +47,16 @@ struct matrix_distribution {
     constexpr
     matrix_distribution() {}
 
-    template<typename Columnwise_, typename Rowwise_, typename Wrapping_>
+    template<
+		typename Columnwise_ = Columnwise,
+		typename Rowwise_ = Rowwise,
+		typename Wrapping_ = Wrapping,
+		typename std::enable_if_t<
+			detail::is_braces_constructible_v<Columnwise, Columnwise_> &&
+			detail::is_braces_constructible_v<Rowwise, Rowwise_> &&
+			detail::is_braces_constructible_v<Wrapping, Wrapping_>
+		>* = nullptr
+	>
     constexpr
     matrix_distribution(Columnwise_ && rowwise, Rowwise_ && columnwise, Wrapping_ && wrapping)
     : columnwise_{HBRS_MPL_FWD(rowwise)}, rowwise_{HBRS_MPL_FWD(columnwise)}, wrapping_{HBRS_MPL_FWD(wrapping)} {}

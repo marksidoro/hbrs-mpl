@@ -106,6 +106,9 @@ struct is_braces_constructible {
 	static inline constexpr bool value = type::value;
 };
 
+template< class T, class... Args>
+inline constexpr bool is_braces_constructible_v = is_braces_constructible<T, Args...>::value;
+
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 

@@ -21,6 +21,7 @@
 
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
+#include <hbrs/mpl/detail/is_braces_constructible.hpp>
 
 #include <type_traits>
 
@@ -38,8 +39,8 @@ public:
 		typename Operation_ = Operation,
 		typename Operands_ = Operands,
 		typename std::enable_if_t<
-			std::is_constructible_v<Operation, Operation_> &&
-			std::is_constructible_v<Operands, Operands_>
+			detail::is_braces_constructible_v<Operation, Operation_> &&
+			detail::is_braces_constructible_v<Operands, Operands_>
 		>* = nullptr
 	>
 	constexpr

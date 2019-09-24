@@ -20,6 +20,7 @@
 #include "fwd.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
+#include <hbrs/mpl/detail/is_braces_constructible.hpp>
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 
@@ -29,8 +30,13 @@ namespace hana = boost::hana;
 template <typename F>
 struct functor {
 public:
-	
-	template<typename F_>
+	template<
+		typename F_ = F,
+		typename std::enable_if_t<
+			detail::is_braces_constructible_v<F, F_> &&
+			!std::is_base_of_v<functor, std::remove_reference_t<F_> >
+		>* = nullptr
+	>
 	constexpr
 	functor(F_ && f) : f_{HBRS_MPL_FWD(f)} {}
 	

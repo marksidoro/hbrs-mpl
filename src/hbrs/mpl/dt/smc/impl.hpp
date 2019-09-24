@@ -21,6 +21,7 @@
 
 #include <hbrs/mpl/dt/matrix_index.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
+#include <hbrs/mpl/detail/is_braces_constructible.hpp>
 
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/fn/m.hpp>
@@ -36,7 +37,14 @@ template<
 	typename Index
 >
 struct smc {
-	template<typename Matrix_, typename Index_>
+	template<
+		typename Matrix_ = Matrix,
+		typename Index_ = Index,
+		typename std::enable_if_t<
+			detail::is_braces_constructible_v<Matrix, Matrix_> &&
+			detail::is_braces_constructible_v<Index, Index_>
+		>* = nullptr
+	>
 	constexpr
 	smc(Matrix_ && a, Index_ && column) : a_{HBRS_MPL_FWD(a)}, column_{HBRS_MPL_FWD(column)} {}
 

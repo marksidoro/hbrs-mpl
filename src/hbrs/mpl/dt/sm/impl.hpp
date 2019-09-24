@@ -23,6 +23,7 @@
 
 #include <hbrs/mpl/dt/storage_order.hpp>
 #include <hbrs/mpl/detail/translate_index.hpp>
+#include <hbrs/mpl/detail/is_braces_constructible.hpp>
 
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/fn/size.hpp>
@@ -40,7 +41,14 @@ template<
 >
 struct sm {
 	
-	template<typename Sequence_, typename Size_>
+	template<
+		typename Sequence_ = Sequence,
+		typename Size_ = Size,
+		typename std::enable_if_t<
+			detail::is_braces_constructible_v<Sequence, Sequence_> &&
+			detail::is_braces_constructible_v<Size, Size_>
+		>* = nullptr
+	>
 	constexpr 
 	sm(Sequence_ && seq, Size_ && size)
 	: seq_{HBRS_MPL_FWD(seq)}, size_{HBRS_MPL_FWD(size)}

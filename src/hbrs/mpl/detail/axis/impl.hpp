@@ -75,7 +75,14 @@
 		constexpr                                                                                                      \
 		name() {}                                                                                                      \
 		                                                                                                               \
-		template<typename Name0 ## _, typename Name1 ## _>                                                             \
+		template<                                                                                                      \
+			typename Name0 ## _ = Name0,                                                                               \
+			typename Name1 ## _ = Name1,                                                                               \
+			typename std::enable_if_t<                                                                                 \
+				hbrs::mpl::detail::is_braces_constructible_v<Name0, Name0 ## _> &&                                     \
+				hbrs::mpl::detail::is_braces_constructible_v<Name1, Name1 ## _>                                        \
+			>* = nullptr                                                                                               \
+		>                                                                                                              \
 		constexpr                                                                                                      \
 		name(Name0 ## _ && name0, Name1 ## _ && name1)                                                                 \
 		: name0 ## _{HBRS_MPL_FWD(name0)}, name1 ## _{HBRS_MPL_FWD(name1)} {}                                          \
@@ -87,8 +94,8 @@
 			typename Name0 ## _,                                                                                       \
 			typename Name1 ## _,                                                                                       \
 			typename std::enable_if_t<                                                                                 \
-				hbrs::mpl::detail::is_braces_constructible< Name0, Name0 ## _>::value &&                               \
-				hbrs::mpl::detail::is_braces_constructible< Name1, Name1 ## _>::value                                  \
+				hbrs::mpl::detail::is_braces_constructible_v< Name0, Name0 ## _> &&                                    \
+				hbrs::mpl::detail::is_braces_constructible_v< Name1, Name1 ## _>                                       \
 			>* = nullptr                                                                                               \
 		>                                                                                                              \
 		constexpr                                                                                                      \
@@ -99,8 +106,8 @@
 			typename Name0 ## _,                                                                                       \
 			typename Name1 ## _,                                                                                       \
 			typename std::enable_if_t<                                                                                 \
-				hbrs::mpl::detail::is_braces_constructible< Name0, Name0 ## _>::value &&                               \
-				hbrs::mpl::detail::is_braces_constructible< Name1, Name1 ## _>::value                                  \
+				hbrs::mpl::detail::is_braces_constructible_v< Name0, Name0 ## _> &&                                    \
+				hbrs::mpl::detail::is_braces_constructible_v< Name1, Name1 ## _>                                       \
 			>* = nullptr                                                                                               \
 		>                                                                                                              \
 		constexpr                                                                                                      \
@@ -112,8 +119,8 @@
 			typename Name1 ## _,                                                                                       \
 			typename std::enable_if_t<                                                                                 \
 				(                                                                                                      \
-					!hbrs::mpl::detail::is_braces_constructible< Name0, Name0 ## _>::value ||                          \
-					!hbrs::mpl::detail::is_braces_constructible< Name1, Name1 ## _>::value                             \
+					!hbrs::mpl::detail::is_braces_constructible_v< Name0, Name0 ## _> ||                               \
+					!hbrs::mpl::detail::is_braces_constructible_v< Name1, Name1 ## _>                                  \
 				) &&                                                                                                   \
 				std::is_convertible<Name0 ## _, Name0>::value &&                                                       \
 				std::is_convertible<Name1 ## _, Name1>::value &&                                                       \
@@ -134,8 +141,8 @@
 			Name1 ## _ Value1,                                                                                         \
 			typename std::enable_if_t<                                                                                 \
 				(                                                                                                      \
-					!hbrs::mpl::detail::is_braces_constructible< Name0, Name0 ## _>::value ||                          \
-					!hbrs::mpl::detail::is_braces_constructible< Name1, Name1 ## _>::value                             \
+					!hbrs::mpl::detail::is_braces_constructible_v< Name0, Name0 ## _> ||                               \
+					!hbrs::mpl::detail::is_braces_constructible_v< Name1, Name1 ## _>                                  \
 				) &&                                                                                                   \
 				std::is_convertible<Name0 ## _, Name0>::value &&                                                       \
 				std::is_convertible<Name1 ## _, Name1>::value &&                                                       \

@@ -19,6 +19,7 @@
 
 #include "fwd.hpp"
 
+#include <hbrs/mpl/detail/is_braces_constructible.hpp>
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/equal.hpp>
@@ -34,7 +35,14 @@ HBRS_MPL_NAMESPACE_BEGIN
 
 template<typename SequenceA, typename SequenceB>
 struct zas {
-	template<typename SequenceA_, typename SequenceB_>
+	template<
+		typename SequenceA_ = SequenceA,
+		typename SequenceB_ = SequenceB,
+		typename std::enable_if_t<
+			detail::is_braces_constructible_v<SequenceA, SequenceA_> &&
+			detail::is_braces_constructible_v<SequenceB, SequenceB_>
+		>* = nullptr
+	>
 	constexpr
 	zas(SequenceA_ && a, SequenceB_ && b) : a_{HBRS_MPL_FWD(a)}, b_{HBRS_MPL_FWD(b)} {
 		//NOTE: a and b might have been moved to a_ and b_, so do not access them in ctor

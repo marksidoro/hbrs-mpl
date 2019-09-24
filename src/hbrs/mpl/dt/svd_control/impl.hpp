@@ -22,6 +22,7 @@
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
+#include <hbrs/mpl/detail/is_braces_constructible.hpp>
 #include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -37,7 +38,13 @@ struct svd_control {
 	constexpr
 	svd_control() {}
 	
-	template<typename DecomposeMode_>
+	template<
+		typename DecomposeMode_ = DecomposeMode,
+		typename std::enable_if_t<
+			detail::is_braces_constructible_v<DecomposeMode, DecomposeMode_> &&
+			!std::is_base_of_v<svd_control, std::remove_reference_t<DecomposeMode_> >
+		>* = nullptr
+	>
 	constexpr 
 	svd_control(DecomposeMode_ && dm)
 	: decompose_mode_{HBRS_MPL_FWD(dm)}

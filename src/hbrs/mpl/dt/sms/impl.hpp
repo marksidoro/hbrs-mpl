@@ -21,6 +21,7 @@
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 
+#include <hbrs/mpl/detail/is_braces_constructible.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
 
 #include <hbrs/mpl/dt/ctsam.hpp>
@@ -72,8 +73,14 @@ template<
 	typename Accessor
 >
 struct sms {
-	
-	template<typename Matrix_, typename Accessor_>
+	template<
+		typename Matrix_ = Matrix,
+		typename Accessor_ = Accessor,
+		typename std::enable_if_t<
+			detail::is_braces_constructible_v<Matrix, Matrix_> &&
+			detail::is_braces_constructible_v<Accessor, Accessor_>
+		>* = nullptr
+	>
 	constexpr 
 	sms(Matrix_ && mat, Accessor_ && acc)
 	: mat_{HBRS_MPL_FWD(mat)}, acc_{HBRS_MPL_FWD(acc)}

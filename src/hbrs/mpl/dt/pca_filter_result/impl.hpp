@@ -22,6 +22,7 @@
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
+#include <hbrs/mpl/detail/is_braces_constructible.hpp>
 #include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -39,7 +40,14 @@ struct pca_filter_result {
 	constexpr
 	pca_filter_result() {}
 	
-	template<typename Data_, typename Latent_>
+	template<
+		typename Data_ = Data,
+		typename Latent_ = Latent,
+		typename std::enable_if_t<
+			detail::is_braces_constructible_v<Data, Data_> &&
+			detail::is_braces_constructible_v<Latent, Latent_>
+		>* = nullptr
+	>
 	constexpr 
 	pca_filter_result(Data_ && d, Latent_ && l)
 	: data_{HBRS_MPL_FWD(d)}, latent_{HBRS_MPL_FWD(l)}

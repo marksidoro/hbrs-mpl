@@ -22,6 +22,7 @@
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
+#include <hbrs/mpl/detail/is_braces_constructible.hpp>
 #include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -44,7 +45,18 @@ struct pca_result {
 	constexpr
 	pca_result() {}
 	
-	template<typename Coeff_, typename Score_, typename Latent_, typename Mean_>
+	template<
+		typename Coeff_ = Coeff,
+		typename Score_ = Score,
+		typename Latent_ = Latent,
+		typename Mean_ = Mean,
+		typename std::enable_if_t<
+			detail::is_braces_constructible_v<Coeff, Coeff_> &&
+			detail::is_braces_constructible_v<Score, Score_> &&
+			detail::is_braces_constructible_v<Latent, Latent_> &&
+			detail::is_braces_constructible_v<Mean, Mean_>
+		>* = nullptr
+	>
 	constexpr 
 	pca_result(Coeff_ && c, Score_ && s, Latent_ && l, Mean_ && m) 
 	: coeff_{HBRS_MPL_FWD(c)}, 

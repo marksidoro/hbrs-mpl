@@ -21,6 +21,7 @@
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
+#include <hbrs/mpl/detail/is_braces_constructible.hpp>
 #include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -40,7 +41,16 @@ struct bidiag_result {
 	constexpr
 	bidiag_result() {}
 	
-	template<typename U_, typename B_, typename V_>
+	template<
+		typename U_ = U,
+		typename B_ = B,
+		typename V_ = V,
+		typename std::enable_if_t<
+			detail::is_braces_constructible_v<U, U_> &&
+			detail::is_braces_constructible_v<B, B_> &&
+			detail::is_braces_constructible_v<V, V_>
+		>* = nullptr
+	>
 	constexpr 
 	bidiag_result(U_ && u, B_ && b, V_ && v) 
 	: u_{HBRS_MPL_FWD(u)}, b_{HBRS_MPL_FWD(b)}, v_{HBRS_MPL_FWD(v)}
