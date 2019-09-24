@@ -34,9 +34,16 @@ template <
 struct expression {
 public:
 	
-	template<typename Operation_, typename Operands_>
+	template<
+		typename Operation_ = Operation,
+		typename Operands_ = Operands,
+		typename std::enable_if_t<
+			std::is_constructible_v<Operation, Operation_> &&
+			std::is_constructible_v<Operands, Operands_>
+		>* = nullptr
+	>
 	constexpr
-	expression(Operation_ && o, Operands_ && os) 
+	expression(Operation_ && o, Operands_ && os)
 	:
 	operation_{HBRS_MPL_FWD(o)},
 	operands_{HBRS_MPL_FWD(os)} {}
@@ -46,6 +53,26 @@ public:
 	
 	constexpr
 	expression(expression &&) = default;
+	
+	template<
+		typename Operation_, typename Operands_,
+		typename std::enable_if_t< 
+			std::is_constructible_v<Operation, Operation_&&> && std::is_constructible_v<Operands, Operands_&&>
+		>* = nullptr
+	>
+	constexpr
+	expression(expression<Operation_,Operands_>&& other)
+	: expression(HBRS_MPL_FWD(other).operation_, HBRS_MPL_FWD(other).operands_) {}
+	
+	template<
+		typename Operation_, typename Operands_,
+		typename std::enable_if_t< 
+			std::is_constructible_v<Operation, Operation_ const&> && std::is_constructible_v<Operands, Operands_ const&>
+		>* = nullptr
+	>
+	constexpr
+	expression(expression<Operation_,Operands_> const& other)
+	: expression(other.operation_, other.operands_) {}
 	
 	constexpr expression&
 	operator=(expression const&) = default;
