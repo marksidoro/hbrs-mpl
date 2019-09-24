@@ -64,6 +64,7 @@ namespace hana = boost::hana;
 namespace detail {
 namespace pca_impl_el {
 
+//TODO: Replace ones() with API functions
 template<typename Matrix>
 static decltype(auto)
 ones(Matrix && m) {
@@ -71,6 +72,15 @@ ones(Matrix && m) {
 	return HBRS_MPL_FWD(m);
 }
 
+//TODO: Replace zeros() with API functions
+template<typename Matrix>
+static decltype(auto)
+zeros(Matrix && m) {
+	// el_matrix and el_dist_matrix are zerod by default
+	return HBRS_MPL_FWD(m);
+}
+
+//TODO: Replace datatype-specific code with calls to generic API functions
 template <typename Ring>
 static auto
 signum_of_largest_element_in_column(el_matrix<Ring> const& coeff) {
@@ -157,6 +167,90 @@ signum_of_largest_element_in_column(el_dist_matrix<Ring, Columnwise, Rowwise, Wr
 	return colsign;
 }
 
+//TODO: Replace this helper function with generic code
+template <
+	typename Ring,
+	typename Size
+>
+auto
+make_row_vector_like(
+	el_matrix<Ring> const& a,
+	Size && sz
+) {
+	typedef std::decay_t<Ring> _Ring_;
+	return el_row_vector<_Ring_>{HBRS_MPL_FWD(sz)};
+}
+
+//TODO: Replace this helper function with generic code
+template<
+	typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping,
+	typename Size
+>
+auto
+make_row_vector_like(
+	el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& a,
+	Size && sz
+) {
+	typedef std::decay_t<Ring> _Ring_;
+	return el_dist_row_vector<_Ring_, El::STAR, El::STAR>{a.data().Grid(), HBRS_MPL_FWD(sz)};
+}
+
+//TODO: Replace this helper function with generic code
+template <
+	typename Ring,
+	typename Size
+>
+auto
+make_column_vector_like(
+	el_matrix<Ring> const& a,
+	Size && sz
+) {
+	typedef std::decay_t<Ring> _Ring_;
+	return el_column_vector<_Ring_>{HBRS_MPL_FWD(sz)};
+}
+
+//TODO: Replace this helper function with generic code
+template<
+	typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping,
+	typename Size
+>
+auto
+make_column_vector_like(
+	el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& a,
+	Size && sz
+) {
+	typedef std::decay_t<Ring> _Ring_;
+	return el_dist_column_vector<_Ring_, El::STAR, El::STAR>{a.data().Grid(), HBRS_MPL_FWD(sz)};
+}
+
+//TODO: Replace this helper function with generic code
+template <
+	typename Ring,
+	typename Size
+>
+auto
+make_matrix_like(
+	el_matrix<Ring> const& a,
+	Size && sz
+) {
+	typedef std::decay_t<Ring> _Ring_;
+	return el_matrix<_Ring_>{HBRS_MPL_FWD(sz).m(), HBRS_MPL_FWD(sz).n()};
+}
+
+//TODO: Replace this helper function with generic code
+template<
+	typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping,
+	typename Size
+>
+auto
+make_matrix_like(
+	el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& a,
+	Size && sz
+) {
+	typedef std::decay_t<Ring> _Ring_;
+	return el_dist_matrix<_Ring_, Columnwise, Rowwise, Wrapping>{a.data().Grid(), HBRS_MPL_FWD(sz).m(), HBRS_MPL_FWD(sz).n()};
+}
+
 /* namespace pca_impl_el */ }
 
 /* C++ code is equivalent to MATLAB code in file src/hbrs/mpl/detail/matlab_cxn/impl/pca_level2.m */
@@ -178,7 +272,7 @@ pca_impl_el_matrix::operator()(
 	
 	el_row_vector<_Ring_> vw = ctrl.normalize()
 		? (*rdivide)(1., variance(columns(a), 0))
-		: ones(el_row_vector<_Ring_>{a_n});
+		: ones(make_row_vector_like(a, a_n));
 	//MATLAB>> if Normalize
 	//MATLAB>>     vVariableWeights = 1./var(x,0);
 	//MATLAB>>     % code equals:
@@ -190,21 +284,21 @@ pca_impl_el_matrix::operator()(
 	auto const DOF = a_m - (ctrl.center() ? 1_c : 0_c);
 	//MATLAB>> DOF=m-Center;
 	
-	el_row_vector<_Ring_> mu = ctrl.center() ? (*mean)(columns(a)) : el_row_vector<_Ring_>{a_n};
+	el_row_vector<_Ring_> mu = ctrl.center() ? (*mean)(columns(a)) : zeros(make_row_vector_like(a, a_n));
 	//MATLAB>> if Center
 	//MATLAB>> 	mu = wnanmean(x, ones(1,m,'like',x));
 	//MATLAB>> else
 	//MATLAB>> 	mu = zeros(1,n,'like',x);
 	//MATLAB>> end
 	
-	el_matrix<_Ring_> && cntr = ctrl.center() ? (*minus)(a, (*expand)(mu, a_sz)) : el_matrix<_Ring_>{a};
+	el_matrix<_Ring_> cntr = ctrl.center() ? (*minus)(a, (*expand)(mu, a_sz)) : a;
 	//MATLAB>> if Center
 	//MATLAB>>     x = bsxfun(@minus,x,mu);
 	//MATLAB>> end
 	
 	auto sqrt = [](auto x) { return power(x, 1./2.); };
 	auto phi_sqrt = transform(vw, sqrt);
-	el_matrix<_Ring_> && stdz = ctrl.normalize() ? (*times)(cntr, expand(phi_sqrt, a_sz)) : cntr;
+	auto && stdz = ctrl.normalize() ? (*times)(std::move(cntr), expand(phi_sqrt, a_sz)) : std::move(cntr);
 	//MATLAB>> PhiSqrt = sqrt(vVariableWeights);
 	//MATLAB>> if Normalize
 	//MATLAB>>     x = bsxfun(@times, x, PhiSqrt);
@@ -274,12 +368,12 @@ pca_impl_el_matrix::operator()(
 				El::IR(0, DOF)
 			);
 		} else {
-			el_matrix<_Ring_> score_{a_m,a_n};
+			el_matrix<_Ring_> score_ = make_matrix_like(a, a_sz);
 			El::Matrix<_Ring_> score_view = score_.data()(El::ALL, El::IR(0,DOF));
 			El::Copy(score.data()(El::ALL, El::IR(0,DOF)), score_view);
 			score = std::move(score_);
 			
-			el_column_vector<_Ring_> latent_{a_n};
+			el_column_vector<_Ring_> latent_ = make_column_vector_like(a, a_n);
 			auto latent_view = latent_.data()(El::IR(0,DOF), 0);
 			El::Copy(latent.data()(El::IR(0,DOF), 0), latent_view);
 			latent = std::move(latent_);
@@ -336,7 +430,7 @@ pca_impl_el_dist_matrix::operator()(
 	
 	el_dist_row_vector<_Ring_, El::STAR, El::STAR> vw = ctrl.normalize()
 		? (*rdivide)(1., variance(columns(a), 0))
-		: ones(el_dist_row_vector<_Ring_, El::STAR, El::STAR>{a.data().Grid(), a_n});
+		: ones(make_row_vector_like(a, a_n));
 	//MATLAB>> if Normalize
 	//MATLAB>>     vVariableWeights = 1./var(x,0);
 	//MATLAB>>     % code equals:
@@ -348,23 +442,23 @@ pca_impl_el_dist_matrix::operator()(
 	auto const DOF = a_m - (ctrl.center() ? 1_c : 0_c);
 	//MATLAB>> DOF=m-Center;
 	
-	el_dist_row_vector<_Ring_, El::STAR, El::STAR> mu = ctrl.center() 
+	el_dist_row_vector<_Ring_, El::STAR, El::STAR> mu = ctrl.center()
 		? (*mean)(columns(a))
-		: el_dist_row_vector<_Ring_, El::STAR, El::STAR>{a.data().Grid(), a_n};
+		: zeros(make_row_vector_like(a, a_n));
 	//MATLAB>> if Center
 	//MATLAB>> 	mu = wnanmean(x, ones(1,m,'like',x));
 	//MATLAB>> else
 	//MATLAB>> 	mu = zeros(1,n,'like',x);
 	//MATLAB>> end
 	
-	auto && cntr = ctrl.center() ? (*minus)(a, (*expand)(mu, a_sz)) : el_dist_matrix<_Ring_, Columnwise, Rowwise, Wrapping>{a};
+	auto cntr = ctrl.center() ? (*minus)(a, (*expand)(mu, a_sz)) : a;
 	//MATLAB>> if Center
 	//MATLAB>>     x = bsxfun(@minus,x,mu);
 	//MATLAB>> end
 	
 	auto sqrt = [](auto x) { return power(x, 1./2.); };
 	auto phi_sqrt = transform(vw, sqrt);
-	auto && stdz = ctrl.normalize() ? (*times)(cntr, expand(phi_sqrt, a_sz)) : cntr;
+	auto && stdz = ctrl.normalize() ? (*times)(std::move(cntr), expand(phi_sqrt, a_sz)) : std::move(cntr);
 	//MATLAB>> PhiSqrt = sqrt(vVariableWeights);
 	//MATLAB>> if Normalize
 	//MATLAB>>     x = bsxfun(@times, x, PhiSqrt);
@@ -420,12 +514,12 @@ pca_impl_el_dist_matrix::operator()(
 				El::IR(0, DOF)
 			);
 		} else {
-			el_dist_matrix<_Ring_> score_{a.data().Grid(), a_m,a_n};
+			el_dist_matrix<_Ring_> score_ = make_matrix_like(a, a_sz);
 			auto score_view = score_.data()(El::ALL, El::IR(0,DOF));
 			El::Copy(score.data()(El::ALL, El::IR(0,DOF)), score_view);
 			score = std::move(score_);
 			
-			el_dist_column_vector<_Ring_, El::STAR, El::STAR> latent_{a.data().Grid(), a_n};
+			el_dist_column_vector<_Ring_, El::STAR, El::STAR> latent_ = make_column_vector_like(a, a_n);
 			auto latent_view = latent_.data()(El::IR(0,DOF), 0);
 			El::Copy(latent.data()(El::IR(0,DOF), 0), latent_view);
 			latent = std::move(latent_);
