@@ -77,6 +77,7 @@ G(std::size_t i, std::size_t k, givens_result<Ring,Ring> theta) {
 
 namespace detail {
 
+//TODO: Replace with expression<givens_t, LHS, RHS>
 template<typename LHS, typename RHS>
 struct givens_rotation_expression {
 	template<
