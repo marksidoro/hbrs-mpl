@@ -251,6 +251,17 @@ make_matrix_like(
 	return el_dist_matrix<_Ring_, Columnwise, Rowwise, Wrapping>{a.data().Grid(), HBRS_MPL_FWD(sz).m(), HBRS_MPL_FWD(sz).n()};
 }
 
+struct square_t {
+	template<typename Ring>
+	auto
+	operator()(Ring e) const {
+		typedef std::decay_t<Ring> _Ring_;
+		return (*power)(e, _Ring_(2));
+	}
+};
+
+constexpr square_t square{};
+
 /* namespace pca_impl_el */ }
 
 /* C++ code is equivalent to MATLAB code in file src/hbrs/mpl/detail/matlab_cxn/impl/pca_level2.m */
@@ -270,7 +281,7 @@ pca_impl_el_matrix::operator()(
 	auto const a_n = (*n)(a_sz);
 	//MATLAB>> [m,n] = size(x);
 	
-	el_row_vector<_Ring_> vw = ctrl.normalize()
+	auto vw = ctrl.normalize()
 		? (*rdivide)(1., variance(columns(a), 0))
 		: ones(make_row_vector_like(a, a_n));
 	//MATLAB>> if Normalize
@@ -284,14 +295,14 @@ pca_impl_el_matrix::operator()(
 	auto const DOF = a_m - (ctrl.center() ? 1_c : 0_c);
 	//MATLAB>> DOF=m-Center;
 	
-	el_row_vector<_Ring_> mu = ctrl.center() ? (*mean)(columns(a)) : zeros(make_row_vector_like(a, a_n));
+	auto mu = ctrl.center() ? (*mean)(columns(a)) : zeros(make_row_vector_like(a, a_n));
 	//MATLAB>> if Center
 	//MATLAB>> 	mu = wnanmean(x, ones(1,m,'like',x));
 	//MATLAB>> else
 	//MATLAB>> 	mu = zeros(1,n,'like',x);
 	//MATLAB>> end
 	
-	el_matrix<_Ring_> cntr = ctrl.center() ? (*minus)(a, (*expand)(mu, a_sz)) : a;
+	auto cntr = ctrl.center() ? (*minus)(a, (*expand)(mu, a_sz)) : a;
 	//MATLAB>> if Center
 	//MATLAB>>     x = bsxfun(@minus,x,mu);
 	//MATLAB>> end
@@ -330,13 +341,7 @@ pca_impl_el_matrix::operator()(
 	//MATLAB>> score =  bsxfun(@times,U,S');
 	//MATLAB>> % these two lines are equal to: score =  U*S;
 	
-	
-	std::function<_Ring_(_Ring_)> pow2 = 
-		[](_Ring_ e) -> _Ring_ { 
-			return (*power)(e, _Ring_(2));
-		};
-	
-	el_column_vector<_Ring_> latent = (*divide)(transform(std::move(Sd), pow2), _Ring_(DOF));
+	auto latent = (*divide)(transform(std::move(Sd), square), DOF);
 	//MATLAB>> latent = S.^2./DOF;
 	
 	if (DOF < a_n) {
@@ -356,12 +361,12 @@ pca_impl_el_matrix::operator()(
 				El::IR(0, DOF)
 			);
 		} else {
-			el_matrix<_Ring_> score_ = make_matrix_like(a, a_sz);
-			El::Matrix<_Ring_> score_view = score_.data()(El::ALL, El::IR(0,DOF));
+			auto score_ = make_matrix_like(a, a_sz);
+			auto score_view = score_.data()(El::ALL, El::IR(0,DOF));
 			El::Copy(score.data()(El::ALL, El::IR(0,DOF)), score_view);
 			score = std::move(score_);
 			
-			el_column_vector<_Ring_> latent_ = make_column_vector_like(a, a_n);
+			auto latent_ = make_column_vector_like(a, a_n);
 			auto latent_view = latent_.data()(El::IR(0,DOF), 0);
 			El::Copy(latent.data()(El::IR(0,DOF), 0), latent_view);
 			latent = std::move(latent_);
@@ -389,8 +394,8 @@ pca_impl_el_matrix::operator()(
 	
 	auto colsign = signum_of_largest_element_in_column(coeff);
 	
-	el_matrix<_Ring_> coeff_sgn = (*times)(coeff, expand(colsign, size(coeff)));
-	el_matrix<_Ring_> score_sgn = (*times)(score, expand(colsign, size(score)));
+	auto coeff_sgn = (*times)(coeff, expand(colsign, size(coeff)));
+	auto score_sgn = (*times)(score, expand(colsign, size(score)));
 	
 	//MATLAB>> coeff = bsxfun(@times, coeff, colsign);
 	//MATLAB>> score = bsxfun(@times, score, colsign);
@@ -416,7 +421,7 @@ pca_impl_el_dist_matrix::operator()(
 	auto const a_n = (*n)(a_sz);
 	//MATLAB>> [m,n] = size(x);
 	
-	el_dist_row_vector<_Ring_, El::STAR, El::STAR> vw = ctrl.normalize()
+	auto vw = ctrl.normalize()
 		? (*rdivide)(1., variance(columns(a), 0))
 		: ones(make_row_vector_like(a, a_n));
 	//MATLAB>> if Normalize
@@ -430,7 +435,7 @@ pca_impl_el_dist_matrix::operator()(
 	auto const DOF = a_m - (ctrl.center() ? 1_c : 0_c);
 	//MATLAB>> DOF=m-Center;
 	
-	el_dist_row_vector<_Ring_, El::STAR, El::STAR> mu = ctrl.center()
+	auto mu = ctrl.center()
 		? (*mean)(columns(a))
 		: zeros(make_row_vector_like(a, a_n));
 	//MATLAB>> if Center
@@ -476,13 +481,7 @@ pca_impl_el_dist_matrix::operator()(
 	//MATLAB>> score =  bsxfun(@times,U,S');
 	//MATLAB>> % these two lines are equal to: score =  U*S;
 	
-	
-	std::function<_Ring_(_Ring_)> pow2 = 
-		[](_Ring_ e) -> _Ring_ { 
-			return (*power)(e, _Ring_(2));
-		};
-	
-	el_dist_column_vector latent = (*divide)(transform(std::move(Sd), pow2), _Ring_(DOF));
+	auto latent = (*divide)(transform(std::move(Sd), square), DOF);
 	//MATLAB>> latent = S.^2./DOF;
 	
 	if (DOF < a_n) {
@@ -502,12 +501,12 @@ pca_impl_el_dist_matrix::operator()(
 				El::IR(0, DOF)
 			);
 		} else {
-			el_dist_matrix<_Ring_> score_ = make_matrix_like(a, a_sz);
+			auto score_ = make_matrix_like(a, a_sz);
 			auto score_view = score_.data()(El::ALL, El::IR(0,DOF));
 			El::Copy(score.data()(El::ALL, El::IR(0,DOF)), score_view);
 			score = std::move(score_);
 			
-			el_dist_column_vector<_Ring_, El::STAR, El::STAR> latent_ = make_column_vector_like(a, a_n);
+			auto latent_ = make_column_vector_like(a, a_n);
 			auto latent_view = latent_.data()(El::IR(0,DOF), 0);
 			El::Copy(latent.data()(El::IR(0,DOF), 0), latent_view);
 			latent = std::move(latent_);
