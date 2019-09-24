@@ -79,6 +79,20 @@ struct mean_impl_el_dist_matrix_columns {
 			std::tuple<DistMatrix>
 		> const& expr
 	) const;
+	
+	template <
+		typename DistMatrix,
+		typename std::enable_if_t<
+			std::is_same< hana::tag_of_t<DistMatrix>, el_dist_matrix_tag >::value
+		>* = nullptr
+	>
+	auto
+	operator()(
+		expression<
+			columns_t,
+			std::tuple<DistMatrix>
+		> && expr
+	) const;
 };
 
 #else

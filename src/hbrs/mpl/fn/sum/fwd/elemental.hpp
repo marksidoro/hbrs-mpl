@@ -76,6 +76,20 @@ struct sum_impl_el_dist_matrix_columns {
 			std::tuple<DistMatrix>
 		> const& expr
 	) const;
+	
+	template <
+		typename DistMatrix,
+		typename std::enable_if_t<
+			std::is_same_v< hana::tag_of_t<DistMatrix>, el_dist_matrix_tag >
+		>* = nullptr
+	>
+	auto
+	operator()(
+		expression<
+			columns_t,
+			std::tuple<DistMatrix>
+		> && expr
+	) const;
 };
 
 #else

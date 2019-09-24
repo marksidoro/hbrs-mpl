@@ -137,7 +137,6 @@ sum_impl_el_dist_matrix_columns_impl(el_dist_matrix<Ring, Columnwise, Rowwise, W
 	return make_el_dist_row_vector(sums_dmat);
 }
 
-
 template <
 	typename DistMatrix,
 	typename std::enable_if_t<
@@ -152,6 +151,22 @@ sum_impl_el_dist_matrix_columns::operator()(
 	> const& expr
 ) const {
 	return sum_impl_el_dist_matrix_columns_impl(hana::at_c<0>(expr.operands()));
+}
+
+template <
+	typename DistMatrix,
+	typename std::enable_if_t<
+		std::is_same_v< hana::tag_of_t<DistMatrix>, el_dist_matrix_tag >
+	>*
+>
+auto
+sum_impl_el_dist_matrix_columns::operator()(
+	expression<
+		columns_t,
+		std::tuple<DistMatrix>
+	> && expr
+) const {
+	return sum_impl_el_dist_matrix_columns_impl(hana::at_c<0>(HBRS_MPL_FWD(expr).operands()));
 }
 
 

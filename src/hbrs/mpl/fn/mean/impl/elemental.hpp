@@ -77,6 +77,20 @@ mean_impl_smrs_el_matrix::operator()(smrs<Matrix> const& a) const {
 	return v;
 }
 
+template <typename Expression>
+static auto
+mean_el_dist_matrix_columns_impl(Expression const& expr) {
+	auto const& from = hana::at_c<0>(expr.operands());
+	auto from_sz = (*size)(from);
+	el_dist_row_vector sums = (*sum)(std::move(expr));
+	BOOST_ASSERT(sums.length() == from_sz.n());
+	
+	//TODO: Once sums is converted from "El::STAR, El::STAR" to "El::CIRC, El::CIRC" do only on sums_dmat.Grid().Rank() == 0!
+	
+	El::Scale(1.0/from_sz.m(), sums.data());
+	return sums;
+}
+
 template <
 	typename DistMatrix,
 	typename std::enable_if_t<
@@ -90,14 +104,23 @@ mean_impl_el_dist_matrix_columns::operator()(
 		std::tuple<DistMatrix>
 	> const& expr
 ) const {
-	auto const& from = hana::at_c<0>(expr.operands());
-	el_dist_row_vector sums = (*sum)(expr);
-	BOOST_ASSERT(sums.length() == from.n());
-	
-	//TODO: Once sums is converted from "El::STAR, El::STAR" to "El::CIRC, El::CIRC" do only on sums_dmat.Grid().Rank() == 0!
-	
-	El::Scale(1.0/from.m(), sums.data());
-	return sums;
+	return mean_el_dist_matrix_columns_impl(expr);
+}
+
+template <
+	typename DistMatrix,
+	typename std::enable_if_t<
+		std::is_same< hana::tag_of_t<DistMatrix>, el_dist_matrix_tag >::value
+	>*
+>
+auto
+mean_impl_el_dist_matrix_columns::operator()(
+	expression<
+		columns_t,
+		std::tuple<DistMatrix>
+	> && expr
+) const {
+	return mean_el_dist_matrix_columns_impl(HBRS_MPL_FWD(expr));
 }
 
 /* namespace detail */ }

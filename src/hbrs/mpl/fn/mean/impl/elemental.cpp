@@ -35,6 +35,11 @@ template auto mean_impl_el_dist_matrix_columns::operator()(expression<columns_t,
 template auto mean_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<double>>> const&) const;
 template auto mean_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<El::Complex<double>>>> const&) const;
 
+template auto mean_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<float>>> &&) const;
+template auto mean_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<El::Complex<float>>>> &&) const;
+template auto mean_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<double>>> &&) const;
+template auto mean_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<El::Complex<double>>>> &&) const;
+
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
