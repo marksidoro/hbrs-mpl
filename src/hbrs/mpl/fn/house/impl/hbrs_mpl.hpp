@@ -70,7 +70,7 @@ house_impl_rtsacv::operator()(rtsacv<Ring> const& x) {
 		} else {
 			ni.at(0) = -sigma / (x.at(0) + mi);
 		}
-		auto nisq = (*power)(ni.at(0), 2); // square of first element of ni
+		auto nisq = (*power)(ni.at(0), _Ring_(2)); // square of first element of ni
 		beta = 2 * nisq / (sigma + nisq);
 		ni = (*divide)(ni, ni.at(0));
 	}
