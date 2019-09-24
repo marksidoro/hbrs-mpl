@@ -49,7 +49,9 @@
 #include <boost/hana/drop_back.hpp>
 #include <boost/hana/min.hpp>
 #include <boost/hana/greater_equal.hpp>
+#include <boost/hana/less_equal.hpp>
 #include <boost/hana/length.hpp>
+#include <boost/hana/not.hpp>
 #include <boost/hana/cartesian_product.hpp>
 
 #include <hbrs/mpl/detail/test.hpp>
@@ -115,11 +117,11 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(0.000000001)) {
 			[](auto && a, auto keep, auto economy, auto center, auto normalize) {
 				return detail::pca_filter_impl_el_matrix{}(hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a)), keep, {economy, center, normalize});
 			},
-			[&m_, &n_](auto && a, auto keep, auto economy, auto center, auto normalize) {
+			[](auto && a, auto keep, auto economy, auto center, auto normalize) {
 				static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
-				
+				auto a_sz = (*size)(a);
 				if constexpr(
-					!economy && hana::value(m_) <= hana::value(n_)
+					!hana::value(economy) && (hana::value(a_sz.m()) <= hana::value(a_sz.n()))
 					/* because this will do a zero svd which equals complete which is not supported by elemental */
 				) {
 					return detail::not_supported{};
