@@ -88,7 +88,7 @@ bidiag_impl_rtsam::operator()(rtsam<Ring,Order> const& x, bidiag_control<decompo
 		range<std::size_t,std::size_t> j1n {j + 1, x_n-1};
 
 		//Use Algorithm 5.1.1 to compute the householder vector.
-		auto h = house(select(A, std::make_pair(jm, j)));
+		auto h = (*house)(select(A, std::make_pair(jm, j)));
 		decltype(auto) ni = h.ni();
 		decltype(auto) beta = h.beta();
 
@@ -100,9 +100,9 @@ bidiag_impl_rtsam::operator()(rtsam<Ring,Order> const& x, bidiag_control<decompo
 			*/
 
 		/* Ajmjn is equivalent to A(j:x_m,j:x_n) in the book */
-		auto Ajmjn = select(A, std::make_pair(jm, jn));
+		auto Ajmjn = (*select)(A, std::make_pair(jm, jn));
 		/* Ajmjn = (make_identity(x_m - j) - beta * ni * transpose(ni)) * Ajmjn; // mathematical notation */
-		Ajmjn = Ajmjn - (beta * ni) * (transpose(ni) * Ajmjn);
+		Ajmjn = Ajmjn - (beta * ni) * ((*transpose)(ni) * Ajmjn);
 		/*
 			* In the book here the householder vector would be saved
 			* inside of A. But since we compute and return U we don't
@@ -110,11 +110,11 @@ bidiag_impl_rtsam::operator()(rtsam<Ring,Order> const& x, bidiag_control<decompo
 			*/
 
 		auto Ui = make_identity(x_m);
-		select(Ui, std::make_pair(jm,jm)) = make_identity(x_m - j) - beta * (ni * transpose(ni));
+		(*select)(Ui, std::make_pair(jm,jm)) = make_identity(x_m - j) - beta * (ni * (*transpose)(ni));
 		U = Ui * U;
 
 		if (j + 1 <= x_n - 2) {
-			auto h = house(
+			auto h = (*house)(
 				transpose(
 					select(A, std::make_pair(j, j1n))
 				)
@@ -122,21 +122,21 @@ bidiag_impl_rtsam::operator()(rtsam<Ring,Order> const& x, bidiag_control<decompo
 			decltype(auto) ni = h.ni();
 			decltype(auto) beta = h.beta();
 
-			auto Ajmj1n = select(A, std::make_pair(jm, j1n)); // equivalent to A(j:x_m,j+1:x_n)
+			auto Ajmj1n = (*select)(A, std::make_pair(jm, j1n)); // equivalent to A(j:x_m,j+1:x_n)
 			/* Ajmj1n = Ajmj1n * (make_identity(x_n-1 - j) - beta * ni * transpose(ni)); // mathematical notation */
-			Ajmj1n = Ajmj1n - (Ajmj1n * ni) * transpose(beta * ni);
+			Ajmj1n = Ajmj1n - (Ajmj1n * ni) * (*transpose)(beta * ni);
 			/*
 				* In the book here the householder vector would be saved
 				* inside of A. But since we compute and return V we don't
 				* do that.
 				*/
 
-			auto Vjmj1n = select(V, std::make_pair(jn, j1n));
-			Vjmj1n = Vjmj1n - (Vjmj1n * ni) * transpose(beta * ni);
+			auto Vjmj1n = (*select)(V, std::make_pair(jn, j1n));
+			Vjmj1n = Vjmj1n - (Vjmj1n * ni) * (*transpose)(beta * ni);
 		}
 	}
 	
-	return make_bidiag_result(transpose(U), A, V);
+	return make_bidiag_result((*transpose)(U), A, V);
 }
 
 /* namespace detail */ }

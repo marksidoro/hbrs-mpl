@@ -102,32 +102,32 @@ svd_step_rtsam(B_& B, std::size_t p, std::size_t q, U_& U, V_& V) {
 	// The range for B22 rows and columns
 	range<std::size_t,std::size_t> pq = {
 		p,
-		n(size(B)) - 1 - q
+		(*n)(size(B)) - 1 - q
 	};
 	
-	auto B22 = select(B, std::make_pair(pq, pq));
+	auto B22 = (*select)(B, std::make_pair(pq, pq));
 
 	/* Let mu be the eigenvalue of the trailing 2-by-2 submatrix of
 	 * T=B'B that is closer to tnn.
 	 *
 	 * Calculate mu.
 	 */
-	auto T = transpose(B22) * B22;
+	auto T = (*transpose)(B22) * B22;
 	range<std::size_t,std::size_t> T22 = {
-		m(size(T)) - 2,
-		m(size(T)) - 1
+		(*m)(size(T)) - 2,
+		(*m)(size(T)) - 1
 	};
-	auto l = eigenvalue_of_2x2_matrix_rtsam(select(T, std::make_pair(T22, T22)));
-	auto tnn = T[m(size(T))-1][m(size(T))-1];
+	auto l = eigenvalue_of_2x2_matrix_rtsam((*select)(T, std::make_pair(T22, T22)));
+	auto tnn = T[(*m)(size(T))-1][(*m)(size(T))-1];
 	auto mu = std::abs(l.at(0) - tnn) < std::abs(l.at(1) - tnn) ? l.at(0) : l.at(1);
 
 	auto y = T[0][0] - mu;
 	auto z = T[0][1];
 	
-	for (std::size_t k = 0; k < n(size(B22))-1; ++k) {
+	for (std::size_t k = 0; k < (*n)(size(B22))-1; ++k) {
 		{
 			// Determine c = cos(theta) and s = sin(theta) such that
-			auto theta = givens(y, z);
+			auto theta = (*givens)(y, z);
 			B22 = B22 * G(  k,   k + 1, theta);
 			V   = V   * G(p+k, p+k + 1, theta);
 
@@ -136,10 +136,10 @@ svd_step_rtsam(B_& B, std::size_t p, std::size_t q, U_& U, V_& V) {
 		}
 		{
 			// Determine c = cos(theta) and s = sin(theta) such that
-			auto theta = givens(y, z);
+			auto theta = (*givens)(y, z);
 			B22 = G(k, k + 1, theta) * B22;
 			U   = U * G(p+k, p+k + 1, theta);
-			if (k + 1 < n(size(B22))-1) {
+			if (k + 1 < (*n)(size(B22))-1) {
 				y = B22[k][k+1];
 				z = B22[k][k+2];
 			}
@@ -196,7 +196,7 @@ svd_impl_rtsam::operator()(
 	almost_equal_control<int,int> aeq_ctrl{147,2};
 	
 	//Use Algorithm 5.4.2 to compute the bidiagonalization.
-	auto UBV = bidiag(a, make_bidiag_control(ctrl.decompose_mode()));
+	auto UBV = (*bidiag)(a, make_bidiag_control(ctrl.decompose_mode()));
 	auto U = std::move(UBV.u());
 	auto B = std::move(UBV.b());
 	auto V = std::move(UBV.v());
@@ -264,13 +264,13 @@ svd_impl_rtsam::operator()(
 					zero_found = true;
 					if (i < n_-1 - q) {
 						for (std::size_t j = i + 1; j < n_ - q; ++j) {
-							auto theta = givens(-B[j][j], B[i][j]);
+							auto theta = (*givens)(-B[j][j], B[i][j]);
 							B = G(i, j, theta) * B;
 							U = U * G(i, j, theta);
 						}
 					} else {
 						for (std::size_t j = n_-1 - q - 1; j >= p; --j) {
-							auto theta = givens(B[j][j], B[j][n_-1 - q]);
+							auto theta = (*givens)(B[j][j], B[j][n_-1 - q]);
 							B = B * G(j, n_-1 - q, theta);
 							V = V * G(j, n_-1 - q, theta);
 						}

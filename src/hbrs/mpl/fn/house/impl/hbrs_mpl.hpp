@@ -49,8 +49,8 @@ house_impl_rtsacv::operator()(rtsacv<Ring> const& x) {
 	typedef std::decay_t<Ring> _Ring_;
 	
 	/* x2m is a temporary which is written x(2:m) in the book and is equivalent to x(range(1,m-1)) in this code */
-	auto x2m = select(x, range<std::size_t,std::size_t>{1u, (*size)(x)-1u});
-	auto sigma = transpose(x2m) * x2m;
+	auto x2m = (*select)(x, range<std::size_t,std::size_t>{1u, (*size)(x)-1u});
+	auto sigma = (*transpose)(x2m) * x2m;
 
 	/* The vector ni is the vector x with the value 1 in its first row */
 	rtsacv<_Ring_> ni = x;

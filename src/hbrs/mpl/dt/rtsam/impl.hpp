@@ -86,7 +86,7 @@ struct rtsam {
 		using hbrs::mpl::size;
 		if ((*not_equal)(size_, size(m_))) {
 			BOOST_THROW_EXCEPTION((
-				incompatible_matrices_exception{} << errinfo_matrix_sizes{{size_, size(m_)}}
+				incompatible_matrices_exception{} << errinfo_matrix_sizes{{size_, (*size)(m_)}}
 			));
 		}
 		
@@ -238,19 +238,19 @@ template<
 >
 decltype(auto)
 operator-(LHS && lhs, RHS && rhs) {
-	return minus(HBRS_MPL_FWD(lhs), HBRS_MPL_FWD(rhs));
+	return (*minus)(HBRS_MPL_FWD(lhs), HBRS_MPL_FWD(rhs));
 }
 
 template<typename Ring, storage_order Order>
 rtsam<Ring,Order>
 operator*(rtsam<Ring,Order> const& M, Ring const& d) {
-	return multiply(M,d);
+	return (*multiply)(M,d);
 }
 
 template<typename Ring, storage_order Order>
 rtsam<Ring,Order>
 operator*(Ring const& d, rtsam<Ring,Order> const& M) {
-	return multiply(d,M);
+	return (*multiply)(d,M);
 }
 
 template<
@@ -268,7 +268,7 @@ template<
 >
 decltype(auto)
 operator*(LHS && lhs, RHS && rhs) {
-	return multiply(HBRS_MPL_FWD(lhs), HBRS_MPL_FWD(rhs));
+	return (*multiply)(HBRS_MPL_FWD(lhs), HBRS_MPL_FWD(rhs));
 }
 
 HBRS_MPL_NAMESPACE_END

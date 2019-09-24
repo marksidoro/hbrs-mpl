@@ -483,13 +483,13 @@ BOOST_AUTO_TEST_CASE(svd_rtsam, * utf::tolerance(0.000000001)) {
 		 make_matrix_size(4,4)
 	};
 	
-	auto ASVD = svd(A, make_svd_control(decompose_mode::complete));
-	auto CSVD = svd(C, make_svd_control(decompose_mode::complete));
-	auto DSVD = svd(D, make_svd_control(decompose_mode::complete));
+	auto ASVD = (*svd)(A, make_svd_control(decompose_mode::complete));
+	auto CSVD = (*svd)(C, make_svd_control(decompose_mode::complete));
+	auto DSVD = (*svd)(D, make_svd_control(decompose_mode::complete));
 
-	auto rA = ASVD.u() * ASVD.s() * transpose(ASVD.v());
-	auto rC = CSVD.u() * CSVD.s() * transpose(CSVD.v());
-	auto rD = DSVD.u() * DSVD.s() * transpose(DSVD.v());
+	auto rA = ASVD.u() * ASVD.s() * (*transpose)(ASVD.v());
+	auto rC = CSVD.u() * CSVD.s() * (*transpose)(CSVD.v());
+	auto rD = DSVD.u() * DSVD.s() * (*transpose)(DSVD.v());
 	
 	HBRS_MPL_TEST_MMEQ(A, rA, false);
 	HBRS_MPL_TEST_MMEQ(C, rC, false);

@@ -53,9 +53,9 @@ expand_impl_smr_el_matrix::operator()(
 	smr<Matrix, El::Int> const& a,
 	matrix_size<El::Int, El::Int> const& sz
 ) const {
-	auto a_sz = size(a);
-	auto m_ = m(sz);
-	auto n_ = n(sz);
+	auto a_sz = (*size)(a);
+	auto m_ = (*m)(sz);
+	auto n_ = (*n)(sz);
 	
 	if (((n_ % a_sz) != 0) || (m_ == 0)) {
 		BOOST_THROW_EXCEPTION((
@@ -92,9 +92,9 @@ expand_impl_el_row_vector::operator()(
 	el_row_vector<Ring> const& v,
 	matrix_size<El::Int, El::Int> const& sz
 ) const  {
-	auto v_sz = size(v);
-	auto a_m = m(sz);
-	auto a_n = n(sz);
+	auto v_sz = (*size)(v);
+	auto a_m = (*m)(sz);
+	auto a_n = (*n)(sz);
 	
 	if (((a_n % v_sz) != 0) || (a_m == 0)) {
 		BOOST_THROW_EXCEPTION((
@@ -131,9 +131,9 @@ expand_impl_el_column_vector::operator()(
 	el_column_vector<Ring> const& v,
 	matrix_size<El::Int, El::Int> const& sz
 ) const  {
-	auto v_sz = size(v);
-	auto a_m = m(sz);
-	auto a_n = n(sz);
+	auto v_sz = (*size)(v);
+	auto a_m = (*m)(sz);
+	auto a_n = (*n)(sz);
 	
 	if ((a_n == 0) || ((a_m % v_sz) != 0)) {
 		BOOST_THROW_EXCEPTION((
@@ -170,9 +170,9 @@ expand_impl_el_dist_row_vector::operator()(
 	el_dist_row_vector<Ring, Columnwise, Rowwise, Wrapping> const& v,
 	matrix_size<El::Int, El::Int> const& sz
 ) const {
-	auto v_sz = size(v);
-	auto a_m = m(sz);
-	auto a_n = n(sz);
+	auto v_sz = (*size)(v);
+	auto a_m = (*m)(sz);
+	auto a_n = (*n)(sz);
 	
 	if (((a_n % v_sz) != 0) || (a_m == 0)) {
 		BOOST_THROW_EXCEPTION((
@@ -191,9 +191,9 @@ expand_impl_el_dist_column_vector::operator()(
 	el_dist_column_vector<Ring, Columnwise, Rowwise, Wrapping> const& v,
 	matrix_size<El::Int, El::Int> const& sz
 ) const {
-	auto v_sz = size(v);
-	auto a_m = m(sz);
-	auto a_n = n(sz);
+	auto v_sz = (*size)(v);
+	auto a_m = (*m)(sz);
+	auto a_n = (*n)(sz);
 	
 	if ((a_n == 0) || ((a_m % v_sz) != 0)) {
 		BOOST_THROW_EXCEPTION((

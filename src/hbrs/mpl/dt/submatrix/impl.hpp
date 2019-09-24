@@ -29,6 +29,7 @@
 #include <hbrs/mpl/fn/m.hpp>
 #include <hbrs/mpl/fn/n.hpp>
 #include <hbrs/mpl/fn/plus.hpp>
+#include <hbrs/mpl/fn/multiply.hpp>
 #include <hbrs/mpl/fn/less_equal.hpp>
 #include <hbrs/mpl/fn/not_equal.hpp>
 #include <hbrs/mpl/fn/select.hpp>
@@ -76,7 +77,7 @@ struct submatrix {
 		
 		if ((*not_equal)(sz_, size(m_))) {
 			BOOST_THROW_EXCEPTION((
-				incompatible_matrices_exception{} << errinfo_matrix_sizes{{sz_, size(m_)}}
+				incompatible_matrices_exception{} << errinfo_matrix_sizes{{sz_, (*size)(m_)}}
 			));
 		}
 		
@@ -106,13 +107,13 @@ struct submatrix {
 		using hbrs::mpl::size;
 		if ((*not_equal)(sz_, size(m_))) {
 			BOOST_THROW_EXCEPTION((
-				incompatible_matrices_exception{} << errinfo_matrix_sizes{{sz_, size(m_)}}
+				incompatible_matrices_exception{} << errinfo_matrix_sizes{{sz_, (*size)(m_)}}
 			));
 		}
 		
 		//TODO: Optimize for column_major/row_major
-		for (std::size_t i = 0; i < m(size(m_)); ++i) {
-			for (std::size_t j = 0; j < n(size(m_)); ++j) {
+		for (std::size_t i = 0; i < (*m)(size(m_)); ++i) {
+			for (std::size_t j = 0; j < (*n)(size(m_)); ++j) {
 				at(make_matrix_index(i,j)) = m_.at(make_matrix_index(i,j));
 			}
 		}
@@ -279,7 +280,7 @@ template<
 >
 decltype(auto)
 operator*(LHS && lhs, RHS && rhs) {
-	return multiply(HBRS_MPL_FWD(lhs), HBRS_MPL_FWD(rhs));
+	return (*multiply)(HBRS_MPL_FWD(lhs), HBRS_MPL_FWD(rhs));
 }
 
 HBRS_MPL_NAMESPACE_END

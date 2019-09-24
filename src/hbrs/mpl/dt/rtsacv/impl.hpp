@@ -77,7 +77,7 @@ private:
 template<typename Ring>
 decltype(auto)
 operator*(Ring const& s, rtsacv<Ring> const& v) {
-	return multiply(v,s);
+	return (*multiply)(v,s);
 }
 
 template<
@@ -89,13 +89,13 @@ template<
 >
 decltype(auto)
 operator*(LHS && lhs, RHS && rhs) {
-	return multiply(HBRS_MPL_FWD(lhs), HBRS_MPL_FWD(rhs));
+	return (*multiply)(HBRS_MPL_FWD(lhs), HBRS_MPL_FWD(rhs));
 }
 
 template<typename Ring>
 decltype(auto)
 operator/(rtsacv<Ring> const& v, Ring const& d) {
-	return divide(v,d);
+	return (*divide)(v,d);
 }
 
 HBRS_MPL_NAMESPACE_END

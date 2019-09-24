@@ -61,13 +61,13 @@ BOOST_AUTO_TEST_CASE(rtsam_, * utf::tolerance(_TOL)) {
 		make_matrix_size(5,3)
 	};
 
-	auto B  = bidiag(A , make_bidiag_control(decompose_mode::complete));
-	auto B2 = bidiag(A , make_bidiag_control(decompose_mode::complete));
-	auto B3 = bidiag(A2, make_bidiag_control(decompose_mode::complete));
+	auto B  = (*bidiag)(A , make_bidiag_control(decompose_mode::complete));
+	auto B2 = (*bidiag)(A , make_bidiag_control(decompose_mode::complete));
+	auto B3 = (*bidiag)(A2, make_bidiag_control(decompose_mode::complete));
 
-	auto C  =  B.u() *  B.b() * transpose( B.v());
-	auto C2 = B2.u() * B2.b() * transpose(B2.v());
-	auto C3 = B3.u() * B3.b() * transpose(B3.v());
+	auto C  =  B.u() *  B.b() * (*transpose)( B.v());
+	auto C2 = B2.u() * B2.b() * (*transpose)(B2.v());
+	auto C3 = B3.u() * B3.b() * (*transpose)(B3.v());
 
 	HBRS_MPL_TEST_MMEQ(C, A, false);
 	HBRS_MPL_TEST_MMEQ(C2, A, false);

@@ -217,7 +217,7 @@ pca_impl_el_matrix::operator()(
 	// Enforce a sign convention on the coefficients -- the largest element in
 	// each column will have a positive sign.
 	auto mxa = (*transform)(columns(absolute(coeff)), [](auto && column) {
-		return fold1(
+		return (*fold1)(
 			zip(column, indices(column)),
 			[](auto && a, auto && b) {
 				if (

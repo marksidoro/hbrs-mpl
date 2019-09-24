@@ -102,17 +102,20 @@ multiply_rtsam_rtsam_impl(Matrix1 const& m1, Matrix2 const& m2, hana::basic_type
 	for (std::size_t i = 0; i < m1_m; ++i) {
 		for (std::size_t j = 0; j < m2_n; ++j) {
 			(*at)(result, make_matrix_index(i, j)) =
-				select(
-					m1,
-					std::make_pair(
-						i,
-						range<std::size_t,std::size_t>(0u, m1_n - 1u)
-					)
-				) * select(
-					m2,
-					std::make_pair(
-						range<std::size_t,std::size_t>(0u, m2_m - 1u),
-						j
+				(*multiply)(
+					select(
+						m1,
+						std::make_pair(
+							i,
+							range<std::size_t,std::size_t>(0u, m1_n - 1u)
+						)
+					),
+					select(
+						m2,
+						std::make_pair(
+							range<std::size_t,std::size_t>(0u, m2_m - 1u),
+							j
+						)
 					)
 				);
 		}
@@ -180,7 +183,10 @@ multiply_rtsarv_rtsam_impl(RowVector const& lhs, Matrix const& rhs, hana::basic_
 	
 	rtsarv<Ring> result{rhs_n};
 	for (std::size_t i = 0; i < rhs_n; ++i) {
-		(*at)(result, i) = lhs * select(rhs, std::make_pair(range<std::size_t,std::size_t>(0u, rhs_m - 1u), i));
+		(*at)(result, i) = (*multiply)(
+			lhs,
+			select(rhs, std::make_pair(range<std::size_t,std::size_t>(0u, rhs_m - 1u), i))
+		);
 	}
 	return result;
 }
@@ -221,7 +227,10 @@ multiply_rtsam_rtsacv_impl(Matrix const& lhs, ColumnVector const& rhs, hana::bas
 	
 	rtsacv<Ring> result{lhs_m};
 	for (std::size_t i = 0; i < lhs_m; ++i) {
-		(*at)(result, i) = select(lhs, std::make_pair(i, range<std::size_t,std::size_t>(0u, lhs_n - 1u))) * rhs;
+		(*at)(result, i) = (*multiply)(
+			select(lhs, std::make_pair(i, range<std::size_t,std::size_t>(0u, lhs_n - 1u))), 
+			rhs
+		);
 	}
 	return result;
 }

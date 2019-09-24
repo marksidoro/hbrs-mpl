@@ -60,11 +60,11 @@ variance_impl_el(Sequence const& seq, Matrix const& mat, Weight w) {
 	auto && cntr = (*minus)(mat, (*expand)(mu, size(mat)));
 	
 	auto square = [](auto x) { return power(x, 2); };
-	auto && squared = transform(cntr, square);
-	auto && summed = sum(columns(squared));
-	auto biased_m = m(size(mat))-1+w;
+	auto && squared = (*transform)(cntr, square);
+	auto && summed = (*sum)(columns(squared));
+	auto biased_m = (*m)(size(mat))-1+w;
 	
-	return transform(summed, [&biased_m](auto x) { return divide(x, biased_m); });
+	return (*transform)(summed, [&biased_m](auto x) { return (*divide)(x, biased_m); });
 }
 
 template <

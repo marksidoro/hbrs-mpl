@@ -85,7 +85,7 @@ template<
 >
 decltype(auto)
 operator*(LHS && lhs, RHS && rhs) {
-	return multiply(HBRS_MPL_FWD(lhs), HBRS_MPL_FWD(rhs));
+	return (*multiply)(HBRS_MPL_FWD(lhs), HBRS_MPL_FWD(rhs));
 }
 
 HBRS_MPL_NAMESPACE_END

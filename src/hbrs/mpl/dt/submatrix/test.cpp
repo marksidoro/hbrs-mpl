@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(m_n_size_assignment) {
 	static_assert( (*at)(rb0, make_matrix_index(0u,0u)) == (*at)(a, make_matrix_index(0u,0u)), "");
 	static_assert( rb0[0u][0u] == (*at)(a, make_matrix_index(0u,0u)), "");
 	static_assert( rb0[2u][2u] == (*at)(a, make_matrix_index(2u,2u)), "");
-	static_assert( size(rb0[0u]) == n(size(a)), "");
+	static_assert( (*size)(rb0[0u]) == (*n)(size(a)), "");
 	
 	HBRS_MPL_TEST_MMEQ(b, rb0, false);
 	HBRS_MPL_TEST_MMEQ(c, rc0, false);
