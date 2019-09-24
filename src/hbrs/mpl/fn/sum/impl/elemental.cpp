@@ -22,15 +22,15 @@ namespace detail {
 
 //TODO: Add non-dist impls
 
-template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<float>>> const&) const;
-template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<El::Complex<float>>>> const&) const;
-template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<double>>> const&) const;
-template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<El::Complex<double>>>> const&) const;
+template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, hana::tuple<el_dist_matrix<float>>> const&) const;
+template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, hana::tuple<el_dist_matrix<El::Complex<float>>>> const&) const;
+template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, hana::tuple<el_dist_matrix<double>>> const&) const;
+template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, hana::tuple<el_dist_matrix<El::Complex<double>>>> const&) const;
 
-template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<float>>> &&) const;
-template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<El::Complex<float>>>> &&) const;
-template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<double>>> &&) const;
-template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<El::Complex<double>>>> &&) const;
+template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, hana::tuple<el_dist_matrix<float>>> &&) const;
+template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, hana::tuple<el_dist_matrix<El::Complex<float>>>> &&) const;
+template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, hana::tuple<el_dist_matrix<double>>> &&) const;
+template auto sum_impl_el_dist_matrix_columns::operator()(expression<columns_t, hana::tuple<el_dist_matrix<El::Complex<double>>>> &&) const;
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END

@@ -55,7 +55,7 @@ plus_impl_el_dist_matrix_expand_expr_el_dist_matrix::operator()(
 	el_dist_matrix<RingL, ColumnwiseL, RowwiseL, WrappingL> & lhs,
 	expression<
 		expand_t,
-		std::tuple<
+		hana::tuple<
 			el_dist_row_vector<RingR, ColumnwiseR, RowwiseR, WrappingR> const&,
 			matrix_size<El::Int, El::Int> const&
 		>
@@ -90,7 +90,7 @@ plus_impl_el_dist_matrix_expand_expr_el_dist_matrix::operator()(
 	el_dist_matrix<RingL, ColumnwiseL, RowwiseL, WrappingL> const& lhs,
 	expression<
 		expand_t,
-		std::tuple<
+		hana::tuple<
 			el_dist_row_vector<RingR, ColumnwiseR, RowwiseR, WrappingR> const&,
 			matrix_size<El::Int, El::Int> const&
 		>
@@ -113,7 +113,7 @@ plus_impl_el_dist_matrix_expand_expr_el_dist_matrix::operator()(
 	el_dist_matrix<RingL, ColumnwiseL, RowwiseL, WrappingL> && lhs,
 	expression<
 		expand_t,
-		std::tuple<
+		hana::tuple<
 			el_dist_row_vector<RingR, ColumnwiseR, RowwiseR, WrappingR> const&,
 			matrix_size<El::Int, El::Int> const&
 		>

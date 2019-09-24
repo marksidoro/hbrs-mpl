@@ -32,7 +32,7 @@ template decltype(auto) minus_impl_el_dist_matrix_expand_expr_el_dist_matrix::op
 	el_dist_matrix<float> &,
 	expression<
 		expand_t,
-		std::tuple<
+		hana::tuple<
 			el_dist_row_vector<float> const&,
 			matrix_size<El::Int, El::Int> const&
 		>
@@ -41,7 +41,7 @@ template decltype(auto) minus_impl_el_dist_matrix_expand_expr_el_dist_matrix::op
 	el_dist_matrix<El::Complex<float>> &,
 	expression<
 		expand_t,
-		std::tuple<
+		hana::tuple<
 			el_dist_row_vector<El::Complex<float>> const&,
 			matrix_size<El::Int, El::Int> const&
 		>
@@ -50,7 +50,7 @@ template decltype(auto) minus_impl_el_dist_matrix_expand_expr_el_dist_matrix::op
 	el_dist_matrix<double> &,
 	expression<
 		expand_t,
-		std::tuple<
+		hana::tuple<
 			el_dist_row_vector<double> const&,
 			matrix_size<El::Int, El::Int> const&
 		>
@@ -59,7 +59,7 @@ template decltype(auto) minus_impl_el_dist_matrix_expand_expr_el_dist_matrix::op
 	el_dist_matrix<El::Complex<double>> &,
 	expression<
 		expand_t,
-		std::tuple<
+		hana::tuple<
 			el_dist_row_vector<El::Complex<double>> const&,
 			matrix_size<El::Int, El::Int> const&
 		>

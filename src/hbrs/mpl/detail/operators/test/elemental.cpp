@@ -376,7 +376,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	/////////////////////////// columns ///////////////////////////
 	expression<
 		columns_t,
-		std::tuple<
+		hana::tuple<
 			el_dist_matrix<Real, El::VC, El::STAR, El::ELEMENT> const &
 		>
 	> columns_expr0 = (*columns)(b);
@@ -438,7 +438,7 @@ BOOST_AUTO_TEST_CASE(dist_matrix_sum_1, * utf::tolerance(_TOL)) {
 	
 	expression<
 		expand_t,
-		std::tuple<
+		hana::tuple<
 			el_dist_row_vector<Real, El::STAR, El::STAR, El::ELEMENT> const&,
 			matrix_size<El::Int, El::Int> const&
 		>

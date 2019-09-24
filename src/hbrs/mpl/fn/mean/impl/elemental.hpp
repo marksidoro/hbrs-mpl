@@ -101,7 +101,7 @@ auto
 mean_impl_el_dist_matrix_columns::operator()(
 	expression<
 		columns_t,
-		std::tuple<DistMatrix>
+		hana::tuple<DistMatrix>
 	> const& expr
 ) const {
 	return mean_el_dist_matrix_columns_impl(expr);
@@ -117,7 +117,7 @@ auto
 mean_impl_el_dist_matrix_columns::operator()(
 	expression<
 		columns_t,
-		std::tuple<DistMatrix>
+		hana::tuple<DistMatrix>
 	> && expr
 ) const {
 	return mean_el_dist_matrix_columns_impl(HBRS_MPL_FWD(expr));

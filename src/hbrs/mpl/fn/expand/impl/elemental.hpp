@@ -182,7 +182,7 @@ expand_impl_el_dist_row_vector::operator()(
 		));
 	}
 	
-	return make_expression(expand, std::tuple<decltype(v), decltype(sz)>{v, sz});
+	return make_expression(expand, hana::tuple<decltype(v), decltype(sz)>{v, sz});
 }
 
 template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
@@ -203,7 +203,7 @@ expand_impl_el_dist_column_vector::operator()(
 		));
 	}
 	
-	return make_expression(expand, std::tuple<decltype(v), decltype(sz)>{v, sz});
+	return make_expression(expand, hana::tuple<decltype(v), decltype(sz)>{v, sz});
 }
 
 /* namespace detail */ }

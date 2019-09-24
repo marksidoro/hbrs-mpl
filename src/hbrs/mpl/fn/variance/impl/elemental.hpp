@@ -92,7 +92,7 @@ auto
 variance_impl_el_dist_matrix_columns::operator()(
 	expression<
 		columns_t,
-		std::tuple<DistMatrix>
+		hana::tuple<DistMatrix>
 	> const& expr,
 	Weight w
 ) const {

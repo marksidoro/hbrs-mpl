@@ -73,7 +73,7 @@ template <
 >
 constexpr auto
 columns_impl_el_dist_matrix::operator()(DistMatrix && a) const {
-	return make_expression(columns, std::tuple<decltype(a)>{HBRS_MPL_FWD(a)});
+	return make_expression(columns, hana::tuple<decltype(a)>{HBRS_MPL_FWD(a)});
 }
 
 /* namespace detail */ }

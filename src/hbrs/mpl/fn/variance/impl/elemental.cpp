@@ -25,10 +25,10 @@ template auto variance_impl_smcs_el_matrix::operator()(smcs<el_matrix<El::Comple
 template auto variance_impl_smcs_el_matrix::operator()(smcs<el_matrix<double>> const&, double) const;
 template auto variance_impl_smcs_el_matrix::operator()(smcs<el_matrix<El::Complex<double>>> const&, double) const;
 
-template auto variance_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<float>>> const&, float) const;
-template auto variance_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<El::Complex<float>>>> const&, float) const;
-template auto variance_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<double>>> const&, double) const;
-template auto variance_impl_el_dist_matrix_columns::operator()(expression<columns_t, std::tuple<el_dist_matrix<El::Complex<double>>>> const&, double) const;
+template auto variance_impl_el_dist_matrix_columns::operator()(expression<columns_t, hana::tuple<el_dist_matrix<float>>> const&, float) const;
+template auto variance_impl_el_dist_matrix_columns::operator()(expression<columns_t, hana::tuple<el_dist_matrix<El::Complex<float>>>> const&, float) const;
+template auto variance_impl_el_dist_matrix_columns::operator()(expression<columns_t, hana::tuple<el_dist_matrix<double>>> const&, double) const;
+template auto variance_impl_el_dist_matrix_columns::operator()(expression<columns_t, hana::tuple<el_dist_matrix<El::Complex<double>>>> const&, double) const;
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
