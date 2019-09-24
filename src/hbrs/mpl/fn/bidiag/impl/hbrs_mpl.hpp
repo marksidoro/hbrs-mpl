@@ -101,8 +101,8 @@ bidiag_impl_rtsam::operator()(rtsam<Ring,Order> const& x, bidiag_control<decompo
 
 		/* Ajmjn is equivalent to A(j:x_m,j:x_n) in the book */
 		auto Ajmjn = (*select)(A, std::make_pair(jm, jn));
-		/* Ajmjn = (make_identity(x_m - j) - beta * ni * transpose(ni)) * Ajmjn; // mathematical notation */
-		Ajmjn = Ajmjn - (beta * ni) * ((*transpose)(ni) * Ajmjn);
+		/* Ajmjn = (*multiply)(minus(make_identity((*minus)(x_m, j)), multiply(multiply(beta,ni), transpose(ni))), Ajmjn); // mathematical notation */
+		Ajmjn = (*minus)(Ajmjn, multiply(multiply(beta, ni), multiply(transpose(ni), Ajmjn)));
 		/*
 			* In the book here the householder vector would be saved
 			* inside of A. But since we compute and return U we don't
@@ -110,8 +110,8 @@ bidiag_impl_rtsam::operator()(rtsam<Ring,Order> const& x, bidiag_control<decompo
 			*/
 
 		auto Ui = make_identity(x_m);
-		(*select)(Ui, std::make_pair(jm,jm)) = make_identity(x_m - j) - beta * (ni * (*transpose)(ni));
-		U = Ui * U;
+		(*select)(Ui, std::make_pair(jm,jm)) = (*minus)(make_identity((*minus)(x_m, j)), multiply(beta, multiply(ni, transpose(ni))));
+		U = (*multiply)(Ui, U);
 
 		if (j + 1 <= x_n - 2) {
 			auto h = (*house)(
@@ -123,8 +123,8 @@ bidiag_impl_rtsam::operator()(rtsam<Ring,Order> const& x, bidiag_control<decompo
 			decltype(auto) beta = h.beta();
 
 			auto Ajmj1n = (*select)(A, std::make_pair(jm, j1n)); // equivalent to A(j:x_m,j+1:x_n)
-			/* Ajmj1n = Ajmj1n * (make_identity(x_n-1 - j) - beta * ni * transpose(ni)); // mathematical notation */
-			Ajmj1n = Ajmj1n - (Ajmj1n * ni) * (*transpose)(beta * ni);
+			/* Ajmj1n = (*multiply)(Ajmj1n, minus((make_identity((*minus)(minus(x_n,1),j)), multiply(multiply(beta,ni),transpose(ni))))); // mathematical notation */
+			Ajmj1n = (*minus)(Ajmj1n, multiply(multiply(Ajmj1n, ni), transpose(multiply(beta, ni))));
 			/*
 				* In the book here the householder vector would be saved
 				* inside of A. But since we compute and return V we don't
@@ -132,7 +132,7 @@ bidiag_impl_rtsam::operator()(rtsam<Ring,Order> const& x, bidiag_control<decompo
 				*/
 
 			auto Vjmj1n = (*select)(V, std::make_pair(jn, j1n));
-			Vjmj1n = Vjmj1n - (Vjmj1n * ni) * (*transpose)(beta * ni);
+			Vjmj1n = (*minus)(Vjmj1n, multiply(multiply(Vjmj1n,ni), transpose(multiply(beta,ni))));
 		}
 	}
 	

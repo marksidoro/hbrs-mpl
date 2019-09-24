@@ -34,6 +34,7 @@
 #include <hbrs/mpl/fn/svd.hpp>
 #include <hbrs/mpl/fn/transpose.hpp>
 #include <hbrs/mpl/fn/select.hpp>
+#include <hbrs/mpl/fn/multiply.hpp>
 
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 	#include <hbrs/mpl/dt/el_matrix.hpp>
@@ -487,9 +488,9 @@ BOOST_AUTO_TEST_CASE(svd_rtsam, * utf::tolerance(0.000000001)) {
 	auto CSVD = (*svd)(C, make_svd_control(decompose_mode::complete));
 	auto DSVD = (*svd)(D, make_svd_control(decompose_mode::complete));
 
-	auto rA = ASVD.u() * ASVD.s() * (*transpose)(ASVD.v());
-	auto rC = CSVD.u() * CSVD.s() * (*transpose)(CSVD.v());
-	auto rD = DSVD.u() * DSVD.s() * (*transpose)(DSVD.v());
+	auto rA = (*multiply)(multiply(ASVD.u(), ASVD.s()), transpose(ASVD.v()));
+	auto rC = (*multiply)(multiply(CSVD.u(), CSVD.s()), transpose(CSVD.v()));
+	auto rD = (*multiply)(multiply(DSVD.u(), DSVD.s()), transpose(DSVD.v()));
 	
 	HBRS_MPL_TEST_MMEQ(A, rA, false);
 	HBRS_MPL_TEST_MMEQ(C, rC, false);

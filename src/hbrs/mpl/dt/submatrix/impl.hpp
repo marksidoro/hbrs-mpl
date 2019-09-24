@@ -30,7 +30,6 @@
 #include <hbrs/mpl/fn/m.hpp>
 #include <hbrs/mpl/fn/n.hpp>
 #include <hbrs/mpl/fn/plus.hpp>
-#include <hbrs/mpl/fn/multiply.hpp>
 #include <hbrs/mpl/fn/less_equal.hpp>
 #include <hbrs/mpl/fn/not_equal.hpp>
 #include <hbrs/mpl/fn/select.hpp>
@@ -278,20 +277,6 @@ private:
 	Offset const o_;
 	Size const sz_;
 };
-
-template<
-	typename LHS,
-	typename RHS,
-	typename std::enable_if_t<
-		(std::is_same_v< hana::tag_of_t<LHS>, submatrix_tag       > && std::is_same_v< hana::tag_of_t<RHS>, submatrix_tag       >) ||
-		(std::is_same_v< hana::tag_of_t<LHS>, submatrix_tag       > && std::is_same_v< hana::tag_of_t<RHS>, givens_rotation_tag >) ||
-		(std::is_same_v< hana::tag_of_t<LHS>, givens_rotation_tag > && std::is_same_v< hana::tag_of_t<RHS>, submatrix_tag       >)
-	>* = nullptr
->
-decltype(auto)
-operator*(LHS && lhs, RHS && rhs) {
-	return (*multiply)(HBRS_MPL_FWD(lhs), HBRS_MPL_FWD(rhs));
-}
 
 HBRS_MPL_NAMESPACE_END
 

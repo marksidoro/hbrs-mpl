@@ -32,8 +32,6 @@
 #include <hbrs/mpl/fn/m.hpp>
 #include <hbrs/mpl/fn/n.hpp>
 #include <hbrs/mpl/fn/size.hpp>
-#include <hbrs/mpl/fn/minus.hpp>
-#include <hbrs/mpl/fn/multiply.hpp>
 #include <hbrs/mpl/fn/not_equal.hpp>
 #include <hbrs/mpl/detail/translate_index.hpp>
 #include <hbrs/mpl/dt/exception.hpp>
@@ -227,49 +225,6 @@ private:
 	std::vector<Ring> data_;
 	matrix_size<std::size_t, std::size_t> size_;
 };
-
-template<
-	typename LHS,
-	typename RHS,
-	typename std::enable_if_t<
-		(std::is_same_v< hana::tag_of_t<LHS>, rtsam_tag     > && std::is_same_v< hana::tag_of_t<RHS>, rtsam_tag >) ||
-		(std::is_same_v< hana::tag_of_t<LHS>, submatrix_tag > && std::is_same_v< hana::tag_of_t<RHS>, rtsam_tag >)
-	>* = nullptr
->
-decltype(auto)
-operator-(LHS && lhs, RHS && rhs) {
-	return (*minus)(HBRS_MPL_FWD(lhs), HBRS_MPL_FWD(rhs));
-}
-
-template<typename Ring, storage_order Order>
-rtsam<Ring,Order>
-operator*(rtsam<Ring,Order> const& M, Ring const& d) {
-	return (*multiply)(M,d);
-}
-
-template<typename Ring, storage_order Order>
-rtsam<Ring,Order>
-operator*(Ring const& d, rtsam<Ring,Order> const& M) {
-	return (*multiply)(d,M);
-}
-
-template<
-	typename LHS,
-	typename RHS,
-	typename std::enable_if_t<
-		(std::is_same_v< hana::tag_of_t<LHS>, rtsam_tag           > && std::is_same_v< hana::tag_of_t<RHS>, rtsam_tag           >) ||
-		(std::is_same_v< hana::tag_of_t<LHS>, rtsam_tag           > && std::is_same_v< hana::tag_of_t<RHS>, submatrix_tag       >) ||
-		(std::is_same_v< hana::tag_of_t<LHS>, rtsam_tag           > && std::is_same_v< hana::tag_of_t<RHS>, rtsacv_tag          >) ||
-		(std::is_same_v< hana::tag_of_t<LHS>, rtsam_tag           > && std::is_same_v< hana::tag_of_t<RHS>, givens_rotation_tag >) ||
-		(std::is_same_v< hana::tag_of_t<LHS>, submatrix_tag       > && std::is_same_v< hana::tag_of_t<RHS>, rtsam_tag           >) ||
-		(std::is_same_v< hana::tag_of_t<LHS>, rtsarv_tag          > && std::is_same_v< hana::tag_of_t<RHS>, rtsam_tag           >) ||
-		(std::is_same_v< hana::tag_of_t<LHS>, givens_rotation_tag > && std::is_same_v< hana::tag_of_t<RHS>, rtsam_tag           >)
-	>* = nullptr
->
-decltype(auto)
-operator*(LHS && lhs, RHS && rhs) {
-	return (*multiply)(HBRS_MPL_FWD(lhs), HBRS_MPL_FWD(rhs));
-}
 
 HBRS_MPL_NAMESPACE_END
 

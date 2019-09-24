@@ -21,8 +21,6 @@
 #include "fwd.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
-#include <hbrs/mpl/fn/multiply.hpp>
-#include <hbrs/mpl/fn/divide.hpp>
 #include <vector>
 #include <type_traits>
 
@@ -73,20 +71,6 @@ struct rtsarv {
 private:
 	std::vector<Ring> data_;
 };
-
-template<
-	typename LHS,
-	typename RHS,
-	typename std::enable_if_t<
-		(std::is_same_v< hana::tag_of_t<LHS>, rtsacv_tag > && std::is_same_v< hana::tag_of_t<RHS>, rtsarv_tag    >) ||
-		(std::is_same_v< hana::tag_of_t<LHS>, rtsarv_tag > && std::is_same_v< hana::tag_of_t<RHS>, submatrix_tag >) ||
-		(std::is_same_v< hana::tag_of_t<LHS>, rtsarv_tag > && std::is_same_v< hana::tag_of_t<RHS>, rtsacv_tag    >)
-	>* = nullptr
->
-decltype(auto)
-operator*(LHS && lhs, RHS && rhs) {
-	return (*multiply)(HBRS_MPL_FWD(lhs), HBRS_MPL_FWD(rhs));
-}
 
 HBRS_MPL_NAMESPACE_END
 

@@ -112,7 +112,7 @@ svd_step_rtsam(B_& B, std::size_t p, std::size_t q, U_& U, V_& V) {
 	 *
 	 * Calculate mu.
 	 */
-	auto T = (*transpose)(B22) * B22;
+	auto T = (*multiply)(transpose(B22), B22);
 	range<std::size_t,std::size_t> T22 = {
 		(*m)(size(T)) - 2,
 		(*m)(size(T)) - 1
@@ -128,8 +128,8 @@ svd_step_rtsam(B_& B, std::size_t p, std::size_t q, U_& U, V_& V) {
 		{
 			// Determine c = cos(theta) and s = sin(theta) such that
 			auto theta = (*givens)(y, z);
-			B22 = B22 * G(  k,   k + 1, theta);
-			V   = V   * G(p+k, p+k + 1, theta);
+			B22 = (*multiply)(B22, G(  k,   k + 1, theta));
+			V   = (*multiply)(V,   G(p+k, p+k + 1, theta));
 
 			y = B22[k  ][k];
 			z = B22[k+1][k];
@@ -137,8 +137,8 @@ svd_step_rtsam(B_& B, std::size_t p, std::size_t q, U_& U, V_& V) {
 		{
 			// Determine c = cos(theta) and s = sin(theta) such that
 			auto theta = (*givens)(y, z);
-			B22 = G(k, k + 1, theta) * B22;
-			U   = U * G(p+k, p+k + 1, theta);
+			B22 = (*multiply)(G(k, k + 1, theta), B22);
+			U   = (*multiply)(U, G(p+k, p+k + 1, theta));
 			if (k + 1 < (*n)(size(B22))-1) {
 				y = B22[k][k+1];
 				z = B22[k][k+2];
@@ -265,14 +265,14 @@ svd_impl_rtsam::operator()(
 					if (i < n_-1 - q) {
 						for (std::size_t j = i + 1; j < n_ - q; ++j) {
 							auto theta = (*givens)(-B[j][j], B[i][j]);
-							B = G(i, j, theta) * B;
-							U = U * G(i, j, theta);
+							B = (*multiply)(G(i, j, theta), B);
+							U = (*multiply)(U, G(i, j, theta));
 						}
 					} else {
 						for (std::size_t j = n_-1 - q - 1; j >= p; --j) {
 							auto theta = (*givens)(B[j][j], B[j][n_-1 - q]);
-							B = B * G(j, n_-1 - q, theta);
-							V = V * G(j, n_-1 - q, theta);
+							B = (*multiply)(B, G(j, n_-1 - q, theta));
+							V = (*multiply)(V, G(j, n_-1 - q, theta));
 						}
 					}
 				}

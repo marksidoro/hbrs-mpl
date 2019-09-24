@@ -50,7 +50,7 @@ house_impl_rtsacv::operator()(rtsacv<Ring> const& x) {
 	
 	/* x2m is a temporary which is written x(2:m) in the book and is equivalent to x(range(1,m-1)) in this code */
 	auto x2m = (*select)(x, range<std::size_t,std::size_t>{1u, (*size)(x)-1u});
-	auto sigma = (*transpose)(x2m) * x2m;
+	auto sigma = (*multiply)(transpose(x2m), x2m);
 
 	/* The vector ni is the vector x with the value 1 in its first row */
 	rtsacv<_Ring_> ni = x;
@@ -72,7 +72,7 @@ house_impl_rtsacv::operator()(rtsacv<Ring> const& x) {
 		}
 		auto nisq = (*power)(ni.at(0), 2); // square of first element of ni
 		beta = 2 * nisq / (sigma + nisq);
-		ni = ni / ni.at(0);
+		ni = (*divide)(ni, ni.at(0));
 	}
 	
 	return make_house_result(x, beta);
