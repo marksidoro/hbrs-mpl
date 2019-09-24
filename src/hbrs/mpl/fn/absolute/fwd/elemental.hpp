@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 	#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
+	#include <hbrs/mpl/dt/el_dist_matrix/fwd.hpp>
 #endif
 
 #include <boost/hana/tuple.hpp>
@@ -42,15 +43,28 @@ struct absolute_impl_el_matrix {
 	operator()(el_matrix<Ring> const& a) const;
 };
 
+struct absolute_impl_el_dist_matrix {
+	template <
+		typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping,
+		typename std::enable_if_t<
+			std::is_arithmetic< Ring >::value /* TODO: absolute() is not yet implemented for El::Complex<> */
+		>* = nullptr
+	>
+	auto
+	operator()(el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& a) const;
+};
+
 #else
 struct absolute_impl_el_matrix {};
+struct absolute_impl_el_dist_matrix {};
 #endif
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
 #define HBRS_MPL_FN_ABSOLUTE_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                  \
-		hbrs::mpl::detail::absolute_impl_el_matrix{}                                                                   \
+		hbrs::mpl::detail::absolute_impl_el_matrix{},                                                                  \
+		hbrs::mpl::detail::absolute_impl_el_dist_matrix{}                                                              \
 	)
 
 #endif // !HBRS_MPL_FN_ABSOLUTE_FWD_ELEMENTAL_HPP

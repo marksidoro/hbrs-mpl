@@ -1366,6 +1366,8 @@ BOOST_AUTO_TEST_CASE(matrix_absolute) {
 	}
 }
 
+//TODO: Add unit test dist_matrix_absolute
+
 BOOST_AUTO_TEST_CASE(matrix_select) {
 	using namespace hbrs::mpl;
 	using hbrs::mpl::select;

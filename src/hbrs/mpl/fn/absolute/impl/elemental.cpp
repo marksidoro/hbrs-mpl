@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,11 @@ template auto absolute_impl_el_matrix::operator()(el_matrix<float>              
 // template auto absolute_impl_el_matrix::operator()(el_matrix<El::Complex<float>>  const&) const;
 template auto absolute_impl_el_matrix::operator()(el_matrix<double>              const&) const;
 // template auto absolute_impl_el_matrix::operator()(el_matrix<El::Complex<double>> const&) const;
+
+template auto absolute_impl_el_dist_matrix::operator()(el_dist_matrix<float>               const&) const;
+// template auto absolute_impl_el_dist_matrix::operator()(el_dist_matrix<El::Complex<float>>  const&) const;
+template auto absolute_impl_el_dist_matrix::operator()(el_dist_matrix<double>              const&) const;
+// template auto absolute_impl_el_dist_matrix::operator()(el_dist_matrix<El::Complex<double>> const&) const;
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
