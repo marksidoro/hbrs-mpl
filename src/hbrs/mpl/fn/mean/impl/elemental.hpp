@@ -79,10 +79,10 @@ mean_impl_smrs_el_matrix::operator()(smrs<Matrix> const& a) const {
 
 template <typename Expression>
 static auto
-mean_el_dist_matrix_columns_impl(Expression const& expr) {
+mean_el_dist_matrix_columns_impl(Expression && expr) {
 	auto const& from = hana::at_c<0>(expr.operands());
 	auto from_sz = (*size)(from);
-	el_dist_row_vector sums = (*sum)(std::move(expr));
+	el_dist_row_vector sums = (*sum)(HBRS_MPL_FWD(expr));
 	BOOST_ASSERT(sums.length() == from_sz.n());
 	
 	//TODO: Once sums is converted from "El::STAR, El::STAR" to "El::CIRC, El::CIRC" do only on sums_dmat.Grid().Rank() == 0!
