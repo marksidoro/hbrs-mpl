@@ -32,15 +32,15 @@ using namespace hbrs::mpl;
 
 int
 main(int argc, char **argv) {
-	constexpr auto r0 = at(std::tuple<int>{1337}, 0_c);
+	constexpr auto r0 = (*at)(std::tuple<int>{1337}, 0_c);
 	static_assert(r0 == 1337, "");
 	
-	auto r1 = at(std::tuple<int>{1337}, 0_c);
+	auto r1 = (*at)(std::tuple<int>{1337}, 0_c);
 	assert(r1 == 1337);
 	
 	std::cout << r1 << std::endl;
 	
-	auto r2 = at(std::tuple<int>{1337}, 0);
+	auto r2 = (*at)(std::tuple<int>{1337}, 0);
 	assert(r2 == 1337);
 	
 	std::cout << r2 << std::endl;
