@@ -40,7 +40,9 @@ template <
 auto
 divide_impl_el_vector_scalar::operator()(Vector v, Scalar const& b) const {
 	//TODO: Move to member function? Or replace with transform call?
-	El::Scale(Scalar(1)/b, v.data());
+	typedef decltype(v.at(0)) Ring;
+	typedef std::decay_t<Ring> _Ring_;
+	El::Scale(_Ring_(1)/b, v.data());
 	return v;
 }
 
