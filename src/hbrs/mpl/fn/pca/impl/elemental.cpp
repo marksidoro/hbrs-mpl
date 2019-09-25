@@ -22,13 +22,15 @@ namespace detail {
 
 //TODO: Add impls!
 
-// template auto pca_impl_el_matrix::operator()(el_matrix<float> const&, pca_control<bool,bool,bool> const&) const;
-// template auto pca_impl_el_matrix::operator()(el_matrix<El::Complex<float>> const&, pca_control<bool,bool,bool> const&) const;
+template decltype(auto) pca_impl_el_matrix::operator()(el_matrix<float> const&, pca_control<bool,bool,bool> const&) const;
+// template decltype(auto) pca_impl_el_matrix::operator()(el_matrix<El::Complex<float>> const&, pca_control<bool,bool,bool> const&) const;
+template decltype(auto) pca_impl_el_matrix::operator()(el_matrix<double> const&, pca_control<bool,bool,bool> const&) const;
+// template decltype(auto) pca_impl_el_matrix::operator()(el_matrix<El::Complex<double>> const&, pca_control<bool,bool,bool> const&) const;
 
-template auto pca_impl_el_matrix::operator()(el_matrix<double> const&, pca_control<bool,bool,bool> const&) const;
-// template auto pca_impl_el_matrix::operator()(el_matrix<El::Complex<double>> const&, pca_control<bool,bool,bool> const&) const;
-
-template auto pca_impl_el_dist_matrix::operator()(el_dist_matrix<double> const&, pca_control<bool,bool,bool> const&) const;
+template decltype(auto) pca_impl_el_dist_matrix::operator()(el_dist_matrix<float> const&, pca_control<bool,bool,bool> const&) const;
+// template decltype(auto) pca_impl_el_dist_matrix::operator()(el_dist_matrix<El::Complex<float>> const&, pca_control<bool,bool,bool> const&) const;
+template decltype(auto) pca_impl_el_dist_matrix::operator()(el_dist_matrix<double> const&, pca_control<bool,bool,bool> const&) const;
+// template decltype(auto) pca_impl_el_dist_matrix::operator()(el_dist_matrix<El::Complex<double>> const&, pca_control<bool,bool,bool> const&) const;
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END

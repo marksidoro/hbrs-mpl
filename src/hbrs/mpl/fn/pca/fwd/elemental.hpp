@@ -25,6 +25,7 @@
 	#include <hbrs/mpl/dt/el_dist_matrix/fwd.hpp>
 #endif
 #include <boost/hana/tuple.hpp>
+#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
@@ -33,18 +34,31 @@ namespace detail {
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 struct pca_impl_el_matrix {
-	template <typename Ring>
-	auto
+	template <
+		typename Ring,
+		typename std::enable_if_t<
+			!std::is_reference_v<Ring> &&
+			!std::is_const_v<Ring> &&
+			std::is_arithmetic_v<Ring>
+		>* = nullptr
+	>
+	decltype(auto)
 	operator()(
 		el_matrix<Ring> const& a,
 		pca_control<bool,bool,bool> const& ctrl
 	) const;
 };
 
-//TODO: Join with pca_impl_el_matrix!
 struct pca_impl_el_dist_matrix {
-	template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
-	auto
+	template<
+		typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping,
+		typename std::enable_if_t<
+			!std::is_reference_v<Ring> &&
+			!std::is_const_v<Ring> &&
+			std::is_arithmetic_v<Ring>
+		>* = nullptr
+	>
+	decltype(auto)
 	operator()(
 		el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& a,
 		pca_control<bool,bool,bool> const& ctrl

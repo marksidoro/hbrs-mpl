@@ -262,18 +262,14 @@ struct square_t {
 
 constexpr square_t square{};
 
-/* namespace pca_impl_el */ }
-
 /* C++ code is equivalent to MATLAB code in file src/hbrs/mpl/detail/matlab_cxn/impl/pca_level2.m */
-template <typename Ring>
-auto
-pca_impl_el_matrix::operator()(
-	el_matrix<Ring> const& a,
-	pca_control<bool,bool,bool> const& ctrl
-) const {
-	using namespace pca_impl_el;
-	typedef std::decay_t<Ring> _Ring_;
-	
+template <typename Matrix, typename Control>
+static auto
+pca(
+	Matrix const& a,
+	Control const& ctrl
+) {
+	//TODO: Handle complex values
 	using namespace hana::literals;
 	
 	auto const a_sz = (*size)(a);
@@ -391,9 +387,7 @@ pca_impl_el_matrix::operator()(
 	
 	// Enforce a sign convention on the coefficients -- the largest element in
 	// each column will have a positive sign.
-	
 	auto colsign = signum_of_largest_element_in_column(coeff);
-	
 	auto coeff_sgn = (*times)(coeff, expand(colsign, size(coeff)));
 	auto score_sgn = (*times)(score, expand(colsign, size(score)));
 	
@@ -403,143 +397,42 @@ pca_impl_el_matrix::operator()(
 	return make_pca_result(coeff_sgn, score_sgn, latent, mu);
 }
 
-template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
-auto
+/* namespace pca_impl_el */ }
+
+template <
+	typename Ring,
+	typename std::enable_if_t<
+		!std::is_reference_v<Ring> &&
+		!std::is_const_v<Ring> &&
+		std::is_arithmetic_v<Ring>
+	>*
+>
+decltype(auto)
+pca_impl_el_matrix::operator()(
+	el_matrix<Ring> const& a,
+	pca_control<bool,bool,bool> const& ctrl
+) const {
+	typedef std::decay_t<Ring> _Ring_;
+	static_assert(std::is_same<_Ring_, El::Base<_Ring_>>::value, "because S is returned as El::Base<_Ring_>");
+	return pca_impl_el::pca(a, ctrl);
+}
+
+template<
+	typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping,
+	typename std::enable_if_t<
+		!std::is_reference_v<Ring> &&
+		!std::is_const_v<Ring> &&
+		std::is_arithmetic_v<Ring>
+	>*
+>
+decltype(auto)
 pca_impl_el_dist_matrix::operator()(
 	el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& a,
 	pca_control<bool,bool,bool> const& ctrl
 ) const {
-	using namespace pca_impl_el;
 	typedef std::decay_t<Ring> _Ring_;
-	static_assert(!std::is_reference<Ring>::value && !std::is_const<Ring>::value, "");
 	static_assert(std::is_same<_Ring_, El::Base<_Ring_>>::value, "because S is returned as El::Base<_Ring_>");
-	
-	using namespace hana::literals;
-	
-	auto const a_sz = (*size)(a);
-	auto const a_m = (*m)(a_sz);
-	auto const a_n = (*n)(a_sz);
-	//MATLAB>> [m,n] = size(x);
-	
-	auto vw = ctrl.normalize()
-		? (*rdivide)(1., variance(columns(a), 0))
-		: ones(make_row_vector_like(a, a_n));
-	//MATLAB>> if Normalize
-	//MATLAB>>     vVariableWeights = 1./var(x,0);
-	//MATLAB>>     % code equals:
-	//MATLAB>>     %  vVariableWeights = 1./wnanvar(x,ones(1,m,'like',x),1)
-	//MATLAB>> else
-	//MATLAB>>     vVariableWeights = ones(1,n,'like',x);
-	//MATLAB>> end
-	
-	auto const DOF = a_m - (ctrl.center() ? 1_c : 0_c);
-	//MATLAB>> DOF=m-Center;
-	
-	auto mu = ctrl.center()
-		? (*mean)(columns(a))
-		: zeros(make_row_vector_like(a, a_n));
-	//MATLAB>> if Center
-	//MATLAB>> 	mu = wnanmean(x, ones(1,m,'like',x));
-	//MATLAB>> else
-	//MATLAB>> 	mu = zeros(1,n,'like',x);
-	//MATLAB>> end
-	
-	auto cntr = ctrl.center() ? (*minus)(a, (*expand)(mu, a_sz)) : a;
-	//MATLAB>> if Center
-	//MATLAB>>     x = bsxfun(@minus,x,mu);
-	//MATLAB>> end
-	
-	auto sqrt = [](auto x) { return power(x, 1./2.); };
-	auto phi_sqrt = transform(vw, sqrt);
-	auto && stdz = ctrl.normalize() ? (*times)(std::move(cntr), expand(phi_sqrt, a_sz)) : std::move(cntr);
-	//MATLAB>> PhiSqrt = sqrt(vVariableWeights);
-	//MATLAB>> if Normalize
-	//MATLAB>>     x = bsxfun(@times, x, PhiSqrt);
-	//MATLAB>> end
-	
-	auto usv = (*svd)(stdz, ctrl.economy() ? decompose_mode::economy : decompose_mode::zero);
-	
-	auto && U = (*at)(usv, svd_u{});
-	auto && S = (*at)(usv, svd_s{});
-	auto && coeff = (*at)(usv, svd_v{});
-	//MATLAB>> if Economy
-	//MATLAB>> 	[U,S,coeff] = svd(x, 'econ');
-	//MATLAB>> else
-	//MATLAB>> 	[U,S,coeff] = svd(x, 0);
-	//MATLAB>> end
-	
-	coeff = ctrl.normalize()
-		? (*times)(coeff, expand( rdivide(1., transpose(phi_sqrt)), size(coeff)) )
-		: coeff;
-	//MATLAB>> if Normalize
-	//MATLAB>>     coeff = bsxfun(@times, coeff, 1./PhiSqrt');
-	//MATLAB>> end
-	
-	auto Sd = (*diag)(S);
-	auto score = (*multiply)(U,S);
-	//MATLAB>> S = diag(S);
-	//MATLAB>> score =  bsxfun(@times,U,S');
-	//MATLAB>> % these two lines are equal to: score =  U*S;
-	
-	auto latent = (*divide)(transform(std::move(Sd), square), DOF);
-	//MATLAB>> latent = S.^2./DOF;
-	
-	if (DOF < a_n) {
-		if (ctrl.economy()) {
-			coeff = (*select)(
-				std::move(coeff),
-				std::make_pair(El::ALL, El::IR(0, DOF))
-			);
-			
-			score = (*select)(
-				std::move(score),
-				std::make_pair(El::ALL, El::IR(0, DOF))
-			);
-			
-			latent = (*select)(
-				std::move(latent),
-				El::IR(0, DOF)
-			);
-		} else {
-			auto score_ = make_matrix_like(a, a_sz);
-			auto score_view = score_.data()(El::ALL, El::IR(0,DOF));
-			El::Copy(score.data()(El::ALL, El::IR(0,DOF)), score_view);
-			score = std::move(score_);
-			
-			auto latent_ = make_column_vector_like(a, a_n);
-			auto latent_view = latent_.data()(El::IR(0,DOF), 0);
-			El::Copy(latent.data()(El::IR(0,DOF), 0), latent_view);
-			latent = std::move(latent_);
-		}
-	}
-	//MATLAB>> if DOF < n
-	//MATLAB>> 	if Economy
-	//MATLAB>> 		% When 'Economy' value is true, nothing corresponding to zero
-	//MATLAB>> 		% eigenvalues should be returned.
-	//MATLAB>> 		coeff(:, DOF+1:end) = [];
-	//MATLAB>> 		score(:, DOF+1:end)= [];
-	//MATLAB>> 		latent(DOF+1:end, :)= [];
-	//MATLAB>> 	else
-	//MATLAB>> 		% otherwise, eigenvalues and corresponding outputs need to pad
-	//MATLAB>> 		% zeros because svd(x,0) does not return columns of U corresponding
-	//MATLAB>> 		% to components of (DOF+1):p.
-	//MATLAB>> 		score(:, DOF+1:n) = 0;
-	//MATLAB>> 		latent(DOF+1:n, 1) = 0;
-	//MATLAB>> 	end
-	//MATLAB>> end
-	
-	
-	// Enforce a sign convention on the coefficients -- the largest element in
-	// each column will have a positive sign.
-	auto colsign = signum_of_largest_element_in_column(coeff);
-	
-	auto coeff_sgn = (*times)(coeff, expand(colsign, size(coeff)));
-	auto score_sgn = (*times)(score, expand(colsign, size(score)));
-	
-	//MATLAB>> coeff = bsxfun(@times, coeff, colsign);
-	//MATLAB>> score = bsxfun(@times, score, colsign);
-	
-	return make_pca_result(coeff_sgn, score_sgn, latent, mu);
+	return pca_impl_el::pca(a, ctrl);
 }
 
 /* namespace detail */ }
