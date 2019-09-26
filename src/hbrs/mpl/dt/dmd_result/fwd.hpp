@@ -24,7 +24,7 @@
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
 
-template<typename Eigenvalues, typename Modes>
+template<typename Eigenvalues, typename Modes, typename Coefficients>
 struct dmd_result;
 struct dmd_result_tag {};
 constexpr auto make_dmd_result = hana::make<dmd_result_tag>;
@@ -32,6 +32,7 @@ constexpr auto to_dmd_result = hana::to<dmd_result_tag>;
 
 struct dmd_eigenvalues;
 struct dmd_modes;
+struct dmd_coefficients;
 
 HBRS_MPL_NAMESPACE_END
 

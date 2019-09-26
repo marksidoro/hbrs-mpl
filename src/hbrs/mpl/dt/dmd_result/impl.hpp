@@ -26,14 +26,16 @@
 
 HBRS_MPL_NAMESPACE_BEGIN
 
-template<typename Eigenvalues, typename Modes>
+template<typename Eigenvalues, typename Modes, typename Coefficients>
 struct dmd_result {
 	template<
 		typename Eigenvalues_ = Eigenvalues,
 		typename Modes_ = Modes,
+        typename Coefficients_ = Coefficients,
 		typename std::enable_if_t<
 			std::is_default_constructible<Eigenvalues_>::value &&
-			std::is_default_constructible<Modes_>::value
+			std::is_default_constructible<Modes_>::value &&
+			std::is_default_constructible<Coefficients_>::value
 		>* = nullptr
 	>
 	constexpr
@@ -42,14 +44,16 @@ struct dmd_result {
 	template<
 		typename Eigenvalues_ = Eigenvalues,
 		typename Modes_ = Modes,
+        typename Coefficients_ = Coefficients,
 		typename std::enable_if_t<
 			detail::is_braces_constructible_v<Eigenvalues, Eigenvalues_> &&
-			detail::is_braces_constructible_v<Modes, Modes_>
+			detail::is_braces_constructible_v<Modes, Modes_> &&
+			detail::is_braces_constructible_v<Coefficients, Coefficients_>
 		>* = nullptr
 	>
 	constexpr 
-	dmd_result(Eigenvalues_ && eigenvalues, Modes_ && modes)
-	: eigenvalues_{HBRS_MPL_FWD(eigenvalues)}, modes_{HBRS_MPL_FWD(modes)}
+	dmd_result(Eigenvalues_ && eigenvalues, Modes_ && modes, Coefficients_ && coefficients)
+	: eigenvalues_{HBRS_MPL_FWD(eigenvalues)}, modes_{HBRS_MPL_FWD(modes)}, coefficients_{HBRS_MPL_FWD(coefficients)}
 	{}
 	
 	constexpr 
@@ -80,34 +84,46 @@ struct dmd_result {
 	constexpr decltype(auto)
 	modes() && { return HBRS_MPL_FWD(modes_); };
 	
+    constexpr decltype(auto)
+	coefficients() & { return (coefficients_); };
+	
+	constexpr decltype(auto)
+	coefficients() const& { return (coefficients_); };
+	
+	constexpr decltype(auto)
+	coefficients() && { return HBRS_MPL_FWD(coefficients_); };
 private:
 	Eigenvalues eigenvalues_;
 	Modes modes_;
+    Coefficients coefficients_;
 };
 
 struct dmd_eigenvalues{};
 struct dmd_modes{};
+struct dmd_coefficients{};
 
 HBRS_MPL_NAMESPACE_END
 
 namespace boost { namespace hana {
 
-template <typename Eigenvalues, typename Modes>
-struct tag_of< hbrs::mpl::dmd_result<Eigenvalues, Modes> > {
+template <typename Eigenvalues, typename Modes, typename Coefficients>
+struct tag_of< hbrs::mpl::dmd_result<Eigenvalues, Modes, Coefficients> > {
 	using type = hbrs::mpl::dmd_result_tag;
 };
 
 template <>
 struct make_impl<hbrs::mpl::dmd_result_tag> {
-	template <typename Eigenvalues, typename Modes>
+	template <typename Eigenvalues, typename Modes, typename Coefficients>
 	static constexpr hbrs::mpl::dmd_result<
 		std::decay_t<Eigenvalues>,
-		std::decay_t<Modes>
+		std::decay_t<Modes>,
+		std::decay_t<Coefficients>
 	>
-	apply(Eigenvalues && eigenvalues, Modes && modes) {
+	apply(Eigenvalues && eigenvalues, Modes && modes, Coefficients && coefficients) {
 		return {
 			HBRS_MPL_FWD(eigenvalues),
-			HBRS_MPL_FWD(modes)
+			HBRS_MPL_FWD(modes),
+			HBRS_MPL_FWD(coefficients)
 		};
 	}
 };

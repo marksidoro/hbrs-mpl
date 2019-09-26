@@ -88,8 +88,9 @@ _HBRS_MPL_DEF_FO_NAMED_AT(at_impl_pca_latent, pca_result_tag, pca_latent, latent
 _HBRS_MPL_DEF_FO_NAMED_AT(at_impl_pca_mean,   pca_result_tag, pca_mean,   mean)
 _HBRS_MPL_DEF_FO_NAMED_AT(at_impl_pca_filter_data,   pca_filter_result_tag, pca_filter_data,   data)
 _HBRS_MPL_DEF_FO_NAMED_AT(at_impl_pca_filter_latent, pca_filter_result_tag, pca_filter_latent, latent)
-_HBRS_MPL_DEF_FO_NAMED_AT(at_impl_dmd_eigenvalues, dmd_result_tag, dmd_eigenvalues, eigenvalues)
-_HBRS_MPL_DEF_FO_NAMED_AT(at_impl_dmd_modes,       dmd_result_tag, dmd_modes,       modes)
+_HBRS_MPL_DEF_FO_NAMED_AT(at_impl_dmd_eigenvalues,  dmd_result_tag, dmd_eigenvalues,  eigenvalues)
+_HBRS_MPL_DEF_FO_NAMED_AT(at_impl_dmd_modes,        dmd_result_tag, dmd_modes,        modes)
+_HBRS_MPL_DEF_FO_NAMED_AT(at_impl_dmd_coefficients, dmd_result_tag, dmd_coefficients, coefficients)
 
 #undef _HBRS_MPL_DEF_FO_NAMED_AT
 
