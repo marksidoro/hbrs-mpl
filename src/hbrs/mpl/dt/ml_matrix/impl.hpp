@@ -38,6 +38,7 @@
 
 #include <algorithm>
 #include <limits>
+#include <array>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
@@ -229,6 +230,24 @@ struct make_impl<hbrs::mpl::ml_matrix_tag> {
 	static auto
 	apply(
 		hbrs::mpl::sm<hbrs::mpl::ctsav<T, Length>, hbrs::mpl::matrix_size<M, N>, Order> const& b
+	) {
+		return hbrs::mpl::detail::copy_matrix(b, hbrs::mpl::ml_matrix<real_T>{(int)b.size().m(), (int)b.size().n()});
+	}
+	
+	template <
+		typename T,
+		std::size_t Length,
+		typename M,
+		typename N,
+		hbrs::mpl::storage_order Order,
+		typename std::enable_if_t<
+			std::is_same<std::remove_cv_t<T>, real_T>::value &&
+			std::is_convertible<M,int>::value && std::is_convertible<N,int>::value
+		>* = nullptr
+	>
+	static auto
+	apply(
+		hbrs::mpl::sm<std::array<T, Length>, hbrs::mpl::matrix_size<M, N>, Order> const& b
 	) {
 		return hbrs::mpl::detail::copy_matrix(b, hbrs::mpl::ml_matrix<real_T>{(int)b.size().m(), (int)b.size().n()});
 	}

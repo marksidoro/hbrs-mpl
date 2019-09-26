@@ -183,6 +183,26 @@ struct make_impl<hbrs::mpl::el_matrix_tag> {
 	
 	template <
 		typename Ring,
+		std::size_t Length,
+		typename M,
+		typename N,
+		hbrs::mpl::storage_order Order,
+		typename std::enable_if_t<
+			std::is_convertible<M,El::Int>::value && std::is_convertible<N,El::Int>::value
+		>* = nullptr
+	>
+	static constexpr auto
+	apply(
+		hbrs::mpl::sm<std::array<Ring, Length>, hbrs::mpl::matrix_size<M, N>, Order> const& b
+	) {
+		typedef std::remove_cv_t<Ring> _Ring_;
+		hbrs::mpl::matrix_size<El::Int, El::Int> sz{b.size()};
+		hbrs::mpl::el_matrix<_Ring_> m{sz.m(), sz.n()};
+		return hbrs::mpl::detail::copy_matrix(b, m);
+	}
+	
+	template <
+		typename Ring,
 		hbrs::mpl::storage_order Order
 	>
 	static constexpr auto
