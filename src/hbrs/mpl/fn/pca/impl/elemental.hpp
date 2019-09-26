@@ -262,6 +262,7 @@ struct square_t {
 
 constexpr square_t square{};
 
+//TODO: Turn this code into a dedicated, generic pca() implementation
 /* C++ code is equivalent to MATLAB code in file src/hbrs/mpl/detail/matlab_cxn/impl/pca_level2.m */
 template <typename Matrix, typename Control>
 static auto
@@ -342,26 +343,36 @@ pca(
 	
 	if (DOF < a_n) {
 		if (ctrl.economy()) {
+			// When 'economy' value is true, nothing corresponding to zero eigenvalues should be returned.
+			
+			// TODO: more generic code is e.g.: coeff[make_range(range::begin,range::end)][make_range(DOF+1_c,range::end)] = [];
 			coeff = (*select)(
 				std::move(coeff),
 				std::make_pair(El::ALL, El::IR(0, DOF))
 			);
 			
+			// TODO: more generic code is e.g.: score[make_range(range::begin,range::end)][make_range(DOF+1_c,range::end)] = [];
 			score = (*select)(
 				std::move(score),
 				std::make_pair(El::ALL, El::IR(0, DOF))
 			);
 			
+			// TODO: more generic code is e.g.: latent[make_range(DOF+1_c,range::end)][make_range(range::begin,range::end)] = [];
 			latent = (*select)(
 				std::move(latent),
 				El::IR(0, DOF)
 			);
 		} else {
+			// otherwise, eigenvalues and corresponding outputs need to pad zeros because svd(x,0) does not return 
+			// columns of U corresponding to components of (DOF+1):p.
+			
+			// TODO: more generic code is e.g.: score[make_range(range::begin,range::end)][make_range(DOF+1_c,a_n)] = 0;
 			auto score_ = make_matrix_like(a, a_sz);
 			auto score_view = score_.data()(El::ALL, El::IR(0,DOF));
 			El::Copy(score.data()(El::ALL, El::IR(0,DOF)), score_view);
 			score = std::move(score_);
 			
+			// TODO: more generic code is e.g.: latent[make_range(DOF+1_c,a_n)][1_c] = 0;
 			auto latent_ = make_column_vector_like(a, a_n);
 			auto latent_view = latent_.data()(El::IR(0,DOF), 0);
 			El::Copy(latent.data()(El::IR(0,DOF), 0), latent_view);
