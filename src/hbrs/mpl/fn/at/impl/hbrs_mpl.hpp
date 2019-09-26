@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@
 #include <hbrs/mpl/dt/svd_result.hpp>
 #include <hbrs/mpl/dt/pca_result.hpp>
 #include <hbrs/mpl/dt/pca_filter_result.hpp>
+#include <hbrs/mpl/dt/dmd_result.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
@@ -87,6 +88,8 @@ _HBRS_MPL_DEF_FO_NAMED_AT(at_impl_pca_latent, pca_result_tag, pca_latent, latent
 _HBRS_MPL_DEF_FO_NAMED_AT(at_impl_pca_mean,   pca_result_tag, pca_mean,   mean)
 _HBRS_MPL_DEF_FO_NAMED_AT(at_impl_pca_filter_data,   pca_filter_result_tag, pca_filter_data,   data)
 _HBRS_MPL_DEF_FO_NAMED_AT(at_impl_pca_filter_latent, pca_filter_result_tag, pca_filter_latent, latent)
+_HBRS_MPL_DEF_FO_NAMED_AT(at_impl_dmd_eigenvalues, dmd_result_tag, dmd_eigenvalues, eigenvalues)
+_HBRS_MPL_DEF_FO_NAMED_AT(at_impl_dmd_modes,       dmd_result_tag, dmd_modes,       modes)
 
 #undef _HBRS_MPL_DEF_FO_NAMED_AT
 
