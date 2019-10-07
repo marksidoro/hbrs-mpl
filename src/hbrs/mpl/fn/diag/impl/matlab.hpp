@@ -14,18 +14,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FN_DIAG_IMPL_HPP
-#define HBRS_MPL_FN_DIAG_IMPL_HPP
+#ifndef HBRS_MPL_FN_DIAG_IMPL_MATLAB_HPP
+#define HBRS_MPL_FN_DIAG_IMPL_MATLAB_HPP
 
-#include "fwd.hpp"
+#include "../fwd/matlab.hpp"
 
-#include <hbrs/mpl/dt/function.hpp>
-
-HBRS_MPL_NAMESPACE_BEGIN
-HBRS_MPL_DEF_F1(diag, diag_t)
-HBRS_MPL_NAMESPACE_END
-
-#include "impl/elemental.hpp"
-#include "impl/matlab.hpp"
-
-#endif // !HBRS_MPL_FN_DIAG_IMPL_HPP
+#endif // !HBRS_MPL_FN_DIAG_IMPL_MATLAB_HPP

@@ -4,6 +4,11 @@
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 #
 
+#################### build ####################
+
+target_sources(hbrs_mpl PRIVATE
+    impl.cpp)
+
 #################### list the subdirectories ####################
 
 add_subdirectory(impl)

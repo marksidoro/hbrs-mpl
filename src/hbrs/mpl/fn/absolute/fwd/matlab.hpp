@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,32 +14,39 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_DT_ML_VECTOR_FWD_HPP
-#define HBRS_MPL_DT_ML_VECTOR_FWD_HPP
+#ifndef HBRS_MPL_FN_ABSOLUTE_FWD_MATLAB_HPP
+#define HBRS_MPL_FN_ABSOLUTE_FWD_MATLAB_HPP
 
 #include <hbrs/mpl/config.hpp>
-#ifdef HBRS_MPL_ENABLE_MATLAB
 
-#include <boost/hana/fwd/core/make.hpp>
-#include <boost/hana/fwd/core/to.hpp>
-#include <hbrs/mpl/detail/matlab_cxn/fwd.hpp>
+#ifdef HBRS_MPL_ENABLE_MATLAB
+	#include <hbrs/mpl/detail/matlab_cxn/fwd.hpp>
+#endif
+
+#include <boost/hana/tuple.hpp>
+#include <boost/hana/core/tag_of.hpp>
+#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
+namespace detail {
 
-template<typename BaseType>
-struct ml_column_vector;
-struct ml_column_vector_tag;
-constexpr auto make_ml_column_vector = hana::make<ml_column_vector_tag>;
-constexpr auto to_ml_column_vector = hana::to<ml_column_vector_tag>;
+#ifdef HBRS_MPL_ENABLE_MATLAB
 
-template<typename BaseType>
-struct ml_row_vector;
-struct ml_row_vector_tag;
-constexpr auto make_ml_row_vector = hana::make<ml_row_vector_tag>;
-constexpr auto to_ml_row_vector = hana::to<ml_row_vector_tag>;
+struct absolute_impl_ml_creal_T {
+	real_T
+	operator()(creal_T const& a) const;
+};
 
+#else
+struct absolute_impl_ml_creal_T{};
+#endif
+
+/* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
 
-#endif // !HBRS_MPL_ENABLE_MATLAB
-#endif // !HBRS_MPL_DT_ML_VECTOR_FWD_HPP
+#define HBRS_MPL_FN_ABSOLUTE_IMPLS_MATLAB boost::hana::make_tuple(                                                     \
+		hbrs::mpl::detail::absolute_impl_ml_creal_T{}                                                                  \
+	)
+
+#endif // !HBRS_MPL_FN_ABSOLUTE_FWD_MATLAB_HPP

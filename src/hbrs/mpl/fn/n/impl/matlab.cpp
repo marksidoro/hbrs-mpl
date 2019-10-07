@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,12 +28,22 @@ n_impl_emxArray::operator()(emxArray_real_T const& a) const {
 }
 
 int const&
+n_impl_emxArray::operator()(emxArray_creal_T const& a) const {
+	return a.size[1];
+}
+
+int const&
 n_impl_emxArray::operator()(emxArray_boolean_T const& a) const {
 	return a.size[1];
 }
 
 int const&
 n_impl_ml_matrix::operator()(ml_matrix<real_T> const& a) const {
+	return a.n();
+}
+
+int const&
+n_impl_ml_matrix::operator()(ml_matrix<creal_T> const& a) const {
 	return a.n();
 }
 

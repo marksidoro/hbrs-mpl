@@ -14,18 +14,38 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HBRS_MPL_FN_DIAG_IMPL_HPP
-#define HBRS_MPL_FN_DIAG_IMPL_HPP
+#include "impl.hpp"
 
-#include "fwd.hpp"
+#ifdef HBRS_MPL_ENABLE_MATLAB
 
-#include <hbrs/mpl/dt/function.hpp>
+std::complex<double>
+to_std_complex(creal_T const& x) {
+	return {x.re, x.im};
+}
 
-HBRS_MPL_NAMESPACE_BEGIN
-HBRS_MPL_DEF_F1(diag, diag_t)
-HBRS_MPL_NAMESPACE_END
+creal_T
+from_std_complex(std::complex<real_T> const& x) {
+	return {x.real(), x.imag()};
+}
 
-#include "impl/elemental.hpp"
-#include "impl/matlab.hpp"
+std::ostream&
+operator<<(std::ostream& o, creal_T const& x) {
+	return o << to_std_complex(x);
+}
 
-#endif // !HBRS_MPL_FN_DIAG_IMPL_HPP
+bool
+operator==(creal_T const& lhs, double const& rhs) {
+	return to_std_complex(lhs) == rhs;
+}
+
+bool
+operator==(creal_T const& lhs, creal_T const& rhs) {
+	return to_std_complex(lhs) == to_std_complex(rhs);
+}
+
+bool
+operator==( creal_T const& lhs, std::complex<double> const& rhs) {
+	return to_std_complex(lhs) == rhs;
+}
+
+#endif // !HBRS_MPL_ENABLE_MATLAB

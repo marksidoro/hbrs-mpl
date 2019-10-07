@@ -27,6 +27,7 @@ HBRS_MPL_NAMESPACE_END
 
 #include "impl/elemental.hpp"
 #include "impl/hbrs_mpl.hpp"
+#include "impl/matlab.hpp"
 #include "impl/std.hpp"
 
 #endif // !HBRS_MPL_FN_ABSOLUTE_IMPL_HPP

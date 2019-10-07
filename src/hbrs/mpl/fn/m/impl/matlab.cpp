@@ -28,12 +28,22 @@ m_impl_emxArray::operator()(emxArray_real_T const& a) const {
 }
 
 int const&
+m_impl_emxArray::operator()(emxArray_creal_T const& a) const {
+	return a.size[0];
+}
+
+int const&
 m_impl_emxArray::operator()(emxArray_boolean_T const& a) const {
 	return a.size[0];
 }
 
 int const&
 m_impl_ml_matrix::operator()(ml_matrix<real_T> const& a) const {
+	return a.m();
+}
+
+int const&
+m_impl_ml_matrix::operator()(ml_matrix<creal_T> const& a) const {
 	return a.m();
 }
 

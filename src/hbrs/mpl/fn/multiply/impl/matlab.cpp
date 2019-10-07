@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,11 @@
 #include <hbrs/mpl/dt/ml_matrix.hpp>
 
 extern "C" {
-	#include <hbrs/mpl/detail/matlab_cxn/impl/multiply_mm.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/multiply_mdmd.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/multiply_mdmcd.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/multiply_mcdmcd.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/multiply_mdvd.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/multiply_mcdvcd.h>
 }
 #undef I /* I is defined by MATLAB Coder, but also used within Boost Unit Test Framework as a template parameter. */
 
@@ -30,7 +34,35 @@ namespace detail {
 ml_matrix<real_T>
 multiply_impl_ml_matrix_ml_matrix::operator()(ml_matrix<real_T> const& a, ml_matrix<real_T> const& b) const {
 	ml_matrix<real_T> c;
-	multiply_mm(&a.data(), &b.data(), &c.data());
+	multiply_mdmd(&a.data(), &b.data(), &c.data());
+	return c;
+}
+
+ml_matrix<creal_T>
+multiply_impl_ml_matrix_ml_matrix::operator()(ml_matrix<real_T> const& a, ml_matrix<creal_T> const& b) const {
+	ml_matrix<creal_T> c;
+	multiply_mdmcd(&a.data(), &b.data(), &c.data());
+	return c;
+}
+
+ml_matrix<creal_T>
+multiply_impl_ml_matrix_ml_matrix::operator()(ml_matrix<creal_T> const& a, ml_matrix<creal_T> const& b) const {
+	ml_matrix<creal_T> c;
+	multiply_mcdmcd(&a.data(), &b.data(), &c.data());
+	return c;
+}
+
+ml_column_vector<real_T>
+multiply_impl_ml_matrix_ml_vector::operator()(ml_matrix<real_T> const& a, ml_column_vector<real_T> const& b) const {
+	ml_column_vector<real_T> c;
+	multiply_mdvd(&a.data(), &b.data(), &c.data());
+	return c;
+}
+
+ml_column_vector<creal_T>
+multiply_impl_ml_matrix_ml_vector::operator()(ml_matrix<creal_T> const& a, ml_column_vector<creal_T> const& b) const {
+	ml_column_vector<creal_T> c;
+	multiply_mcdvcd(&a.data(), &b.data(), &c.data());
 	return c;
 }
 

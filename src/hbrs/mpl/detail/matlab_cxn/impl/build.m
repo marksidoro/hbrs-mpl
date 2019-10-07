@@ -34,12 +34,16 @@ function build(bin_dir, src_dir, build_type)
     flags = { flags{:}, 'noop'};
     
     matrix_double_type = coder.typeof(double(0), [Inf Inf]);
+    matrix_complex_double_type = coder.typeof(complex(double(0), double(0)), [Inf Inf]);
     matrix_dim_type = coder.newtype('matrix_dim');
     double_type = coder.typeof(double(0));
+    complex_double_type = coder.typeof(complex(double(0), double(0)));
+    uint64_type = coder.typeof(uint64(0));
     bool_type = coder.typeof(logical(true));
     decompose_mode_type = coder.newtype('decompose_mode');
     vector_bool_type = coder.typeof(logical(false), [Inf 1]);
     vector_double_type = coder.typeof(double(0), [Inf 1]);
+    vector_complex_double_type = coder.typeof(complex(double(0),double(0)), [Inf 1]);
     vector_index_type = coder.typeof(uint64(1));
     matrix_index_type = coder.typeof(struct('m',uint64(1),'n', uint64(1)));
     matrix_index_type = coder.cstructname(matrix_index_type ,'emxArrayIndex');
@@ -68,12 +72,35 @@ function build(bin_dir, src_dir, build_type)
         };
     end
     
-    flags = { flags{:}, 'transpose_m', '-args', {matrix_double_type}};
-    flags = { flags{:}, 'mean_m', '-args', {matrix_double_type, matrix_dim_type}};
-    flags = { flags{:}, 'variance_m', '-args', {matrix_double_type, double_type, matrix_dim_type}};
-    flags = { flags{:}, 'multiply_mm', '-args', {matrix_double_type, matrix_double_type}};
-    flags = { flags{:}, 'plus_mm', '-args', {matrix_double_type, matrix_double_type}};
-    flags = { flags{:}, 'plus_ms', '-args', {matrix_double_type, double_type}};
+    for fun = {'dmd_level1'}
+        flags = {flags{:}, fun{1}, '-args', ...
+            {matrix_double_type, matrix_double_type, uint64_type}
+        };
+    end
+    
+    for fun = {'eig_level0'}
+        flags = {flags{:}, fun{1}, '-args', ...
+            {matrix_double_type}
+        };
+    end
+    
+    flags = { flags{:}, 'complex_vdd', '-args', {vector_double_type, double_type}};
+    flags = { flags{:}, 'complex_vdvd', '-args', {vector_double_type, vector_double_type}};
+    flags = { flags{:}, 'absolute_cd', '-args', {complex_double_type}};
+    flags = { flags{:}, 'transpose_md', '-args', {matrix_double_type}};
+    flags = { flags{:}, 'mean_md', '-args', {matrix_double_type, matrix_dim_type}};
+    flags = { flags{:}, 'variance_md', '-args', {matrix_double_type, double_type, matrix_dim_type}};
+    flags = { flags{:}, 'multiply_mdmd', '-args', {matrix_double_type, matrix_double_type}};
+    flags = { flags{:}, 'multiply_mdmcd', '-args', {matrix_double_type, matrix_complex_double_type}};
+    flags = { flags{:}, 'multiply_mcdmcd', '-args', {matrix_complex_double_type, matrix_complex_double_type}};
+    flags = { flags{:}, 'multiply_mdvd', '-args', {matrix_double_type, vector_double_type}};
+    flags = { flags{:}, 'multiply_mcdvcd', '-args', {matrix_complex_double_type, vector_complex_double_type}};
+    flags = { flags{:}, 'mldivide_mdvd', '-args', {matrix_double_type, vector_double_type}};
+    flags = { flags{:}, 'mldivide_mcdvcd', '-args', {matrix_complex_double_type, vector_complex_double_type}};
+    flags = { flags{:}, 'diag_vd', '-args', {vector_double_type}};
+    flags = { flags{:}, 'diag_vcd', '-args', {vector_complex_double_type}};
+    flags = { flags{:}, 'plus_mdmd', '-args', {matrix_double_type, matrix_double_type}};
+    flags = { flags{:}, 'plus_mdsd', '-args', {matrix_double_type, double_type}};
     
     flags = { flags{:}, 'at', '-args', {matrix_double_type, matrix_index_type}};
     flags = { flags{:}, 'samples'};

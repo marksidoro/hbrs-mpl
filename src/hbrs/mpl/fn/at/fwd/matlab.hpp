@@ -40,11 +40,17 @@ struct at_impl_emxArray {
 	real_T & 
 	operator()(emxArray_real_T & v, int d0) const;
 
+	creal_T & 
+	operator()(emxArray_creal_T & v, int d0) const;
+
 	boolean_T & 
 	operator()(emxArray_boolean_T & v, int d0) const;
 
 	real_T const& 
 	operator()(emxArray_real_T const& v, int d0) const;
+
+	creal_T const& 
+	operator()(emxArray_creal_T const& v, int d0) const;
 
 	boolean_T const& 
 	operator()(emxArray_boolean_T const& v, int d0) const;
@@ -52,12 +58,18 @@ struct at_impl_emxArray {
 	real_T & 
 	operator()(emxArray_real_T & a, matrix_index<int,int> i) const;
 
+	creal_T & 
+	operator()(emxArray_creal_T & a, matrix_index<int,int> i) const;
+
 	boolean_T & 
 	operator()(emxArray_boolean_T & a, matrix_index<int,int> i) const;
 
 	real_T const& 
 	operator()(emxArray_real_T const& a, matrix_index<int,int> i) const;
-	
+
+	creal_T const& 
+	operator()(emxArray_creal_T const& a, matrix_index<int,int> i) const;
+
 	boolean_T const& 
 	operator()(emxArray_boolean_T const& a, matrix_index<int,int> i) const;
 };

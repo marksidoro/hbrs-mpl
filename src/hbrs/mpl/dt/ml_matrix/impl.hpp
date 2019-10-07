@@ -1,4 +1,4 @@
-/* Copyright (c) 2016 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,13 @@
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
 
+#include <hbrs/mpl/detail/matlab_cxn.hpp>
 #include <hbrs/mpl/detail/copy_matrix.hpp>
 #include <hbrs/mpl/dt/smr.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>
 #include <hbrs/mpl/dt/sm.hpp>
+#include <hbrs/mpl/dt/ctsam.hpp>
 #include <hbrs/mpl/dt/ctsav.hpp>
 #include <hbrs/mpl/dt/rtsav.hpp>
 
@@ -178,6 +180,7 @@ namespace hana = boost::hana;
 	};
 
 _HBRS_MPL_DEF_ML_MAT1(real_T)
+_HBRS_MPL_DEF_ML_MAT1(creal_T)
 _HBRS_MPL_DEF_ML_MAT1(boolean_T)
 
 #undef _HBRS_MPL_DEF_ML_MAT1
@@ -205,7 +208,7 @@ struct make_impl<hbrs::mpl::ml_matrix_tag> {
 		typename N,
 		hbrs::mpl::storage_order Order,
 		typename std::enable_if_t<
-			std::is_same<std::remove_cv_t<T>, real_T>::value &&
+			(std::is_same_v<std::remove_cv_t<T>, real_T> || std::is_same_v<std::remove_cv_t<T>, creal_T>) &&
 			std::is_convertible<M,int>::value && std::is_convertible<N,int>::value
 		>* = nullptr
 	>
@@ -213,7 +216,8 @@ struct make_impl<hbrs::mpl::ml_matrix_tag> {
 	apply(
 		hbrs::mpl::sm<hbrs::mpl::rtsav<T>, hbrs::mpl::matrix_size<M, N>, Order> const& b
 	) {
-		return hbrs::mpl::detail::copy_matrix(b, hbrs::mpl::ml_matrix<real_T>{(int)b.size().m(), (int)b.size().n()});
+		
+		return hbrs::mpl::detail::copy_matrix(b, hbrs::mpl::ml_matrix<std::remove_cv_t<T>>{(int)b.size().m(), (int)b.size().n()});
 	}
 	
 	template <
@@ -223,7 +227,7 @@ struct make_impl<hbrs::mpl::ml_matrix_tag> {
 		typename N,
 		hbrs::mpl::storage_order Order,
 		typename std::enable_if_t<
-			std::is_same<std::remove_cv_t<T>, real_T>::value &&
+			(std::is_same_v<std::remove_cv_t<T>, real_T> || std::is_same_v<std::remove_cv_t<T>, creal_T>) &&
 			std::is_convertible<M,int>::value && std::is_convertible<N,int>::value
 		>* = nullptr
 	>
@@ -231,7 +235,7 @@ struct make_impl<hbrs::mpl::ml_matrix_tag> {
 	apply(
 		hbrs::mpl::sm<hbrs::mpl::ctsav<T, Length>, hbrs::mpl::matrix_size<M, N>, Order> const& b
 	) {
-		return hbrs::mpl::detail::copy_matrix(b, hbrs::mpl::ml_matrix<real_T>{(int)b.size().m(), (int)b.size().n()});
+		return hbrs::mpl::detail::copy_matrix(b, hbrs::mpl::ml_matrix<std::remove_cv_t<T>>{(int)b.size().m(), (int)b.size().n()});
 	}
 	
 	template <
@@ -241,7 +245,7 @@ struct make_impl<hbrs::mpl::ml_matrix_tag> {
 		typename N,
 		hbrs::mpl::storage_order Order,
 		typename std::enable_if_t<
-			std::is_same<std::remove_cv_t<T>, real_T>::value &&
+			(std::is_same_v<std::remove_cv_t<T>, real_T> || std::is_same_v<std::remove_cv_t<T>, creal_T>) &&
 			std::is_convertible<M,int>::value && std::is_convertible<N,int>::value
 		>* = nullptr
 	>
@@ -249,14 +253,14 @@ struct make_impl<hbrs::mpl::ml_matrix_tag> {
 	apply(
 		hbrs::mpl::sm<std::array<T, Length>, hbrs::mpl::matrix_size<M, N>, Order> const& b
 	) {
-		return hbrs::mpl::detail::copy_matrix(b, hbrs::mpl::ml_matrix<real_T>{(int)b.size().m(), (int)b.size().n()});
+		return hbrs::mpl::detail::copy_matrix(b, hbrs::mpl::ml_matrix<std::remove_cv_t<T>>{(int)b.size().m(), (int)b.size().n()});
 	}
 	
 	template <
 		typename T,
 		hbrs::mpl::storage_order Order,
 		typename std::enable_if_t<
-			std::is_same<std::remove_cv_t<T>, real_T>::value
+			(std::is_same_v<std::remove_cv_t<T>, real_T> || std::is_same_v<std::remove_cv_t<T>, creal_T>)
 		>* = nullptr
 	>
 	static auto
@@ -268,7 +272,21 @@ struct make_impl<hbrs::mpl::ml_matrix_tag> {
 		return hbrs::mpl::detail::copy_matrix(
 			data,
 			hbrs::mpl::storage_order_c<Order>, 
-			hbrs::mpl::ml_matrix<real_T>{sz.m(), sz.n()}
+			hbrs::mpl::ml_matrix<std::remove_cv_t<T>>{sz.m(), sz.n()}
+		);
+	}
+	
+	template<
+		typename Ring,
+		std::size_t Rows,
+		std::size_t Columns,
+		hbrs::mpl::storage_order Order
+	>
+	static auto
+	apply(hbrs::mpl::ctsam<Ring, Rows, Columns, Order> const& a) {
+		return hbrs::mpl::detail::copy_matrix(
+			a,
+			hbrs::mpl::ml_matrix<std::decay_t<Ring>>{(int)Rows, (int)Columns}
 		);
 	}
 };

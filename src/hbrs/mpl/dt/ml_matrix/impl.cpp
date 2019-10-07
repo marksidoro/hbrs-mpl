@@ -36,6 +36,7 @@ HBRS_MPL_NAMESPACE_BEGIN
 	}                                                                                                                  \
 
 _HBRS_MPL_DEF_ML_MAT1(real_T)
+_HBRS_MPL_DEF_ML_MAT1(creal_T)
 _HBRS_MPL_DEF_ML_MAT1(boolean_T)
 
 #undef _HBRS_MPL_DEF_ML_MAT1

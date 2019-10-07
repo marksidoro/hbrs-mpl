@@ -27,6 +27,7 @@ HBRS_MPL_NAMESPACE_END
 
 #include "impl/boost_hana.hpp"
 #include "impl/hbrs_mpl.hpp"
+#include "impl/matlab.hpp"
 #include "impl/std.hpp"
 
 #endif // !HBRS_MPL_FN_EQUAL_IMPL_HPP

@@ -1,4 +1,4 @@
-% Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+% Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
 % 
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -16,10 +16,67 @@
 % TODO: replace isequal with is_almost_equal to better handle floating point arithmetics
 
 function test()
+    eig_test();
+    dmd_test();
     pca_filter_test();
     pca_test();
     svd_test();
     bidiag_test();
+end
+
+function dmd_test()
+    % TODO: Implement!
+end
+
+function dmd_test()
+    datasets = samples();
+    
+    [~, ds_sz ] = size(datasets);
+    funs = { @dmd_level1, @dmd_level1};
+    [~, funs_sz] = size(funs);
+    
+    for ds_i = 1:ds_sz
+        dataset = datasets{1,ds_i};
+        [m,n] = size(dataset);
+        max_rank = min(m,n);
+        
+        runs_per_fun = max_rank;
+        eigenvalues  = cell(1,funs_sz*runs_per_fun);
+        modes        = cell(1,funs_sz*runs_per_fun);
+        coefficients = cell(1,funs_sz*runs_per_fun);
+
+        for i = 1:funs_sz
+            fun = funs{1,i};
+            for target_rank = 1:max_rank
+                x1 = dataset(:,1:n-1);
+                x2 = dataset(:,2:n);
+                
+                [ ...
+                    eigenvalues{1,i+funs_sz*(target_rank-1)}, ...
+                    modes{1,i+funs_sz*(target_rank-1)}, ...
+                    coefficients{1,i+funs_sz*(target_rank-1)} ...
+                ] = fun(x1, x2, target_rank);
+            end
+        end
+        
+        for i = 1:funs_sz-1
+            % TODO: Properly test eigenvalues, modes and coefficients
+            for target_rank = 1:max_rank
+                assert(isequal( ...
+                    eigenvalues{1,i+funs_sz*(target_rank-1)}, ...
+                    eigenvalues{1,i+funs_sz*(target_rank-1)+1} ...
+                ));
+                assert(isequal( ...
+                    modes{1,i+funs_sz*(target_rank-1)}, ...
+                    modes{1,i+funs_sz*(target_rank-1)+1} ...
+                ));
+                assert(isequal( ...
+                    coefficients{1,i+funs_sz*(target_rank-1)}, ...
+                    coefficients{1,i+funs_sz*(target_rank-1)+1} ...
+                ));
+            end
+        end
+    end
 end
 
 function pca_filter_test()

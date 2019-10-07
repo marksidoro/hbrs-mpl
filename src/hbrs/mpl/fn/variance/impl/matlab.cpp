@@ -25,7 +25,7 @@
 #include <hbrs/mpl/dt/smrs.hpp>
 
 extern "C" {
-	#include <hbrs/mpl/detail/matlab_cxn/impl/variance_m.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/variance_md.h>
 }
 #undef I /* I is defined by MATLAB Coder, but also used within Boost Unit Test Framework as a template parameter. */
 
@@ -35,14 +35,14 @@ namespace detail {
 smc<ml_matrix<real_T>, int>
 variance_impl_ml_matrix::operator()(smrs<ml_matrix<real_T>> const& a, real_T weight) const {
 	ml_matrix<real_T> b;
-	variance_m(&a.data().data(), weight, ::row, &b.data());
+	variance_md(&a.data().data(), weight, ::row, &b.data());
 	return {b, 0};
 }
 
 smr<ml_matrix<real_T>, int>
 variance_impl_ml_matrix::operator()(smcs<ml_matrix<real_T>> const& a, real_T weight) const {
 	ml_matrix<real_T> b;
-	variance_m(&a.data().data(), weight, ::column, &b.data());
+	variance_md(&a.data().data(), weight, ::column, &b.data());
 	return {b, 0};
 }
 

@@ -4,8 +4,6 @@
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 #
 
-#################### build ####################
+#################### list the subdirectories ####################
 
-target_sources(hbrs_mpl PRIVATE
-    elemental.cpp
-    matlab.cpp)
+add_subdirectory(impl)

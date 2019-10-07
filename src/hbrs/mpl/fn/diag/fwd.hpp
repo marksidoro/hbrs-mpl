@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,8 @@ HBRS_MPL_DEC_F1(diag, diag_t)
 HBRS_MPL_NAMESPACE_END
 
 #include "fwd/elemental.hpp"
+#include "fwd/matlab.hpp"
 
-HBRS_MPL_MAP_IMPLS(diag_t, HBRS_MPL_FN_DIAG_IMPLS_ELEMENTAL)
+HBRS_MPL_MAP_IMPLS(diag_t, HBRS_MPL_FN_DIAG_IMPLS_ELEMENTAL, HBRS_MPL_FN_DIAG_IMPLS_MATLAB)
 
 #endif // !HBRS_MPL_FN_DIAG_FWD_HPP

@@ -39,6 +39,12 @@ at_impl_emxArray::operator()(emxArray_real_T & v, int d0) const {
 	return v.data[d0];
 }
 
+creal_T & 
+at_impl_emxArray::operator()(emxArray_creal_T & v, int d0) const {
+	BOOST_ASSERT(d0 < v.allocatedSize);
+	return v.data[d0];
+}
+
 boolean_T & 
 at_impl_emxArray::operator()(emxArray_boolean_T & v, int d0) const {
 	BOOST_ASSERT(d0 < v.allocatedSize);
@@ -47,6 +53,12 @@ at_impl_emxArray::operator()(emxArray_boolean_T & v, int d0) const {
 
 real_T const& 
 at_impl_emxArray::operator()(emxArray_real_T const& v, int d0) const {
+	BOOST_ASSERT(d0 < v.allocatedSize);
+	return v.data[d0];
+}
+
+creal_T const& 
+at_impl_emxArray::operator()(emxArray_creal_T const& v, int d0) const {
 	BOOST_ASSERT(d0 < v.allocatedSize);
 	return v.data[d0];
 }
@@ -69,6 +81,18 @@ at_impl_emxArray::operator()(emxArray_real_T & a, matrix_index<int,int> i) const
 	return a.data[i_];
 }
 
+creal_T & 
+at_impl_emxArray::operator()(emxArray_creal_T & a, matrix_index<int,int> i) const {
+	using namespace mpl;
+	
+	// changin' indices from row (C) to column (MATLAB) order!
+	// row order would be:
+	//  return a.data[m(i) * n(a) + n(i)];
+	int i_ = (*plus)(multiply(n(i), m(a)), m(i));
+	BOOST_ASSERT(i_ < a.allocatedSize);
+	return a.data[i_];
+}
+
 boolean_T & 
 at_impl_emxArray::operator()(emxArray_boolean_T & a, matrix_index<int,int> i) const {
 	using namespace mpl;
@@ -80,6 +104,15 @@ at_impl_emxArray::operator()(emxArray_boolean_T & a, matrix_index<int,int> i) co
 
 real_T const& 
 at_impl_emxArray::operator()(emxArray_real_T const& a, matrix_index<int,int> i) const {
+	using namespace mpl;
+	
+	int i_ = (*plus)(multiply(n(i), m(a)), m(i));
+	BOOST_ASSERT(i_ < a.allocatedSize);
+	return a.data[i_];
+}
+
+creal_T const& 
+at_impl_emxArray::operator()(emxArray_creal_T const& a, matrix_index<int,int> i) const {
 	using namespace mpl;
 	
 	int i_ = (*plus)(multiply(n(i), m(a)), m(i));

@@ -1,4 +1,4 @@
-/* Copyright (c) 2016 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,12 @@
 
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
+#include <hbrs/mpl/detail/matlab_cxn.hpp>
+#include <hbrs/mpl/dt/scv.hpp>
+#include <hbrs/mpl/dt/srv.hpp>
 #include <hbrs/mpl/fn/at.hpp>
+#include <boost/assert.hpp>
+#include <array>
 #include <algorithm>
 #include <initializer_list>
 
@@ -41,6 +46,7 @@
 			ptr_ = {emxArray, emxDestroyArray_ ## base_type};                                                          \
 		}                                                                                                              \
 		                                                                                                               \
+		explicit                                                                                                       \
 		ml_ ## vector_kind ## _vector(int size)                                                                        \
 		: ptr_{emxCreateND_ ## base_type(1, &size), emxDestroyArray_ ## base_type} {}                                  \
 		                                                                                                               \
@@ -74,6 +80,7 @@
 		                                                                                                               \
 	public:                                                                                                            \
 		                                                                                                               \
+		explicit                                                                                                       \
 		ml_ ## vector_kind ## _vector(std::initializer_list<base_type> const& data)                                    \
 		: ml_ ## vector_kind ## _vector(data.size()) {                                                                 \
 			std::copy(data.begin(), data.end(), (*ptr_).data);                                                         \
@@ -152,8 +159,10 @@
 	/* namespace hana */ } /* namespace boost */ }
 
 _HBRS_MPL_DEF_ML_VEC1(column, real_T)
+_HBRS_MPL_DEF_ML_VEC1(column, creal_T)
 _HBRS_MPL_DEF_ML_VEC1(column, boolean_T)
 _HBRS_MPL_DEF_ML_VEC1(row, real_T)
+_HBRS_MPL_DEF_ML_VEC1(row, creal_T)
 _HBRS_MPL_DEF_ML_VEC1(row, boolean_T)
 
 #undef _HBRS_MPL_DEF_ML_VEC1
@@ -161,10 +170,36 @@ _HBRS_MPL_DEF_ML_VEC1(row, boolean_T)
 namespace boost { namespace hana {
 
 template <>
-struct make_impl<hbrs::mpl::ml_column_vector_tag>;
+struct make_impl<hbrs::mpl::ml_column_vector_tag> {
+	template<typename T, std::size_t N>
+	static auto
+	apply(hbrs::mpl::scv<std::array<T, N>> const& a) {
+		using namespace hbrs::mpl;
+		
+		ml_column_vector<T> b((int)N);
+		BOOST_ASSERT(b.length() == N);
+		for(std::size_t i = 0; i < N; ++i) {
+			b.at((int)i) = a.at(i);
+		}
+		return b;
+	}
+};
 
 template <>
-struct make_impl<hbrs::mpl::ml_row_vector_tag>;
+struct make_impl<hbrs::mpl::ml_row_vector_tag> {
+	template<typename T, std::size_t N>
+	static auto
+	apply(hbrs::mpl::srv<std::array<T, N>> const& a) {
+		using namespace hbrs::mpl;
+		
+		ml_row_vector<T> b((int)N);
+		BOOST_ASSERT(b.length() == N);
+		for(std::size_t i = 0; i < N; ++i) {
+			b.at((int)i) = a.at(i);
+		}
+		return b;
+	}
+};
 
 /* namespace hana */ } /* namespace boost */ }
 

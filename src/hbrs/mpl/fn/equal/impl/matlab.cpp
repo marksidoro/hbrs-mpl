@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,33 +17,34 @@
 #include "matlab.hpp"
 #ifdef HBRS_MPL_ENABLE_MATLAB
 
-#include <hbrs/mpl/core/preprocessor.hpp>
-#include <hbrs/mpl/dt/ml_matrix.hpp>
-#include <hbrs/mpl/dt/smc.hpp>
-#include <hbrs/mpl/dt/smcs.hpp>
-#include <hbrs/mpl/dt/smr.hpp>
-#include <hbrs/mpl/dt/smrs.hpp>
-
-extern "C" {
-	#include <hbrs/mpl/detail/matlab_cxn/impl/mean_md.h>
-}
-#undef I /* I is defined by MATLAB Coder, but also used within Boost Unit Test Framework as a template parameter. */
+#include <hbrs/mpl/detail/matlab_cxn.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-smc<ml_matrix<real_T>, int>
-mean_impl_ml_matrix::operator()(smrs<ml_matrix<real_T>> const& a) const {
-	ml_matrix<real_T> b;
-	mean_md(&a.data().data(), ::row, &b.data());
-	return {b, 0};
+bool
+equal_impl_ml_creal_T::operator()(real_T const& lhs, creal_T const& rhs) const {
+	return (rhs.re == lhs) && (rhs.im == 0.);
 }
 
-smr<ml_matrix<real_T>, int>
-mean_impl_ml_matrix::operator()(smcs<ml_matrix<real_T>> const& a) const {
-	ml_matrix<real_T> b;
-	mean_md(&a.data().data(), ::column, &b.data());
-	return {b, 0};
+bool
+equal_impl_ml_creal_T::operator()(creal_T const& lhs, real_T const& rhs) const {
+	return (lhs.re == rhs) && (lhs.im == 0.);
+}
+
+bool
+equal_impl_ml_creal_T::operator()(creal_T const& lhs, creal_T const& rhs) const {
+	return (lhs.re == rhs.re) && (lhs.im == rhs.im);
+}
+
+bool
+equal_impl_ml_creal_T::operator()(creal_T const& lhs, std::complex<real_T> const& rhs) const {
+	return (lhs.re == rhs.real()) && (lhs.im == rhs.imag());
+}
+
+bool
+equal_impl_ml_creal_T::operator()(std::complex<real_T> const& lhs, creal_T const& rhs) const {
+	return (lhs.real() == rhs.re) && (lhs.imag() == rhs.im);
 }
 
 /* namespace detail */ }

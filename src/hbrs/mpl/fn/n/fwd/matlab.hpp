@@ -36,12 +36,18 @@ struct n_impl_emxArray {
 	operator()(emxArray_real_T const& a) const;
 
 	int const&
+	operator()(emxArray_creal_T const& a) const;
+
+	int const&
 	operator()(emxArray_boolean_T const& a) const;
 };
 
 struct n_impl_ml_matrix {
 	int const&
 	operator()(ml_matrix<real_T> const& a) const;
+
+	int const&
+	operator()(ml_matrix<creal_T> const& a) const;
 
 	int const&
 	operator()(ml_matrix<boolean_T> const& a) const;

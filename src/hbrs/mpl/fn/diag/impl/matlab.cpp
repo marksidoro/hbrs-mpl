@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,31 +19,43 @@
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/dt/ml_matrix.hpp>
-#include <hbrs/mpl/dt/smc.hpp>
-#include <hbrs/mpl/dt/smcs.hpp>
-#include <hbrs/mpl/dt/smr.hpp>
-#include <hbrs/mpl/dt/smrs.hpp>
+#include <hbrs/mpl/dt/ml_vector.hpp>
 
 extern "C" {
-	#include <hbrs/mpl/detail/matlab_cxn/impl/mean_md.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/diag_vd.h>
+    #include <hbrs/mpl/detail/matlab_cxn/impl/diag_vcd.h>
 }
 #undef I /* I is defined by MATLAB Coder, but also used within Boost Unit Test Framework as a template parameter. */
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-smc<ml_matrix<real_T>, int>
-mean_impl_ml_matrix::operator()(smrs<ml_matrix<real_T>> const& a) const {
+ml_matrix<real_T>
+diag_impl_ml_vector::operator()(ml_column_vector<real_T> const& a) const {
 	ml_matrix<real_T> b;
-	mean_md(&a.data().data(), ::row, &b.data());
-	return {b, 0};
+	diag_vd(&a.data(), &b.data());
+	return b;
 }
 
-smr<ml_matrix<real_T>, int>
-mean_impl_ml_matrix::operator()(smcs<ml_matrix<real_T>> const& a) const {
+ml_matrix<real_T>
+diag_impl_ml_vector::operator()(ml_row_vector<real_T> const& a) const {
 	ml_matrix<real_T> b;
-	mean_md(&a.data().data(), ::column, &b.data());
-	return {b, 0};
+	diag_vd(&a.data(), &b.data());
+	return b;
+}
+
+ml_matrix<creal_T>
+diag_impl_ml_vector::operator()(ml_column_vector<creal_T> const& a) const {
+	ml_matrix<creal_T> b;
+	diag_vcd(&a.data(), &b.data());
+	return b;
+}
+
+ml_matrix<creal_T>
+diag_impl_ml_vector::operator()(ml_row_vector<creal_T> const& a) const {
+	ml_matrix<creal_T> b;
+	diag_vcd(&a.data(), &b.data());
+	return b;
 }
 
 /* namespace detail */ }

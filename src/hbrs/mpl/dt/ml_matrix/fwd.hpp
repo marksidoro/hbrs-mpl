@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,7 @@
 
 #include <boost/hana/fwd/core/make.hpp>
 #include <boost/hana/fwd/core/to.hpp>
-
-extern "C" {
-	#include <hbrs/mpl/detail/matlab_cxn/impl/matlab_cxn_emxAPI.h>
-}
-#undef I /* I is defined by MATLAB Coder, but also used within Boost Unit Test Framework as a template parameter. */
+#include <hbrs/mpl/detail/matlab_cxn/fwd.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;

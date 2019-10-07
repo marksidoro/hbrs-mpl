@@ -21,7 +21,7 @@
 #include <hbrs/mpl/dt/ml_vector.hpp>
 
 extern "C" {
-	#include <hbrs/mpl/detail/matlab_cxn/impl/transpose_m.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/transpose_md.h>
 }
 #undef I /* I is defined by MATLAB Coder, but also used within Boost Unit Test Framework as a template parameter. */
 
@@ -31,7 +31,7 @@ namespace detail {
 ml_matrix<real_T>
 transpose_impl_ml_matrix::operator()(ml_matrix<real_T> const& a) const {
 	ml_matrix<real_T> b;
-	transpose_m(&a.data(), &b.data());
+	transpose_md(&a.data(), &b.data());
 	return b;
 }
 

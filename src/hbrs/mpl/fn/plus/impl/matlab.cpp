@@ -20,8 +20,8 @@
 #include <hbrs/mpl/dt/ml_matrix.hpp>
 
 extern "C" {
-	#include <hbrs/mpl/detail/matlab_cxn/impl/plus_mm.h>
-	#include <hbrs/mpl/detail/matlab_cxn/impl/plus_ms.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/plus_mdmd.h>
+	#include <hbrs/mpl/detail/matlab_cxn/impl/plus_mdsd.h>
 }
 #undef I /* I is defined by MATLAB Coder, but also used within Boost Unit Test Framework as a template parameter. */
 
@@ -31,14 +31,14 @@ namespace detail {
 ml_matrix<real_T>
 plus_impl_ml_matrix_scalar::operator()(ml_matrix<real_T> const& a, real_T b) const {
 	ml_matrix<real_T> c;
-	plus_ms(&a.data(), b, &c.data());
+	plus_mdsd(&a.data(), b, &c.data());
 	return c;
 }
 
 ml_matrix<real_T>
 plus_impl_ml_matrix_ml_matrix::operator()(ml_matrix<real_T> const& a, ml_matrix<real_T> const& b) const {
 	ml_matrix<real_T> c;
-	plus_mm(&a.data(), &b.data(), &c.data());
+	plus_mdmd(&a.data(), &b.data(), &c.data());
 	return c;
 }
 
