@@ -101,6 +101,18 @@
 		apply(El::DistMatrix<Ring, Columnwise, Rowwise, Wrapping> data) {                                              \
 			return { data };                                                                                           \
 		}                                                                                                              \
+		                                                                                                               \
+		template <typename Ring>                                                                                       \
+		static hbrs::mpl::el_dist_ ## vector_kind ## _vector<Ring, El::STAR, El::STAR, El::ELEMENT>                    \
+		apply(                                                                                                         \
+			El::Grid const& grid,                                                                                      \
+			hbrs::mpl::el_ ## vector_kind ## _vector<Ring> const& local                                                \
+		) {                                                                                                            \
+			El::DistMatrix<Ring, El::STAR, El::STAR, El::ELEMENT> dmat{grid};                                          \
+			dmat.Resize(local.data().Height(), local.data().Width());                                                  \
+			dmat.Matrix() = local.data();                                                                              \
+			return { dmat };                                                                                           \
+		}                                                                                                              \
 	};                                                                                                                 \
                                                                                                                        \
 	BOOST_HANA_NAMESPACE_END

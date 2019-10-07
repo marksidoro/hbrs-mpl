@@ -24,12 +24,15 @@
 #include <boost/hana/core/to.hpp>
 
 #include <hbrs/mpl/dt/matrix_index.hpp>
+#include <hbrs/mpl/dt/scv.hpp>
+#include <hbrs/mpl/dt/srv.hpp>
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/fn/size.hpp>
 
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/hana/type.hpp>
 #include <boost/assert.hpp>
+#include <array>
 #include <El.hpp>
 
 #define _HBRS_MPL_DEF_EL_VECTOR(vector_kind)                                                                           \
@@ -109,33 +112,6 @@
 		using type = hbrs::mpl::el_ ## vector_kind ## _vector_tag;                                                     \
 	};                                                                                                                 \
                                                                                                                        \
-	template <>                                                                                                        \
-	struct make_impl<hbrs::mpl::el_ ## vector_kind ## _vector_tag> {                                                   \
-		template <typename Ring>                                                                                       \
-		static hbrs::mpl::el_ ## vector_kind ## _vector<Ring>                                                          \
-		apply(basic_type<Ring>, El::Int sz) {                                                                          \
-			return {sz};                                                                                               \
-		}                                                                                                              \
-	                                                                                                                   \
-		template <typename Ring>                                                                                       \
-		static hbrs::mpl::el_ ## vector_kind ## _vector<std::decay_t<Ring>>                                            \
-		apply(El::Matrix<Ring> data) {                                                                                 \
-			return {data};                                                                                             \
-		}                                                                                                              \
-		                                                                                                               \
-		template <typename Ring>                                                                                       \
-		static hbrs::mpl::el_ ## vector_kind ## _vector<std::decay_t<Ring>>                                            \
-		apply(Ring const* data, El::Int sz) {                                                                          \
-			return {data, sz};                                                                                         \
-		}                                                                                                              \
-		                                                                                                               \
-		template <typename Ring>                                                                                       \
-		static hbrs::mpl::el_ ## vector_kind ## _vector<std::decay_t<Ring>>                                            \
-		apply(std::initializer_list<Ring> data) {                                                                      \
-			return { data.begin(), boost::numeric_cast<El::Int>(data.size()) };                                        \
-		}                                                                                                              \
-	};                                                                                                                 \
-                                                                                                                       \
 	/* namespace hana */ } /* namespace boost */ }
 
 _HBRS_MPL_DEF_EL_VECTOR(column)
@@ -204,6 +180,71 @@ el_row_vector<Ring>::at(El::Int i) const {
 }
 
 HBRS_MPL_NAMESPACE_END
+
+namespace boost { namespace hana {
+
+#define _HBRS_MPL_DEF_EL_VECTOR(vector_kind)                                                                           \
+	template <typename Ring>                                                                                           \
+	static hbrs::mpl::el_ ## vector_kind ## _vector<Ring>                                                              \
+	apply(basic_type<Ring>, El::Int sz) {                                                                              \
+		return {sz};                                                                                                   \
+	}                                                                                                                  \
+	                                                                                                                   \
+	template <typename Ring>                                                                                           \
+	static hbrs::mpl::el_ ## vector_kind ## _vector<std::decay_t<Ring>>                                                \
+	apply(El::Matrix<Ring> data) {                                                                                     \
+		return {data};                                                                                                 \
+	}                                                                                                                  \
+	                                                                                                                   \
+	template <typename Ring>                                                                                           \
+	static hbrs::mpl::el_ ## vector_kind ## _vector<std::decay_t<Ring>>                                                \
+	apply(Ring const* data, El::Int sz) {                                                                              \
+		return {data, sz};                                                                                             \
+	}                                                                                                                  \
+	                                                                                                                   \
+	template <typename Ring>                                                                                           \
+	static hbrs::mpl::el_ ## vector_kind ## _vector<std::decay_t<Ring>>                                                \
+	apply(std::initializer_list<Ring> data) {                                                                          \
+		return { data.begin(), boost::numeric_cast<El::Int>(data.size()) };                                            \
+	}                                                                                                                  \
+
+template <>
+struct make_impl<hbrs::mpl::el_column_vector_tag> {
+	_HBRS_MPL_DEF_EL_VECTOR(column)
+	
+	template<typename T, std::size_t N>
+	static auto
+	apply(hbrs::mpl::scv<std::array<T, N>> const& a) {
+		using namespace hbrs::mpl;
+		
+		el_column_vector<T> b = {(El::Int)N};
+		for(std::size_t i = 0; i < N; ++i) {
+			b.at((El::Int)i) = a.at(i);
+		}
+		return b;
+	}
+};
+
+template <>
+struct make_impl<hbrs::mpl::el_row_vector_tag> {
+	_HBRS_MPL_DEF_EL_VECTOR(row)
+	
+	template<typename T, std::size_t N>
+	static auto
+	apply(hbrs::mpl::srv<std::array<T, N>> const& a) {
+		using namespace hbrs::mpl;
+		
+		el_row_vector<T> b = {(El::Int)N};
+		for(std::size_t i = 0; i < N; ++i) {
+			b.at((El::Int)i) = a.at(i);
+		}
+		return b;
+	}
+};
+
+#undef _HBRS_MPL_DEF_EL_VECTOR
+
+/* namespace hana */ } /* namespace boost */ }
 
 #endif // !HBRS_MPL_ENABLE_ELEMENTAL
 #endif // !HBRS_MPL_DT_EL_VECTOR_IMPL_HPP
