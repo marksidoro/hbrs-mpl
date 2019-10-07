@@ -42,6 +42,7 @@
 #include <hbrs/mpl/dt/pca_result/fwd.hpp>
 #include <hbrs/mpl/dt/pca_filter_result/fwd.hpp>
 #include <hbrs/mpl/dt/dmd_result/fwd.hpp>
+#include <hbrs/mpl/dt/eig_result/fwd.hpp>
 
 #include <boost/hana/tuple.hpp>
 
@@ -92,6 +93,8 @@ _HBRS_MPL_DEC_FO_NAMED_AT(at_impl_pca_filter_latent, pca_filter_result_tag, pca_
 _HBRS_MPL_DEC_FO_NAMED_AT(at_impl_dmd_eigenvalues,  dmd_result_tag, dmd_eigenvalues,  eigenvalues)
 _HBRS_MPL_DEC_FO_NAMED_AT(at_impl_dmd_modes,        dmd_result_tag, dmd_modes,        modes)
 _HBRS_MPL_DEC_FO_NAMED_AT(at_impl_dmd_coefficients, dmd_result_tag, dmd_coefficients, coefficients)
+_HBRS_MPL_DEC_FO_NAMED_AT(at_impl_eig_eigenvalues,  eig_result_tag, eig_eigenvalues,  eigenvalues)
+_HBRS_MPL_DEC_FO_NAMED_AT(at_impl_eig_eigenvectors, eig_result_tag, eig_eigenvectors, eigenvectors)
 
 #undef _HBRS_MPL_DEC_FO_NAMED_AT
 
@@ -130,6 +133,8 @@ HBRS_MPL_NAMESPACE_END
 		hbrs::mpl::detail::at_impl_dmd_eigenvalues{},                                                                  \
 		hbrs::mpl::detail::at_impl_dmd_modes{},                                                                        \
 		hbrs::mpl::detail::at_impl_dmd_coefficients{},                                                                 \
+		hbrs::mpl::detail::at_impl_eig_eigenvalues{},                                                                  \
+		hbrs::mpl::detail::at_impl_eig_eigenvectors{},                                                                 \
 		hbrs::mpl::detail::at_impl_zas{}                                                                               \
 	)                                                                                                                  \
 
