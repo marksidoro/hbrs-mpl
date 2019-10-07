@@ -105,12 +105,20 @@ struct select_impl_el_matrix {
 	operator()(el_matrix<Ring> & a, std::pair<El::IR, El::IR> const& rng) const;
 	
 	template<typename Ring>
+	el_column_vector<Ring>
+	operator()(el_matrix<Ring> const& a, std::pair<El::IR, El::Int> const& rng) const;
+	
+	template<typename Ring>
 	el_matrix<Ring const>
 	operator()(el_matrix<Ring> const& a, std::pair<El::IR, El::IR> const& rng) const;
 	
 	template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 	el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping>
 	operator()(el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> & a, std::pair<El::IR, El::IR> const& rng) const;
+	
+	template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
+	el_dist_column_vector<Ring, Columnwise, Rowwise, Wrapping>
+	operator()(el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& a, std::pair<El::IR, El::Int> const& rng) const;
 	
 	template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 	el_dist_matrix<Ring const, Columnwise, Rowwise, Wrapping>

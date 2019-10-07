@@ -1420,6 +1420,36 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 		row_major_c
 	);
 	
+	auto const f = make_el_column_vector(
+		std::initializer_list<double>{
+			1.,
+			4.
+		}
+	);
+	
+	auto const g = make_el_column_vector(
+		std::initializer_list<double>{
+			5.,
+			8.
+		}
+	);
+	
+	auto const h = make_el_column_vector(
+		std::initializer_list<double>{
+			1.,
+			4.,
+			7.
+		}
+	);
+	
+	auto const i = make_el_column_vector(
+		std::initializer_list<double>{
+			2.,
+			5.,
+			8.
+		}
+	);
+	
 	detail::select_impl_el_matrix{}(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
 	el_matrix<double const> rb0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
 	el_matrix<double const> rc0 = (*select)(a, make_range(make_matrix_index(1,0), make_matrix_index(2,2)));
@@ -1446,6 +1476,11 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 	el_matrix<double> rd4 = (*select)(el_matrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(0,2)));
 	el_matrix<double> re4 = (*select)(el_matrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(1,3)));
 	
+	el_column_vector<double> rf0 = (*select)(std::move(a), std::make_pair(El::IR(0,2), 0));
+	el_column_vector<double> rg0 = (*select)(std::move(a), std::make_pair(El::IR(1,3), 1));
+	el_column_vector<double> rh0 = (*select)(std::move(a), std::make_pair(El::IR(0,3), 0));
+	el_column_vector<double> ri0 = (*select)(std::move(a), std::make_pair(El::IR(0,3), 1));
+	
 	HBRS_MPL_TEST_MMEQ(b, rb0, false);
 	HBRS_MPL_TEST_MMEQ(c, rc0, false);
 	HBRS_MPL_TEST_MMEQ(d, rd0, false);
@@ -1470,6 +1505,11 @@ BOOST_AUTO_TEST_CASE(matrix_select) {
 	HBRS_MPL_TEST_MMEQ(c, rc4, false);
 	HBRS_MPL_TEST_MMEQ(d, rd4, false);
 	HBRS_MPL_TEST_MMEQ(e, re4, false);
+	
+	HBRS_MPL_TEST_VVEQ(f, rf0, false);
+	HBRS_MPL_TEST_VVEQ(g, rg0, false);
+	HBRS_MPL_TEST_VVEQ(h, rh0, false);
+	HBRS_MPL_TEST_VVEQ(i, ri0, false);
 }
 
 BOOST_AUTO_TEST_CASE(dist_matrix_select) {
@@ -1541,6 +1581,40 @@ BOOST_AUTO_TEST_CASE(dist_matrix_select) {
 		)
 	);
 	
+	auto const f = make_el_dist_column_vector(
+		grid,
+		std::initializer_list<double>{
+			1.,
+			4.
+		}
+	);
+	
+	auto const g = make_el_dist_column_vector(
+		grid,
+		std::initializer_list<double>{
+			5.,
+			8.
+		}
+	);
+	
+	auto const h = make_el_dist_column_vector(
+		grid,
+		std::initializer_list<double>{
+			1.,
+			4.,
+			7.
+		}
+	);
+	
+	auto const i = make_el_dist_column_vector(
+		grid,
+		std::initializer_list<double>{
+			2.,
+			5.,
+			8.
+		}
+	);
+	
 	detail::select_impl_el_matrix{}(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
 	auto const rb0 = (*select)(a, make_range(make_matrix_index(0,0), make_matrix_index(1,2)));
 	auto const rc0 = (*select)(a, make_range(make_matrix_index(1,0), make_matrix_index(2,2)));
@@ -1558,7 +1632,10 @@ BOOST_AUTO_TEST_CASE(dist_matrix_select) {
 	auto       rc3 = (*select)(el_dist_matrix<double>{a}, std::make_pair(El::IR(1,3), El::IR(0,3)));
 	auto       rd3 = (*select)(el_dist_matrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(0,2)));
 	auto       re3 = (*select)(el_dist_matrix<double>{a}, std::make_pair(El::IR(0,3), El::IR(1,3)));
-	
+	auto       rf0 = (*select)(a, std::make_pair(El::IR(0,2), 0));
+	auto       rg0 = (*select)(a, std::make_pair(El::IR(1,3), 1));
+	auto       rh0 = (*select)(a, std::make_pair(El::IR(0,3), 0));
+	auto       ri0 = (*select)(a, std::make_pair(El::IR(0,3), 1));
 	
 	HBRS_MPL_TEST_MMEQ(b, rb0, false);
 	HBRS_MPL_TEST_MMEQ(c, rc0, false);
@@ -1576,7 +1653,10 @@ BOOST_AUTO_TEST_CASE(dist_matrix_select) {
 	HBRS_MPL_TEST_MMEQ(c, rc3, false);
 	HBRS_MPL_TEST_MMEQ(d, rd3, false);
 	HBRS_MPL_TEST_MMEQ(e, re3, false);
-	
+	HBRS_MPL_TEST_VVEQ(f, rf0, false);
+	HBRS_MPL_TEST_VVEQ(g, rg0, false);
+	HBRS_MPL_TEST_VVEQ(h, rh0, false);
+	HBRS_MPL_TEST_VVEQ(i, ri0, false);
 }
 
 BOOST_AUTO_TEST_CASE(column_vector_select) {

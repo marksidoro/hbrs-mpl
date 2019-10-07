@@ -139,6 +139,14 @@ select_impl_el_matrix::operator()(el_matrix<Ring> & a, std::pair<El::IR, El::IR>
 }
 
 template<typename Ring>
+el_column_vector<Ring>
+select_impl_el_matrix::operator()(el_matrix<Ring> const& a, std::pair<El::IR, El::Int> const& rng) const {
+	el_column_vector<Ring> b = { a.data()(rng.first, El::IR(rng.second, rng.second+1)) };
+	BOOST_ASSERT(b.data().Width() == 1);
+	return b;
+}
+
+template<typename Ring>
 el_matrix<Ring const>
 select_impl_el_matrix::operator()(el_matrix<Ring> const& a, std::pair<El::IR, El::IR> const& rng) const {
 	return {El::LockedView(a.data(), hana::first(rng), hana::second(rng))};
@@ -148,6 +156,14 @@ template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrap
 el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping>
 select_impl_el_matrix::operator()(el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> & a, std::pair<El::IR, El::IR> const& rng) const {
 	return {El::View(a.data(), hana::first(rng), hana::second(rng))};
+}
+
+template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
+el_dist_column_vector<Ring, Columnwise, Rowwise, Wrapping>
+select_impl_el_matrix::operator()(el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& a, std::pair<El::IR, El::Int> const& rng) const {
+	el_dist_column_vector<Ring, Columnwise, Rowwise, Wrapping> b = {a.data()(rng.first, El::IR(rng.second, rng.second+1)) };
+	BOOST_ASSERT(b.data().Width() == 1);
+	return b;
 }
 
 template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
