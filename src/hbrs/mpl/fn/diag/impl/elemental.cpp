@@ -27,7 +27,7 @@ template auto diag_impl_el_matrix::operator()(el_matrix<El::Complex<float>> cons
 template auto diag_impl_el_matrix::operator()(el_matrix<double> const&) const;
 template auto diag_impl_el_matrix::operator()(el_matrix<El::Complex<double>> const&) const;
 
-//TODO Add diag_impl_el_dist_matrix impl!
+//TODO Add diag_impl_el_vector, diag_impl_el_dist_matrix, diag_impl_el_dist_vector impl!
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END

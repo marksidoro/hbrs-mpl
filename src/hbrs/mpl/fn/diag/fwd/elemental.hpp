@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,6 @@
 	#include <hbrs/mpl/dt/el_dist_vector/fwd.hpp>
 #endif
 
-#include <hbrs/mpl/fn/at.hpp>
-
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
@@ -44,15 +42,29 @@ struct diag_impl_el_matrix {
 	operator()(el_matrix<Ring> const& m) const;
 };
 
+struct diag_impl_el_vector {
+	template <typename Ring>
+	auto
+	operator()(el_column_vector<Ring> const& v) const;
+};
+
 //TODO: replace with a wrapper struct?!
 struct diag_impl_el_dist_matrix {
 	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 	auto
 	operator()(el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& m) const;
 };
+
+struct diag_impl_el_dist_vector {
+	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
+	auto
+	operator()(el_dist_column_vector<Ring, Columnwise, Rowwise, Wrapping> const& v) const;
+};
 #else
 struct diag_impl_el_matrix {};
+struct diag_impl_el_vector {};
 struct diag_impl_el_dist_matrix {};
+struct diag_impl_el_dist_vector {};
 #endif
 
 /* namespace detail */ }
@@ -60,7 +72,9 @@ HBRS_MPL_NAMESPACE_END
 
 #define HBRS_MPL_FN_DIAG_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                      \
 		hbrs::mpl::detail::diag_impl_el_matrix{},                                                                      \
-		hbrs::mpl::detail::diag_impl_el_dist_matrix{}                                                                  \
+		hbrs::mpl::detail::diag_impl_el_vector{},                                                                      \
+		hbrs::mpl::detail::diag_impl_el_dist_matrix{},                                                                 \
+		hbrs::mpl::detail::diag_impl_el_dist_vector{}                                                                  \
 	)
 
 #endif // !HBRS_MPL_FN_DIAG_FWD_ELEMENTAL_HPP

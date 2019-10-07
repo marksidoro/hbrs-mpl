@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,14 @@ diag_impl_el_matrix::operator()(el_matrix<Ring> const& m) const {
 	return make_el_column_vector(El::GetDiagonal(m.data()));
 }
 
+template <typename Ring>
+auto
+diag_impl_el_vector::operator()(el_column_vector<Ring> const& v) const {
+	el_matrix<Ring> m{v.length(),v.length()};
+	El::SetDiagonal(m.data(), v.data(), 0);
+	return m;
+}
+
 template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 auto
 diag_impl_el_dist_matrix::operator()(el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> const& m) const {
@@ -57,6 +65,14 @@ diag_impl_el_dist_matrix::operator()(el_dist_matrix<Ring, Columnwise, Rowwise, W
 	}
 	
 	return make_el_dist_column_vector(std::move(v));
+}
+
+template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
+auto
+diag_impl_el_dist_vector::operator()(el_dist_column_vector<Ring, Columnwise, Rowwise, Wrapping> const& v) const {
+	el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping> m{v.data().Grid(), v.length(), v.length()};
+	El::SetDiagonal(m.data(), v.data(), 0);
+	return m;
 }
 
 /* namespace detail */ }
