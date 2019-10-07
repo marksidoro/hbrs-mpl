@@ -22,6 +22,7 @@
 #include <hbrs/mpl/detail/environment.hpp>
 #include <hbrs/mpl/detail/gather.hpp>
 #include <hbrs/mpl/detail/mpi.hpp>
+#include <hbrs/mpl/fn/absolute.hpp>
 #include <hbrs/mpl/fn/m.hpp>
 #include <hbrs/mpl/fn/n.hpp>
 #include <hbrs/mpl/fn/equal.hpp>
@@ -31,7 +32,251 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include <hbrs/mpl/detail/integral_value.hpp>
 #include <boost/test/results_collector.hpp>
+#include <boost/test/framework.hpp>
+#include <boost/test/tools/floating_point_comparison.hpp>
+#include <boost/test/tools/fpc_tolerance.hpp>
+#include <boost/test/tools/fpc_op.hpp>
 #include <cstdlib>
+#include <ostream>
+#include <complex>
+
+#ifdef HBRS_MPL_ENABLE_MATLAB
+	#include <hbrs/mpl/detail/matlab_cxn.hpp>
+#endif // !HBRS_MPL_ENABLE_MATLAB
+
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+	#include <El.hpp>
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
+
+#ifdef HBRS_MPL_ENABLE_MATLAB
+namespace boost {
+namespace test_tools {
+
+//TODO: Replaces or document this hack!?!
+template<>
+inline creal_T&
+fpc_tolerance<creal_T>()
+{
+    static creal_T s_value = {0,0};
+	s_value = { fpc_tolerance<real_T>(), fpc_tolerance<real_T>() };
+    return s_value;
+}
+
+/* namespace test_tools */ }
+/* namespace boost */ }
+
+namespace boost {
+namespace math {
+namespace fpc {
+
+template <>
+struct tolerance_based_delegate<creal_T, true> : mpl::true_ {};
+
+/* namespace fpc */ }
+/* namespace math */ }
+/* namespace boost */ }
+#endif // !HBRS_MPL_ENABLE_MATLAB
+
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+namespace boost {
+namespace test_tools {
+
+//TODO: Replaces or document this hack!?!
+template<>
+inline El::Complex<double>&
+fpc_tolerance<El::Complex<double>>()
+{
+    static El::Complex<double> s_value = {0,0};
+	s_value = El::Complex<double>{ fpc_tolerance<double>(), fpc_tolerance<double>() };
+    return s_value;
+}
+
+/* namespace test_tools */ }
+/* namespace boost */ }
+
+namespace boost {
+namespace math {
+namespace fpc {
+
+template <typename T>
+struct tolerance_based_delegate<El::Complex<T>, true> : mpl::true_ {};
+
+/* namespace fpc */ }
+/* namespace math */ }
+/* namespace boost */ }
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
+
+namespace boost {
+namespace test_tools {
+namespace assertion {
+namespace op {
+
+template <typename FPT, typename Lhs, typename Rhs>
+inline assertion_result
+compare_complex_fpv(
+	Lhs const& lhs,
+	Rhs const& rhs,
+	op::EQ<Lhs,Rhs>*
+) {
+	if(lhs == Lhs(0,0)) {
+		return
+			compare_fpv_near_zero( rhs.real(), (op::EQ<Lhs,Rhs>*)nullptr ) &&
+			compare_fpv_near_zero( rhs.imag(), (op::EQ<Lhs,Rhs>*)nullptr );
+	} else if (rhs == Rhs(0,0)) {
+		return
+			compare_fpv_near_zero( lhs.real(), (op::EQ<Lhs,Rhs>*)nullptr ) &&
+			compare_fpv_near_zero( lhs.imag(), (op::EQ<Lhs,Rhs>*)nullptr );
+	} else {
+		fpc::close_at_tolerance<FPT> P1( fpc_tolerance<FPT>(), fpc::FPC_STRONG );
+		fpc::close_at_tolerance<FPT> P2( fpc_tolerance<FPT>(), fpc::FPC_STRONG );
+		bool p1v = P1(lhs.real(), rhs.real());
+		bool p2v = P2(lhs.imag(), rhs.imag());
+		
+		assertion_result ar(p1v && p2v);
+		if(!ar) {
+			ar.message() << "Relative difference exceeds tolerance [";
+			
+			if (!p1v) {
+				ar.message() << P1.tested_rel_diff() << " > " << P1.fraction_tolerance() << " (real)";
+			} 
+			if (!p1v && !p2v) {
+				ar.message() << " && ";
+			}
+			if (!p2v) {
+				ar.message() << P2.tested_rel_diff() << " > " << P2.fraction_tolerance() << " (imag)";
+			}
+			ar.message() << ']';
+		}
+		return ar;
+	}
+}
+
+/* namespace op */ }
+/* namespace assertion */ }
+/* namespace test_tools */ }
+/* namespace boost */ }
+
+#ifdef HBRS_MPL_ENABLE_ELEMENTAL
+namespace boost {
+namespace test_tools {
+namespace assertion {
+namespace op {
+
+template<>
+inline assertion_result
+compare_fpv<El::Complex<double>>(
+	El::Complex<double> const& lhs,
+	El::Complex<double> const& rhs,
+	op::EQ<El::Complex<double>,El::Complex<double>>*
+) {
+	return compare_complex_fpv<double, std::complex<double>,std::complex<double>>(
+		lhs,
+		rhs,
+		nullptr
+	);
+}
+
+/* namespace op */ }
+/* namespace assertion */ }
+/* namespace test_tools */ }
+/* namespace boost */ }
+#endif // !HBRS_MPL_ENABLE_ELEMENTAL
+
+#ifdef HBRS_MPL_ENABLE_MATLAB
+namespace boost {
+namespace test_tools {
+namespace assertion {
+namespace op {
+
+template<>
+struct EQ<creal_T,creal_T> {
+public:
+    typedef typename common_type<creal_T,creal_T>::type FPT;
+    typedef EQ<creal_T,creal_T> OP;
+
+    typedef assertion_result result_type;
+
+    static bool
+    eval_direct( creal_T const& lhs, creal_T const& rhs );
+
+    static assertion_result
+    eval( creal_T const& lhs, creal_T const& rhs );
+
+    template<typename PrevExprType>
+    static void
+    report( std::ostream&       ostr,
+            PrevExprType const& lhs,
+            creal_T const&          rhs );
+
+    static char const* revert();
+};
+
+template<>
+inline assertion_result
+compare_fpv<creal_T>(
+	creal_T const& lhs,
+	creal_T const& rhs,
+	op::EQ<creal_T, creal_T>*
+) {
+	return compare_complex_fpv<double, std::complex<double>,std::complex<double>>(
+		to_std_complex(lhs),
+		to_std_complex(rhs),
+		nullptr
+	);
+}
+
+template<typename PrevExprType>
+void
+EQ<creal_T,creal_T>::report(std::ostream& ostr, PrevExprType const& lhs, creal_T const& rhs) {
+	lhs.report( ostr );
+	ostr << revert() << tt_detail::print_helper( rhs );
+}
+
+/* namespace op */ }
+/* namespace assertion */ }
+/* namespace test_tools */ }
+/* namespace boost */ }
+#endif // !HBRS_MPL_ENABLE_MATLAB
+
+#if defined(HBRS_MPL_ENABLE_ELEMENTAL) && defined(HBRS_MPL_ENABLE_MATLAB)
+namespace boost {
+namespace test_tools {
+namespace assertion {
+namespace op {
+
+template<>
+inline assertion_result
+compare_fpv<El::Complex<double>>(
+	El::Complex<double> const& lhs,
+	creal_T const& rhs,
+	op::EQ<El::Complex<double>,creal_T>*
+) {
+	return compare_complex_fpv<double, std::complex<double>,std::complex<double>>(
+		lhs,
+		to_std_complex(rhs),
+		nullptr
+	);
+}
+
+template<>
+inline assertion_result
+compare_fpv<El::Complex<double>>(
+	creal_T const& lhs,
+	El::Complex<double> const& rhs,
+	op::EQ<creal_T, El::Complex<double>>*
+) {
+	return compare_complex_fpv<double, std::complex<double>,std::complex<double>>(
+		to_std_complex(lhs),
+		rhs,
+		nullptr
+	);
+}
+
+/* namespace op */ }
+/* namespace assertion */ }
+/* namespace test_tools */ }
+/* namespace boost */ }
+#endif // defined(HBRS_MPL_ENABLE_ELEMENTAL) && defined(HBRS_MPL_ENABLE_MATLAB)
 
 #if BOOST_VERSION <= 106500
 	#define BOOST_TEST_GLOBAL_FIXTURE BOOST_GLOBAL_FIXTURE
@@ -69,14 +314,12 @@
 						auto x = (*at)(a_local, make_matrix_index(i, j));                                              \
 						auto y = (*at)(b_local, make_matrix_index(i, j));                                              \
 						if (ucmp) {                                                                                    \
-							if constexpr(std::is_signed<std::decay_t<decltype(x)>>::value) {                           \
-								x = std::abs(x);                                                                       \
-							}                                                                                          \
-							if constexpr(std::is_signed<std::decay_t<decltype(y)>>::value) {                           \
-								y = std::abs(y);                                                                       \
-							}                                                                                          \
+							auto x_ = (*absolute)(x);                                                                  \
+							auto y_ = (*absolute)(y);                                                                  \
+							BOOST_TEST(x_ == y_, "@[" << i << "][" << j << "] := Left: " << x_ << " Right: " << y_);   \
+						} else {                                                                                       \
+							BOOST_TEST(x  == y,  "@[" << i << "][" << j << "] := Left: " << x  << " Right: " << y );   \
 						}                                                                                              \
-						BOOST_TEST(x == y, "@[" << i << "][" << j << "] := Left: " << x << " Right: " << y);           \
 					}                                                                                                  \
 				}                                                                                                      \
 			}                                                                                                          \
@@ -102,14 +345,12 @@
 					auto x = (*at)(a_local, i);                                                                        \
 					auto y = (*at)(b_local, i);                                                                        \
 					if (ucmp) {                                                                                        \
-						if constexpr(std::is_signed<std::decay_t<decltype(x)>>::value) {                               \
-							x = std::abs(x);                                                                           \
-						}                                                                                              \
-						if constexpr(std::is_signed<std::decay_t<decltype(y)>>::value) {                               \
-							y = std::abs(y);                                                                           \
-						}                                                                                              \
+						auto x_ = (*absolute)(x);                                                                      \
+						auto y_ = (*absolute)(y);                                                                      \
+						BOOST_TEST(x_ == y_, "@[" << i << "] := Left: " << x_ << " Right: " << y_);                    \
+					} else {                                                                                           \
+						BOOST_TEST(x  == y,  "@[" << i << "] := Left: " << x  << " Right: " << y );                    \
 					}                                                                                                  \
-					BOOST_TEST(x == y, "@[" << i << "] := Left: " << x << " Right: " << y);                            \
 				}                                                                                                      \
 			}                                                                                                          \
 		}                                                                                                              \
@@ -130,10 +371,10 @@
 			for(std::size_t i = 0; i < boost::numeric_cast<std::size_t>(integral_value(m_)); ++i) {                    \
 				for(std::size_t j = 0; j < boost::numeric_cast<std::size_t>(integral_value(n_)); ++j) {                \
 					auto x = (*at)(a_local, make_matrix_index(i, j));                                                  \
-					if (i == j) {                                                                                      \
-						BOOST_TEST(x == 1.0, "@[" << i << "][" << j << "] := " << x << " != 1");                       \
+					if ((*equal)(i, j)) {                                                                              \
+						BOOST_TEST(x == 1., "@[" << i << "][" << j << "] := " << x << " != 1");                        \
 					} else {                                                                                           \
-						BOOST_TEST(x == 0.0, "@[" << i << "][" << j << "] := " << x << " != 0");                       \
+						BOOST_TEST(x == 0., "@[" << i << "][" << j << "] := " << x << " != 0");                        \
 					}                                                                                                  \
 				}                                                                                                      \
 			}                                                                                                          \
@@ -144,12 +385,7 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 struct environment_fixture {
-	environment_fixture()
-	: env{
-		boost::unit_test::framework::master_test_suite().argc,
-		boost::unit_test::framework::master_test_suite().argv
-	} {};
-	
+	environment_fixture(boost::unit_test::master_test_suite_t & ts = boost::unit_test::framework::master_test_suite());
 	environment env;
 };
 

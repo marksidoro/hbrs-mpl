@@ -18,6 +18,8 @@
 #define HBRS_MPL_DETAIL_NOT_SUPPORTED_IMPL_HPP
 
 #include <hbrs/mpl/config.hpp>
+#include <boost/hana/integral_constant.hpp>
+#include <boost/hana/not.hpp>
 #include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
@@ -25,11 +27,34 @@ namespace detail {
 
 struct not_supported{};
 
-#define is_not_supported(x)                                                                                            \
-	boost::hana::bool_c<std::is_same<std::decay_t<decltype(x)>, hbrs::mpl::detail::not_supported>::value>
+template<typename T>
+inline constexpr auto is_not_supported_v =
+	hana::bool_c<
+		std::is_same_v<std::decay_t<T>, not_supported>
+	>;
 
-#define is_supported(x)                                                                                                \
-	(!is_not_supported(x))
+struct is_not_supported_t {
+	template<typename T>
+	constexpr decltype(auto)
+	operator()(T&&) const {
+		return is_not_supported_v<T>;
+	}
+};
+
+constexpr is_not_supported_t is_not_supported{};
+
+template<typename T>
+inline constexpr auto is_supported_v = !is_not_supported_v<T>;
+
+struct is_supported_t {
+	template<typename T>
+	constexpr decltype(auto)
+	operator()(T&&) const {
+		return is_supported_v<T>;
+	}
+};
+
+constexpr is_supported_t is_supported{};
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END

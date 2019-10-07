@@ -31,6 +31,11 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
+struct absolute_impl_el_complex {
+	template<typename Ring>
+	El::Base<El::Complex<Ring>>
+	operator()(El::Complex<Ring> const& a) const;
+};
 
 struct absolute_impl_el_matrix {
 	template <
@@ -55,6 +60,7 @@ struct absolute_impl_el_dist_matrix {
 };
 
 #else
+struct absolute_impl_el_complex {};
 struct absolute_impl_el_matrix {};
 struct absolute_impl_el_dist_matrix {};
 #endif
@@ -63,6 +69,7 @@ struct absolute_impl_el_dist_matrix {};
 HBRS_MPL_NAMESPACE_END
 
 #define HBRS_MPL_FN_ABSOLUTE_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                  \
+		hbrs::mpl::detail::absolute_impl_el_complex{},                                                                 \
 		hbrs::mpl::detail::absolute_impl_el_matrix{},                                                                  \
 		hbrs::mpl::detail::absolute_impl_el_dist_matrix{}                                                              \
 	)

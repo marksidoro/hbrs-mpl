@@ -20,6 +20,9 @@
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
+template El::Base<El::Complex<float>> absolute_impl_el_complex::operator()(El::Complex<float> const& a) const;
+template El::Base<El::Complex<double>> absolute_impl_el_complex::operator()(El::Complex<double> const& a) const;
+
 template auto absolute_impl_el_matrix::operator()(el_matrix<float>               const&) const;
 // template auto absolute_impl_el_matrix::operator()(el_matrix<El::Complex<float>>  const&) const;
 template auto absolute_impl_el_matrix::operator()(el_matrix<double>              const&) const;

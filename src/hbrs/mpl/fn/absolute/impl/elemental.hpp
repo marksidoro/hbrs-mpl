@@ -29,6 +29,12 @@
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
+template<typename Ring>
+El::Base<El::Complex<Ring>>
+absolute_impl_el_complex::operator()(El::Complex<Ring> const& a) const {
+	return El::Abs(a);
+}
+
 template <typename From, typename To>
 static void
 absolute_el_impl(From const& a, To & b) {
