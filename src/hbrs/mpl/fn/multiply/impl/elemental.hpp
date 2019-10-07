@@ -20,6 +20,11 @@
 #include "../fwd/elemental.hpp"
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
+#include <hbrs/mpl/dt/el_matrix.hpp>
+#include <hbrs/mpl/dt/el_dist_matrix.hpp>
+#include <hbrs/mpl/dt/el_vector.hpp>
+#include <hbrs/mpl/dt/el_dist_vector.hpp>
+
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/dt/scv.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
@@ -33,31 +38,58 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename A, typename B, typename C>
-decltype(auto)
-multiply_impl_el(A const& a, B const& b, C c) {
-	typedef decltype(a.data().Get(0,0)) Ring;
+auto
+multiply_el_matrix_el_matrix_impl(A const& a, B const& b, C c) {
+	typedef decltype(c.Get(0,0)) Ring;
 	typedef std::decay_t<Ring> _Ring_;
 	
-	if (a.n() != b.m()) {
+	if (a.Width() != b.Height()) {
 		BOOST_THROW_EXCEPTION((
 			incompatible_matrices_exception{}
-			<< errinfo_el_matrix_sizes{{ {a.m(), a.n()}, {b.m(), b.n()} }}
+			<< errinfo_el_matrix_sizes{{ {a.Height(), a.Width()}, {b.Height(), b.Width()} }}
 		));
 	}
 	
-	c.Resize(a.m(), b.n());
+	c.Resize(a.Height(), b.Width());
 	
 	El::Gemm(
 		El::Orientation::NORMAL,
 		El::Orientation::NORMAL,
 		_Ring_(1),
-		a.data(),
-		b.data(),
+		a,
+		b,
 		_Ring_(0), /* zero all entries in c because El::Matrix<> constructor does no zero initialisation */
 		c
 	);
 	
-	return hana::make<hana::tag_of_t<A>>(c);
+	return c;
+}
+
+template <typename A, typename B, typename C>
+auto
+multiply_el_matrix_el_vector_impl(A const& a, B const& b, C c) {
+	typedef decltype(c.Get(0,0)) Ring;
+	typedef std::decay_t<Ring> _Ring_;
+	
+	if (a.Width() != b.Height()) {
+		BOOST_THROW_EXCEPTION((
+			incompatible_matrices_exception{}
+			<< errinfo_el_matrix_sizes{{ {a.Height(), a.Width()}, {b.Height(), b.Width()} }}
+		));
+	}
+	
+	c.Resize(a.Height(), b.Width());
+	
+	El::Gemv(
+		El::Orientation::NORMAL,
+		_Ring_(1),
+		a,
+		b,
+		_Ring_(0), /* zero all entries in c because El::Matrix<> constructor does no zero initialisation */
+		c
+	);
+	
+	return c;
 }
 
 template <
@@ -72,29 +104,24 @@ decltype(auto)
 multiply_impl_el_matrix_el_matrix::operator()(el_matrix<RingL> const& a, el_matrix<RingR> const& b) const {
 	typedef std::common_type_t<RingL, RingR> Ring;
 	
-	//Replace with faster algorithm (e.g. Strassen algorithm) and use parallelization
+	El::MatrixReadProxy<RingL, Ring> a_pxy = {a.data()};
+	El::MatrixReadProxy<RingR, Ring> b_pxy = {b.data()};
 	
-	el_matrix<Ring> a_ct {a.m(), a.n()};
-	for(El::Int j = 0; j < a.n(); ++j) {
-		for(El::Int i = 0; i < a.m(); ++i) {
-			a_ct.at({i,j}) = a.at({i,j});
-		}
-	}
-	
-	el_matrix<Ring> b_ct {b.m(), b.n()};
-	for(El::Int j = 0; j < b.n(); ++j) {
-		for(El::Int i = 0; i < b.m(); ++i) {
-			b_ct.at({i,j}) = b.at({i,j});
-		}
-	}
-	
-	return multiply_impl_el(a_ct, b_ct, El::Matrix<Ring>{});
+	return make_el_matrix(
+		multiply_el_matrix_el_matrix_impl(a_pxy.GetLocked(), b_pxy.GetLocked(), El::Matrix<Ring>{})
+	);
 }
 
 template <typename Ring>
 decltype(auto)
 multiply_impl_el_matrix_el_matrix::operator()(el_matrix<Ring> const& a, el_matrix<Ring> const& b) const {
-	return multiply_impl_el(a, b, El::Matrix<Ring>{});
+	return make_el_matrix(multiply_el_matrix_el_matrix_impl(a.data(), b.data(), El::Matrix<Ring>{}));
+}
+
+template <typename Ring>
+auto
+multiply_impl_el_matrix_el_vector::operator()(el_matrix<Ring> const& a, el_column_vector<Ring> const& b) const {
+	return make_el_column_vector(multiply_el_matrix_el_vector_impl(a.data(), b.data(), El::Matrix<Ring>{}));
 }
 
 template <
@@ -111,15 +138,43 @@ multiply_impl_el_dist_matrix_el_dist_matrix::operator()(
 	el_dist_matrix<RingR, ColumnwiseR, RowwiseR, Wrapping> const& b
 ) const {
 	BOOST_ASSERT(a.data().Grid() == b.data().Grid());
-	// "El::MC, El::MR" as used by proxy in Elemental/src/blas_like/level3/Gemm/NN.hpp
 	
 	typedef std::common_type_t<RingL, RingR> Ring;
-	return multiply_impl_el(
-		a,
-		b,
-		El::DistMatrix<Ring, El::MC, El::MR, Wrapping>{a.data().Grid()}
+	
+	El::DistMatrixReadProxy<RingL, Ring, ColumnwiseL, RowwiseL, Wrapping> a_pxy = {a.data()};
+	El::DistMatrixReadProxy<RingR, Ring, ColumnwiseR, RowwiseR, Wrapping> b_pxy = {b.data()};
+	
+	return make_el_dist_matrix(
+		multiply_el_matrix_el_matrix_impl(
+			a_pxy.GetLocked(),
+			b_pxy.GetLocked(),
+			// "El::MC, El::MR" as used by proxy in Elemental/src/blas_like/level3/Gemm/NN.hpp
+			El::DistMatrix<Ring, El::MC, El::MR, Wrapping>{a.data().Grid()}
+		)
 	);
 }
+
+
+template <
+	typename Ring, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap Wrapping,
+	/*          */ El::Dist ColumnwiseR, El::Dist RowwiseR
+>
+auto
+multiply_impl_el_dist_matrix_el_dist_vector::operator()(
+	el_dist_matrix<Ring, ColumnwiseL, RowwiseL, Wrapping> const& a,
+	el_dist_column_vector<Ring, ColumnwiseR, RowwiseR, Wrapping> const& b
+) const {
+	BOOST_ASSERT(a.data().Grid() == b.data().Grid());
+	
+	return make_el_dist_column_vector(
+		multiply_el_matrix_el_vector_impl(
+			a.data(),
+			b.data(),
+			El::DistMatrix<Ring, El::MC, El::MR, Wrapping>{a.data().Grid()}
+		)
+	);
+}
+
 
 template <
 	typename MatrixRing,

@@ -22,6 +22,8 @@
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 	#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
 	#include <hbrs/mpl/dt/el_dist_matrix/fwd.hpp>
+	#include <hbrs/mpl/dt/el_vector/fwd.hpp>
+	#include <hbrs/mpl/dt/el_dist_vector/fwd.hpp>
 	#include <hbrs/mpl/dt/scv/fwd.hpp>
 	#include <boost/mpl/if.hpp>
 	#include <boost/mpl/void.hpp>
@@ -53,6 +55,12 @@ struct multiply_impl_el_matrix_el_matrix {
 	operator()(el_matrix<Ring> const& a, el_matrix<Ring> const& b) const;
 };
 
+struct multiply_impl_el_matrix_el_vector {
+	template <typename Ring>
+	auto
+	operator()(el_matrix<Ring> const& a, el_column_vector<Ring> const& b) const;
+};
+
 struct multiply_impl_el_dist_matrix_el_dist_matrix {
 	template <
 		typename RingL, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap Wrapping,
@@ -66,6 +74,18 @@ struct multiply_impl_el_dist_matrix_el_dist_matrix {
 	operator()(
 		el_dist_matrix<RingL, ColumnwiseL, RowwiseL, Wrapping> const& a,
 		el_dist_matrix<RingR, ColumnwiseR, RowwiseR, Wrapping> const& b
+	) const;
+};
+
+struct multiply_impl_el_dist_matrix_el_dist_vector {
+	template <
+		typename Ring, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap Wrapping,
+		/*          */ El::Dist ColumnwiseR, El::Dist RowwiseR
+	>
+	auto
+	operator()(
+		el_dist_matrix<Ring, ColumnwiseL, RowwiseL, Wrapping> const& a,
+		el_dist_column_vector<Ring, ColumnwiseR, RowwiseR, Wrapping> const& b
 	) const;
 };
 
@@ -95,7 +115,9 @@ struct multiply_impl_el_matrix_scalar {
 
 #else
 struct multiply_impl_el_matrix_el_matrix {};
+struct multiply_impl_el_matrix_el_vector {};
 struct multiply_impl_el_dist_matrix_el_dist_matrix {};
+struct multiply_impl_el_dist_matrix_el_dist_vector {};
 struct multiply_impl_el_matrix_scv_vector {};
 struct multiply_impl_el_matrix_scalar {};
 #endif
@@ -105,9 +127,11 @@ HBRS_MPL_NAMESPACE_END
 
 #define HBRS_MPL_FN_MULTIPLY_IMPLS_ELEMENTAL boost::hana::make_tuple(                                                  \
 		hbrs::mpl::detail::multiply_impl_el_matrix_el_matrix{},                                                        \
+		hbrs::mpl::detail::multiply_impl_el_matrix_el_vector{},                                                        \
 		hbrs::mpl::detail::multiply_impl_el_matrix_scv_vector{},                                                       \
 		hbrs::mpl::detail::multiply_impl_el_matrix_scalar{},                                                           \
-		hbrs::mpl::detail::multiply_impl_el_dist_matrix_el_dist_matrix{}                                               \
+		hbrs::mpl::detail::multiply_impl_el_dist_matrix_el_dist_matrix{},                                              \
+		hbrs::mpl::detail::multiply_impl_el_dist_matrix_el_dist_vector{}                                               \
 	)
 
 #endif // !HBRS_MPL_FN_MULTIPLY_FWD_ELEMENTAL_HPP
