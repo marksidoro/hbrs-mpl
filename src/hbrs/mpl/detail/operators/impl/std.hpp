@@ -240,6 +240,40 @@
 			boost::numeric_cast<std::common_type_t<std::decay_t<LHS>, std::decay_t<RHS>>>(HBRS_MPL_FWD(rhs));          \
 	}
 
+#define HBRS_MPL_DEFINE_STD_COMPLEX_OPERATOR_IMPL_ARITY2(op_name, op_sign)                                             \
+	template <                                                                                                         \
+		typename T,                                                                                                    \
+		typename std::enable_if_t<                                                                                     \
+			std::is_floating_point_v<T>                                                                                \
+		>*                                                                                                             \
+	>                                                                                                                  \
+	constexpr decltype(auto)                                                                                           \
+	op_name ## _impl_std_complex_op::operator()(std::complex<T> const& lhs, std::complex<T> const& rhs) const {        \
+		return lhs op_sign rhs;                                                                                        \
+	}                                                                                                                  \
+	                                                                                                                   \
+	template <                                                                                                         \
+		typename T,                                                                                                    \
+		typename std::enable_if_t<                                                                                     \
+			std::is_floating_point_v<T>                                                                                \
+		>*                                                                                                             \
+	>                                                                                                                  \
+	constexpr decltype(auto)                                                                                           \
+	op_name ## _impl_std_complex_op::operator()(std::complex<T> const& lhs, T const& rhs) const {                      \
+		return lhs op_sign rhs;                                                                                        \
+	}                                                                                                                  \
+	                                                                                                                   \
+	template <                                                                                                         \
+		typename T,                                                                                                    \
+		typename std::enable_if_t<                                                                                     \
+			std::is_floating_point_v<T>                                                                                \
+		>*                                                                                                             \
+	>                                                                                                                  \
+	constexpr decltype(auto)                                                                                           \
+	op_name ## _impl_std_complex_op::operator()(T const& lhs, std::complex<T> const& rhs) const {                      \
+		return lhs op_sign rhs;                                                                                        \
+	}
+
 /* NOTE: Using free function operators are disabled because e.g. those operators are defined for 
  *       boost::hana::integral_constant but calling them using with invalid input in has_*_op function triggers 
  *       assertions, because boost hana concept checks fail.

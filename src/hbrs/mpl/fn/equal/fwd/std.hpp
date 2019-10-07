@@ -30,6 +30,7 @@ namespace detail {
 HBRS_MPL_DECLARE_STD_INTEGRAL_CONSTANT_OPERATOR_IMPL_ARITY2(equal, HBRS_MPL_OPERATOR_EQUAL)
 HBRS_MPL_DECLARE_STD_ARITHMETIC_ENUM_OPERATOR_IMPL_ARITY2(equal, HBRS_MPL_OPERATOR_EQUAL)
 HBRS_MPL_DECLARE_FREEFUN_OPERATOR_IMPL_ARITY2(equal, HBRS_MPL_OPERATOR_EQUAL)
+HBRS_MPL_DECLARE_STD_COMPLEX_OPERATOR_IMPL_ARITY2(equal, HBRS_MPL_OPERATOR_EQUAL)
 
 /* compare operators for std::array are constexpr since C++20 only!
  * Ref.: https://en.cppreference.com/w/cpp/container/array/operator_cmp
@@ -50,7 +51,8 @@ HBRS_MPL_NAMESPACE_END
 		hbrs::mpl::detail::equal_impl_lhs_is_braces_constructible{},                                                   \
 		hbrs::mpl::detail::equal_impl_rhs_is_braces_constructible{},                                                   \
 		hbrs::mpl::detail::equal_impl_numeric_cast{},                                                                  \
-		hbrs::mpl::detail::equal_impl_op{}                                                                             \
+		hbrs::mpl::detail::equal_impl_op{},                                                                            \
+		hbrs::mpl::detail::equal_impl_std_complex_op{}                                                                 \
 	)
 
 #endif // !HBRS_MPL_FN_EQUAL_FWD_STD_HPP

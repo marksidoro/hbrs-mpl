@@ -25,6 +25,7 @@
 #include <boost/mpl/or.hpp>
 #include <boost/mpl/not.hpp>
 #include <type_traits>
+#include <complex>
 
 /* TODO: Give higher priority to specialized impls by only enabling default operators if no other impls exist. 
  * This is important e.g. if you plus/minus/.. two compile-time integrals because those are implicitly convertible
@@ -218,6 +219,36 @@
 		 *       https://github.com/boostorg/numeric_conversion/issues/13                                              \
 		 */                                                                                                            \
 		operator()(LHS && lhs, RHS && rhs);                                                                            \
+	};
+
+#define HBRS_MPL_DECLARE_STD_COMPLEX_OPERATOR_IMPL_ARITY2(op_name, op_sign)                                            \
+	struct op_name ## _impl_std_complex_op {                                                                           \
+		template <                                                                                                     \
+			typename T,                                                                                                \
+			typename std::enable_if_t<                                                                                 \
+				std::is_floating_point_v<T>                                                                            \
+			>* = nullptr                                                                                               \
+		>                                                                                                              \
+		constexpr decltype(auto)                                                                                       \
+		operator()(std::complex<T> const& lhs, std::complex<T> const& rhs) const;                                      \
+		                                                                                                               \
+		template <                                                                                                     \
+			typename T,                                                                                                \
+			typename std::enable_if_t<                                                                                 \
+				std::is_floating_point_v<T>                                                                            \
+			>* = nullptr                                                                                               \
+		>                                                                                                              \
+		constexpr decltype(auto)                                                                                       \
+		operator()(std::complex<T> const& lhs, T const& rhs) const;                                                    \
+		                                                                                                               \
+		template <                                                                                                     \
+			typename T,                                                                                                \
+			typename std::enable_if_t<                                                                                 \
+				std::is_floating_point_v<T>                                                                            \
+			>* = nullptr                                                                                               \
+		>                                                                                                              \
+		constexpr decltype(auto)                                                                                       \
+		operator()(T const& lhs, std::complex<T> const& rhs) const;                                                    \
 	};
 
 /* NOTE: Using free function operators are disabled because e.g. those operators are defined for 
