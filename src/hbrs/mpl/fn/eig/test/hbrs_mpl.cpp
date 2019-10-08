@@ -34,6 +34,7 @@
 #include <hbrs/mpl/detail/not_supported.hpp>
 
 #include <hbrs/mpl/dt/ctsav.hpp>
+#include <hbrs/mpl/dt/ctsam.hpp>
 #include <hbrs/mpl/dt/sm.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>
 #include <hbrs/mpl/dt/eig_control.hpp>
@@ -85,6 +86,20 @@ BOOST_AUTO_TEST_CASE(eig_comparison,  * utf::tolerance(_TOL)) {
 	static constexpr auto datasets = hana::make_tuple(
 		make_sm(
 			make_ctsav(detail::mat_a), make_matrix_size(hana::size_c<detail::mat_a_m>, hana::size_c<detail::mat_a_n>), row_major_c
+		),
+		make_ctsam(
+			std::array<double, 8*8>{
+				49, 64, 62, 23, 90, 60,  9, 24,
+				44, 38, 59, 17, 98, 71, 26, 46,
+				45, 81, 21, 23, 44, 22, 80, 96,
+				31, 53, 30, 44, 11, 12,  3, 55,
+				51, 35, 47, 31, 26, 30, 93, 52,
+				51, 94, 23, 92, 41, 32, 73, 23,
+				82, 88, 84, 43, 59, 42, 49, 49,
+				79, 55, 19, 18, 26, 51, 58, 62
+			},
+			make_matrix_size(hana::size_c<8>, hana::size_c<8>),
+			row_major_c
 		)
 	);
 	
@@ -175,7 +190,14 @@ BOOST_AUTO_TEST_CASE(eig_comparison,  * utf::tolerance(_TOL)) {
 				
 				BOOST_TEST_PASSPOINT();
 				
-				//TODO: Can signs and ordering of eigenvalues and eigenvectors differ depending on the algorithm used?
+				/* TODO: Can signs and ordering of eigenvalues and eigenvectors differ depending on the algorithm used?
+				 * "Since the eigenvalues may be complex, there is no fixed way to order them." [1]
+				 * MATLAB Coder [2] and Elemental [3] use different algorithms for eig().
+				 * Ref.:
+				 * [1] http://www.netlib.org/utk/people/JackDongarra/etemplates/node49.html
+				 * [2] src/hbrs/mpl/detail/matlab_cxn/impl/eig_level0.m
+				 * [3] src/hbrs/mpl/fn/eig/impl/elemental.hpp
+				 */
 				BOOST_TEST_MESSAGE("comparing eig_eigenvalues of impl nr " << impl_idx_i << " and " << impl_idx_j);
 				auto const& eig_eigenvalues_i = (*at)(result_i, eig_eigenvalues{});
 				auto const& eig_eigenvalues_j = (*at)(result_j, eig_eigenvalues{});
