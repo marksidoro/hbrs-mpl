@@ -22,7 +22,7 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 environment_fixture::environment_fixture(boost::unit_test::master_test_suite_t & ts)
-: env{ts.argc, ts.argv} {};
+: env{ts.argc, ts.argv} {}
 
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END

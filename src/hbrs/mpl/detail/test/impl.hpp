@@ -162,9 +162,9 @@ namespace test_tools {
 namespace assertion {
 namespace op {
 
-template<>
+template<typename FPT>
 inline assertion_result
-compare_fpv<El::Complex<double>>(
+compare_fpv(
 	El::Complex<double> const& lhs,
 	El::Complex<double> const& rhs,
 	op::EQ<El::Complex<double>,El::Complex<double>>*
@@ -211,9 +211,9 @@ public:
     static char const* revert();
 };
 
-template<>
+template<typename FPT>
 inline assertion_result
-compare_fpv<creal_T>(
+compare_fpv(
 	creal_T const& lhs,
 	creal_T const& rhs,
 	op::EQ<creal_T, creal_T>*
@@ -244,9 +244,9 @@ namespace test_tools {
 namespace assertion {
 namespace op {
 
-template<>
+template<typename FPT>
 inline assertion_result
-compare_fpv<El::Complex<double>>(
+compare_fpv(
 	El::Complex<double> const& lhs,
 	creal_T const& rhs,
 	op::EQ<El::Complex<double>,creal_T>*
@@ -258,9 +258,9 @@ compare_fpv<El::Complex<double>>(
 	);
 }
 
-template<>
+template<typename FPT>
 inline assertion_result
-compare_fpv<El::Complex<double>>(
+compare_fpv(
 	creal_T const& lhs,
 	El::Complex<double> const& rhs,
 	op::EQ<creal_T, El::Complex<double>>*
