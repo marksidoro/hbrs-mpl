@@ -378,7 +378,10 @@ BOOST_AUTO_TEST_CASE(mldivide_comparison_Ax_b,  * utf::tolerance(_TOL)) {
 				
 				BOOST_TEST_MESSAGE("A*x == A*x_?");
 				HBRS_MPL_TEST_VVEQ(Ax, Ax_, false);
+				// TODO: A*x == A*x_, but A*x != b and A*x_ != b, but why?
 				BOOST_TEST_MESSAGE("A*x == b?");
+				HBRS_MPL_TEST_VVEQ(Ax, b, false);
+				BOOST_TEST_MESSAGE("A*x_ == b?");
 				HBRS_MPL_TEST_VVEQ(Ax_, b, false);
 				BOOST_TEST_MESSAGE("x == x_?");
 				//NOTE: Results from MATLAB and Elemental differ, see src/hbrs/mpl/fn/mldivide/impl/elemental.hpp!

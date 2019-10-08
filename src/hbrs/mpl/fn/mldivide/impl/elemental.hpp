@@ -49,7 +49,7 @@ mldivide_el_matrix_el_vector_impl(A const& a, X & x, B const& b) {
 	 * Let A be m*n and B be m.
 	 *
 	 * If m==n, then mldivide(A,B) from MATLAB Coder [1] uses lusolve(A,B) else qrsolve(A,B).
-	 * If A's rank is less than the number of columns in A (a.k. A is under underdetermined; a.k.a. infinite solutions
+	 * If A's rank is less than the number of columns in A (a.k.a. A is under underdetermined; a.k.a. infinite solutions
 	 * exist to Ax=b), then x = mldivide(A,B) is not necessarily the minimum norm solution. [4]
 	 * mldivide(A,B) computes one solution that minimizes ||Ax-b||, but this solution typically does not minimize ||x||.
 	 * The solution computed by lsqminnorm minimizes not only norm(A*x-b), but also norm(x). [5]
