@@ -146,7 +146,7 @@ signum_of_largest_element_in_column(el_dist_matrix<Ring, Columnwise, Rowwise, Wr
 	auto coeff_n = (*n)(coeff_sz);
 	
 	//TODO: Replace this hack!
-	el_dist_row_vector<Ring, El::STAR, El::STAR, El::ELEMENT> colsign{ coeff.data().Grid(), coeff_n };
+	el_dist_row_vector<Ring, El::STAR, El::VC, El::ELEMENT> colsign{ coeff.data().Grid(), coeff_n };
 	
 	for(El::Int j = 0; j < coeff_n; ++j) {
 		El::Int max_idx = 0;
@@ -192,7 +192,7 @@ make_row_vector_like(
 	Size && sz
 ) {
 	typedef std::decay_t<Ring> _Ring_;
-	return el_dist_row_vector<_Ring_, El::STAR, El::STAR>{a.data().Grid(), HBRS_MPL_FWD(sz)};
+	return el_dist_row_vector<_Ring_, El::STAR, El::VC>{a.data().Grid(), HBRS_MPL_FWD(sz)};
 }
 
 //TODO: Replace this helper function with generic code
@@ -220,7 +220,7 @@ make_column_vector_like(
 	Size && sz
 ) {
 	typedef std::decay_t<Ring> _Ring_;
-	return el_dist_column_vector<_Ring_, El::STAR, El::STAR>{a.data().Grid(), HBRS_MPL_FWD(sz)};
+	return el_dist_column_vector<_Ring_, El::MD, El::STAR>{a.data().Grid(), HBRS_MPL_FWD(sz)};
 }
 
 //TODO: Replace this helper function with generic code

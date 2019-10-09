@@ -138,10 +138,10 @@ svd_impl_el_dist_matrix::operator()(
 		*/
 	return svd_impl_el(
 		a, ctrl,
-		El::DistMatrix<_Ring_, El::MC, El::MR>{a.data().Grid()} /*u*/,
-		El::DistMatrix<El::Base<_Ring_>, El::STAR, El::STAR>{a.data().Grid()} /*s*/,
-		El::DistMatrix<El::Base<_Ring_>, El::STAR, El::STAR>{a.data().Grid()} /*s_*/,
-		El::DistMatrix<_Ring_, El::MC, El::MR>{a.data().Grid()} /*v*/
+		El::DistMatrix<_Ring_>{a.data().Grid()} /*u*/,
+		El::DistMatrix<El::Base<_Ring_>>{a.data().Grid()} /*s*/,
+		El::DistMatrix<El::Base<_Ring_>>{a.data().Grid()} /*s_*/,
+		El::DistMatrix<_Ring_>{a.data().Grid()} /*v*/
 	);
 }
 

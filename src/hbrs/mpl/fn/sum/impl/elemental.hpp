@@ -118,11 +118,10 @@ sum_impl_el_dist_matrix_columns_impl(el_dist_matrix<Ring, Columnwise, Rowwise, W
 		BOOST_THROW_EXCEPTION(incompatible_matrix_exception{} << errinfo_el_matrix_size{in_dmat_sz});
 	}
 	
-	El::DistMatrix<_Ring_, Columnwise, Rowwise, Wrapping> ones_dmat{in_dmat.Grid()};
+	El::DistMatrix<_Ring_> ones_dmat{in_dmat.Grid()};
 	El::Ones(ones_dmat, in_dmat.Height(), 1);
-
-	//TODO: Maybe "El::STAR, El::STAR" with "El::CIRC, El::CIRC"?
-	El::DistMatrix<_Ring_, El::STAR, El::STAR, El::ELEMENT> sums_dmat{in_dmat.Grid()};
+	
+	El::DistMatrix<_Ring_, El::STAR, El::VC, El::ELEMENT> sums_dmat{in_dmat.Grid()};
 	sums_dmat.Resize(1, in_dmat.Width());
 	
 	El::Gemv(

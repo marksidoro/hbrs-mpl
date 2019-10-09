@@ -85,8 +85,6 @@ mean_el_dist_matrix_columns_impl(Expression && expr) {
 	el_dist_row_vector sums = (*sum)(HBRS_MPL_FWD(expr));
 	BOOST_ASSERT(sums.length() == from_sz.n());
 	
-	//TODO: Once sums is converted from "El::STAR, El::STAR" to "El::CIRC, El::CIRC" do only on sums_dmat.Grid().Rank() == 0!
-	
 	El::Scale(1.0/from_sz.m(), sums.data());
 	return sums;
 }
