@@ -82,11 +82,13 @@ using hbrs::mpl::detail::environment_fixture;
 BOOST_TEST_GLOBAL_FIXTURE(environment_fixture);
 
 struct less_norm_t {
+#ifdef HBRS_MPL_ENABLE_MATLAB
 	bool
 	operator()(creal_T const& lhs, creal_T const& rhs) const {
 		return (*this)(to_std_complex(lhs), to_std_complex(rhs));
 	}
-	
+#endif
+
 	template<typename T>
 	bool
 	operator()(std::complex<T> const& lhs, std::complex<T> const& rhs) const {
