@@ -7,6 +7,8 @@
 
 % NOTE:
 % Native MATLAB may use different algorithms for eig() than MATLAB Coder.
+% If input matrix is Hermitian (*1) results from "[V,D] = eig(A)" will be 
+% similar to "[V,D] = schur(A,'complex')". Both V and D will be complex.
 % If input matrix is not Hermitian, then MATLAB Coder uses the QZ algorithm.
 % The results from "[V,D] = eig(A)" in MATLAB Coder will be similar to
 % "[V,D] = eig(A,eye(size(A)),'qz')", except that MATLAB Coder normalizes the
@@ -14,7 +16,11 @@
 % and the eigenvalues in D may not be in the same order as in MATLAB.
 %
 % For eig(A) and if A is not Hermitian, MATLAB Coder uses LAPACK's xGEEV.
+% For eig(A) and if A is Hermitian (*1), MATLAB Coder uses schur(), which 
+% again uses LAPACK's xGEHRD, xORGHR and xHSEQR functions.
 % For eig(A,B), MATLAB Coder uses LAPACK's xGGEV.
+%
+% (*1) A real matrix is Hermitian if it is symmetric.
 %
 % Ref.:
 %  R2018b/toolbox/eml/lib/matlab/matfun/eig.m

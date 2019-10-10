@@ -72,8 +72,10 @@ namespace detail {
  * be set to 'N'). :math:`\mbox{op}` is determined in the same manner as in 
  * ``blas::Trmv``." [5]
  * 
- * NOTE: MATLAB Coder uses LAPACK's xGEEV for eig() and thus
- *       will likely produce different decompositions [6].
+ * NOTE: If A is Hermitian (e.g. if real and symmetric), then MATLAB Coder
+ *       uses a similar (the same?) algorithm for eig() with functions
+ *       from LAPACK. Else MATLAB Coder uses LAPACK's xGEEV for eig()
+ *       and thus will likely produce different decompositions [6].
  * 
  * Ref.:
  * [1] Elemental/src/lapack_like/spectral/Eig.cpp 
