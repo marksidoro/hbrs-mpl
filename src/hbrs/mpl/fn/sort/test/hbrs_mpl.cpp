@@ -14,7 +14,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define BOOST_TEST_MODULE fn_eig_hbrs_mpl_test
+#define BOOST_TEST_MODULE fn_sort_hbrs_mpl_test
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
@@ -24,32 +24,25 @@
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 	#include <hbrs/mpl/dt/el_matrix.hpp>
 	#include <hbrs/mpl/dt/el_dist_matrix.hpp>
+	#include <hbrs/mpl/dt/el_vector.hpp>
+	#include <hbrs/mpl/dt/el_dist_vector.hpp>
 #endif
 #ifdef HBRS_MPL_ENABLE_MATLAB
 	#include <hbrs/mpl/dt/ml_matrix.hpp>
-	#include <hbrs/mpl/detail/matlab_cxn.hpp>
+	#include <hbrs/mpl/dt/ml_vector.hpp>
 #endif
 
 #include <hbrs/mpl/detail/test.hpp>
 #include <hbrs/mpl/detail/gather.hpp>
 #include <hbrs/mpl/detail/not_supported.hpp>
 
-#include <hbrs/mpl/dt/ctsav.hpp>
 #include <hbrs/mpl/dt/ctsam.hpp>
-#include <hbrs/mpl/dt/sm.hpp>
+#include <hbrs/mpl/dt/scv.hpp>
+#include <hbrs/mpl/dt/storage_order.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>
-#include <hbrs/mpl/dt/eig_control.hpp>
 
-#include <hbrs/mpl/fn/eig.hpp>
-#include <hbrs/mpl/fn/size.hpp>
-#include <hbrs/mpl/fn/m.hpp>
-#include <hbrs/mpl/fn/n.hpp>
-#include <hbrs/mpl/fn/minimum.hpp>
-#include <hbrs/mpl/fn/select.hpp>
-#include <hbrs/mpl/fn/multiply.hpp>
-#include <hbrs/mpl/fn/diag.hpp>
 #include <hbrs/mpl/fn/sort.hpp>
-#include <hbrs/mpl/fn/absolute.hpp>
+#include <hbrs/mpl/fn/less.hpp>
 
 #include <boost/hana/filter.hpp>
 #include <boost/hana/zip.hpp>
@@ -64,61 +57,64 @@
 #include <boost/hana/cartesian_product.hpp>
 #include <boost/hana/drop_back.hpp>
 #include <boost/hana/drop_front.hpp>
+#include <boost/hana/take_front.hpp>
 #include <boost/hana/front.hpp>
 #include <boost/hana/back.hpp>
 #include <boost/hana/unpack.hpp>
 #include <boost/hana/greater_equal.hpp>
 #include <boost/hana/range.hpp>
 #include <boost/hana/length.hpp>
+#include <boost/hana/remove_at.hpp>
+
+#include <array>
 
 namespace utf = boost::unit_test;
 namespace tt = boost::test_tools;
 
-#define _TOL 0.000000001
-
-BOOST_AUTO_TEST_SUITE(fn_eig_hbrs_mpl_test)
+BOOST_AUTO_TEST_SUITE(fn_sort_hbrs_mpl_test)
 
 using hbrs::mpl::detail::environment_fixture;
 BOOST_TEST_GLOBAL_FIXTURE(environment_fixture);
 
-struct less_norm_t {
-	bool
-	operator()(creal_T const& lhs, creal_T const& rhs) const {
-		return (*this)(to_std_complex(lhs), to_std_complex(rhs));
-	}
-	
-	template<typename T>
-	bool
-	operator()(std::complex<T> const& lhs, std::complex<T> const& rhs) const {
-		using namespace hbrs::mpl;
-		return (*absolute)(lhs) < (*absolute)(rhs);
-	}
-};
-
-constexpr less_norm_t less_norm{};
-
-BOOST_AUTO_TEST_CASE(eig_comparison,  * utf::tolerance(_TOL)) {
+BOOST_AUTO_TEST_CASE(sort_eig_result) {
 	using namespace hbrs::mpl;
 	using hbrs::mpl::select;
 	
-	// tuple of square matrices
+	// tuple of [unsorted eigenvalues, unsorted eigenvectors, sorted eigenvalues, sorted eigenvectors]
 	static constexpr auto datasets = hana::make_tuple(
-		make_sm(
-			make_ctsav(detail::mat_a), make_matrix_size(hana::size_c<detail::mat_a_m>, hana::size_c<detail::mat_a_n>), row_major_c
-		),
-		make_ctsam(
-			std::array<double, 8*8>{
-				49, 64, 62, 23, 90, 60,  9, 24,
-				44, 38, 59, 17, 98, 71, 26, 46,
-				45, 81, 21, 23, 44, 22, 80, 96,
-				31, 53, 30, 44, 11, 12,  3, 55,
-				51, 35, 47, 31, 26, 30, 93, 52,
-				51, 94, 23, 92, 41, 32, 73, 23,
-				82, 88, 84, 43, 59, 42, 49, 49,
-				79, 55, 19, 18, 26, 51, 58, 62
-			},
-			make_matrix_size(hana::size_c<8>, hana::size_c<8>),
-			row_major_c
+		hana::make_tuple(
+			make_scv(std::array<double, 4>{
+				4,
+				1,
+				3,
+				2
+			}),
+			make_ctsam(
+				std::array<double, 4*4>{
+					1,   2,  3,  4,
+					5,   6,  7,  8,
+					9,  10, 11, 12,
+					13, 14, 15, 16
+				},
+				make_matrix_size(hana::size_c<4>, hana::size_c<4>),
+				row_major_c
+			),
+			make_scv(std::array<double, 4>{
+				1,
+				2,
+				3,
+				4
+			}),
+			make_ctsam(
+				std::array<double, 4*4>{
+					2,   4,  3,  1,
+					6,   8,  7,  5,
+					10, 12, 11,  9,
+					14, 16, 15, 13
+				},
+				make_matrix_size(hana::size_c<4>, hana::size_c<4>),
+				row_major_c
+			)
 		)
 	);
 	
@@ -129,27 +125,64 @@ BOOST_AUTO_TEST_CASE(eig_comparison,  * utf::tolerance(_TOL)) {
 	static constexpr auto factories = hana::drop_back(hana::make_tuple(
 		#ifdef HBRS_MPL_ENABLE_MATLAB
 		[](auto && dataset) {
+			auto eigval_us = hana::at(dataset, hana::size_c<0>);
+			auto eigvec_us = hana::at(dataset, hana::size_c<1>);
+			auto eigval_so = hana::at(dataset, hana::size_c<2>);
+			auto eigvec_so = hana::at(dataset, hana::size_c<3>);
+			
 			return hana::make_tuple(
-				detail::eig_impl_level0_ml_matrix{},
-				make_ml_matrix(HBRS_MPL_FWD(dataset)),
-				eig_control<>{}
+				detail::sort_impl_ml_eig_result{},
+				make_eig_result(
+					make_ml_column_vector(std::move(eigval_us)),
+					make_ml_matrix(       std::move(eigvec_us))
+				),
+				less,
+				make_eig_result(
+					make_ml_column_vector(std::move(eigval_so)),
+					make_ml_matrix(       std::move(eigvec_so))
+				)
 			);
 		},
 		#endif
+		
 		#ifdef HBRS_MPL_ENABLE_ELEMENTAL
 		[](auto && dataset) {
+			auto eigval_us = hana::at(dataset, hana::size_c<0>);
+			auto eigvec_us = hana::at(dataset, hana::size_c<1>);
+			auto eigval_so = hana::at(dataset, hana::size_c<2>);
+			auto eigvec_so = hana::at(dataset, hana::size_c<3>);
+			
 			return hana::make_tuple(
-				detail::eig_impl_el_matrix{},
-				make_el_matrix(HBRS_MPL_FWD(dataset)),
-				eig_control<>{}
+				detail::sort_impl_el_eig_result{},
+				make_eig_result(
+					make_el_column_vector(std::move(eigval_us)),
+					make_el_matrix(       std::move(eigvec_us))
+				),
+				less,
+				make_eig_result(
+					make_el_column_vector(std::move(eigval_so)),
+					make_el_matrix(       std::move(eigvec_so))
+				)
 			);
 		},
 		[](auto && dataset) {
 			static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
+			auto eigval_us = hana::at(dataset, hana::size_c<0>);
+			auto eigvec_us = hana::at(dataset, hana::size_c<1>);
+			auto eigval_so = hana::at(dataset, hana::size_c<2>);
+			auto eigvec_so = hana::at(dataset, hana::size_c<3>);
+			
 			return hana::make_tuple(
-					detail::eig_impl_el_dist_matrix{},
-					make_el_dist_matrix(grid, make_el_matrix(HBRS_MPL_FWD(dataset))),
-					eig_control<>{}
+				detail::sort_impl_el_eig_result{},
+				make_eig_result(
+					make_el_dist_column_vector(grid, make_el_column_vector(std::move(eigval_us))),
+					make_el_dist_matrix(       grid, make_el_matrix(       std::move(eigvec_us)))
+				),
+				less,
+				make_eig_result(
+					make_el_dist_column_vector(grid, make_el_column_vector(std::move(eigval_so))),
+					make_el_dist_matrix(       grid, make_el_matrix(       std::move(eigvec_so)))
+				)
 			);
 		},
 		#endif
@@ -183,7 +216,7 @@ BOOST_AUTO_TEST_CASE(eig_comparison,  * utf::tolerance(_TOL)) {
 				BOOST_TEST_MESSAGE("Running impl nr " << i);
 				auto testcase = hana::at(testcases, i);
 				return hana::unpack(
-					hana::drop_front(testcase),
+					hana::take_front(hana::drop_front(testcase), hana::size_c<2>),
 					hana::front(testcase)
 				);
 			}
@@ -207,32 +240,20 @@ BOOST_AUTO_TEST_CASE(eig_comparison,  * utf::tolerance(_TOL)) {
 				auto const& result_i = hana::at(results, i);
 				auto const& result_j = hana::at(results, j);
 				
-				auto sorted_i = sort(result_i, less_norm);
-				auto sorted_j = sort(result_j, less_norm);
-				
 				BOOST_TEST_PASSPOINT();
 				
-				/* TODO: Can signs and ordering of eigenvalues and eigenvectors differ depending on the algorithm used?
-				 * "Since the eigenvalues may be complex, there is no fixed way to order them." [1]
-				 * MATLAB Coder [2] and Elemental [3] use different algorithms for eig().
-				 * Ref.:
-				 * [1] http://www.netlib.org/utk/people/JackDongarra/etemplates/node49.html
-				 * [2] src/hbrs/mpl/detail/matlab_cxn/impl/eig_level0.m
-				 * [3] src/hbrs/mpl/fn/eig/impl/elemental.hpp
-				 */
-				BOOST_TEST_MESSAGE("Comparing eig_eigenvalues of impl nr " << impl_idx_i << " and " << impl_idx_j);
-				auto const& eig_eigenvalues_i = (*at)(sorted_i, eig_eigenvalues{});
-				auto const& eig_eigenvalues_j = (*at)(sorted_j, eig_eigenvalues{});
-				HBRS_MPL_TEST_VVEQ(eig_eigenvalues_i, eig_eigenvalues_j, true);
+				BOOST_TEST_MESSAGE("comparing results of impl nr " << impl_idx_i << " and " << impl_idx_j);
 				
-				BOOST_TEST_MESSAGE("Comparing eig_eigenvectors of impl nr " << impl_idx_i << " and " << impl_idx_j);
-				auto const& eig_eigenvectors_i = (*at)(sorted_i, eig_eigenvectors{});
-				auto const& eig_eigenvectors_j = (*at)(sorted_j, eig_eigenvectors{});
+				auto const& eig_eigenvalues_i = (*at)(result_i, eig_eigenvalues{});
+				auto const& eig_eigenvalues_j = (*at)(result_j, eig_eigenvalues{});
 				
-				//Compare 2-norm/absolute of complex numbers only
-				HBRS_MPL_TEST_MMEQ(eig_eigenvectors_i, eig_eigenvectors_j, true);
+				auto const& eig_eigenvectors_i = (*at)(result_i, eig_eigenvectors{});
+				auto const& eig_eigenvectors_j = (*at)(result_j, eig_eigenvectors{});
 				
-				BOOST_TEST_MESSAGE("Comparing impl nr " << impl_idx_i << " and " << impl_idx_j << " done.");
+				HBRS_MPL_TEST_VVEQ(eig_eigenvalues_i, eig_eigenvalues_j, false);
+				HBRS_MPL_TEST_MMEQ(eig_eigenvectors_i, eig_eigenvectors_j, false);
+				
+				BOOST_TEST_MESSAGE("comparing impl nr " << impl_idx_i << " and " << impl_idx_j << " done.");
 				
 				BOOST_TEST_PASSPOINT();
 			};
@@ -242,32 +263,28 @@ BOOST_AUTO_TEST_CASE(eig_comparison,  * utf::tolerance(_TOL)) {
 		
 		BOOST_TEST_PASSPOINT();
 		
-		// Test A*V = V*D where V is a matrix whose columns are the eigenvectors 
-		// of A and D is a diagonal matrix with eigenvalues of A
-		
 		hana::for_each(
 			results_indices,
 			[&](auto i) {
 				auto impl_idx = hana::at(supported_indices, i);
-				BOOST_TEST_MESSAGE("Comparing A*V and V*D of impl nr " << impl_idx);
+				BOOST_TEST_MESSAGE("Comparing sorted eigenvalues/-vectors to sorted ones by impl nr " << impl_idx);
 				
 				auto testcase = hana::at(testcases, impl_idx);
-				auto A = hana::at(testcase, hana::size_c<1>);
-				auto eig_result = hana::at(results, i);
-				auto D = (*at)(eig_result, eig_eigenvalues{});
-				auto V = (*at)(eig_result, eig_eigenvectors{});
+				auto eig_result_sorted = hana::at(testcase, hana::size_c<3>);
+				auto eig_result_computed = hana::at(results, i);
 				
-				auto AV = (*multiply)(A, V);
-				auto VD = (*multiply)(V, diag(D));
 				
-				//Compare 2-norm/absolute of complex numbers only
-				HBRS_MPL_TEST_MMEQ(AV, VD, true);
+				auto const& eig_eigenvalues_sorted = (*at)(eig_result_sorted, eig_eigenvalues{});
+				auto const& eig_eigenvalues_computed = (*at)(eig_result_computed, eig_eigenvalues{});
+				
+				auto const& eig_eigenvectors_sorted = (*at)(eig_result_sorted, eig_eigenvectors{});
+				auto const& eig_eigenvectors_computed = (*at)(eig_result_computed, eig_eigenvectors{});
+				
+				HBRS_MPL_TEST_VVEQ(eig_eigenvalues_sorted, eig_eigenvalues_computed, false);
+				HBRS_MPL_TEST_MMEQ(eig_eigenvectors_sorted, eig_eigenvectors_computed, false);
 			}
 		);
-		BOOST_TEST_MESSAGE("Comparing A*V and V*D done.");
-		
-		//TODO: Test more properties of eigenvalues and eigenvectors?
-		
+		BOOST_TEST_MESSAGE("Comparison done.");
 	});
 	
 }

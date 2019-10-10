@@ -304,6 +304,7 @@ pca(
 	//MATLAB>>     x = bsxfun(@minus,x,mu);
 	//MATLAB>> end
 	
+	//TODO: Do we need a different algo. for normalizing matrices with complex numbers?
 	auto sqrt = [](auto x) { return power(x, 1./2.); };
 	auto phi_sqrt = transform(vw, sqrt);
 	auto && stdz = ctrl.normalize() ? (*times)(std::move(cntr), expand(phi_sqrt, a_sz)) : std::move(cntr);
