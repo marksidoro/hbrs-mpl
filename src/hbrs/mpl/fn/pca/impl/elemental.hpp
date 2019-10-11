@@ -334,7 +334,7 @@ pca(
 	//MATLAB>> end
 	
 	auto Sd = (*diag)(S);
-	auto score = (*multiply)(U,S);
+	auto score = (*multiply)(std::move(U),std::move(S));
 	//MATLAB>> S = diag(S);
 	//MATLAB>> score =  bsxfun(@times,U,S');
 	//MATLAB>> % these two lines are equal to: score =  U*S;
@@ -400,8 +400,8 @@ pca(
 	// Enforce a sign convention on the coefficients -- the largest element in
 	// each column will have a positive sign.
 	auto colsign = signum_of_largest_element_in_column(coeff);
-	auto coeff_sgn = (*times)(coeff, expand(colsign, size(coeff)));
-	auto score_sgn = (*times)(score, expand(colsign, size(score)));
+	auto coeff_sgn = (*times)(std::move(coeff), expand(colsign, size(coeff)));
+	auto score_sgn = (*times)(std::move(score), expand(colsign, size(score)));
 	
 	//MATLAB>> coeff = bsxfun(@times, coeff, colsign);
 	//MATLAB>> score = bsxfun(@times, score, colsign);
