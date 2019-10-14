@@ -129,6 +129,7 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(_TOL)) {
 			);
 		},
 		[](auto && a, auto mode) {
+			// matrix has [STAR,STAR] distribution
 			auto sz_ = (*size)(a);
 			auto m_ = (*m)(sz_);
 			auto n_ = (*n)(sz_);
@@ -146,6 +147,34 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(_TOL)) {
 						grid,
 						make_el_matrix(HBRS_MPL_FWD(a))
 					),
+					svd_control<decompose_mode>{mode}
+				);
+			}
+		},
+		[](auto && a, auto mode) {
+			// matrix has [MC,MR] distribution
+			typedef decltype(a.at(matrix_index<std::size_t, std::size_t>{0u,0u})) Ring;
+			typedef std::decay_t<Ring> _Ring_;
+			
+			auto sz_ = (*size)(a);
+			auto m_ = (*m)(sz_);
+			auto n_ = (*n)(sz_);
+			
+			if constexpr(
+				(mode == decompose_mode::complete) ||
+				(mode == decompose_mode::zero && hana::value(m_) <= hana::value(n_))
+			) {
+				return detail::not_supported{};
+			} else {
+				static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
+				return hana::make_tuple(
+					detail::svd_impl_el_dist_matrix{},
+					el_dist_matrix<_Ring_, El::MC, El::MR>{
+						make_el_dist_matrix(
+							grid,
+							make_el_matrix(HBRS_MPL_FWD(a))
+						).data()
+					},
 					svd_control<decompose_mode>{mode}
 				);
 			}
