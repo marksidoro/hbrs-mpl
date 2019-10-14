@@ -40,8 +40,14 @@ svd_impl_el(A const& a, svd_control<decompose_mode> const& ctrl, U u, S s, S s_,
 	typedef std::decay_t<Ring> _Ring_;
 	
 	El::SVDCtrl<El::Base<_Ring_>> el_ctrl;
+	
 	el_ctrl.useLAPACK = true;
-	el_ctrl.useScaLAPACK = true;
+	/* Disabled ScaLAPACK because if number of MPI processes is larger than maximum(m(size(a)), n(size(a))),
+	 * then Elemental throws a "std::runtime_error: pdgesvd exited with info=..". More precisely, PDGESVD
+	 * fails with INFO = MIN(M,N) + 1 if number of MPI processes is larger than MAX(M,N).
+	 * TODO: Solve this bug!
+	 */
+	el_ctrl.useScaLAPACK = false;
 	el_ctrl.bidiagSVDCtrl.wantU = true;
 	el_ctrl.bidiagSVDCtrl.wantV = true;
 	
