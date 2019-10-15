@@ -135,6 +135,7 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(_TOL)) {
 			);
 		},
 		[](auto && a, auto economy, auto center, auto normalize) {
+			// matrix has [STAR,STAR] distribution
 			BOOST_TEST_PASSPOINT();
 			auto sz_ = (*size)(a);
 			auto m_ = (*m)(sz_);
@@ -153,6 +154,34 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(_TOL)) {
 						grid,
 						make_el_matrix(HBRS_MPL_FWD(a))
 					),
+					pca_control<bool,bool,bool>{economy, center, normalize}
+				);
+			}
+		},
+		[](auto && a, auto economy, auto center, auto normalize) {
+			// matrix has [MC,MR] distribution
+			BOOST_TEST_PASSPOINT();
+			typedef decltype(a.at(matrix_index<std::size_t, std::size_t>{0u,0u})) Ring;
+			typedef std::decay_t<Ring> _Ring_;
+			auto sz_ = (*size)(a);
+			auto m_ = (*m)(sz_);
+			auto n_ = (*n)(sz_);
+			
+			if constexpr(
+				!economy && hana::value(m_) <= hana::value(n_)
+				/* because this will do a zero svd which equals complete which is not supported by elemental */
+			) {
+				return detail::not_supported{};
+			} else {
+				static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
+				return hana::make_tuple(
+					detail::pca_impl_el_dist_matrix{},
+					el_dist_matrix<_Ring_, El::MC, El::MR>{
+						make_el_dist_matrix(
+							grid,
+							make_el_matrix(HBRS_MPL_FWD(a))
+						).data()
+					},
 					pca_control<bool,bool,bool>{economy, center, normalize}
 				);
 			}
