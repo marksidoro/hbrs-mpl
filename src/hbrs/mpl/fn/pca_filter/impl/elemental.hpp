@@ -39,6 +39,7 @@
 #include <hbrs/mpl/fn/expand.hpp>
 
 #include <vector>
+#include <boost/numeric/conversion/cast.hpp>
 #include <boost/assert.hpp>
 #include <algorithm>
 
@@ -113,7 +114,7 @@ pca_filter_impl_el_matrix::operator()(
 	return (*this)(
 		HBRS_MPL_FWD(a),
 		[&keep](El::Int i) {
-			BOOST_ASSERT(i < keep.size());
+			BOOST_ASSERT(i < boost::numeric_cast<El::Int>(keep.size()));
 			return keep.at(static_cast<std::size_t>(i));
 		},
 		ctrl

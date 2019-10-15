@@ -29,6 +29,7 @@
 #include <hbrs/mpl/fn/n.hpp>
 #include <hbrs/mpl/fn/at.hpp>
 #include <hbrs/mpl/fn/equal.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 #include <boost/assert.hpp>
 #include <vector>
 #include <algorithm>
@@ -53,6 +54,7 @@ sort_eig_result(eig_result<Vector,Matrix> const& r, Predicate && p) {
 	auto eigvec_n = (*n)(eigvec_sz);
 	
 	BOOST_ASSERT((*equal)(eigval_sz, eigvec_n));
+	BOOST_ASSERT(eigvec_m >= 0);
 	
 	//Ref.: https://stackoverflow.com/a/12399290/6490710
 	std::vector<std::size_t> idx(eigval_sz);
@@ -74,7 +76,7 @@ sort_eig_result(eig_result<Vector,Matrix> const& r, Predicate && p) {
 	}
 	
 	for(std::size_t i = 0; i < idx.size(); ++i) {
-		for(std::size_t j = 0; j < eigvec_m; ++j) {
+		for(std::size_t j = 0; j < boost::numeric_cast<std::size_t>(eigvec_m); ++j) {
 			(*at)(eigenvectors, make_matrix_index(j, i)) = (*at)(r.eigenvectors(), make_matrix_index(j,idx[i]));
 		}
 	}
