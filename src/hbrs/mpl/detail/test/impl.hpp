@@ -278,7 +278,7 @@ compare_fpv(
 /* namespace boost */ }
 #endif // defined(HBRS_MPL_ENABLE_ELEMENTAL) && defined(HBRS_MPL_ENABLE_MATLAB)
 
-#if BOOST_VERSION <= 106500
+#if BOOST_VERSION < 106500
 	#define BOOST_TEST_GLOBAL_FIXTURE BOOST_GLOBAL_FIXTURE
 #endif
 
