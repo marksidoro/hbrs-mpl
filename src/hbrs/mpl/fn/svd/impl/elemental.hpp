@@ -27,6 +27,7 @@
 #include <hbrs/mpl/dt/decompose_mode.hpp>
 #include <hbrs/mpl/dt/svd_result.hpp>
 #include <boost/assert.hpp>
+#include <cmath>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
@@ -67,7 +68,16 @@ svd_impl_el(A const& a, svd_control<decompose_mode> const& ctrl, U u, S s, S s_,
 	el_ctrl.useScaLAPACK = false;
 	el_ctrl.bidiagSVDCtrl.wantU = true;
 	el_ctrl.bidiagSVDCtrl.wantV = true;
-	el_ctrl.bidiagSVDCtrl.qrCtrl.maxIterPerVal *= 2; // default value is 6
+	el_ctrl.bidiagSVDCtrl.qrCtrl.maxIterPerVal = 16384; // default value is 6
+	BOOST_ASSERT(
+		el_ctrl.bidiagSVDCtrl.qrCtrl.maxIterPerVal <
+		(((long double)std::numeric_limits<El::Int>::max()) / std::pow((long double)std::fmin(a.m(), a.n()), 2.))
+	);
+	el_ctrl.bidiagSVDCtrl.tolType = El::RELATIVE_TO_SELF_SING_VAL_TOL;
+	
+#if !defined(NDEBUG)
+	el_ctrl.bidiagSVDCtrl.progress = true;
+#endif
 	
 	if (ctrl.decompose_mode() == decompose_mode::complete) {
 		el_ctrl.bidiagSVDCtrl.approach = El::SVDApproach::FULL_SVD;
