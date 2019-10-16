@@ -66,13 +66,16 @@ pca_filter_impl_el_matrix::operator()(
 	auto a_n = (*n)(a_sz);
 	auto DOF = a_m - (ctrl.center() ? 1 : 0);
 	auto keep_sz = (DOF<a_n && ctrl.economy()) ? DOF : std::min(a_m, a_n);
+	auto latent_sz = (DOF<a_n && ctrl.economy()) ? DOF : a_n;
 	
 	auto rslt = (*pca)(HBRS_MPL_FWD(a), ctrl);
 	
-	auto & coeff  =  (*at)(rslt, pca_coeff{});
-	auto & score  =  (*at)(rslt, pca_score{});
-	auto & latent = (*at)(rslt, pca_latent{});
-	auto & mean   =   (*at)(rslt, pca_mean{});
+	decltype(auto) coeff  =  (*at)(rslt, pca_coeff{});
+	decltype(auto) score  =  (*at)(rslt, pca_score{});
+	decltype(auto) latent = (*at)(rslt, pca_latent{});
+	decltype(auto) mean   =   (*at)(rslt, pca_mean{});
+	
+	BOOST_ASSERT((*equal)(size(latent), latent_sz));
 	
 	// size(keep) <= n(size(score))
 	for (El::Int i = 0; i < (*n)(size(score)); ++i) {
@@ -87,6 +90,7 @@ pca_filter_impl_el_matrix::operator()(
 	
 	//TODO: Only add mean if ctrl.center()==true a.k.a. mean != 0
 	auto data = (*plus)(centered, expand(mean, size(centered)));
+	BOOST_ASSERT((*equal)(size(data), a_sz));
 	
 	return make_pca_filter_result(data, latent);
 }

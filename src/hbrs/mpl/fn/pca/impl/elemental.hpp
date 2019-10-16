@@ -351,18 +351,21 @@ pca(
 				std::move(coeff),
 				std::make_pair(El::ALL, El::IR(0, DOF))
 			);
+			BOOST_ASSERT((*equal)(size(coeff), make_matrix_size(a_n, DOF)));
 			
 			// TODO: more generic code is e.g.: score[make_range(range::begin,range::end)][make_range(DOF+1_c,range::end)] = [];
 			score = (*select)(
 				std::move(score),
 				std::make_pair(El::ALL, El::IR(0, DOF))
 			);
+			BOOST_ASSERT((*equal)(size(score), make_matrix_size(a_m, DOF)));
 			
 			// TODO: more generic code is e.g.: latent[make_range(DOF+1_c,range::end)][make_range(range::begin,range::end)] = [];
 			latent = (*select)(
 				std::move(latent),
 				El::IR(0, DOF)
 			);
+			BOOST_ASSERT((*equal)(size(latent), DOF));
 		} else {
 			// otherwise, eigenvalues and corresponding outputs need to pad zeros because svd(x,0) does not return 
 			// columns of U corresponding to components of (DOF+1):p.
@@ -372,12 +375,14 @@ pca(
 			auto score_view = score_.data()(El::ALL, El::IR(0,DOF));
 			El::Copy(score.data()(El::ALL, El::IR(0,DOF)), score_view);
 			score = std::move(score_);
+			BOOST_ASSERT((*equal)(size(score), a_sz));
 			
 			// TODO: more generic code is e.g.: latent[make_range(DOF+1_c,a_n)][1_c] = 0;
 			auto latent_ = make_column_vector_like(a, a_n);
 			auto latent_view = latent_.data()(El::IR(0,DOF), 0);
 			El::Copy(latent.data()(El::IR(0,DOF), 0), latent_view);
 			latent = std::move(latent_);
+			BOOST_ASSERT((*equal)(size(latent), a_n));
 		}
 	}
 	//MATLAB>> if DOF < n
