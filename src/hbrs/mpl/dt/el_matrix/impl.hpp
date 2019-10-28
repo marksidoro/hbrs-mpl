@@ -29,6 +29,7 @@
 #include <hbrs/mpl/detail/copy_matrix.hpp>
 #include <hbrs/mpl/dt/sm.hpp>
 #include <hbrs/mpl/dt/ctsam.hpp>
+#include <hbrs/mpl/dt/rtsam.hpp>
 #include <hbrs/mpl/dt/ctsav.hpp>
 #include <hbrs/mpl/dt/rtsav.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
@@ -228,6 +229,19 @@ struct make_impl<hbrs::mpl::el_matrix_tag> {
 		using namespace hbrs::mpl;
 		typedef std::decay_t<Ring> _Ring_;
 		matrix_size<El::Int, El::Int> sz = make_matrix_size(Rows, Columns);
+		el_matrix<_Ring_> b{sz.m(), sz.n()};
+		return hbrs::mpl::detail::copy_matrix(a, b);
+	}
+	
+	template<
+		typename Ring,
+		hbrs::mpl::storage_order Order
+	>
+	static constexpr auto
+	apply(hbrs::mpl::rtsam<Ring, Order> const& a) {
+		using namespace hbrs::mpl;
+		typedef std::decay_t<Ring> _Ring_;
+		matrix_size<El::Int, El::Int> sz = (*hbrs::mpl::size)(a);
 		el_matrix<_Ring_> b{sz.m(), sz.n()};
 		return hbrs::mpl::detail::copy_matrix(a, b);
 	}
