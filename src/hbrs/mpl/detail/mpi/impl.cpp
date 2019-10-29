@@ -135,6 +135,20 @@ irecv(void *buffer, int count, MPI_Datatype datatype, int source, int tag, MPI_C
 	return request;
 }
 
+void
+allreduce(const void *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, MPI_Comm comm) {
+	BOOST_ASSERT(initialized());
+	safe(MPI_Allreduce(sendbuf, recvbuf, count, datatype, op, comm));
+}
+
+MPI_Request
+iallreduce(void const *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, MPI_Comm comm) {
+	BOOST_ASSERT(initialized());
+	MPI_Request request;
+	safe(MPI_Iallreduce(sendbuf, recvbuf, count, datatype, op, comm, &request));
+	return request;
+}
+
 /* namespace mpi */ }
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END

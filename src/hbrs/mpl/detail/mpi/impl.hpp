@@ -88,6 +88,24 @@ irecv(T *buffer, int count, int source, int tag, MPI_Comm comm) {
 	return irecv(buffer, count, datatype(hana::type_c<T>), source, tag, comm);
 }
 
+void
+allreduce(const void *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, MPI_Comm comm);
+
+template<typename T>
+void
+allreduce(T const* sendbuf, T* recvbuf, int count, MPI_Op op, MPI_Comm comm) {
+	return allreduce(sendbuf, recvbuf, count, datatype(hana::type_c<T>), op, comm);
+}
+
+MPI_Request
+iallreduce(void const *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, MPI_Comm comm);
+
+template<typename T>
+MPI_Request
+iallreduce(T const *sendbuf, T *recvbuf, int count, MPI_Op op, MPI_Comm comm) {
+	return iallreduce(sendbuf, recvbuf, count, datatype(hana::type_c<T>), op, comm);
+}
+
 /* namespace mpi */ }
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
