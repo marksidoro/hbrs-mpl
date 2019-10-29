@@ -90,6 +90,21 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(_TOL)) {
 		),
 		make_sm(
 			make_ctsav(detail::mat_j), make_matrix_size(hana::size_c<detail::mat_j_m>, hana::size_c<detail::mat_j_n>), row_major_c
+		),
+		make_sm(
+			make_ctsav(detail::mat_k), make_matrix_size(hana::size_c<detail::mat_k_m>, hana::size_c<detail::mat_k_n>), row_major_c
+		),
+		make_sm(
+			make_ctsav(detail::mat_l), make_matrix_size(hana::size_c<detail::mat_l_m>, hana::size_c<detail::mat_l_n>), row_major_c
+		),
+		make_sm(
+			make_ctsav(detail::mat_m), make_matrix_size(hana::size_c<detail::mat_m_m>, hana::size_c<detail::mat_m_n>), row_major_c
+		),
+		make_sm(
+			make_ctsav(detail::mat_n), make_matrix_size(hana::size_c<detail::mat_n_m>, hana::size_c<detail::mat_n_n>), row_major_c
+		),
+		make_sm(
+			make_ctsav(detail::mat_o), make_matrix_size(hana::size_c<detail::mat_o_m>, hana::size_c<detail::mat_o_n>), row_major_c
 		)
 	);
 	
