@@ -22,6 +22,7 @@
 #include <mpi.h>
 #include <cstdlib>
 #include <boost/hana/type.hpp>
+#include <type_traits>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
@@ -71,11 +72,11 @@ int
 get_count(MPI_Status const& status, MPI_Datatype datatype);
 
 MPI_Request
-isend(void const *buffer, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm);
+isend(void const* buffer, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm);
 
 template<typename T>
 MPI_Request
-isend(T *buffer, int count, int dest, int tag, MPI_Comm comm) {
+isend(T const* buffer, int count, int dest, int tag, MPI_Comm comm) {
 	return isend(buffer, count, datatype(hana::type_c<T>), dest, tag, comm);
 }
 
@@ -104,6 +105,24 @@ template<typename T>
 MPI_Request
 iallreduce(T const *sendbuf, T *recvbuf, int count, MPI_Op op, MPI_Comm comm) {
 	return iallreduce(sendbuf, recvbuf, count, datatype(hana::type_c<T>), op, comm);
+}
+
+void
+allgather(void const* sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm);
+
+template<typename S, typename R>
+void
+allgather(S const* sendbuf, int sendcount, R *recvbuf, int recvcount, MPI_Comm comm) {
+	return allgather(sendbuf, sendcount, datatype(hana::type_c<S>), recvbuf, recvcount, datatype(hana::type_c<R>), comm);
+}
+
+MPI_Request
+iallgather(void const* sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm);
+
+template<typename S, typename R>
+MPI_Request
+iallgather(S const* sendbuf, int sendcount, R *recvbuf, int recvcount, MPI_Comm comm) {
+	return iallgather(sendbuf, sendcount, datatype(hana::type_c<S>), recvbuf, recvcount, datatype(hana::type_c<R>), comm);
 }
 
 /* namespace mpi */ }

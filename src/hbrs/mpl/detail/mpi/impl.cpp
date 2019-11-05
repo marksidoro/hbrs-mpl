@@ -149,6 +149,20 @@ iallreduce(void const *sendbuf, void *recvbuf, int count, MPI_Datatype datatype,
 	return request;
 }
 
+void
+allgather(void const* sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm) {
+	BOOST_ASSERT(initialized());
+	safe(MPI_Allgather(sendbuf, sendcount, sendtype, recvbuf, recvcount, recvtype, comm));
+}
+
+MPI_Request
+iallgather(void const* sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm) {
+	BOOST_ASSERT(initialized());
+	MPI_Request request;
+	safe(MPI_Iallgather(sendbuf, sendcount, sendtype, recvbuf, recvcount, recvtype, comm, &request));
+	return request;
+}
+
 /* namespace mpi */ }
 /* namespace detail */ }
 HBRS_MPL_NAMESPACE_END
