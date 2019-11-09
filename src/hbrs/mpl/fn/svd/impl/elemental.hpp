@@ -75,9 +75,9 @@ svd_impl_el(A const& a, svd_control<decompose_mode> const& ctrl, U u, S s, S s_,
 	);
 	el_ctrl.bidiagSVDCtrl.tolType = El::RELATIVE_TO_SELF_SING_VAL_TOL;
 	
-#if !defined(NDEBUG)
+#ifdef HBRS_MPL_ENABLE_DEBUG_OUTPUT
 	el_ctrl.bidiagSVDCtrl.progress = true;
-#endif
+#endif //!HBRS_MPL_ENABLE_DEBUG_OUTPUT
 	
 	if (ctrl.decompose_mode() == decompose_mode::complete) {
 		el_ctrl.bidiagSVDCtrl.approach = El::SVDApproach::FULL_SVD;
