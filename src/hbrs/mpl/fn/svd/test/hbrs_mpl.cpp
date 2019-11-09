@@ -105,6 +105,9 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(_TOL)) {
 		),
 		make_sm(
 			make_ctsav(detail::mat_o), make_matrix_size(hana::size_c<detail::mat_o_m>, hana::size_c<detail::mat_o_n>), row_major_c
+		),
+		make_sm(
+			make_ctsav(detail::mat_p), make_matrix_size(hana::size_c<detail::mat_p_m>, hana::size_c<detail::mat_p_n>), row_major_c
 		)
 	);
 	
