@@ -42,7 +42,7 @@ svd_impl_el(A const& a, svd_control<decompose_mode> const& ctrl, U u, S s, S s_,
 	
 	El::SVDCtrl<El::Base<_Ring_>> el_ctrl;
 	
-	el_ctrl.useLAPACK = true;
+	el_ctrl.useLAPACK = false;
 	/* Use Elemental's native SVD instead of ScaLAPACK's PDGESVD.
 	 * 
 	 * Depending on the numerical properties of the input matrix, ScaLAPACK's PDGESVD fails with INFO = MIN(M,N) + 1
