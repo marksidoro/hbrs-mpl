@@ -32,6 +32,8 @@
 #include <hbrs/mpl/dt/el_dist_matrix.hpp>
 #include <hbrs/mpl/dt/el_dist_vector.hpp>
 
+#include <hbrs/mpl/detail/mpi.hpp>
+
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/m.hpp>
 #include <hbrs/mpl/fn/n.hpp>
@@ -58,6 +60,9 @@
 #include <hbrs/mpl/fn/select.hpp>
 #include <hbrs/mpl/fn/diag.hpp>
 #include <hbrs/mpl/fn/variance.hpp>
+
+#include <boost/numeric/conversion/cast.hpp>
+#include <boost/hana/functional/id.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
@@ -251,6 +256,7 @@ make_matrix_like(
 	return el_dist_matrix<_Ring_, Columnwise, Rowwise, Wrapping>{a.data().Grid(), HBRS_MPL_FWD(sz).m(), HBRS_MPL_FWD(sz).n()};
 }
 
+//TODO: Move code to dedicated global function
 struct square_t {
 	template<typename Ring>
 	auto
@@ -262,6 +268,56 @@ struct square_t {
 
 constexpr square_t square{};
 
+//TODO: Move code to dedicated global function
+template<typename Ring, typename UnaryPredicate>
+bool
+any_of(El::Matrix<Ring> const& a, UnaryPredicate pred) {
+	for(El::Int j = 0; j < a.Width(); ++j) {
+		for(El::Int i = 0; i < a.Height(); ++i) {
+			if (pred(a.Get(i,j))) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+//TODO: Move code to dedicated global function
+template<
+	typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping,
+	typename UnaryPredicate
+>
+bool
+any_of(El::DistMatrix<Ring, Columnwise, Rowwise, Wrapping> const& a, UnaryPredicate pred) {
+	// Converting bool to int because std::vector<bool> does not provide pointer-access.
+	int lcl = any_of(a.LockedMatrix(), pred);
+	std::vector<int> gbl(boost::numeric_cast<std::size_t>(mpi::size(a.Grid().Comm().comm)), false);
+	mpi::allgather(&lcl, 1, gbl.data(), 1, a.Grid().Comm().comm);
+	return std::any_of(gbl.begin(), gbl.end(), [](int x) { return x == true; });
+}
+
+//TODO: Move code to dedicated global function
+struct isnan_t {
+	template<typename T>
+	bool
+	operator()(T && t) const {
+		return std::isnan(HBRS_MPL_FWD(t));
+	}
+};
+
+constexpr isnan_t isnan{};
+
+//TODO: Move code to dedicated global function
+struct isinf_t {
+	template<typename T>
+	bool
+	operator()(T && t) const {
+		return std::isinf(HBRS_MPL_FWD(t));
+	}
+};
+
+constexpr isinf_t isinf{};
+
 //TODO: Turn this code into a dedicated, generic pca() implementation
 /* C++ code is equivalent to MATLAB code in file src/hbrs/mpl/detail/matlab_cxn/impl/pca_level2.m */
 template <typename Matrix, typename Control>
@@ -272,6 +328,7 @@ pca(
 ) {
 	//TODO: Handle complex values
 	using namespace hana::literals;
+	BOOST_ASSERT(any_of(a.data(), isnan) == false);
 	
 	auto const a_sz = (*size)(a);
 	auto const a_m = (*m)(a_sz);
@@ -281,6 +338,7 @@ pca(
 	auto vw = ctrl.normalize()
 		? (*rdivide)(1., variance(columns(a), 0))
 		: ones(make_row_vector_like(a, a_n));
+	BOOST_ASSERT(any_of(vw.data(), isinf) == false);
 	//MATLAB>> if Normalize
 	//MATLAB>>     vVariableWeights = 1./var(x,0);
 	//MATLAB>>     % code equals:
@@ -300,6 +358,7 @@ pca(
 	//MATLAB>> end
 	
 	auto cntr = ctrl.center() ? (*minus)(a, (*expand)(mu, a_sz)) : a;
+	BOOST_ASSERT(any_of(cntr.data(), isnan) == false);
 	//MATLAB>> if Center
 	//MATLAB>>     x = bsxfun(@minus,x,mu);
 	//MATLAB>> end
@@ -308,6 +367,7 @@ pca(
 	auto sqrt = [](auto x) { return power(x, 1./2.); };
 	auto phi_sqrt = transform(vw, sqrt);
 	auto && stdz = ctrl.normalize() ? (*times)(std::move(cntr), expand(phi_sqrt, a_sz)) : std::move(cntr);
+	BOOST_ASSERT(any_of(stdz.data(), isnan) == false);
 	//MATLAB>> PhiSqrt = sqrt(vVariableWeights);
 	//MATLAB>> if Normalize
 	//MATLAB>>     x = bsxfun(@times, x, PhiSqrt);
