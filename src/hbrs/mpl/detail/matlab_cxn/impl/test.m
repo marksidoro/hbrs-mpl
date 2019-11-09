@@ -24,7 +24,7 @@ function test()
     bidiag_test();
 end
 
-function dmd_test()
+function eig_test()
     % TODO: Implement!
 end
 
