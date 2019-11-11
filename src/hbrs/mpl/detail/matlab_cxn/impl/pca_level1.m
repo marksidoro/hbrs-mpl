@@ -25,6 +25,15 @@ function [coeff,score,latent,mu] = pca_level1(A, Economy, Center, Normalize)
         vVariableWeights = ones(1,n,'like',x);
     end
     
+    % Let x_i be a column of x.
+    % If and only if all entries in x_i are zero, then variance(x_i)=0.
+    % If and only if variance(x_i)=0, then 1/variance(x_i)=inf.
+    % Normalization includes a scalar-multiplication sqrt(1/var(x_i)) * x_i
+    % which will results in a column of NaN's iff x_i has only zeros.
+    % Input to MATLAB Coder's SVD must not contain NaN's and thus we just
+    % replace all inf's in vw with 1's and thus "skipping" normalization.
+    vVariableWeights(isinf(vVariableWeights)) = 1;
+    
     DOF=m-Center;
     
     if Center

@@ -318,6 +318,42 @@ struct isinf_t {
 
 constexpr isinf_t isinf{};
 
+//TODO: Move code to dedicated global function
+template<
+	typename Ring,
+	typename Predicate,
+	typename Value,
+	typename std::enable_if_t<
+		std::is_constructible_v<Ring, Value>
+	>* = nullptr
+>
+decltype(auto)
+replace_if(El::Matrix<Ring> & a, Predicate pred, Value v) {
+	for(El::Int j = 0; j < a.Width(); ++j) {
+		for(El::Int i = 0; i < a.Height(); ++i) {
+			if (pred(a.Get(i,j))) {
+				a.Set(i,j, v);
+			}
+		}
+	}
+	return a;
+}
+
+//TODO: Move code to dedicated global function
+template<
+	typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping,
+	typename Predicate,
+	typename Value,
+	typename std::enable_if_t<
+		std::is_constructible_v<Ring, Value>
+	>* = nullptr
+>
+decltype(auto)
+replace_if(El::DistMatrix<Ring, Columnwise, Rowwise, Wrapping> & a, Predicate pred, Value v) {
+	replace_if(a.Matrix(), pred, HBRS_MPL_FWD(v));
+	return a;
+}
+
 //TODO: Turn this code into a dedicated, generic pca() implementation
 /* C++ code is equivalent to MATLAB code in file src/hbrs/mpl/detail/matlab_cxn/impl/pca_level2.m */
 template <typename Matrix, typename Control>
@@ -329,6 +365,7 @@ pca(
 	//TODO: Handle complex values
 	using namespace hana::literals;
 	BOOST_ASSERT(any_of(a.data(), isnan) == false);
+	BOOST_ASSERT(any_of(a.data(), isinf) == false);
 	
 	auto const a_sz = (*size)(a);
 	auto const a_m = (*m)(a_sz);
@@ -338,6 +375,15 @@ pca(
 	auto vw = ctrl.normalize()
 		? (*rdivide)(1., variance(columns(a), 0))
 		: ones(make_row_vector_like(a, a_n));
+	/* Let x_i be a column of x.
+	 * If and only if all entries in x_i are zero, then variance(x_i)=0.
+	 * If and only if variance(x_i)=0, then 1/variance(x_i)=inf.
+	 * Normalization includes a scalar-multiplication sqrt(1/var(x_i)) * x_i
+	 * which will results in a column of NaN's iff x_i has only zeros.
+	 * (Sca-)LAPACK's and Elemental's SVD do not handle NaN's and thus we just
+	 * replace all inf's in vw with 1's and thus "skipping" normalization.
+	 */
+	replace_if(vw.data(), isinf, 1);
 	BOOST_ASSERT(any_of(vw.data(), isinf) == false);
 	//MATLAB>> if Normalize
 	//MATLAB>>     vVariableWeights = 1./var(x,0);
