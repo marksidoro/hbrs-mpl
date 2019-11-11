@@ -338,7 +338,7 @@ pca(
 	auto vw = ctrl.normalize()
 		? (*rdivide)(1., variance(columns(a), 0))
 		: ones(make_row_vector_like(a, a_n));
-// 	BOOST_ASSERT(any_of(vw.data(), isinf) == false);
+	BOOST_ASSERT(any_of(vw.data(), isinf) == false);
 	//MATLAB>> if Normalize
 	//MATLAB>>     vVariableWeights = 1./var(x,0);
 	//MATLAB>>     % code equals:
@@ -358,17 +358,7 @@ pca(
 	//MATLAB>> end
 	
 	auto cntr = ctrl.center() ? (*minus)(a, (*expand)(mu, a_sz)) : a;
-// 	BOOST_ASSERT(any_of(cntr.data(), isnan) == false);
-	for(El::Int i = 0; i < cntr.data().Width(); ++i) {
-		bool is_zero = true;
-		for(El::Int j = 0; j < cntr.data().Height(); ++j) {
-			if (cntr.data().Get(j,i) != 0.) {
-				is_zero = false;
-				break;
-			}
-		}
-		BOOST_ASSERT(!is_zero);
-	}
+	BOOST_ASSERT(any_of(cntr.data(), isnan) == false);
 	//MATLAB>> if Center
 	//MATLAB>>     x = bsxfun(@minus,x,mu);
 	//MATLAB>> end
