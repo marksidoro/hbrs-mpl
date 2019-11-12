@@ -198,6 +198,22 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(_TOL)) {
 			}
 		},
 		#endif
+		[](auto && a, auto mode) {
+			auto sz_ = (*size)(a);
+			auto m_ = (*m)(sz_);
+			auto n_ = (*n)(sz_);
+			if constexpr(
+				(mode != decompose_mode::complete) || (hana::value(m_) < hana::value(n_))
+			) {
+				return detail::not_supported{};
+			} else {
+				return hana::make_tuple(
+					detail::svd_impl_rtsam{},
+					make_rtsam(HBRS_MPL_FWD(a)),
+					svd_control<decompose_mode>{mode}
+				);
+			}
+		},
 		"SEQUENCE_TERMINATOR___REMOVED_BY_DROP_BACK"
 	));
 	
@@ -267,7 +283,6 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(_TOL)) {
 				
 				auto const& result_i = hana::at(results, i);
 				auto const& result_j = hana::at(results, j);
-				//TODO: Take ++j if j not supported!
 				
 				using hbrs::mpl::select;
 				
@@ -560,46 +575,6 @@ reasons for test failures:
 
 
  */
-}
-
-BOOST_AUTO_TEST_CASE(svd_rtsam, * utf::tolerance(0.000000001)) {
-	using namespace hbrs::mpl;
-	using hbrs::mpl::decompose_mode;
-	
-	rtsam<double, storage_order::row_major> A{
-		{1, 2, 3,
-		 4, 5, 6,
-		 7, 8, 9},
-		make_matrix_size(3,3)
-	};
-
-	rtsam<double, storage_order::row_major> C{
-		{1, 2,  3,
-		 4, 5,  6,
-		 7, 8,  9,
-		10, 11, 12},
-		make_matrix_size(4,3)
-	};
-
-	rtsam<double, storage_order::row_major> D{
-		{1, 0,  0,  0,
-		 0, 6,  7,  0,
-		 0, 0, 11, 12,
-		 0, 0,  0,  0},
-		 make_matrix_size(4,4)
-	};
-	
-	auto ASVD = (*svd)(A, make_svd_control(decompose_mode::complete));
-	auto CSVD = (*svd)(C, make_svd_control(decompose_mode::complete));
-	auto DSVD = (*svd)(D, make_svd_control(decompose_mode::complete));
-
-	auto rA = (*multiply)(multiply(ASVD.u(), ASVD.s()), transpose(ASVD.v()));
-	auto rC = (*multiply)(multiply(CSVD.u(), CSVD.s()), transpose(CSVD.v()));
-	auto rD = (*multiply)(multiply(DSVD.u(), DSVD.s()), transpose(DSVD.v()));
-	
-	HBRS_MPL_TEST_MMEQ(A, rA, false);
-	HBRS_MPL_TEST_MMEQ(C, rC, false);
-	HBRS_MPL_TEST_MMEQ(D, rD, false);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
