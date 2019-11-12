@@ -25,6 +25,8 @@
 #include <hbrs/mpl/dt/smr.hpp>
 #include <hbrs/mpl/dt/rtsacv.hpp>
 #include <hbrs/mpl/dt/rtsarv.hpp>
+#include <hbrs/mpl/dt/sm.hpp>
+#include <hbrs/mpl/dt/ctsav.hpp>
 #include <hbrs/mpl/dt/submatrix.hpp>
 #include <hbrs/mpl/dt/range.hpp>
 #include <hbrs/mpl/dt/storage_order.hpp>
@@ -34,6 +36,7 @@
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/not_equal.hpp>
 #include <hbrs/mpl/detail/translate_index.hpp>
+#include <hbrs/mpl/detail/copy_matrix.hpp>
 #include <hbrs/mpl/dt/exception.hpp>
 
 #include <boost/hana/core/make.hpp>
@@ -256,6 +259,27 @@ struct make_impl<hbrs::mpl::rtsam_tag> {
 	static hbrs::mpl::rtsam<std::remove_const_t<Ring>, Order>
 	apply(std::vector<Ring> data, hbrs::mpl::matrix_size<std::size_t, std::size_t> sz, hbrs::mpl::storage_order_<Order>) {
 		return {data, sz};
+	}
+	
+	template <
+		typename Ring,
+		std::size_t Length,
+		typename M,
+		typename N,
+		hbrs::mpl::storage_order Order,
+		typename std::enable_if_t<
+			std::is_convertible_v<M,std::size_t> && std::is_convertible_v<N,std::size_t>
+		>* = nullptr
+	>
+	static constexpr auto
+	apply(
+		hbrs::mpl::sm<hbrs::mpl::ctsav<Ring, Length>, hbrs::mpl::matrix_size<M, N>, Order> const& x
+	) {
+		using namespace hbrs::mpl;
+		typedef std::remove_cv_t<Ring> _Ring_;
+		matrix_size<std::size_t, std::size_t> sz = {x.size()};
+		rtsam<_Ring_, Order> y = {sz.m(), sz.n()};
+		return hbrs::mpl::detail::copy_matrix(x, y);
 	}
 };
 
