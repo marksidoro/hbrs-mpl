@@ -31,6 +31,7 @@
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/transpose.hpp>
 #include <hbrs/mpl/fn/power.hpp>
+#include <boost/assert.hpp>
 #include <type_traits>
 #include <cmath>
 
@@ -49,13 +50,14 @@ house_impl_rtsacv::operator()(rtsacv<Ring> const& x) {
 	typedef std::decay_t<Ring> _Ring_;
 	
 	/* x2m is a temporary which is written x(2:m) in the book and is equivalent to x(range(1,m-1)) in this code */
-	auto x2m = (*select)(x, range<std::size_t,std::size_t>{1u, (*size)(x)-1u});
+	auto x2m = (*select)(x, range<std::size_t,std::size_t>{1u, (*size)(x)-1});
+	BOOST_ASSERT((*size)(x2m) == ((*size)(x)-1));
 	auto sigma = (*multiply)(transpose(x2m), x2m);
 
 	/* The vector ni is the vector x with the value 1 in its first row */
 	rtsacv<_Ring_> ni = x;
 	ni.at(0) = 1;
-	
+	BOOST_ASSERT(ni.at(0) == 1);
 	_Ring_ beta = 0;
 
 	if (sigma == 0 && x.at(0) >= 0) {
@@ -71,11 +73,12 @@ house_impl_rtsacv::operator()(rtsacv<Ring> const& x) {
 			ni.at(0) = -sigma / (x.at(0) + mi);
 		}
 		auto nisq = (*power)(ni.at(0), _Ring_(2)); // square of first element of ni
+		BOOST_ASSERT(nisq == (ni.at(0) * ni.at(0)));
 		beta = 2 * nisq / (sigma + nisq);
 		ni = (*divide)(ni, ni.at(0));
 	}
 	
-	return make_house_result(x, beta);
+	return make_house_result(ni, beta);
 }
 
 /* namespace detail */ }
