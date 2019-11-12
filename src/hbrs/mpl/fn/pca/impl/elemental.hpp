@@ -33,6 +33,8 @@
 #include <hbrs/mpl/dt/el_dist_vector.hpp>
 
 #include <hbrs/mpl/detail/mpi.hpp>
+#include <hbrs/mpl/detail/is_nan.hpp>
+#include <hbrs/mpl/detail/is_inf.hpp>
 
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/m.hpp>
@@ -60,6 +62,7 @@
 #include <hbrs/mpl/fn/select.hpp>
 #include <hbrs/mpl/fn/diag.hpp>
 #include <hbrs/mpl/fn/variance.hpp>
+#include <hbrs/mpl/fn/any_of.hpp>
 
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/hana/functional/id.hpp>
@@ -269,56 +272,6 @@ struct square_t {
 constexpr square_t square{};
 
 //TODO: Move code to dedicated global function
-template<typename Ring, typename UnaryPredicate>
-bool
-any_of(El::Matrix<Ring> const& a, UnaryPredicate pred) {
-	for(El::Int j = 0; j < a.Width(); ++j) {
-		for(El::Int i = 0; i < a.Height(); ++i) {
-			if (pred(a.Get(i,j))) {
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-//TODO: Move code to dedicated global function
-template<
-	typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping,
-	typename UnaryPredicate
->
-bool
-any_of(El::DistMatrix<Ring, Columnwise, Rowwise, Wrapping> const& a, UnaryPredicate pred) {
-	// Converting bool to int because std::vector<bool> does not provide pointer-access.
-	int lcl = any_of(a.LockedMatrix(), pred);
-	std::vector<int> gbl(boost::numeric_cast<std::size_t>(mpi::size(a.Grid().Comm().comm)), false);
-	mpi::allgather(&lcl, 1, gbl.data(), 1, a.Grid().Comm().comm);
-	return std::any_of(gbl.begin(), gbl.end(), [](int x) { return x == true; });
-}
-
-//TODO: Move code to dedicated global function
-struct isnan_t {
-	template<typename T>
-	bool
-	operator()(T && t) const {
-		return std::isnan(HBRS_MPL_FWD(t));
-	}
-};
-
-constexpr isnan_t isnan{};
-
-//TODO: Move code to dedicated global function
-struct isinf_t {
-	template<typename T>
-	bool
-	operator()(T && t) const {
-		return std::isinf(HBRS_MPL_FWD(t));
-	}
-};
-
-constexpr isinf_t isinf{};
-
-//TODO: Move code to dedicated global function
 template<
 	typename Ring,
 	typename Predicate,
@@ -364,8 +317,8 @@ pca(
 ) {
 	//TODO: Handle complex values
 	using namespace hana::literals;
-	BOOST_ASSERT(any_of(a.data(), isnan) == false);
-	BOOST_ASSERT(any_of(a.data(), isinf) == false);
+	BOOST_ASSERT(any_of(a, is_nan) == false);
+	BOOST_ASSERT(any_of(a, is_inf) == false);
 	
 	auto const a_sz = (*size)(a);
 	auto const a_m = (*m)(a_sz);
@@ -383,8 +336,8 @@ pca(
 	 * (Sca-)LAPACK's and Elemental's SVD do not handle NaN's and thus we just
 	 * replace all inf's in vw with 1's and thus "skipping" normalization.
 	 */
-	replace_if(vw.data(), isinf, 1);
-	BOOST_ASSERT(any_of(vw.data(), isinf) == false);
+	replace_if(vw.data(), is_inf, 1);
+	BOOST_ASSERT(any_of(vw, is_inf) == false);
 	//MATLAB>> if Normalize
 	//MATLAB>>     vVariableWeights = 1./var(x,0);
 	//MATLAB>>     % code equals:
@@ -404,7 +357,7 @@ pca(
 	//MATLAB>> end
 	
 	auto cntr = ctrl.center() ? (*minus)(a, (*expand)(mu, a_sz)) : a;
-	BOOST_ASSERT(any_of(cntr.data(), isnan) == false);
+	BOOST_ASSERT(any_of(cntr, is_nan) == false);
 	//MATLAB>> if Center
 	//MATLAB>>     x = bsxfun(@minus,x,mu);
 	//MATLAB>> end
@@ -413,7 +366,7 @@ pca(
 	auto sqrt = [](auto x) { return power(x, 1./2.); };
 	auto phi_sqrt = transform(vw, sqrt);
 	auto && stdz = ctrl.normalize() ? (*times)(std::move(cntr), expand(phi_sqrt, a_sz)) : std::move(cntr);
-	BOOST_ASSERT(any_of(stdz.data(), isnan) == false);
+	BOOST_ASSERT(any_of(stdz, is_nan) == false);
 	//MATLAB>> PhiSqrt = sqrt(vVariableWeights);
 	//MATLAB>> if Normalize
 	//MATLAB>>     x = bsxfun(@times, x, PhiSqrt);
