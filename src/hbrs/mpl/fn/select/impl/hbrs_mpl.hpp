@@ -178,7 +178,7 @@ select_impl_rtsacv_range::operator() (rtsacv<Ring> const& v, range<std::size_t,s
 	for (std::size_t i = 0; i < (*size)(v2); ++i) {
 		(*at)(v2, i) = (*at)(v, i + rng.first());
 	}
-	return v;
+	return v2;
 }
 
 template<typename Ring>
@@ -188,7 +188,7 @@ select_impl_rtsarv_range::operator() (rtsarv<Ring> const& v, range<std::size_t,s
 	for (std::size_t i = 0; i < (*size)(v2); ++i) {
 		(*at)(v2, i) = (*at)(v, i + rng.first());
 	}
-	return v;
+	return v2;
 }
 
 /* namespace detail */ }
