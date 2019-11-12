@@ -236,10 +236,9 @@ BOOST_AUTO_TEST_CASE(bidiag_comparison, * utf::tolerance(_TOL)) {
 				auto const& bidiag_u_j = (*at)(result_j, bidiag_u{});
 				if ((m_ > n_) && (mode == decompose_mode::complete)) {
 					auto rng = std::make_pair(make_matrix_index(0,0), make_matrix_size((int)m_, (int)n_));
-					//TODO: Uncomment when implemented!
-// 					auto const bidiag_u_i_mxn = (*select)(bidiag_u_i, rng);
-// 					auto const bidiag_u_j_mxn = (*select)(bidiag_u_j, rng);
-// 					HBRS_MPL_TEST_MMEQ(bidiag_u_i_mxn, bidiag_u_j_mxn, true);
+					auto const bidiag_u_i_mxn = (*select)(bidiag_u_i, rng);
+					auto const bidiag_u_j_mxn = (*select)(bidiag_u_j, rng);
+					HBRS_MPL_TEST_MMEQ(bidiag_u_i_mxn, bidiag_u_j_mxn, true);
 				} else {
 					HBRS_MPL_TEST_MMEQ(bidiag_u_i, bidiag_u_j, true);
 				}
@@ -257,10 +256,9 @@ BOOST_AUTO_TEST_CASE(bidiag_comparison, * utf::tolerance(_TOL)) {
 					((mode == decompose_mode::complete) || (mode == decompose_mode::zero))
 				) {
 					auto rng = std::make_pair(make_matrix_index(0,0), make_matrix_size((int)n_, (int)m_));
-					//TODO: Uncomment when implemented!
-// 					auto const bidiag_v_i_mxn = (*select)(bidiag_v_i, rng);
-// 					auto const bidiag_v_j_mxn = (*select)(bidiag_v_j, rng);
-// 					HBRS_MPL_TEST_MMEQ(bidiag_v_i_mxn, bidiag_v_j_mxn, true);
+					auto const bidiag_v_i_mxn = (*select)(bidiag_v_i, rng);
+					auto const bidiag_v_j_mxn = (*select)(bidiag_v_j, rng);
+					HBRS_MPL_TEST_MMEQ(bidiag_v_i_mxn, bidiag_v_j_mxn, true);
 				} else {
 					HBRS_MPL_TEST_MMEQ(bidiag_v_i, bidiag_v_j, true);
 				}

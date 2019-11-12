@@ -126,6 +126,26 @@ select_impl_rtsam_range_range::operator()(
 ) const;
 
 template
+decltype(auto)
+select_impl_rtsam_index_offset::operator()(
+	rtsam<double,storage_order::row_major> const& a,
+	std::pair<
+		matrix_index<std::size_t, std::size_t>,
+		matrix_size<std::size_t, std::size_t>
+	>  const& rng
+) const;
+
+template
+decltype(auto)
+select_impl_rtsam_index_offset::operator()(
+	rtsam<float,storage_order::column_major> const& a,
+	std::pair<
+		matrix_index<std::size_t, std::size_t>,
+		matrix_size<std::size_t, std::size_t>
+	>  const& rng
+) const;
+
+template
 auto
 select_impl_rtsacv_range::operator() (
 	rtsacv<float> const&,

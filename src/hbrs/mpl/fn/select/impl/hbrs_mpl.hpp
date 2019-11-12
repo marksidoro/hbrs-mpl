@@ -171,6 +171,24 @@ select_impl_rtsam_range_range::operator()(
 	};
 }
 
+template<typename Ring, storage_order Order>
+decltype(auto)
+select_impl_rtsam_index_offset::operator()(
+	rtsam<Ring,Order> const& a,
+	std::pair<
+		matrix_index<std::size_t, std::size_t>,
+		matrix_size<std::size_t, std::size_t>
+	>  const& rng
+) const {
+	return submatrix<
+		rtsam<Ring,Order> const&,
+		matrix_index<std::size_t, std::size_t>,
+		matrix_size<std::size_t, std::size_t>
+	> {
+		a, rng.first, rng.second
+	};
+}
+
 template<typename Ring>
 auto
 select_impl_rtsacv_range::operator() (rtsacv<Ring> const& v, range<std::size_t,std::size_t> const& rng) const {

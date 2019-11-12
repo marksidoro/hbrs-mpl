@@ -25,6 +25,8 @@
 #include <hbrs/mpl/dt/rtsarv/fwd.hpp>
 #include <hbrs/mpl/dt/submatrix/fwd.hpp>
 #include <hbrs/mpl/dt/range/fwd.hpp>
+#include <hbrs/mpl/dt/matrix_index/fwd.hpp>
+#include <hbrs/mpl/dt/matrix_size/fwd.hpp>
 #include <boost/hana/ext/std/pair.hpp>
 #include <boost/hana/core/tag_of.hpp>
 #include <type_traits>
@@ -105,6 +107,18 @@ struct select_impl_rtsam_range_range {
 	) const;
 };
 
+struct select_impl_rtsam_index_offset {
+	template<typename Ring, storage_order Order>
+	decltype(auto)
+	operator()(
+		rtsam<Ring,Order> const& a,
+		std::pair<
+			matrix_index<std::size_t, std::size_t>,
+			matrix_size<std::size_t, std::size_t>
+		>  const& rng
+	) const;
+};
+
 struct select_impl_rtsacv_range {
 	template<typename Ring>
 	auto
@@ -130,6 +144,7 @@ HBRS_MPL_NAMESPACE_END
 		hbrs::mpl::detail::select_impl_rtsam_range_index{},                                                            \
 		hbrs::mpl::detail::select_impl_rtsam_index_range{},                                                            \
 		hbrs::mpl::detail::select_impl_rtsam_range_range{},                                                            \
+		hbrs::mpl::detail::select_impl_rtsam_index_offset{},                                                           \
 		hbrs::mpl::detail::select_impl_rtsacv_range{},                                                                 \
 		hbrs::mpl::detail::select_impl_rtsarv_range{}                                                                  \
 	)
