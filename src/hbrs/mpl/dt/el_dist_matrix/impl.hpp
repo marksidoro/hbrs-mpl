@@ -34,6 +34,35 @@
 #include <type_traits>
 #include <initializer_list>
 
+#ifdef EL_HAVE_SCALAPACK
+	#pragma message "CAUTION: Elemental has been compiled with ScaLAPACK support. USE AT YOUR OWN RISK!"
+	/* NOTE:
+	 * If one MPI process is not part of El::Grid, then ScaLAPACK throws an error in [1]:
+	 *    BLACS ERROR 'Cannot define a BLACS system handle based on MPI_COMM_NULL'
+	 *    from {-1,-1}, pnum=460, Contxt=-1, on line 18 of file 'scalapack-2.0.2/BLACS/SRC/sys2blacs_.c'.
+	 *
+	 * Backtrace:
+	 * During grid initialization in Grid::SetUpGrid() [2], this code is executed if any process is part of the grid:
+	 * 
+	 *    if( InGrid() ) {
+	 *      ...
+	 *    } else {
+	 *      ...
+	 *      vcComm_     = mpi::COMM_NULL;
+	 *      ...
+	 *    }
+	 *    #ifdef EL_HAVE_SCALAPACK
+	 *       blacsVCHandle_ = blacs::Handle( vcComm_.comm );
+	 * 
+	 * blacs::Handle() then calls ScaLAPACK's Csys2blacs_handle() function with MPI_COMM_NULL,
+	 * which then causes the above-mentioned BLACS ERROR.
+	 *
+	 * References:
+	 * [1] scalapack/BLACS/SRC/sys2blacs_.c
+	 * [2] Elemental/src/core/Grid.cpp
+	 */
+#endif //!EL_HAVE_SCALAPACK
+
 HBRS_MPL_NAMESPACE_BEGIN
 
 template<
