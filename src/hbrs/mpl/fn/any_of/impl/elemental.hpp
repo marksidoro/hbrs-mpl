@@ -64,7 +64,7 @@ any_of_el_dist_matrix_impl(
 ) {
 	// Converting bool to int because std::vector<bool> does not provide pointer-access.
 	int lcl = any_of_el_matrix_impl(a.LockedMatrix(), pred);
-	std::vector<int> gbl(boost::numeric_cast<std::size_t>(mpi::size(a.Grid().Comm().comm)), false);
+	std::vector<int> gbl(boost::numeric_cast<std::size_t>(mpi::comm_size(a.Grid().Comm().comm)), false);
 	mpi::allgather(&lcl, 1, gbl.data(), 1, a.Grid().Comm().comm);
 	return std::any_of(gbl.begin(), gbl.end(), [](int x) { return x == true; });
 }

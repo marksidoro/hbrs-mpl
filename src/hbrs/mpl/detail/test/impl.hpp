@@ -298,7 +298,7 @@ compare_fpv(
 		auto a_local = gather(a_dist);                                                                                 \
 		auto b_local = gather(b_dist);                                                                                 \
 		                                                                                                               \
-		if (!mpi::initialized() || (mpi::rank() == 0)) {                                                               \
+		if (!mpi::initialized() || (mpi::comm_rank() == 0)) {                                                          \
 			auto a_m = (*m)(size(a_local));                                                                            \
 			auto b_m = (*m)(size(b_local));                                                                            \
 			BOOST_TEST((*equal)(a_m, b_m), "a_m: " << a_m << " b_m: " << b_m);                                         \
@@ -335,7 +335,7 @@ compare_fpv(
 		auto a_local = gather(a_dist);                                                                                 \
 		auto b_local = gather(b_dist);                                                                                 \
 		                                                                                                               \
-		if (!mpi::initialized() || (mpi::rank() == 0)) {                                                               \
+		if (!mpi::initialized() || (mpi::comm_rank() == 0)) {                                                          \
 			auto a_sz = (*size)(a_local);                                                                              \
 			auto b_sz = (*size)(b_local);                                                                              \
 			BOOST_TEST((*equal)(a_sz, b_sz), "a_sz: " << a_sz << " b_sz: " << b_sz);                                   \
@@ -363,7 +363,7 @@ compare_fpv(
 		using hbrs::mpl::detail::gather;                                                                               \
 		namespace mpi = hbrs::mpl::detail::mpi;                                                                        \
 		auto a_local = gather(a_dist);                                                                                 \
-		if (!mpi::initialized() || (mpi::rank() == 0)) {                                                               \
+		if (!mpi::initialized() || (mpi::comm_rank() == 0)) {                                                          \
 			auto sz_ = (*size)(a_local);                                                                               \
 			auto m_ = (*m)(sz_);                                                                                       \
 			auto n_ = (*n)(sz_);                                                                                       \

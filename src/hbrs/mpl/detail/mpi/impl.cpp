@@ -60,7 +60,7 @@ initialized() {
 }
 
 int
-rank(MPI_Comm comm) {
+comm_rank(MPI_Comm comm) {
 	BOOST_ASSERT(initialized());
 	int rank;
 	safe(MPI_Comm_rank(comm, &rank));
@@ -68,7 +68,7 @@ rank(MPI_Comm comm) {
 }
 
 int
-size(MPI_Comm comm) {
+comm_size(MPI_Comm comm) {
 	BOOST_ASSERT(initialized());
 	int size;
 	safe(MPI_Comm_size(comm, &size));

@@ -42,10 +42,10 @@ bool
 initialized();
 
 int
-rank(MPI_Comm comm = MPI_COMM_WORLD);
+comm_rank(MPI_Comm comm = MPI_COMM_WORLD);
 
 int
-size(MPI_Comm comm = MPI_COMM_WORLD);
+comm_size(MPI_Comm comm = MPI_COMM_WORLD);
 
 void
 barrier(MPI_Comm comm = MPI_COMM_WORLD);
