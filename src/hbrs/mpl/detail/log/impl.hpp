@@ -56,10 +56,18 @@
 #include <vector>
 #include <string>
 
-#define HBRS_MPL_LOG_TRIVIAL(lvl)                                                                                      \
-	BOOST_LOG_TRIVIAL(lvl)                                                                                             \
-		<< boost::log::add_value("__FILE__", __FILE__)                                                                 \
-		<< boost::log::add_value("__LINE__", __LINE__)
+#define HBRS_MPL_ENABLE_LOGGING /* TODO: Make this a CMake variable? */
+
+#ifdef HBRS_MPL_ENABLE_LOGGING
+	#define HBRS_MPL_LOG_TRIVIAL(lvl)                                                                                  \
+		BOOST_LOG_TRIVIAL(lvl)                                                                                         \
+			<< boost::log::add_value("__FILE__", __FILE__)                                                             \
+			<< boost::log::add_value("__LINE__", __LINE__)
+#else // !HBRS_MPL_ENABLE_LOGGING
+	#define HBRS_MPL_LOG_TRIVIAL(lvl)                                                                                  \
+		if constexpr (false)                                                                                           \
+			std::clog
+#endif //!HBRS_MPL_ENABLE_LOGGING
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
