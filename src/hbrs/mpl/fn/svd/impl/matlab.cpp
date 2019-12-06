@@ -21,6 +21,7 @@
 #include <hbrs/mpl/dt/svd_control.hpp>
 #include <hbrs/mpl/dt/svd_result.hpp>
 #include <hbrs/mpl/dt/decompose_mode.hpp>
+#include <hbrs/mpl/detail/log.hpp>
 
 extern "C" {
 	#include <hbrs/mpl/detail/matlab_cxn/impl/svd_level0.h>
@@ -41,6 +42,9 @@ namespace detail {
 		ml_matrix<real_T> const& a,                                                                                    \
 		svd_control<decompose_mode> const& ctrl                                                                        \
 	) const {                                                                                                          \
+		HBRS_MPL_LOG_TRIVIAL(debug) << "svd:matlab:begin";                                                             \
+		HBRS_MPL_LOG_TRIVIAL(trace) << "A:" << loggable{a};                                                            \
+		                                                                                                               \
 		ml_matrix<real_T> u, s, v;                                                                                     \
 		                                                                                                               \
 		svd_level ## lvl(                                                                                              \
@@ -55,6 +59,10 @@ namespace detail {
 			&v.data()                                                                                                  \
 		);                                                                                                             \
                                                                                                                        \
+		HBRS_MPL_LOG_TRIVIAL(trace) << "U:" << loggable{u};                                                            \
+		HBRS_MPL_LOG_TRIVIAL(trace) << "S:" << loggable{s};                                                            \
+		HBRS_MPL_LOG_TRIVIAL(trace) << "V:" << loggable{v};                                                            \
+		HBRS_MPL_LOG_TRIVIAL(debug) << "svd:matlab:end";                                                               \
 		return {u,s,v};                                                                                                \
 	}
 

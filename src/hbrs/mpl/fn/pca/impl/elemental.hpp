@@ -35,6 +35,7 @@
 #include <hbrs/mpl/detail/mpi.hpp>
 #include <hbrs/mpl/detail/is_nan.hpp>
 #include <hbrs/mpl/detail/is_inf.hpp>
+#include <hbrs/mpl/detail/log.hpp>
 
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/m.hpp>
@@ -315,6 +316,9 @@ pca(
 	Matrix const& a,
 	Control const& ctrl
 ) {
+	HBRS_MPL_LOG_TRIVIAL(debug) << "pca:elemental:begin";
+	HBRS_MPL_LOG_TRIVIAL(trace) << "A:" << loggable{a};
+	
 	//TODO: Handle complex values
 	using namespace hana::literals;
 	BOOST_ASSERT(any_of(a, is_nan) == false);
@@ -469,6 +473,13 @@ pca(
 	
 	//MATLAB>> coeff = bsxfun(@times, coeff, colsign);
 	//MATLAB>> score = bsxfun(@times, score, colsign);
+	
+	
+	HBRS_MPL_LOG_TRIVIAL(trace) << "coeff:" << loggable{coeff_sgn};
+	HBRS_MPL_LOG_TRIVIAL(trace) << "score:" << loggable{score_sgn};
+	HBRS_MPL_LOG_TRIVIAL(trace) << "latent:" << loggable{latent};
+	HBRS_MPL_LOG_TRIVIAL(trace) << "mu:" << loggable{mu};
+	HBRS_MPL_LOG_TRIVIAL(debug) << "pca:elemental:end";
 	
 	return make_pca_result(coeff_sgn, score_sgn, latent, mu);
 }

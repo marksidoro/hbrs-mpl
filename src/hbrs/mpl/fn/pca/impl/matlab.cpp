@@ -22,6 +22,7 @@
 #include <hbrs/mpl/dt/pca_result.hpp>
 #include <hbrs/mpl/dt/ml_matrix.hpp>
 #include <hbrs/mpl/dt/ml_vector.hpp>
+#include <hbrs/mpl/detail/log.hpp>
 
 extern "C" {
 	#include <hbrs/mpl/detail/matlab_cxn/impl/pca_level0.h>
@@ -44,6 +45,9 @@ namespace detail {
 		ml_matrix<real_T> const& a,                                                                                    \
 		pca_control<bool,bool,bool> const& ctrl                                                                        \
 	) const {                                                                                                          \
+		HBRS_MPL_LOG_TRIVIAL(debug) << "pca:matlab:begin";                                                             \
+		HBRS_MPL_LOG_TRIVIAL(trace) << "A:" << loggable{a};                                                            \
+                                                                                                                       \
 		ml_matrix<real_T> coeff, score;                                                                                \
 		ml_column_vector<real_T> latent;                                                                               \
 		ml_matrix<real_T> mu;                                                                                          \
@@ -59,6 +63,12 @@ namespace detail {
 			&mu.data()                                                                                                 \
 		);                                                                                                             \
 		                                                                                                               \
+		HBRS_MPL_LOG_TRIVIAL(trace) << "coeff:" << loggable{coeff};                                                    \
+		HBRS_MPL_LOG_TRIVIAL(trace) << "score:" << loggable{score};                                                    \
+		HBRS_MPL_LOG_TRIVIAL(trace) << "latent:" << loggable{latent};                                                  \
+		HBRS_MPL_LOG_TRIVIAL(trace) << "mu:" << loggable{mu};                                                          \
+		                                                                                                               \
+		HBRS_MPL_LOG_TRIVIAL(debug) << "pca:matlab:end";                                                               \
 		return { coeff, score, latent, std::move(mu)[0] };                                                             \
 	}
 

@@ -45,7 +45,7 @@ if (HBRS_MPL_ENABLE_ELEMENTAL)
         PUBLIC ${Elemental_INCLUDE_DIRS})
 endif()
 
-target_compile_definitions(hbrs_mpl PUBLIC ${MPI_CXX_COMPILE_DEFINITIONS})
+target_compile_definitions(hbrs_mpl PUBLIC ${MPI_CXX_COMPILE_DEFINITIONS} BOOST_LOG_DYN_LINK)
 if (HBRS_MPL_ENABLE_ELEMENTAL)
     target_compile_definitions(hbrs_mpl PUBLIC ${Elemental_DEFINITIONS})
     # NOTE: Linker and compiler flags are not adopted from Elemental because Elemental might be build with a compiler/linker

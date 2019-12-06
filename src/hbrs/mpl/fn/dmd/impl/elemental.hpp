@@ -29,6 +29,8 @@
 #include <hbrs/mpl/dt/el_dist_matrix.hpp>
 #include <hbrs/mpl/dt/el_dist_vector.hpp>
 
+#include <hbrs/mpl/detail/log.hpp>
+
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/m.hpp>
 #include <hbrs/mpl/fn/n.hpp>
@@ -60,13 +62,12 @@ dmd(
 	X2 const& x2,
 	Control const& ctrl
 ) {
+	HBRS_MPL_LOG_TRIVIAL(debug) << "dmd:elemental:begin";
+	HBRS_MPL_LOG_TRIVIAL(trace) << "X1:" << loggable{x1};
+	HBRS_MPL_LOG_TRIVIAL(trace) << "X2:" << loggable{x2};
+	
 	typedef decltype(x1.data().Get(0,0)) Ring;
 	typedef std::decay_t<Ring> _Ring_;
-	
-#if !defined(NDEBUG)
-	El::Print(x1.data(), "x1");
-	El::Print(x2.data(), "x2");
-#endif
 	
 	auto const x1_sz = (*size)(x1);
 	auto const x1_m = (*m)(x1_sz);
@@ -83,11 +84,9 @@ dmd(
 	auto && S = (*at)(usv, svd_s{});
 	auto && V = (*at)(usv, svd_v{});
 	
-#if !defined(NDEBUG)
-	El::Print(U.data(), "U");
-	El::Print(S.data(), "S");
-	El::Print(V.data(), "V");
-#endif
+	HBRS_MPL_LOG_TRIVIAL(trace) << "U:" << loggable{U};
+	HBRS_MPL_LOG_TRIVIAL(trace) << "S:" << loggable{S};
+	HBRS_MPL_LOG_TRIVIAL(trace) << "V:" << loggable{V};
 	
 	auto U_r = (*select)(
 		std::move(U),
@@ -104,11 +103,9 @@ dmd(
 		std::make_pair(El::ALL, El::IR(0, r))
 	);
 	
-#if !defined(NDEBUG)
-	El::Print(U_r.data(), "U_r");
-	El::Print(S_r.data(), "S_r");
-	El::Print(V_r.data(), "V_r");
-#endif
+	HBRS_MPL_LOG_TRIVIAL(trace) << "U_r:" << loggable{U_r};
+	HBRS_MPL_LOG_TRIVIAL(trace) << "S_r:" << loggable{S_r};
+	HBRS_MPL_LOG_TRIVIAL(trace) << "V_r:" << loggable{V_r};
 	
 	auto Atilde =
 		(*multiply)(
@@ -121,18 +118,15 @@ dmd(
 			),
 			inverse(diagonal_matrix_without_zeros_on_main_diagonal<decltype(S_r)>{S_r})
 		);
-#if !defined(NDEBUG)
-	El::Print(Atilde.data(), "Atilde");
-#endif
+	
+	HBRS_MPL_LOG_TRIVIAL(trace) << "A~:" << loggable{Atilde};
 	
 	auto VD = (*eig)(Atilde, eig_control<>{});
 	auto && D   = (*at)(VD, eig_eigenvalues{});
 	auto && W_r = (*at)(VD, eig_eigenvectors{});
 	
-#if !defined(NDEBUG)
-	El::Print(D.data(), "D");
-	El::Print(W_r.data(), "W_r");
-#endif
+	HBRS_MPL_LOG_TRIVIAL(trace) << "D:" << loggable{D};
+	HBRS_MPL_LOG_TRIVIAL(trace) << "W_r:" << loggable{W_r};
 	
 	auto modes =
 		(*multiply)(
@@ -148,12 +142,12 @@ dmd(
 	auto col1 = (*select)(std::move(x1), std::make_pair(El::ALL, 0));
 	auto coefficients = (*mldivide)(modes, complex(col1, _Ring_(0)));
 	
-#if !defined(NDEBUG)
-	El::Print(modes.data(), "modes");
-	El::Print(col1.data(), "col1");
-	El::Print(coefficients.data(), "coefficients");
-#endif
+	HBRS_MPL_LOG_TRIVIAL(trace) << "col1:" << loggable{col1};
 	
+	HBRS_MPL_LOG_TRIVIAL(trace) << "eigenvalues:" << loggable{eigenvalues};
+	HBRS_MPL_LOG_TRIVIAL(trace) << "modes:" << loggable{modes};
+	HBRS_MPL_LOG_TRIVIAL(trace) << "coefficients:" << loggable{coefficients};
+	HBRS_MPL_LOG_TRIVIAL(debug) << "dmd:elemental:end";
 	return make_dmd_result(eigenvalues, modes, coefficients);
 }
 

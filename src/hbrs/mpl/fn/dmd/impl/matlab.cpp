@@ -21,6 +21,7 @@
 #include <hbrs/mpl/dt/ml_vector.hpp>
 #include <hbrs/mpl/dt/dmd_control.hpp>
 #include <hbrs/mpl/dt/dmd_result.hpp>
+#include <hbrs/mpl/detail/log.hpp>
 
 extern "C" {
 	#include <hbrs/mpl/detail/matlab_cxn/impl/dmd_level1.h>
@@ -41,9 +42,13 @@ namespace detail {
 		ml_matrix<real_T> const& x2,                                                                                   \
 		dmd_control<int> const& ctrl                                                                                   \
 	) const {                                                                                                          \
-		ml_column_vector<creal_T> eigenvalues;                                                                          \
-		ml_matrix<creal_T> modes;                                                                                       \
-		ml_column_vector<creal_T> coefficients;                                                                         \
+		HBRS_MPL_LOG_TRIVIAL(debug) << "dmd:matlab:begin";                                                             \
+		HBRS_MPL_LOG_TRIVIAL(trace) << "X1:" << loggable{x1};                                                          \
+		HBRS_MPL_LOG_TRIVIAL(trace) << "X2:" << loggable{x2};                                                          \
+                                                                                                                       \
+		ml_column_vector<creal_T> eigenvalues;                                                                         \
+		ml_matrix<creal_T> modes;                                                                                      \
+		ml_column_vector<creal_T> coefficients;                                                                        \
 		                                                                                                               \
 		dmd_level ## lvl(                                                                                              \
 			&x1.data(),                                                                                                \
@@ -54,6 +59,10 @@ namespace detail {
 			&coefficients.data()                                                                                       \
 		);                                                                                                             \
 		                                                                                                               \
+		HBRS_MPL_LOG_TRIVIAL(trace) << "eigenvalues:" << loggable{eigenvalues};                                        \
+		HBRS_MPL_LOG_TRIVIAL(trace) << "modes:" << loggable{modes};                                                    \
+		HBRS_MPL_LOG_TRIVIAL(trace) << "coefficients:" << loggable{coefficients};                                      \
+		HBRS_MPL_LOG_TRIVIAL(debug) << "dmd:matlab:end";                                                               \
 		return { eigenvalues, modes, coefficients };                                                                   \
 	}
 

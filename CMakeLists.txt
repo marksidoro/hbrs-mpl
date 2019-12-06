@@ -34,7 +34,7 @@ set_package_properties(hbrs-cmake PROPERTIES
 # Hana is part of boost since 1.61, Ref.: http://www.boost.org/users/history/
 # BOOST_TEST macro requires 1.59, Ref.: https://stackoverflow.com/a/38083784/6490710
 # boost::hana::overload_linearly with single argument is supported since boost 1.62, Ref.: https://github.com/boostorg/hana/commit/89755947faffc56ff76ef3eecca0430191e976b8
-find_package(Boost 1.62 COMPONENTS unit_test_framework system thread serialization chrono program_options filesystem iostreams regex exception signals)
+find_package(Boost 1.62 COMPONENTS unit_test_framework system thread serialization chrono program_options filesystem iostreams regex exception signals log)
 set_package_properties(Boost PROPERTIES
     PURPOSE "Required for meta programming, unit tests and others."
     TYPE REQUIRED)
@@ -221,6 +221,8 @@ function(hbrs_mpl_add_test target)
     target_include_directories(${target}
         SYSTEM
         PUBLIC ${Boost_INCLUDE_DIRS})
+    
+    target_compile_definitions(${target} PUBLIC ${MPI_CXX_COMPILE_DEFINITIONS} BOOST_LOG_DYN_LINK)
     
     if(HBRS_MPL_ENABLE_MEMCHECK AND VALGRIND)
         add_test(${target} ${VALGRIND} --leak-check=full --error-exitcode=1 ${CMAKE_CURRENT_BINARY_DIR}/${target})

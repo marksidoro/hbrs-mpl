@@ -26,6 +26,8 @@
 #include <hbrs/mpl/dt/svd_control.hpp>
 #include <hbrs/mpl/dt/decompose_mode.hpp>
 #include <hbrs/mpl/dt/svd_result.hpp>
+#include <hbrs/mpl/detail/log.hpp>
+
 #include <boost/assert.hpp>
 #include <cmath>
 
@@ -37,6 +39,9 @@ namespace detail {
 template <typename A, typename U, typename S, typename V>
 auto
 svd_impl_el(A const& a, svd_control<decompose_mode> const& ctrl, U u, S s, S s_, V v) {
+	HBRS_MPL_LOG_TRIVIAL(debug) << "svd:elemental:begin";
+	HBRS_MPL_LOG_TRIVIAL(trace) << "A:" << loggable{a};
+	
 	typedef decltype(a.data().Get(0,0)) Ring;
 	typedef std::decay_t<Ring> _Ring_;
 	
@@ -75,9 +80,6 @@ svd_impl_el(A const& a, svd_control<decompose_mode> const& ctrl, U u, S s, S s_,
 	);
 	el_ctrl.bidiagSVDCtrl.tolType = El::RELATIVE_TO_SELF_SING_VAL_TOL;
 	
-#ifdef HBRS_MPL_ENABLE_DEBUG_OUTPUT
-	el_ctrl.bidiagSVDCtrl.progress = true;
-#endif //!HBRS_MPL_ENABLE_DEBUG_OUTPUT
 	
 	if (ctrl.decompose_mode() == decompose_mode::complete) {
 		el_ctrl.bidiagSVDCtrl.approach = El::SVDApproach::FULL_SVD;
@@ -127,6 +129,11 @@ svd_impl_el(A const& a, svd_control<decompose_mode> const& ctrl, U u, S s, S s_,
 		BOOST_ASSERT(v.Height() == a.n());
 		BOOST_ASSERT(v.Width() == std::min(a.m(), a.n()));
 	}
+	
+	HBRS_MPL_LOG_TRIVIAL(trace) << "U:" << loggable{u};
+	HBRS_MPL_LOG_TRIVIAL(trace) << "S:" << loggable{s_};
+	HBRS_MPL_LOG_TRIVIAL(trace) << "V:" << loggable{v};
+	HBRS_MPL_LOG_TRIVIAL(debug) << "svd:elemental:end";
 	
 	return make_svd_result(
 		hana::make<hana::tag_of_t<A>>(std::move(u)),
