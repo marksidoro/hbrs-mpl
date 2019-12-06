@@ -47,6 +47,7 @@
 #endif //!HBRS_MPL_ENABLE_MATLAB
 
 #include <boost/log/utility/manipulators/add_value.hpp>
+#include <boost/hana/ext/std/vector.hpp>
 #include <boost/hana/functional/always.hpp>
 #include <boost/hana/integral_constant.hpp>
 #include <boost/hana/type.hpp>
@@ -155,9 +156,14 @@ configure_precision(std::ostream & os) {
 	);
 }
 
-template<typename T>
+template<
+	typename T,
+	typename std::enable_if_t<
+		std::is_same_v< hana::tag_of_t<T>, hana::ext::std::vector_tag >
+	>* = nullptr
+>
 std::ostream &
-operator<<(std::ostream & o, loggable<std::vector<T>> const& s) {
+operator<<(std::ostream & o, loggable<T> const& s) {
 	o << '[';
 	if (!s.value().empty()) {
 		o << "0:" << s.value()[0];
