@@ -73,7 +73,12 @@ svd_impl_el(A const& a, svd_control<decompose_mode> const& ctrl, U u, S s, S s_,
 	el_ctrl.useScaLAPACK = false;
 	el_ctrl.bidiagSVDCtrl.wantU = true;
 	el_ctrl.bidiagSVDCtrl.wantV = true;
-	el_ctrl.bidiagSVDCtrl.qrCtrl.maxIterPerVal = 16384; // default value is 6
+	
+	// A default value of 6 is good enough according to Demmel and Kahan.
+	// Ref.: Accurate Singular Values of Bidiagonal Matrices by James Demmel and W. Kahan (1990)
+	//       http://www.netlib.org/lapack/lawnspdf/lawn03.pdf
+	//
+	//el_ctrl.bidiagSVDCtrl.qrCtrl.maxIterPerVal = 16384; // default value is 6
 	BOOST_ASSERT(
 		el_ctrl.bidiagSVDCtrl.qrCtrl.maxIterPerVal <
 		(((long double)std::numeric_limits<El::Int>::max()) / std::pow((long double)std::fmin(a.m(), a.n()), 2.))
