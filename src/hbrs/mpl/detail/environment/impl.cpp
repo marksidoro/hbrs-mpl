@@ -14,7 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <hbrs/mpl/detail/environment.hpp>
+#include "impl.hpp"
+
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/dt/exception.hpp>
 #include <boost/throw_exception.hpp>
