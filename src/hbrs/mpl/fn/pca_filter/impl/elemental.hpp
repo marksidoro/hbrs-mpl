@@ -38,6 +38,8 @@
 #include <hbrs/mpl/fn/equal.hpp>
 #include <hbrs/mpl/fn/expand.hpp>
 
+#include <hbrs/mpl/detail/log.hpp>
+
 #include <vector>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/assert.hpp>
@@ -60,6 +62,8 @@ pca_filter_impl_el_matrix::operator()(
 	std::function<bool(El::Int)> const& keep,
 	pca_control<bool,bool,bool> const& ctrl
 ) const {
+	HBRS_MPL_LOG_TRIVIAL(debug) << "pca_filter:elemental:begin";
+	HBRS_MPL_LOG_TRIVIAL(trace) << "A:" << loggable{a};
 	
 	auto a_sz = (*size)(a);
 	auto a_m = (*m)(a_sz);
@@ -92,6 +96,9 @@ pca_filter_impl_el_matrix::operator()(
 	auto data = (*plus)(centered, expand(mean, size(centered)));
 	BOOST_ASSERT((*equal)(size(data), a_sz));
 	
+	HBRS_MPL_LOG_TRIVIAL(trace) << "data:" << loggable{data};
+	HBRS_MPL_LOG_TRIVIAL(trace) << "latent:" << loggable{latent};
+	HBRS_MPL_LOG_TRIVIAL(debug) << "pca_filter:elemental:end";
 	return make_pca_filter_result(data, latent);
 }
 

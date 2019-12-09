@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/n.hpp>
 #include <hbrs/mpl/fn/equal.hpp>
+
+#include <hbrs/mpl/detail/log.hpp>
 
 #include <boost/assert.hpp>
 #include <boost/numeric/conversion/cast.hpp>
@@ -71,6 +73,10 @@ pca_filter_impl_ml_matrix::operator()(
 	ml_column_vector<boolean_T> const& keep,
 	pca_control<bool,bool,bool> const& ctrl
 ) const {
+	HBRS_MPL_LOG_TRIVIAL(debug) << "pca_filter:matlab:begin";
+	HBRS_MPL_LOG_TRIVIAL(trace) << "A:" << loggable{a};
+	HBRS_MPL_LOG_TRIVIAL(trace) << "keep:" << loggable{keep};
+	
 	auto sz = (*size)(a);
 	int m_ = (*m)(sz);
 	int n_ = (*n)(sz);
@@ -93,6 +99,9 @@ pca_filter_impl_ml_matrix::operator()(
 		&latent.data()
 	);
 	
+	HBRS_MPL_LOG_TRIVIAL(trace) << "data:" << loggable{data};
+	HBRS_MPL_LOG_TRIVIAL(trace) << "latent:" << loggable{latent};
+	HBRS_MPL_LOG_TRIVIAL(debug) << "pca_filter:matlab:end";
 	return {data, latent};
 }
 

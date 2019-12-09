@@ -25,6 +25,7 @@
 #include <hbrs/mpl/dt/el_vector.hpp>
 #include <hbrs/mpl/dt/el_dist_matrix.hpp>
 #include <hbrs/mpl/dt/el_dist_vector.hpp>
+#include <hbrs/mpl/detail/log.hpp>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
@@ -38,11 +39,15 @@ template<
 >
 auto
 transpose_impl_el_matrix::operator()(Matrix && m) const {
+	HBRS_MPL_LOG_TRIVIAL(debug) << "transpose:el_matrix:begin";
+	
 	typedef decltype(m.at({0,0})) Ring;
 	typedef std::decay_t<Ring> _Ring_;
 	
 	El::Matrix<_Ring_> b;
 	El::Transpose(HBRS_MPL_FWD(m).data(), b);
+	
+	HBRS_MPL_LOG_TRIVIAL(debug) << "transpose:el_matrix:end";
 	return make_el_matrix(std::move(b));
 }
 
@@ -55,12 +60,14 @@ template<
 >
 auto
 transpose_impl_el_vector::operator()(Vector && v) const {
+	HBRS_MPL_LOG_TRIVIAL(debug) << "transpose:el_vector:begin";
 	typedef decltype(v.at(0)) Ring;
 	typedef std::decay_t<Ring> _Ring_;
 	
 	El::Matrix<_Ring_> b;
 	El::Transpose(HBRS_MPL_FWD(v).data(), b);
 	
+	HBRS_MPL_LOG_TRIVIAL(debug) << "transpose:el_vector:end";
 	return hana::make<
 		std::conditional_t<
 			std::is_same_v< hana::tag_of_t<Vector>, el_column_vector_tag >,
@@ -78,12 +85,16 @@ template<
 >
 auto
 transpose_impl_el_dist_matrix::operator()(DistMatrix && m) const {
+	HBRS_MPL_LOG_TRIVIAL(debug) << "transpose:el_dist_matrix:begin";
+	
 	typedef decltype(m.data()) ElDistMatrix;
 	typedef std::decay_t<ElDistMatrix> _ElDistMatrix_;
 	typedef typename _ElDistMatrix_::transType Transposed;
 	
 	Transposed b{m.data().Grid()};
 	El::Transpose(HBRS_MPL_FWD(m).data(), b);
+	
+	HBRS_MPL_LOG_TRIVIAL(debug) << "transpose:el_dist_matrix:end";
 	return make_el_dist_matrix(std::move(b));
 }
 
@@ -96,12 +107,15 @@ template<
 >
 auto
 transpose_impl_el_dist_vector::operator()(DistVector && v) const {
+	HBRS_MPL_LOG_TRIVIAL(debug) << "transpose:el_dist_vector:begin";
 	typedef decltype(v.data()) ElDistMatrix;
 	typedef std::decay_t<ElDistMatrix> _ElDistMatrix_;
 	typedef typename _ElDistMatrix_::transType Transposed;
 	
 	Transposed b{v.data().Grid()};
 	El::Transpose(HBRS_MPL_FWD(v).data(), b);
+	
+	HBRS_MPL_LOG_TRIVIAL(debug) << "transpose:el_dist_vector:end";
 	return hana::make<
 		std::conditional_t<
 			std::is_same_v< hana::tag_of_t<DistVector>, el_dist_column_vector_tag >,
