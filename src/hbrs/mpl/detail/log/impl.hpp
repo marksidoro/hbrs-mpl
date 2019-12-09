@@ -21,6 +21,7 @@
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/is_braces_constructible.hpp>
+#include <hbrs/mpl/detail/mpi.hpp>
 
 #include <hbrs/mpl/fn/size.hpp>
 #include <hbrs/mpl/fn/m.hpp>
@@ -63,7 +64,8 @@
 	#define HBRS_MPL_LOG_TRIVIAL(lvl)                                                                                  \
 		BOOST_LOG_TRIVIAL(lvl)                                                                                         \
 			<< boost::log::add_value("__FILE__", __FILE__)                                                             \
-			<< boost::log::add_value("__LINE__", __LINE__)
+			<< boost::log::add_value("__LINE__", __LINE__)                                                             \
+			<< boost::log::add_value("MPI_COMM_RANK", hbrs::mpl::detail::mpi::comm_rank())
 #else // !HBRS_MPL_ENABLE_LOGGING
 	#define HBRS_MPL_LOG_TRIVIAL(lvl)                                                                                  \
 		if constexpr (false)                                                                                           \
