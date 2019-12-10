@@ -329,6 +329,7 @@ pca(
 	auto const a_n = (*n)(a_sz);
 	//MATLAB>> [m,n] = size(x);
 	
+	HBRS_MPL_LOG_TRIVIAL(debug) << "pca:elemental:variance";
 	auto vw = ctrl.normalize()
 		? (*rdivide)(1., variance(columns(a), 0))
 		: ones(make_row_vector_like(a, a_n));
@@ -353,6 +354,7 @@ pca(
 	auto const DOF = a_m - (ctrl.center() ? 1_c : 0_c);
 	//MATLAB>> DOF=m-Center;
 	
+	HBRS_MPL_LOG_TRIVIAL(debug) << "pca:elemental:mean";
 	auto mu = ctrl.center() ? (*mean)(columns(a)) : zeros(make_row_vector_like(a, a_n));
 	//MATLAB>> if Center
 	//MATLAB>> 	mu = wnanmean(x, ones(1,m,'like',x));
@@ -360,12 +362,14 @@ pca(
 	//MATLAB>> 	mu = zeros(1,n,'like',x);
 	//MATLAB>> end
 	
+	HBRS_MPL_LOG_TRIVIAL(debug) << "pca:elemental:center";
 	auto cntr = ctrl.center() ? (*minus)(a, (*expand)(mu, a_sz)) : a;
 	BOOST_ASSERT(any_of(cntr, is_nan) == false);
 	//MATLAB>> if Center
 	//MATLAB>>     x = bsxfun(@minus,x,mu);
 	//MATLAB>> end
 	
+	HBRS_MPL_LOG_TRIVIAL(debug) << "pca:elemental:normalize:pre";
 	//TODO: Do we need a different algo. for normalizing matrices with complex numbers?
 	auto sqrt = [](auto x) { return power(x, 1./2.); };
 	auto phi_sqrt = transform(vw, sqrt);
@@ -388,6 +392,7 @@ pca(
 	//MATLAB>> 	[U,S,coeff] = svd(x, 0);
 	//MATLAB>> end
 	
+	HBRS_MPL_LOG_TRIVIAL(debug) << "pca:elemental:normalize:post";
 	coeff = ctrl.normalize()
 		? (*times)(coeff, expand( rdivide(1., transpose(phi_sqrt)), size(coeff)) )
 		: coeff;
@@ -406,6 +411,7 @@ pca(
 	//MATLAB>> latent = S.^2./DOF;
 	
 	if (DOF < a_n) {
+		HBRS_MPL_LOG_TRIVIAL(debug) << "pca:elemental:pad";
 		if (ctrl.economy()) {
 			// When 'economy' value is true, nothing corresponding to zero eigenvalues should be returned.
 			
@@ -464,7 +470,7 @@ pca(
 	//MATLAB>> 	end
 	//MATLAB>> end
 	
-	
+	HBRS_MPL_LOG_TRIVIAL(debug) << "pca:elemental:sign";
 	// Enforce a sign convention on the coefficients -- the largest element in
 	// each column will have a positive sign.
 	auto colsign = signum_of_largest_element_in_column(coeff);
