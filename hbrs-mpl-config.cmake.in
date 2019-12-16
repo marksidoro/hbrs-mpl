@@ -1,4 +1,4 @@
-# Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+# Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
@@ -6,7 +6,7 @@
 
 @PACKAGE_INIT@
 
-set_and_check(hbrs-mpl_BINDIR      "@PACKAGE_HBRS_MPL_INSTALL_BINDIR@")
+set          (hbrs-mpl_BINDIR      "@PACKAGE_HBRS_MPL_INSTALL_BINDIR@")
 set_and_check(hbrs-mpl_LIBDIR      "@PACKAGE_HBRS_MPL_INSTALL_LIBDIR@")
 set_and_check(hbrs-mpl_INCLUDEDIR  "@PACKAGE_HBRS_MPL_INSTALL_INCLUDEDIR@")
 set_and_check(hbrs-mpl_CMAKEDIR    "@PACKAGE_HBRS_MPL_INSTALL_CMAKEDIR@")
