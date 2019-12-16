@@ -105,7 +105,7 @@ target_include_directories(matlab_cxn
     INTERFACE
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/src>
-        $<INSTALL_INTERFACE:${HBRS_MPL_INSTALL_INCLUDEDIR}/${matlab_cxn_includedir}>)
+        $<INSTALL_INTERFACE:${HBRS_MPL_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(hbrs_mpl PUBLIC matlab_cxn)
 

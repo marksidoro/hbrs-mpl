@@ -94,13 +94,14 @@ install(TARGETS hbrs_mpl
     EXPORT hbrs-mpl-targets
     ${HBRS_MPL_INSTALL_TARGETS_DEFAULT_DESTINATIONS})
 
+file(RELATIVE_PATH hbrs_mpl_includedir "${PROJECT_SOURCE_DIR}/src" "${CMAKE_CURRENT_SOURCE_DIR}")
 install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/export.hpp"
     "${CMAKE_CURRENT_BINARY_DIR}/config.hpp"
-    DESTINATION ${HBRS_MPL_INSTALL_INCLUDEDIR}
+    DESTINATION "${HBRS_MPL_INSTALL_INCLUDEDIR}/${hbrs_mpl_includedir}"
     COMPONENT development)
 
 install(DIRECTORY ./
-    DESTINATION "${HBRS_MPL_INSTALL_INCLUDEDIR}"
+    DESTINATION "${HBRS_MPL_INSTALL_INCLUDEDIR}/${hbrs_mpl_includedir}"
     COMPONENT development
     FILES_MATCHING PATTERN "*.hpp")
