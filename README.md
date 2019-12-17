@@ -26,8 +26,8 @@ Its development started in 2015 as a research project at Bonn-Rhein-Sieg Univers
 - With [MATLAB Coder](https://de.mathworks.com/products/matlab-coder.html), we generate C code from our MATLAB code and use it in our unit tests to compare results of our algorithms to MATLAB or rather its LAPACK libraries. But our code compiles fine without MATLAB!
 - We extensively use [Boost.Hana](https://github.com/boostorg/hana) for our [meta programming tasks](https://github.com/JM1/hbrs-mpl/blob/expression_evaluation_framework_2/src/hbrs/mpl/core/evaluate/impl.hpp).
 - [MPI](https://en.wikipedia.org/wiki/Message_Passing_Interface) is our favored API for 
-   [distributed](https://github.com/JM1/hbrs-theta_utils/blob/master/src/hbrs/theta_utils/detail/vtk/impl.cpp) 
-   [computations](https://github.com/JM1/hbrs-theta_utils/blob/master/src/hbrs/theta_utils/detail/copy_matrix/impl.hpp).
+   [distributed](https://github.com/JM1/hbrs-theta_utils/blob/master/src/hbrs/theta_utils/detail/vtk/impl.cpp)
+   [computations](https://github.com/JM1/hbrs-theta_utils/blob/master/src/hbrs/theta_utils/detail/scatter/impl.cpp).
 - All unit tests (e.g. for 
    [svd](https://github.com/JM1/hbrs-mpl/blob/master/src/hbrs/mpl/fn/svd/test/hbrs_mpl.cpp) and
    [pca](https://github.com/JM1/hbrs-mpl/blob/master/src/hbrs/mpl/fn/pca/test/hbrs_mpl.cpp))
@@ -58,19 +58,24 @@ docker run -ti jm1337/debian-dev-hbrs:buster
 git clone --depth 1 https://github.com/JM1/hbrs-cmake.git
 cd hbrs-cmake
 mkdir build && cd build/
-cmake ..
+# install to non-system directory because sudo is not allowed in this docker container
+cmake -DCMAKE_INSTALL_PREFIX=$HOME/.local ..
 make -j$(nproc)
-sudo make install
+make install
 cd ../../
 
 # fetch, compile and install hbrs-mpl
 git clone --depth 1 https://github.com/JM1/hbrs-mpl.git
 cd hbrs-mpl
 mkdir build && cd build/
-cmake -DHBRS_MPL_ENABLE_TESTS=ON -DHBRS_MPL_ENABLE_BENCHMARKS=ON ..
+cmake \
+ -DCMAKE_INSTALL_PREFIX=$HOME/.local \
+ -DHBRS_MPL_ENABLE_TESTS=ON \
+ -DHBRS_MPL_ENABLE_BENCHMARKS=ON \
+ ..
 make -j$(nproc)
 ctest --output-on-failure
-sudo make install
+make install
 ```
 
 For more examples on how to build and test this code see [`.travis.yml`](https://github.com/JM1/hbrs-mpl/blob/master/.travis.yml).
