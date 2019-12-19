@@ -21,6 +21,7 @@
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 #include <hbrs/mpl/dt/el_vector.hpp>
+#include <hbrs/mpl/dt/matrix_distribution.hpp>
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
@@ -112,6 +113,40 @@
 			dmat.Resize(local.data().Height(), local.data().Width());                                                  \
 			dmat.Matrix() = local.data();                                                                              \
 			return { dmat };                                                                                           \
+		}                                                                                                              \
+		                                                                                                               \
+		template <                                                                                                     \
+			typename Ring,                                                                                             \
+			El::Dist FromColumnwise, El::Dist FromRowwise, El::DistWrap FromWrapping,                                  \
+			El::Dist ToColumnwise, El::Dist ToRowwise, El::DistWrap ToWrapping                                         \
+		>                                                                                                              \
+		static hbrs::mpl::el_dist_ ## vector_kind ## _vector<Ring, ToColumnwise, ToRowwise, ToWrapping>                \
+		apply(                                                                                                         \
+			hbrs::mpl::el_dist_ ## vector_kind ## _vector<Ring, FromColumnwise, FromRowwise, FromWrapping> && v,       \
+			hbrs::mpl::matrix_distribution<                                                                            \
+				integral_constant<El::Dist, ToColumnwise>,                                                             \
+				integral_constant<El::Dist, ToRowwise>,                                                                \
+				integral_constant<El::DistWrap, ToWrapping>                                                            \
+			>                                                                                                          \
+		) {                                                                                                            \
+			return { HBRS_MPL_FWD(v).data() };                                                                         \
+		}                                                                                                              \
+		                                                                                                               \
+		template <                                                                                                     \
+			typename Ring,                                                                                             \
+			El::Dist FromColumnwise, El::Dist FromRowwise, El::DistWrap FromWrapping,                                  \
+			El::Dist ToColumnwise, El::Dist ToRowwise, El::DistWrap ToWrapping                                         \
+		>                                                                                                              \
+		static hbrs::mpl::el_dist_ ## vector_kind ## _vector<Ring, ToColumnwise, ToRowwise, ToWrapping>                \
+		apply(                                                                                                         \
+			hbrs::mpl::el_dist_ ## vector_kind ## _vector<Ring, FromColumnwise, FromRowwise, FromWrapping> const& v,   \
+			hbrs::mpl::matrix_distribution<                                                                            \
+				integral_constant<El::Dist, ToColumnwise>,                                                             \
+				integral_constant<El::Dist, ToRowwise>,                                                                \
+				integral_constant<El::DistWrap, ToWrapping>                                                            \
+			>                                                                                                          \
+		) {                                                                                                            \
+			return { v.data() };                                                                                       \
 		}                                                                                                              \
 	};                                                                                                                 \
                                                                                                                        \

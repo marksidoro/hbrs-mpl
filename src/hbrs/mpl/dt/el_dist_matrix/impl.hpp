@@ -196,6 +196,40 @@ struct make_impl<hbrs::mpl::el_dist_matrix_tag> {
 	) {
 		return apply(grid, std::move(local).data());
 	}
+	
+	template <
+		typename Ring,
+		El::Dist FromColumnwise, El::Dist FromRowwise, El::DistWrap FromWrapping,
+		El::Dist ToColumnwise, El::Dist ToRowwise, El::DistWrap ToWrapping
+	>
+	static hbrs::mpl::el_dist_matrix<Ring, ToColumnwise, ToRowwise, ToWrapping>
+	apply(
+		hbrs::mpl::el_dist_matrix<Ring, FromColumnwise, FromRowwise, FromWrapping> && mat,
+		hbrs::mpl::matrix_distribution<
+			integral_constant<El::Dist, ToColumnwise>,
+			integral_constant<El::Dist, ToRowwise>,
+			integral_constant<El::DistWrap, ToWrapping>
+		>
+	) {
+		return { HBRS_MPL_FWD(mat).data() };
+	}
+	
+	template <
+		typename Ring,
+		El::Dist FromColumnwise, El::Dist FromRowwise, El::DistWrap FromWrapping,
+		El::Dist ToColumnwise, El::Dist ToRowwise, El::DistWrap ToWrapping
+	>
+	static hbrs::mpl::el_dist_matrix<Ring, ToColumnwise, ToRowwise, ToWrapping>
+	apply(
+		hbrs::mpl::el_dist_matrix<Ring, FromColumnwise, FromRowwise, FromWrapping> const& mat,
+		hbrs::mpl::matrix_distribution<
+			integral_constant<El::Dist, ToColumnwise>,
+			integral_constant<El::Dist, ToRowwise>,
+			integral_constant<El::DistWrap, ToWrapping>
+		>
+	) {
+		return { mat.data() };
+	}
 };
 
 BOOST_HANA_NAMESPACE_END
