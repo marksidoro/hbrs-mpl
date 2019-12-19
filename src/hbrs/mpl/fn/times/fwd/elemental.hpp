@@ -38,10 +38,15 @@ namespace detail {
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 
 struct times_impl_el_matrix_el_matrix {
+	template <typename Ring>
+	auto
+	operator()(el_matrix<Ring> const& a, el_matrix<Ring> const& b) const;
+	
 	template <
 		typename RingL,
 		typename RingR,
 		typename std::enable_if_t<
+			!std::is_same_v<RingL, RingR> &&
 			boost::mpl::is_not_void_<std::common_type_t<RingL, RingR>>::value
 		>* = nullptr
 	>
@@ -88,6 +93,7 @@ struct times_impl_el_dist_matrix_expand_expr_el_dist_matrix {
 		> rhs
 	) const;
 	
+	
 	template <
 		typename RingL, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap WrappingL,
 		typename RingR, El::Dist ColumnwiseR, El::Dist RowwiseR, El::DistWrap WrappingR,
@@ -160,6 +166,44 @@ struct times_impl_el_dist_matrix_expand_expr_el_dist_matrix {
 			hana::tuple<
 				el_dist_column_vector<RingR, ColumnwiseR, RowwiseR, WrappingR> const&,
 				matrix_size<El::Int, El::Int> const&
+			>
+		> rhs
+	) const;
+	
+	template <
+		typename RingL, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap WrappingL,
+		typename RingR, El::Dist ColumnwiseR, El::Dist RowwiseR, El::DistWrap WrappingR,
+		typename std::enable_if_t<
+			std::is_convertible_v<RingR, RingL>
+		>* = nullptr
+	>
+	decltype(auto)
+	operator()(
+		el_dist_matrix<RingL, ColumnwiseL, RowwiseL, WrappingL> && lhs,
+		expression<
+			expand_t,
+			hana::tuple<
+				el_dist_row_vector<RingR, ColumnwiseR, RowwiseR, WrappingR>,
+				matrix_size<El::Int, El::Int>
+			>
+		> rhs
+	) const;
+	
+	template <
+		typename RingL, El::Dist ColumnwiseL, El::Dist RowwiseL, El::DistWrap WrappingL,
+		typename RingR, El::Dist ColumnwiseR, El::Dist RowwiseR, El::DistWrap WrappingR,
+		typename std::enable_if_t<
+			std::is_convertible_v<RingR, RingL>
+		>* = nullptr
+	>
+	decltype(auto)
+	operator()(
+		el_dist_matrix<RingL, ColumnwiseL, RowwiseL, WrappingL> && lhs,
+		expression<
+			expand_t,
+			hana::tuple<
+				el_dist_column_vector<RingR, ColumnwiseR, RowwiseR, WrappingR>,
+				matrix_size<El::Int, El::Int>
 			>
 		> rhs
 	) const;

@@ -4,7 +4,9 @@
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 #
 
-#################### list the subdirectories ####################
+#################### tests ####################
 
-add_subdirectory(impl)
-add_subdirectory(test)
+foreach(name
+    hbrs_mpl)
+    hbrs_mpl_add_test(fn_times_${name} "${name}.cpp")
+endforeach()
