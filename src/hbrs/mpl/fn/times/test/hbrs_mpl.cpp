@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE(times_el_dist_matrix_expr, * utf::tolerance(_TOL)) {
 	};
 	
 	static constexpr auto make_el_dist_vector = [&](auto v) {
-		static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
+		static El::Grid grid{}; // grid is static because reference to grid is required by El::DistMatrix<...>
 		if constexpr(decltype(is_column_vector(v))::value) {
 			return make_el_dist_column_vector(grid, make_el_column_vector(std::move(v)));
 		} else {
@@ -208,7 +208,7 @@ BOOST_AUTO_TEST_CASE(times_el_dist_matrix_expr, * utf::tolerance(_TOL)) {
 	
 	static constexpr auto factories = hana::drop_back(hana::make_tuple(
 		[&](auto && dataset) {
-			static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
+			static El::Grid grid{}; // grid is static because reference to grid is required by El::DistMatrix<...>
 			auto A = hana::at(dataset, hana::size_c<0>);
 			auto v = hana::at(dataset, hana::size_c<1>);
 			auto AV_cmp = hana::at(dataset, hana::size_c<2>);
@@ -231,7 +231,7 @@ BOOST_AUTO_TEST_CASE(times_el_dist_matrix_expr, * utf::tolerance(_TOL)) {
 			);
 		},
 		[&](auto && dataset) {
-			static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
+			static El::Grid grid{}; // grid is static because reference to grid is required by El::DistMatrix<...>
 			auto A = hana::at(dataset, hana::size_c<0>);
 			auto v = hana::at(dataset, hana::size_c<1>);
 			auto AV_cmp = hana::at(dataset, hana::size_c<2>);

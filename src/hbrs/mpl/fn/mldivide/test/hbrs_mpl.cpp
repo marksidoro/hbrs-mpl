@@ -277,7 +277,7 @@ BOOST_AUTO_TEST_CASE(mldivide_comparison_Ax_b,  * utf::tolerance(_TOL)) {
 			);
 		},
 		[](auto && dataset) {
-			static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
+			static El::Grid grid{}; // grid is static because reference to grid is required by El::DistMatrix<...>
 			auto A = hana::at(dataset, hana::size_c<0>);
 			auto x = hana::at(dataset, hana::size_c<1>);
 			auto b = hana::at(dataset, hana::size_c<2>);

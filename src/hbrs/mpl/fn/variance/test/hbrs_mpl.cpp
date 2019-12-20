@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(columns_variances, * utf::tolerance(_TOL)) {
 				return (*hbrs::mpl::variance)(columns(matrix), HBRS_MPL_FWD(weight));
 			},
 			[](auto && dataset, auto && weight) {
-				static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
+				static El::Grid grid{}; // grid is static because reference to grid is required by El::DistMatrix<...>
 				auto matrix = make_el_dist_matrix(grid, make_el_matrix(HBRS_MPL_FWD(dataset)));
 				return (*hbrs::mpl::variance)(columns(matrix), HBRS_MPL_FWD(weight));
 			},

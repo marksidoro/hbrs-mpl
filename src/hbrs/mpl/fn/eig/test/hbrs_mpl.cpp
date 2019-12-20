@@ -147,7 +147,7 @@ BOOST_AUTO_TEST_CASE(eig_comparison,  * utf::tolerance(_TOL)) {
 			);
 		},
 		[](auto && dataset) {
-			static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
+			static El::Grid grid{}; // grid is static because reference to grid is required by El::DistMatrix<...>
 			return hana::make_tuple(
 					detail::eig_impl_el_dist_matrix{},
 					make_el_dist_matrix(grid, make_el_matrix(HBRS_MPL_FWD(dataset))),

@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE(inverse_diagonal, * utf::tolerance(_TOL)) {
 			);
 		},
 		[](auto && dataset) {
-			static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
+			static El::Grid grid{}; // grid is static because reference to grid is required by El::DistMatrix<...>
 			auto A = hana::at(dataset, hana::size_c<0>);
 			auto inv_A = hana::at(dataset, hana::size_c<1>);
 			

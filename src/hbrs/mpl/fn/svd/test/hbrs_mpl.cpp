@@ -158,7 +158,7 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(_TOL)) {
 			) {
 				return detail::not_supported{};
 			} else {
-				static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
+				static El::Grid grid{}; // grid is static because reference to grid is required by El::DistMatrix<...>
 				return hana::make_tuple(
 					detail::svd_impl_el_dist_matrix{},
 					make_el_dist_matrix(
@@ -184,7 +184,7 @@ BOOST_AUTO_TEST_CASE(svd_comparison, * utf::tolerance(_TOL)) {
 			) {
 				return detail::not_supported{};
 			} else {
-				static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
+				static El::Grid grid{}; // grid is static because reference to grid is required by El::DistMatrix<...>
 				return hana::make_tuple(
 					detail::svd_impl_el_dist_matrix{},
 					el_dist_matrix<_Ring_, El::MC, El::MR>{

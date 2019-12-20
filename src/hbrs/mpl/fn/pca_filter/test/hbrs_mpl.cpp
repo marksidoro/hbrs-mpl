@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(_TOL)) {
 			);
 		},
 		[](auto && a, auto keep, auto economy, auto center, auto normalize) {
-			static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
+			static El::Grid grid{}; // grid is static because reference to grid is required by El::DistMatrix<...>
 			auto a_sz = (*size)(a);
 			if constexpr(
 				!hana::value(economy) && (hana::value(a_sz.m()) <= hana::value(a_sz.n()))

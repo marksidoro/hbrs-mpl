@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE(sort_eig_result) {
 			);
 		},
 		[](auto && dataset) {
-			static El::Grid grid{El::mpi::COMM_WORLD}; // grid is static because reference to grid is required by El::DistMatrix<...>
+			static El::Grid grid{}; // grid is static because reference to grid is required by El::DistMatrix<...>
 			auto eigval_us = hana::at(dataset, hana::size_c<0>);
 			auto eigvec_us = hana::at(dataset, hana::size_c<1>);
 			auto eigval_so = hana::at(dataset, hana::size_c<2>);
