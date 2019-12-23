@@ -29,6 +29,27 @@ namespace hana = boost::hana;
 namespace detail {
 namespace mpi {
 
+/* Inspired by https://stackoverflow.com/a/51956431 */
+#pragma pack(push, 1)
+template<typename T1, typename T2>
+struct alignas(alignof(T1) < alignof(T2) ? alignof(T2)*2 : alignof(T1)*2) pair{
+	T1 first;
+	T2 second;
+};
+#pragma pack(pop)
+
+static_assert(
+	sizeof(int) < sizeof(double)
+	? sizeof(pair<double,int>) == sizeof(double)*2
+	: sizeof(pair<double,int>) == sizeof(int)*2
+, "");
+
+static_assert(
+	sizeof(short) < sizeof(double)
+	? sizeof(pair<double,short>) == sizeof(double)*2
+	: sizeof(pair<double,short>) == sizeof(short)*2
+, "");
+
 MPI_Datatype
 datatype(hana::basic_type<double>);
 MPI_Datatype
@@ -37,6 +58,16 @@ MPI_Datatype
 datatype(hana::basic_type<unsigned long>);
 MPI_Datatype
 datatype(hana::basic_type<unsigned long long>);
+MPI_Datatype
+datatype(hana::basic_type<pair<int,int>>);
+MPI_Datatype
+datatype(hana::basic_type<pair<short,int>>);
+MPI_Datatype
+datatype(hana::basic_type<pair<long,int>>);
+MPI_Datatype
+datatype(hana::basic_type<pair<float,int>>);
+MPI_Datatype
+datatype(hana::basic_type<pair<double,int>>);
 
 bool
 initialized();

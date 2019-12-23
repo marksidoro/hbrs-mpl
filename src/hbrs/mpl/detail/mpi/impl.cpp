@@ -40,17 +40,45 @@ MPI_Datatype
 datatype(hana::basic_type<double>) {
 	return MPI_DOUBLE;
 }
+
 MPI_Datatype
 datatype(hana::basic_type<int>) {
 	return MPI_INT;
 }
+
 MPI_Datatype
 datatype(hana::basic_type<unsigned long>) {
 	return MPI_UNSIGNED_LONG;
 }
+
 MPI_Datatype
 datatype(hana::basic_type<unsigned long long>) {
 	return MPI_UNSIGNED_LONG_LONG;
+}
+
+MPI_Datatype
+datatype(hana::basic_type<pair<int,int>>) {
+	return MPI_2INT;
+}
+
+MPI_Datatype
+datatype(hana::basic_type<pair<short,int>>) {
+	return MPI_SHORT_INT;
+}
+
+MPI_Datatype
+datatype(hana::basic_type<pair<long,int>>) {
+	return MPI_LONG_INT;
+}
+
+MPI_Datatype
+datatype(hana::basic_type<pair<float,int>>) {
+	return MPI_FLOAT_INT;
+}
+
+MPI_Datatype
+datatype(hana::basic_type<pair<double,int>>) {
+	return MPI_DOUBLE_INT;
 }
 
 bool
