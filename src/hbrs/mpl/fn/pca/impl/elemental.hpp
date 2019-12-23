@@ -474,6 +474,7 @@ pca(
 	// Enforce a sign convention on the coefficients -- the largest element in
 	// each column will have a positive sign.
 	auto colsign = signum_of_largest_element_in_column(coeff);
+	HBRS_MPL_LOG_TRIVIAL(debug) << "pca:elemental:sign:change";
 	auto coeff_sgn = (*times)(std::move(coeff), expand(colsign, size(coeff)));
 	auto score_sgn = (*times)(std::move(score), expand(colsign, size(score)));
 	
