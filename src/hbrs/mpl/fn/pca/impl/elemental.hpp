@@ -151,26 +151,97 @@ signum_of_largest_element_in_column(el_dist_matrix<Ring, Columnwise, Rowwise, Wr
 	//MATLAB>> colsign = sign(coeff(maxind + (0:d1:(d2-1)*d1)));
 	
 	auto coeff_sz = (*size)(coeff);
-	auto coeff_m = (*m)(coeff_sz);
 	auto coeff_n = (*n)(coeff_sz);
 	
 	//TODO: Replace this hack!
-	el_dist_row_vector<Ring, El::STAR, El::VC, El::ELEMENT> colsign{ coeff.data().Grid(), coeff_n };
 	
-	for(El::Int j = 0; j < coeff_n; ++j) {
-		El::Int max_idx = 0;
-		_Ring_ max_abs = (*absolute)(coeff.data().Get(max_idx, j));
-		
-		for(El::Int i = 1; i < coeff_m; ++i) {
-			_Ring_ pot_abs = (*absolute)(coeff.data().Get(i, j));
+	// find largest element in each local column
+	std::vector<mpi::pair<_Ring_,int>> lcl_max_abs(
+		boost::numeric_cast<std::size_t>(coeff_n),
+		{
+			std::numeric_limits<_Ring_>::lowest() /* largest element per column */,
+			0 /* global row index of largest element per column */
+		}
+	);
+	El::Matrix<Ring> const& coeff_lcl = coeff.data().LockedMatrix();
+	El::Int coeff_lcl_ldim = coeff_lcl.LDim();
+	auto coeff_lcl_buf = coeff_lcl.LockedBuffer();
+	
+	EL_PARALLEL_FOR
+	for(El::Int j = 0; j < coeff_lcl.Width(); ++j) {
+		EL_SIMD
+		for(El::Int i = 0; i < coeff_lcl.Height(); ++i) {
+			std::size_t coeff_lcl_offset = i+j*coeff_lcl_ldim;
+			BOOST_ASSERT(coeff_lcl_offset < coeff_lcl.Width() * coeff_lcl.Height());
+			_Ring_ max_abs_maybe = (*absolute)(coeff_lcl_buf[coeff_lcl_offset]);
+			mpi::pair<_Ring_,int> & max_abs_now = lcl_max_abs.at(coeff.data().GlobalCol(j));
 			
-			if ( (*less)( max_abs, pot_abs) ) {
-				max_idx = i;
-				max_abs = pot_abs;
+			if ( (*less)( max_abs_now.first, max_abs_maybe) ) {
+				max_abs_now.first = max_abs_maybe;
+				max_abs_now.second = coeff.data().GlobalRow(i);
 			}
 		}
-		auto sign = (*signum)(coeff.data().Get(max_idx, j));
-		colsign.data().Set(0, j, sign);
+	}
+	
+	// find largest element in each global column
+	mpi::allreduce(
+		MPI_IN_PLACE,
+		lcl_max_abs.data(),
+		lcl_max_abs.size(),
+		mpi::datatype(hana::type_c<mpi::pair<_Ring_,int>>),
+		MPI_MAXLOC,
+		MPI_COMM_WORLD
+	);
+	
+	// store signs of largest element per column if we locally own that element
+	std::vector<mpi::pair<int,int>> lcl_signs(
+		boost::numeric_cast<std::size_t>(coeff_n),
+		{
+			false /* does our mpi process own the largest element? */,
+			0 /* signum of largest element */
+		}
+	);
+	
+	for(std::size_t i = 0; i < lcl_max_abs.size(); ++i) {
+		mpi::pair<_Ring_,int> & max_abs = lcl_max_abs[i];
+		
+		if (coeff.data().IsLocal(max_abs.second, i)) {
+			mpi::pair<int,int> & lcl_sign = lcl_signs[i];
+			lcl_sign.first = true;
+			lcl_sign.second = (*signum)(
+				coeff_lcl.Get(
+					coeff.data().LocalRow(max_abs.second),
+					coeff.data().LocalCol(i)
+				)
+			);
+		}
+	}
+	
+	/* exchange signs of largest elements per global column */
+	mpi::allreduce(
+		MPI_IN_PLACE,
+		lcl_signs.data(),
+		lcl_signs.size(),
+		mpi::datatype(hana::type_c<mpi::pair<int,int>>),
+		MPI_MAXLOC,
+		MPI_COMM_WORLD
+	);
+	
+	/* store signs in el_dist_row_vector */
+	el_dist_row_vector<_Ring_, El::STAR, El::STAR, El::ELEMENT> colsign{ coeff.data().Grid(), coeff_n };
+	
+	El::Matrix<_Ring_> & colsign_lcl = colsign.data().Matrix();
+	El::Int colsign_lcl_ldim = colsign_lcl.LDim();
+	auto colsign_lcl_buf = colsign_lcl.Buffer();
+	
+	EL_SIMD
+	for(El::Int j = 0; j < colsign_lcl.Width(); ++j) {
+		std::size_t colsign_lcl_offset = j*colsign_lcl_ldim;
+		BOOST_ASSERT(colsign_lcl_offset < colsign_lcl.Width() * colsign_lcl.Height());
+		
+		mpi::pair<int,int> & lcl_sign = lcl_signs.at(colsign.data().GlobalCol(j));
+		BOOST_ASSERT(lcl_sign.first == true);
+		colsign_lcl_buf[colsign_lcl_offset] = lcl_sign.second;
 	}
 	
 	return colsign;
