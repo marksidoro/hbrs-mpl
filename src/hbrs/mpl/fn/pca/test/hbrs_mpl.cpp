@@ -283,13 +283,13 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(_TOL)) {
 					auto rng = std::make_pair(make_matrix_index(0,0), make_matrix_size((int)n_, (int)m_-1 /* TODO: Why n*DOF instead of n*m? */));
 					auto pca_coeff_i_mxn = (*select)(pca_coeff_i, rng);
 					auto pca_coeff_j_mxn = (*select)(pca_coeff_j, rng);
-					HBRS_MPL_TEST_MMEQ(pca_coeff_i_mxn, pca_coeff_j_mxn, true);
+					HBRS_MPL_TEST_MMEQ(pca_coeff_i_mxn, pca_coeff_j_mxn, false);
 				} else {
-					HBRS_MPL_TEST_MMEQ(pca_coeff_i, pca_coeff_j, true);
+					HBRS_MPL_TEST_MMEQ(pca_coeff_i, pca_coeff_j, false);
 				}
 				
 				BOOST_TEST_MESSAGE("comparing pca_score of impl nr " << impl_idx_i << " and " << impl_idx_j);
-				HBRS_MPL_TEST_MMEQ((*at)(result_i, pca_score{}),  (*at)(result_j, pca_score{}), true);
+				HBRS_MPL_TEST_MMEQ((*at)(result_i, pca_score{}),  (*at)(result_j, pca_score{}), false);
 				BOOST_TEST_MESSAGE("comparing pca_latent of impl nr " << impl_idx_i << " and " << impl_idx_j);
 				HBRS_MPL_TEST_VVEQ((*at)(result_i, pca_latent{}), (*at)(result_j, pca_latent{}), false);
 				BOOST_TEST_MESSAGE("comparing pca_mean of impl nr " << impl_idx_i << " and " << impl_idx_j);
