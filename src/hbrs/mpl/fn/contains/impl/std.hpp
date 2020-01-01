@@ -20,11 +20,7 @@
 #include "../fwd/std.hpp"
 
 #include <hbrs/mpl/core/preprocessor.hpp>
-
-#include <boost/hana/ext/std/vector.hpp>
-#include <boost/hana/ext/std/tuple.hpp>
 #include <boost/hana/contains.hpp>
-#include <boost/hana/concept/comparable.hpp>
 #include <boost/mpl/if.hpp>
 
 #include <vector>
@@ -41,17 +37,18 @@ template<
 	typename E,
 	typename std::enable_if_t<
 		boost::mpl::if_c<
-			std::is_same< hana::tag_of_t<S>, hana::ext::std::vector_tag>::value && hana::Comparable<E>::value,
+			std::is_same_v< hana::tag_of_t<S>, hana::ext::std::vector_tag>,
 			std::is_convertible<E&&, typename std::remove_reference_t<S>::value_type>,
 			std::false_type
 		>::type::value
+		//TODO: Check if 'e' is comparable?
 	>*
 >
 constexpr decltype(auto)
 contains_impl_std_vector::operator()(S && s, E && e) const {
 	return std::find(
-		s.begin(), 
-		s.end(), 
+		s.begin(),
+		s.end(),
 		HBRS_MPL_FWD(e)
 	) != s.end();
 }

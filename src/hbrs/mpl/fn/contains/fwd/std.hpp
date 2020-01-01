@@ -21,8 +21,6 @@
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/ext/std/vector.hpp>
 #include <boost/hana/ext/std/tuple.hpp>
-#include <boost/hana/contains.hpp>
-#include <boost/hana/concept/comparable.hpp>
 #include <vector>
 #include <tuple>
 #include <numeric>
@@ -38,10 +36,11 @@ struct contains_impl_std_vector {
 		typename E,
 		typename std::enable_if_t<
 			boost::mpl::if_c<
-				std::is_same< hana::tag_of_t<S>, hana::ext::std::vector_tag>::value && hana::Comparable<E>::value,
+				std::is_same_v< hana::tag_of_t<S>, hana::ext::std::vector_tag>,
 				std::is_convertible<E&&, typename std::remove_reference_t<S>::value_type>,
 				std::false_type
 			>::type::value
+			//TODO: Check if 'e' is comparable?
 		>* = nullptr
 	>
 	constexpr decltype(auto)
