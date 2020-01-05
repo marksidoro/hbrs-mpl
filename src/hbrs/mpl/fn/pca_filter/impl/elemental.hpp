@@ -92,8 +92,9 @@ pca_filter_impl_el_matrix::operator()(
 	auto centered = (*multiply)(score, transpose(coeff));
 	BOOST_ASSERT((*equal)(size(a), size(centered)));
 	
-	//TODO: Only add mean if ctrl.center()==true a.k.a. mean != 0
-	auto data = (*plus)(centered, expand(mean, size(centered)));
+	auto data = ctrl.center()
+		? (*plus)(centered, expand(mean, size(centered)))
+		: std::move(centered);
 	BOOST_ASSERT((*equal)(size(data), a_sz));
 	
 	HBRS_MPL_LOG_TRIVIAL(trace) << "data:" << loggable{data};
