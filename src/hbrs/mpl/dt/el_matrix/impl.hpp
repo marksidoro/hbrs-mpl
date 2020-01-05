@@ -144,6 +144,12 @@ struct make_impl<hbrs::mpl::el_matrix_tag> {
 		return {data}; 
 	}
 	
+	template<typename Ring>
+	static hbrs::mpl::el_matrix<Ring>
+	apply(hbrs::mpl::el_matrix<Ring> a) {
+		return a;
+	}
+	
 	template <
 		typename Ring,
 		typename M,
