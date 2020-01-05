@@ -318,7 +318,9 @@ BOOST_AUTO_TEST_CASE(pca_comparison,  * utf::tolerance(_TOL)) {
 				auto && mean_ =   (*at) (pca_result, pca_mean{});
 				
 				auto centered = (*multiply)(score_, transpose(coeff_));
-				auto rebuild = (*plus)(centered, expand(mean_, size(centered)));
+				auto rebuild = center
+					? (*plus)(centered, expand(mean_, size(centered)))
+					: centered;
 				
 				BOOST_TEST_MESSAGE("Comparing original data and reconstructed data computed by impl nr " << impl_idx);
 				
