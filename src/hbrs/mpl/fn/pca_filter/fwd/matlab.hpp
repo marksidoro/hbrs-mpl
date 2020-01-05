@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2020 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 #ifdef HBRS_MPL_ENABLE_MATLAB
 	#include <hbrs/mpl/dt/pca_control/fwd.hpp>
+	#include <hbrs/mpl/dt/pca_filter_control/fwd.hpp>
 	#include <hbrs/mpl/dt/pca_filter_result/fwd.hpp>
 	#include <hbrs/mpl/dt/ml_matrix/fwd.hpp>
 	#include <hbrs/mpl/dt/ml_vector/fwd.hpp>
@@ -46,7 +47,7 @@ struct pca_filter_impl_ml_matrix {
 	operator()(
 		ml_matrix<real_T> const& a,
 		std::vector<bool> const& keep,
-		pca_control<bool,bool,bool> const& ctrl
+		pca_filter_control<pca_control<bool,bool,bool>,bool> const& ctrl
 	) const;
 	
 	pca_filter_result<
@@ -56,7 +57,7 @@ struct pca_filter_impl_ml_matrix {
 	operator()(
 		ml_matrix<real_T> const& a,
 		ml_column_vector<boolean_T> const& keep,
-		pca_control<bool,bool,bool> const& ctrl
+		pca_filter_control<pca_control<bool,bool,bool>,bool> const& ctrl
 	) const;
 	
 	pca_filter_result<
@@ -66,7 +67,7 @@ struct pca_filter_impl_ml_matrix {
 	operator()(
 		ml_matrix<real_T> const& a,
 		ml_row_vector<boolean_T> const& keep,
-		pca_control<bool,bool,bool> const& ctrl
+		pca_filter_control<pca_control<bool,bool,bool>,bool> const& ctrl
 	) const = delete /* TODO: implement... */;
 	
 	pca_filter_result<
@@ -76,7 +77,7 @@ struct pca_filter_impl_ml_matrix {
 	operator()(
 		ml_matrix<real_T> const& a,
 		std::function<bool(int)> const& keep,
-		pca_control<bool,bool,bool> const& ctrl
+		pca_filter_control<pca_control<bool,bool,bool>,bool> const& ctrl
 	) const;
 };
 

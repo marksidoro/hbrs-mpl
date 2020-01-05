@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2020 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 	#include <hbrs/mpl/dt/pca_control/fwd.hpp>
+	#include <hbrs/mpl/dt/pca_filter_control/fwd.hpp>
 	#include <hbrs/mpl/dt/el_matrix/fwd.hpp>
 	#include <hbrs/mpl/dt/el_dist_matrix/fwd.hpp>
 #endif
@@ -49,7 +50,7 @@ struct pca_filter_impl_el_matrix {
 	operator()(
 		Matrix && a,
 		std::function<bool(El::Int)> const& keep,
-		pca_control<bool,bool,bool> const& ctrl
+		pca_filter_control<pca_control<bool,bool,bool>,bool> const& ctrl
 	) const;
 	
 	template <
@@ -63,7 +64,7 @@ struct pca_filter_impl_el_matrix {
 	operator()(
 		Matrix && a,
 		std::vector<bool> const& keep,
-		pca_control<bool,bool,bool> const& ctrl
+		pca_filter_control<pca_control<bool,bool,bool>,bool> const& ctrl
 	) const;
 };
 

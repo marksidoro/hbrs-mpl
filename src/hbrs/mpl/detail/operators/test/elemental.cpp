@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2020 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2269,12 +2269,12 @@ BOOST_AUTO_TEST_CASE(matrix_pca_filter, * utf::tolerance(_TOL)) {
 	auto const b = make_el_matrix(a);
 	std::vector<bool> const keep(std::min((std::size_t)a_m, (std::size_t)a_n), true);
 	
-	detail::pca_filter_impl_el_matrix{}(b, keep, make_pca_control(true, true, false));
+	detail::pca_filter_impl_el_matrix{}(b, keep, make_pca_filter_control(make_pca_control(true, true, false), false));
 	
 	pca_filter_result<
 		el_matrix<double>,
 		el_column_vector<double>
-	> rslt = (*pca_filter)(b, keep, make_pca_control(true, true, false));
+	> rslt = (*pca_filter)(b, keep, make_pca_filter_control(make_pca_control(true, true, false), false));
 	
 	auto && data   = (*at)(rslt, pca_filter_data{});
 	auto && latent = (*at)(rslt, pca_filter_latent{});

@@ -1,4 +1,4 @@
-% Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+% Copyright (c) 2018-2020 Jakob Meng, <jakobmeng@web.de>
 % 
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ function build(bin_dir, src_dir, build_type)
     
     for fun = {'pca_filter_level0'}
         flags = {flags{:}, fun{1}, '-args', ...
-            {matrix_double_type, vector_bool_type, bool_type, bool_type, bool_type} ...
+            {matrix_double_type, vector_bool_type, bool_type, bool_type, bool_type, bool_type} ...
         };
     end
     

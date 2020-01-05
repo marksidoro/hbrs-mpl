@@ -1,4 +1,4 @@
-% Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
+% Copyright (c) 2018-2020 Jakob Meng, <jakobmeng@web.de>
 % 
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -103,20 +103,23 @@ function pca_filter_test()
         for i = 1:funs_sz
             fun = funs{1,i};
             % TODO: test other cases, e.g. Economy:=false,
-            %       Center:=false or Normalize := false
+            %       Center:=false, Normalize := false or
+            %       KeepCentered := true
             
             [data{1,i}, latent{1,i}] = ...
                 fun(dataset, diag(ones(p)), ...
                     true, ... % Economy
                     true, ... % Center
-                    true ... % Normalize
+                    true, ... % Normalize
+                    false ... % KeepCentered
                 );
             
             [data{1,i+funs_sz}, latent{1,i+funs_sz}] = ...
                 fun(dataset, diag(zeros(p)), ...
                     true, ... % Economy
                     true, ... % Center
-                    true ... % Normalize
+                    true, ... % Normalize
+                    false ... % KeepCentered
                 );
             
             for j = 1:p
@@ -126,7 +129,8 @@ function pca_filter_test()
                     fun(dataset, filtered, ...
                         true, ... % Economy
                         true, ... % Center
-                        true ... % Normalize
+                        true, ... % Normalize
+                        false ... % KeepCentered
                     );
             end
         end

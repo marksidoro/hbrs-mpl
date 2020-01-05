@@ -1,4 +1,4 @@
-/* Copyright (c) 2016 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2020 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -379,7 +379,7 @@ BOOST_AUTO_TEST_CASE(matrix_pca_filter, * utf::tolerance(_TOL)) {
 	BOOST_TEST((unsigned) (a5.data().size[0] * a5.data().size[1]) == a3_m * a3_n);
 	
 	std::vector<bool> const keep_all(std::min(a3_m, a3_n), true);
-	auto red1a = (*pca_filter)(a5, keep_all, make_pca_control(true, true, false));
+	auto red1a = (*pca_filter)(a5, keep_all, make_pca_filter_control(make_pca_control(true, true, false), false));
 	for(std::size_t i = 0; i < a3_m; ++i) {
 		for(std::size_t j = 0; j < a3_n; ++j) {
 			BOOST_TEST(a5[(int)i][(int)j] == a3[i][j]);
@@ -394,7 +394,7 @@ BOOST_AUTO_TEST_CASE(matrix_pca_filter, * utf::tolerance(_TOL)) {
 	
 	std::vector<bool> keep_first(std::min(a3_m, a3_n), false);
 	keep_first[0] = true;
-	auto red1b = (*pca_filter)(a5, keep_first, make_pca_control(true, true, false));
+	auto red1b = (*pca_filter)(a5, keep_first, make_pca_filter_control(make_pca_control(true, true, false), false));
 	
 	static constexpr std::size_t const 
 	red1b_ref_m = 13, red1b_ref_n = 4;

@@ -1,4 +1,4 @@
-% Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+% Copyright (c) 2018-2020 Jakob Meng, <jakobmeng@web.de>
 % 
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 % You should have received a copy of the GNU General Public License
 % along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-function [data,latent] = pca_filter_level0(A, filtered, Economy, Center, Normalize)
+function [data,latent] = pca_filter_level0(A, filtered, Economy, Center, Normalize, KeepCentered)
     coder.varsize('A', 'filtered');
 
     [m,n] = size(A);
@@ -44,7 +44,7 @@ function [data,latent] = pca_filter_level0(A, filtered, Economy, Center, Normali
     data = score * filter * coeff';
     
     % Add mean if it was subtracted before
-    if Center
+    if Center && ~KeepCentered
         [m,n] = size(data);
         for i = 1:m
             for j = 1:n

@@ -37,6 +37,7 @@
 #include <hbrs/mpl/dt/sm.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>
 #include <hbrs/mpl/dt/pca_control.hpp>
+#include <hbrs/mpl/dt/pca_filter_control.hpp>
 
 #include <hbrs/mpl/fn/pca_filter.hpp>
 #include <hbrs/mpl/fn/at.hpp>
@@ -106,6 +107,9 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(_TOL)) {
 		),
 		make_sm(
 			make_ctsav(detail::mat_o), make_matrix_size(hana::size_c<detail::mat_o_m>, hana::size_c<detail::mat_o_n>), row_major_c
+		),
+		make_sm(
+			make_ctsav(detail::mat_p), make_matrix_size(hana::size_c<detail::mat_p_m>, hana::size_c<detail::mat_p_n>), row_major_c
 		)
 	);
 	
@@ -114,32 +118,39 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(_TOL)) {
 		hana::make_tuple(hana::true_c, hana::false_c) /* keep */,
 		hana::make_tuple(hana::true_c, hana::false_c) /* economy */,
 		hana::make_tuple(hana::true_c, hana::false_c) /* center */,
-		hana::make_tuple(hana::true_c, hana::false_c) /* normalize */
+		hana::make_tuple(hana::true_c, hana::false_c) /* normalize */,
+		hana::make_tuple(hana::true_c, hana::false_c) /* keep_centered */
 	);
 	
 
 	static constexpr auto factories = hana::drop_back(hana::make_tuple(
 		#ifdef HBRS_MPL_ENABLE_MATLAB
-		[](auto && a, auto keep, auto economy, auto center, auto normalize) {
+		[](auto && a, auto keep, auto economy, auto center, auto normalize, auto keep_centered) {
 			return hana::make_tuple(
 				detail::pca_filter_impl_ml_matrix{},
 				hbrs::mpl::make_ml_matrix(HBRS_MPL_FWD(a)),
 				keep,
-				pca_control<bool,bool,bool>{economy, center, normalize}
+				pca_filter_control<
+					pca_control<bool,bool,bool>,
+					bool
+				>{{economy, center, normalize}, keep_centered}
 			);
 		},
 		#endif
 		
 		#ifdef HBRS_MPL_ENABLE_ELEMENTAL
-		[](auto && a, auto keep, auto economy, auto center, auto normalize) {
+		[](auto && a, auto keep, auto economy, auto center, auto normalize, auto keep_centered) {
 			return hana::make_tuple(
 				detail::pca_filter_impl_el_matrix{},
 				hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a)),
 				keep,
-				pca_control<bool,bool,bool>{economy, center, normalize}
+				pca_filter_control<
+					pca_control<bool,bool,bool>,
+					bool
+				>{{economy, center, normalize}, keep_centered}
 			);
 		},
-		[](auto && a, auto keep, auto economy, auto center, auto normalize) {
+		[](auto && a, auto keep, auto economy, auto center, auto normalize, auto keep_centered) {
 			static El::Grid grid{}; // grid is static because reference to grid is required by El::DistMatrix<...>
 			auto a_sz = (*size)(a);
 			if constexpr(
@@ -155,7 +166,10 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(_TOL)) {
 						hbrs::mpl::make_el_matrix(HBRS_MPL_FWD(a))
 					),
 					keep,
-					pca_control<bool,bool,bool>{economy, center, normalize}
+					pca_filter_control<
+						pca_control<bool,bool,bool>,
+						bool
+					>{{economy, center, normalize}, keep_centered}
 				);
 			}
 		},
@@ -169,13 +183,15 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(_TOL)) {
 		auto const& keep = hana::at_c<1>(cfg);
 		auto const& economy = hana::at_c<2>(cfg);
 		auto const& center = hana::at_c<3>(cfg);
-		auto const& normalize = hana::at_c<3>(cfg);
+		auto const& normalize = hana::at_c<4>(cfg);
+		auto const& keep_centered = hana::at_c<5>(cfg);
 		
 		BOOST_TEST_MESSAGE("dataset_nr=" << dataset_nr);
 		BOOST_TEST_MESSAGE("keep=" << (keep ? "true" : "false"));
 		BOOST_TEST_MESSAGE("economy=" << (economy ? "true" : "false"));
 		BOOST_TEST_MESSAGE("center=" << (center? "true" : "false"));
 		BOOST_TEST_MESSAGE("normalize=" << (normalize? "true" : "false"));
+		BOOST_TEST_MESSAGE("keep_centered=" << (keep_centered? "true" : "false"));
 		
 		auto const& dataset = hana::at(datasets, dataset_nr);
 		auto sz_ = (*size)(dataset);
@@ -187,7 +203,7 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(_TOL)) {
 		
 		auto testcases = hana::transform(
 			factories,
-			[&](auto factory) { return factory(dataset, filter, economy, center, normalize); }
+			[&](auto factory) { return factory(dataset, filter, economy, center, normalize, keep_centered); }
 		);
 		
 		auto supported_indices = hana::transform(
@@ -254,10 +270,19 @@ BOOST_AUTO_TEST_CASE(pca_filter_comparison,  * utf::tolerance(_TOL)) {
 				auto && data_   = (*at)(result, pca_filter_data{});
 				auto && latent_ = (*at)(result, pca_filter_latent{});
 				
+				auto testcase = hana::at(testcases, impl_idx);
+				auto dataset_ = hana::at(testcase, hana::size_c<1>);
+				
 				if (keep) {
-					HBRS_MPL_TEST_MMEQ(dataset, data_, false);
+					if (center && keep_centered) {
+						// dataset == data_ + mean(dataset) ?
+						auto reconstructed = (*plus)(data_, expand(mean(columns(dataset_)), size(dataset_)));
+						HBRS_MPL_TEST_MMEQ(dataset, reconstructed, false);
+					} else {
+						HBRS_MPL_TEST_MMEQ(dataset, data_, false);
+					}
 				} else {
-					if (center) {
+					if (center && !keep_centered) {
 						auto mean_ = (*expand)(mean(columns(dataset)), size(dataset));
 						HBRS_MPL_TEST_MMEQ(mean_, data_, false);
 					} else {

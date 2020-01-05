@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2020 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include <hbrs/mpl/dt/el_dist_matrix.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
 #include <hbrs/mpl/dt/pca_control.hpp>
+#include <hbrs/mpl/dt/pca_filter_control.hpp>
 #include <hbrs/mpl/dt/pca_filter_result.hpp>
 
 #include <hbrs/mpl/fn/pca.hpp>
@@ -60,7 +61,7 @@ auto
 pca_filter_impl_el_matrix::operator()(
 	Matrix && a,
 	std::function<bool(El::Int)> const& keep,
-	pca_control<bool,bool,bool> const& ctrl
+	pca_filter_control<pca_control<bool,bool,bool>,bool> const& ctrl
 ) const {
 	HBRS_MPL_LOG_TRIVIAL(debug) << "pca_filter:elemental:begin";
 	HBRS_MPL_LOG_TRIVIAL(trace) << "A:" << loggable{a};
@@ -68,11 +69,11 @@ pca_filter_impl_el_matrix::operator()(
 	auto a_sz = (*size)(a);
 	auto a_m = (*m)(a_sz);
 	auto a_n = (*n)(a_sz);
-	auto DOF = a_m - (ctrl.center() ? 1 : 0);
-	auto keep_sz = (DOF<a_n && ctrl.economy()) ? DOF : std::min(a_m, a_n);
-	auto latent_sz = (DOF<a_n && ctrl.economy()) ? DOF : a_n;
+	auto DOF = a_m - (ctrl.pca_control().center() ? 1 : 0);
+	auto keep_sz = (DOF<a_n && ctrl.pca_control().economy()) ? DOF : std::min(a_m, a_n);
+	auto latent_sz = (DOF<a_n && ctrl.pca_control().economy()) ? DOF : a_n;
 	
-	auto rslt = (*pca)(HBRS_MPL_FWD(a), ctrl);
+	auto rslt = (*pca)(HBRS_MPL_FWD(a), ctrl.pca_control());
 	
 	decltype(auto) coeff  =  (*at)(rslt, pca_coeff{});
 	decltype(auto) score  =  (*at)(rslt, pca_score{});
@@ -90,9 +91,9 @@ pca_filter_impl_el_matrix::operator()(
 	}
 	
 	auto centered = (*multiply)(score, transpose(coeff));
-	BOOST_ASSERT((*equal)(size(a), size(centered)));
+	BOOST_ASSERT((*equal)(a_sz, size(centered)));
 	
-	auto data = ctrl.center()
+	auto data = ctrl.pca_control().center() && !ctrl.keep_centered()
 		? (*plus)(centered, expand(mean, size(centered)))
 		: std::move(centered);
 	BOOST_ASSERT((*equal)(size(data), a_sz));
@@ -114,14 +115,14 @@ auto
 pca_filter_impl_el_matrix::operator()(
 	Matrix && a,
 	std::vector<bool> const& keep,
-	pca_control<bool,bool,bool> const& ctrl
+	pca_filter_control<pca_control<bool,bool,bool>,bool> const& ctrl
 ) const {
 	auto a_sz = (*size)(a);
 	auto a_m = (*m)(a_sz);
 	auto a_n = (*n)(a_sz);
 	
-	auto DOF = a_m - (ctrl.center() ? 1 : 0);
-	BOOST_ASSERT(keep.size() == (unsigned)((DOF<a_n && ctrl.economy()) ? DOF : std::min(a_m, a_n)));
+	auto DOF = a_m - (ctrl.pca_control().center() ? 1 : 0);
+	BOOST_ASSERT(keep.size() == (unsigned)((DOF<a_n && ctrl.pca_control().economy()) ? DOF : std::min(a_m, a_n)));
 	
 	return (*this)(
 		HBRS_MPL_FWD(a),

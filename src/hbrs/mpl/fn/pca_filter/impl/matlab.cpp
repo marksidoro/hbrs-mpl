@@ -1,4 +1,4 @@
-/* Copyright (c) 2018-2019 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2018-2020 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include <hbrs/mpl/core/preprocessor.hpp>
 
 #include <hbrs/mpl/dt/pca_control.hpp>
+#include <hbrs/mpl/dt/pca_filter_control.hpp>
 #include <hbrs/mpl/dt/pca_filter_result.hpp>
 
 #include <hbrs/mpl/fn/size.hpp>
@@ -50,7 +51,7 @@ pca_filter_result<
 pca_filter_impl_ml_matrix::operator()(
 	ml_matrix<real_T> const& a,
 	std::vector<bool> const& keep,
-	pca_control<bool,bool,bool> const& ctrl
+	pca_filter_control<pca_control<bool,bool,bool>,bool> const& ctrl
 ) const {
 	auto keep_sz = (*size)(keep);
 	auto filter_sz = boost::numeric_cast<int>(keep_sz);
@@ -71,7 +72,7 @@ pca_filter_result<
 pca_filter_impl_ml_matrix::operator()(
 	ml_matrix<real_T> const& a,
 	ml_column_vector<boolean_T> const& keep,
-	pca_control<bool,bool,bool> const& ctrl
+	pca_filter_control<pca_control<bool,bool,bool>,bool> const& ctrl
 ) const {
 	HBRS_MPL_LOG_TRIVIAL(debug) << "pca_filter:matlab:begin";
 	HBRS_MPL_LOG_TRIVIAL(trace) << "A:" << loggable{a};
@@ -83,8 +84,8 @@ pca_filter_impl_ml_matrix::operator()(
 	
 	auto keep_sz = (*size)(keep);
 	
-	auto DOF = m_ - (ctrl.center() ? 1 : 0);
-	BOOST_ASSERT(keep_sz == ((DOF<n_ && ctrl.economy()) ? DOF : std::min(m_, n_)));
+	auto DOF = m_ - (ctrl.pca_control().center() ? 1 : 0);
+	BOOST_ASSERT(keep_sz == ((DOF<n_ && ctrl.pca_control().economy()) ? DOF : std::min(m_, n_)));
 	
 	ml_matrix<real_T> data;
 	ml_column_vector<real_T> latent;
@@ -92,9 +93,10 @@ pca_filter_impl_ml_matrix::operator()(
 	pca_filter_level0(
 		&a.data(),
 		&keep.data(),
-		ctrl.economy(),
-		ctrl.center(),
-		ctrl.normalize(),
+		ctrl.pca_control().economy(),
+		ctrl.pca_control().center(),
+		ctrl.pca_control().normalize(),
+        ctrl.keep_centered(),
 		&data.data(),
 		&latent.data()
 	);
@@ -152,7 +154,7 @@ pca_filter_result<
 pca_filter_impl_ml_matrix::operator()(
 	ml_matrix<real_T> const& a,
 	std::function<bool(int)> const& keep,
-	pca_control<bool,bool,bool> const& ctrl
+	pca_filter_control<pca_control<bool,bool,bool>,bool> const& ctrl
 ) const {
 	auto sz = (*size)(a);
 	int m_ = (*m)(sz);
