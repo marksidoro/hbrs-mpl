@@ -1,4 +1,4 @@
-/* Copyright (c) 2016 Jakob Meng, <jakobmeng@web.de>
+/* Copyright (c) 2016-2020 Jakob Meng, <jakobmeng@web.de>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include <hbrs/mpl/config.hpp>
 #include <boost/hana/fwd/core/make.hpp>
 #include <boost/hana/fwd/core/to.hpp>
+#include <cstddef>
 
 HBRS_MPL_NAMESPACE_BEGIN
 namespace hana = boost::hana;
