@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2019 Jakob Meng, <jakobmeng@web.de>
+# Copyright (c) 2016-2020 Jakob Meng, <jakobmeng@web.de>
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 
 #################### project settings ####################
 
-project(hbrs-mpl VERSION 2019.0.0.0)
+project(hbrs-mpl VERSION 2020.0.0.0)
 
 include(FeatureSummary)
 
@@ -34,7 +34,7 @@ set_package_properties(hbrs-cmake PROPERTIES
 # Hana is part of boost since 1.61, Ref.: http://www.boost.org/users/history/
 # BOOST_TEST macro requires 1.59, Ref.: https://stackoverflow.com/a/38083784/6490710
 # boost::hana::overload_linearly with single argument is supported since boost 1.62, Ref.: https://github.com/boostorg/hana/commit/89755947faffc56ff76ef3eecca0430191e976b8
-find_package(Boost 1.62 COMPONENTS unit_test_framework system thread serialization chrono program_options filesystem iostreams regex exception signals log)
+find_package(Boost 1.62 COMPONENTS unit_test_framework system thread serialization chrono program_options filesystem iostreams regex exception log)
 set_package_properties(Boost PROPERTIES
     PURPOSE "Required for meta programming, unit tests and others."
     TYPE REQUIRED)
