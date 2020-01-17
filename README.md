@@ -16,10 +16,11 @@ Its development started in 2015 as a research project at Bonn-Rhein-Sieg Univers
 
 ## Under the hood
 
-- `hbrs-mpl` provides algorithms for 
-   - linear algebra ([singular value decomposition (SVD)](https://github.com/JM1/hbrs-mpl/tree/master/src/hbrs/mpl/fn/svd))
+- `hbrs-mpl` provides algorithms for
+   - linear algebra (matrix operations, e.g. [multiply](https://github.com/JM1/hbrs-mpl/tree/master/src/hbrs/mpl/fn/multiply) and [transpose](https://github.com/JM1/hbrs-mpl/tree/master/src/hbrs/mpl/fn/transpose))
+   - numerical linear algebra ([eigenvalue decomposition](https://github.com/JM1/hbrs-mpl/tree/master/src/hbrs/mpl/fn/eig), [singular value decomposition (SVD)](https://github.com/JM1/hbrs-mpl/tree/master/src/hbrs/mpl/fn/svd))
    - statistics ([Principal Component Analysis (PCA) / Proper Orthogonal Decomposition (POD)](https://github.com/JM1/hbrs-mpl/tree/master/src/hbrs/mpl/fn/pca))
-   - fluid mechanics ([Dynamic Mode Decomposition (DMD)](https://github.com/JM1/hbrs-mpl/tree/master/src/hbrs/mpl/fn/dmd))
+   - time-dependent statistics ([Dynamic Mode Decomposition (DMD)](https://github.com/JM1/hbrs-mpl/tree/master/src/hbrs/mpl/fn/dmd))
 - `hbrs-mpl` provides local and distributed [datastructures](https://github.com/JM1/hbrs-mpl/tree/master/src/hbrs/mpl/dt) for matrices, vectors and sequences
 - `hbrs-mpl`'s [mathematical functions](https://github.com/JM1/hbrs-mpl/tree/master/src/hbrs/mpl/fn) are mostly geared towards compatibility with [MATLAB's API](https://de.mathworks.com/help/), because the latter has a strong focus on mathematical notations, is properly documented and useful for rapid prototyping.
 - `hbrs-mpl` heavily relies on [Elemental](https://github.com/elemental/Elemental) for linear algebra algorithms, that we have not yet implemented as generic and functional code. 3rd party code from Elemental and MATLAB is wrapped and hidden from the user.
