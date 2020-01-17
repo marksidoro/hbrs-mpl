@@ -399,6 +399,7 @@ pca(
 	//MATLAB>> end
 	
 	HBRS_MPL_LOG_TRIVIAL(debug) << "pca:elemental:center";
+	//TODO: Is centering really necessary or is the first principal component equivalent to mean?
 	auto cntr = ctrl.center() ? (*minus)(a, (*expand)(mu, a_sz)) : a;
 	BOOST_ASSERT(any_of(cntr, is_nan) == false);
 	//MATLAB>> if Center
