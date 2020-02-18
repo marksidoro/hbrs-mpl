@@ -30,5 +30,6 @@ function [eigenvalues, modes, coefficients] = dmd_level1(X1, X2, TargetRank)
     eigenvalues = diag (D);
     
     col1 = y1(:, 1);
+    % TODO: Handle col1 having only zeros!
     coefficients = modes \ col1;
 end

@@ -140,6 +140,7 @@ dmd(
 	auto eigenvalues = D;
 	
 	auto col1 = (*select)(std::move(x1), std::make_pair(El::ALL, 0));
+    // TODO: Handle col1 having only zeros!
 	auto coefficients = (*mldivide)(modes, complex(col1, _Ring_(0)));
 	
 	HBRS_MPL_LOG_TRIVIAL(trace) << "col1:" << loggable{col1};
