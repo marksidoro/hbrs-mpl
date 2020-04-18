@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.com/JM1/hbrs-mpl.svg?branch=master)](https://travis-ci.com/JM1/hbrs-mpl)
 
 `hbrs-mpl` is a experimental generic [C++17](https://en.wikipedia.org/wiki/C++17) library for distributed scientific computing at HPC clusters.
-Our research goal is to codify complex algorithms like [singular value decomposition (SVD)](https://en.wikipedia.org/wiki/Singular_value_decomposition) using abstract, mathematical notations without sacrificing space and time efficiency.
+Our research goal is to codify complex algorithms like [singular value decomposition (SVD)](https://en.wikipedia.org/wiki/Singular_value_decomposition) using abstract, mathematical notation without sacrificing space and time efficiency.
 We use meta programming to [evaluate expressions at compile-time](https://github.com/JM1/hbrs-mpl/blob/expression_evaluation_framework_2/src/hbrs/mpl/core/evaluate/impl.hpp) and thus avoid negative impact on run-time.
 We apply generic techniques with the help of C++ templates to write reusable and robust components.
 
