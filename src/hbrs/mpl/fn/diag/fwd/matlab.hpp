@@ -33,15 +33,19 @@ namespace detail {
 #ifdef HBRS_MPL_ENABLE_MATLAB
 
 struct diag_impl_ml_vector {
+	HBRS_MPL_API
 	ml_matrix<real_T>
 	operator()(ml_column_vector<real_T> const& a) const;
 	
+	HBRS_MPL_API
 	ml_matrix<real_T>
 	operator()(ml_row_vector<real_T> const& a) const;
-    
+
+	HBRS_MPL_API
 	ml_matrix<creal_T>
 	operator()(ml_column_vector<creal_T> const& a) const;
-    
+
+	HBRS_MPL_API
 	ml_matrix<creal_T>
 	operator()(ml_row_vector<creal_T> const& a) const;
 };

@@ -26,6 +26,7 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 struct givens_impl {
+	HBRS_MPL_API
 	givens_result<double, double>
 	operator()(double a, double b) const;
 };

@@ -32,6 +32,7 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 #define _DEF_BIDIAG(lvl)                                                                                               \
+	HBRS_MPL_API                                                                                                       \
 	bidiag_result<                                                                                                     \
 		ml_matrix<real_T> /* U */,                                                                                     \
 		ml_matrix<real_T> /* B */,                                                                                     \

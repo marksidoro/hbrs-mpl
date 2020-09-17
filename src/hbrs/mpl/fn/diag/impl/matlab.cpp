@@ -30,6 +30,7 @@ extern "C" {
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
+HBRS_MPL_API
 ml_matrix<real_T>
 diag_impl_ml_vector::operator()(ml_column_vector<real_T> const& a) const {
 	ml_matrix<real_T> b;
@@ -37,6 +38,7 @@ diag_impl_ml_vector::operator()(ml_column_vector<real_T> const& a) const {
 	return b;
 }
 
+HBRS_MPL_API
 ml_matrix<real_T>
 diag_impl_ml_vector::operator()(ml_row_vector<real_T> const& a) const {
 	ml_matrix<real_T> b;
@@ -44,6 +46,7 @@ diag_impl_ml_vector::operator()(ml_row_vector<real_T> const& a) const {
 	return b;
 }
 
+HBRS_MPL_API
 ml_matrix<creal_T>
 diag_impl_ml_vector::operator()(ml_column_vector<creal_T> const& a) const {
 	ml_matrix<creal_T> b;
@@ -51,6 +54,7 @@ diag_impl_ml_vector::operator()(ml_column_vector<creal_T> const& a) const {
 	return b;
 }
 
+HBRS_MPL_API
 ml_matrix<creal_T>
 diag_impl_ml_vector::operator()(ml_row_vector<creal_T> const& a) const {
 	ml_matrix<creal_T> b;

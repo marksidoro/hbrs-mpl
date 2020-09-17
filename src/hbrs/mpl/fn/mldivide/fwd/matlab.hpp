@@ -34,9 +34,11 @@ namespace detail {
 
 #ifdef HBRS_MPL_ENABLE_MATLAB
 struct mldivide_impl_ml_matrix_ml_vector {
+	HBRS_MPL_API
 	ml_column_vector<real_T>
 	operator()(ml_matrix<real_T> const& a, ml_column_vector<real_T> const& b) const;
 	
+	HBRS_MPL_API
 	ml_column_vector<creal_T>
 	operator()(ml_matrix<creal_T> const& a, ml_column_vector<creal_T> const& b) const;
 };

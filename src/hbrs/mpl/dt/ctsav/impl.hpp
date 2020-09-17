@@ -111,9 +111,9 @@ struct make_impl<hbrs::mpl::ctsav_tag> {
 /* namespace hana */ } /* namespace boost */ }
 
 HBRS_MPL_NAMESPACE_BEGIN
-extern template struct ctsav<int, 1>;
-extern template struct ctsav<int, 2>;
-extern template struct ctsav<int, 3>;
+extern template struct HBRS_MPL_API ctsav<int, 1>;
+extern template struct HBRS_MPL_API ctsav<int, 2>;
+extern template struct HBRS_MPL_API ctsav<int, 3>;
 HBRS_MPL_NAMESPACE_END
 
 #endif // !HBRS_MPL_DT_CTSAV_IMPL_HPP

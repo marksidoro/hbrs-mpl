@@ -35,6 +35,7 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 #define _DEF_PCA(lvl)                                                                                                  \
+	HBRS_MPL_API                                                                                                       \
 	pca_result<                                                                                                        \
 		ml_matrix<real_T>           /* coeff */,                                                                       \
 		ml_matrix<real_T>           /* score */,                                                                       \

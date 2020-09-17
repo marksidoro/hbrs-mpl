@@ -28,21 +28,27 @@ extern "C" {
 #include <ostream>
 #include <complex>
 
+HBRS_MPL_API
 std::complex<double>
 to_std_complex(creal_T const& x);
 
+HBRS_MPL_API
 creal_T
 from_std_complex(std::complex<real_T> const& x);
 
+HBRS_MPL_API
 std::ostream&
 operator<<(std::ostream& o, creal_T const& x);
 
+HBRS_MPL_API
 bool
 operator==(creal_T const& lhs, double const& rhs);
 
+HBRS_MPL_API
 bool
 operator==(creal_T const& lhs, std::complex<double> const& rhs);
 
+HBRS_MPL_API
 bool
 operator==(creal_T const& lhs, creal_T const& rhs);
 

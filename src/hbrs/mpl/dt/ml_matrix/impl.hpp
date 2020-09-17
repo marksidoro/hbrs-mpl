@@ -47,7 +47,7 @@ namespace hana = boost::hana;
 
 #define _HBRS_MPL_DEF_ML_MAT1(base_type)                                                                               \
 	template<>                                                                                                         \
-	struct ml_matrix<base_type> {                                                                                      \
+	struct HBRS_MPL_API ml_matrix<base_type> {                                                                         \
 		                                                                                                               \
 		ml_matrix()                                                                                                    \
 		: ptr_{nullptr, nullptr} {                                                                                     \

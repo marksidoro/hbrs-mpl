@@ -237,40 +237,55 @@ struct alignas(sizeof(T1)) pair{
 };
 #pragma pack(pop)
 
+HBRS_MPL_API
 MPI_Datatype
 datatype(hana::basic_type<double>);
+HBRS_MPL_API
 MPI_Datatype
 datatype(hana::basic_type<int>);
+HBRS_MPL_API
 MPI_Datatype
 datatype(hana::basic_type<unsigned long>);
+HBRS_MPL_API
 MPI_Datatype
 datatype(hana::basic_type<unsigned long long>);
+HBRS_MPL_API
 MPI_Datatype
 datatype(hana::basic_type<pair<int,int>>);
+HBRS_MPL_API
 MPI_Datatype
 datatype(hana::basic_type<pair<short,int>>);
+HBRS_MPL_API
 MPI_Datatype
 datatype(hana::basic_type<pair<long,int>>);
+HBRS_MPL_API
 MPI_Datatype
 datatype(hana::basic_type<pair<float,int>>);
+HBRS_MPL_API
 MPI_Datatype
 datatype(hana::basic_type<pair<double,int>>);
 
+HBRS_MPL_API
 bool
 initialized();
 
+HBRS_MPL_API
 int
 comm_rank(MPI_Comm comm = MPI_COMM_WORLD);
 
+HBRS_MPL_API
 int
 comm_size(MPI_Comm comm = MPI_COMM_WORLD);
 
+HBRS_MPL_API
 void
 barrier(MPI_Comm comm = MPI_COMM_WORLD);
 
+HBRS_MPL_API
 void
 abort(MPI_Comm comm = MPI_COMM_WORLD, int errorcode = EXIT_FAILURE);
 
+HBRS_MPL_API
 MPI_Request
 ibcast(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm);
 
@@ -280,15 +295,19 @@ ibcast(T *buffer, int count, int root, MPI_Comm comm) {
 	return ibcast(buffer, count, datatype(hana::type_c<T>), root, comm);
 }
 
+HBRS_MPL_API
 MPI_Status
 wait(MPI_Request & request);
 
+HBRS_MPL_API
 MPI_Status
 probe(int source, int tag, MPI_Comm comm);
 
+HBRS_MPL_API
 int
 get_count(MPI_Status const& status, MPI_Datatype datatype);
 
+HBRS_MPL_API
 MPI_Request
 isend(void const* buffer, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm);
 
@@ -298,6 +317,7 @@ isend(T const* buffer, int count, int dest, int tag, MPI_Comm comm) {
 	return isend(buffer, count, datatype(hana::type_c<T>), dest, tag, comm);
 }
 
+HBRS_MPL_API
 MPI_Request
 irecv(void *buffer, int count, MPI_Datatype datatype, int source, int tag, MPI_Comm comm);
 
@@ -307,6 +327,7 @@ irecv(T *buffer, int count, int source, int tag, MPI_Comm comm) {
 	return irecv(buffer, count, datatype(hana::type_c<T>), source, tag, comm);
 }
 
+HBRS_MPL_API
 void
 allreduce(const void *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, MPI_Comm comm);
 
@@ -316,6 +337,7 @@ allreduce(T const* sendbuf, T* recvbuf, int count, MPI_Op op, MPI_Comm comm) {
 	return allreduce(sendbuf, recvbuf, count, datatype(hana::type_c<T>), op, comm);
 }
 
+HBRS_MPL_API
 MPI_Request
 iallreduce(void const *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, MPI_Comm comm);
 
@@ -325,6 +347,7 @@ iallreduce(T const *sendbuf, T *recvbuf, int count, MPI_Op op, MPI_Comm comm) {
 	return iallreduce(sendbuf, recvbuf, count, datatype(hana::type_c<T>), op, comm);
 }
 
+HBRS_MPL_API
 void
 allgather(void const* sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm);
 
@@ -334,6 +357,7 @@ allgather(S const* sendbuf, int sendcount, R *recvbuf, int recvcount, MPI_Comm c
 	return allgather(sendbuf, sendcount, datatype(hana::type_c<S>), recvbuf, recvcount, datatype(hana::type_c<R>), comm);
 }
 
+HBRS_MPL_API
 MPI_Request
 iallgather(void const* sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm);
 

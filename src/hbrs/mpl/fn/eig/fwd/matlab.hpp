@@ -38,6 +38,7 @@ namespace detail {
 
 #define _DEC_EIG(lvl)                                                                                                  \
 	struct eig_impl_level ## lvl ## _ml_matrix {                                                                       \
+		HBRS_MPL_API                                                                                                   \
 		eig_result<                                                                                                    \
 			ml_column_vector<creal_T> /* eigenvalues */,                                                               \
 			ml_matrix<creal_T>        /* eigenvectors */                                                               \

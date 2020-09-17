@@ -44,6 +44,7 @@ extern "C" {
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
+HBRS_MPL_API
 pca_filter_result<
 	ml_matrix<real_T> /* data */,
 	ml_column_vector<real_T> /* latent*/
@@ -65,6 +66,7 @@ pca_filter_impl_ml_matrix::operator()(
 	return (*this)(a, filter, ctrl);
 }
 
+HBRS_MPL_API
 pca_filter_result<
 	ml_matrix<real_T> /* data */,
 	ml_column_vector<real_T> /* latent*/
@@ -147,6 +149,7 @@ pca_filter_impl_ml_matrix::operator()(
 // 	return { reduced, latent };
 // }
 
+HBRS_MPL_API
 pca_filter_result<
 	ml_matrix<real_T> /* data */,
 	ml_column_vector<real_T> /* latent*/

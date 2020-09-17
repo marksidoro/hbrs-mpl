@@ -40,6 +40,7 @@ namespace detail {
 #ifdef HBRS_MPL_ENABLE_MATLAB
 
 struct pca_filter_impl_ml_matrix {
+	HBRS_MPL_API
 	pca_filter_result<
 		ml_matrix<real_T> /* data */,
 		ml_column_vector<real_T> /* latent*/
@@ -50,6 +51,7 @@ struct pca_filter_impl_ml_matrix {
 		pca_filter_control<pca_control<bool,bool,bool>,bool> const& ctrl
 	) const;
 	
+	HBRS_MPL_API
 	pca_filter_result<
 		ml_matrix<real_T> /* data */,
 		ml_column_vector<real_T> /* latent*/
@@ -60,6 +62,7 @@ struct pca_filter_impl_ml_matrix {
 		pca_filter_control<pca_control<bool,bool,bool>,bool> const& ctrl
 	) const;
 	
+	HBRS_MPL_API
 	pca_filter_result<
 		ml_matrix<real_T> /* data */,
 		ml_column_vector<real_T> /* latent*/
@@ -70,6 +73,7 @@ struct pca_filter_impl_ml_matrix {
 		pca_filter_control<pca_control<bool,bool,bool>,bool> const& ctrl
 	) const = delete /* TODO: implement... */;
 	
+	HBRS_MPL_API
 	pca_filter_result<
 		ml_matrix<real_T> /* data */,
 		ml_column_vector<real_T> /* latent*/

@@ -33,11 +33,13 @@ namespace detail {
 #ifdef HBRS_MPL_ENABLE_MATLAB
 
 struct plus_impl_ml_matrix_scalar {
+	HBRS_MPL_API
 	ml_matrix<real_T>
 	operator()(ml_matrix<real_T> const& a, real_T b) const;
 };
 
 struct plus_impl_ml_matrix_ml_matrix {
+	HBRS_MPL_API
 	ml_matrix<real_T>
 	operator()(ml_matrix<real_T> const& a, ml_matrix<real_T> const& b) const;
 };

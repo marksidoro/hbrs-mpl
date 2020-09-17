@@ -30,17 +30,17 @@
 
 HBRS_MPL_NAMESPACE_BEGIN
 
-struct exception;
-struct incompatible_sequence_exception;
-struct incompatible_sequences_exception;
-struct incompatible_vectors_exception;
-struct incompatible_matrix_exception;
-struct incompatible_matrix_sequence_exception;
-struct incompatible_matrix_vector_exception;
-struct incompatible_matrices_exception;
-struct mpi_exception;
-struct io_exception;
-struct not_supported_exception;
+struct HBRS_MPL_API exception;
+struct HBRS_MPL_API incompatible_sequence_exception;
+struct HBRS_MPL_API incompatible_sequences_exception;
+struct HBRS_MPL_API incompatible_vectors_exception;
+struct HBRS_MPL_API incompatible_matrix_exception;
+struct HBRS_MPL_API incompatible_matrix_sequence_exception;
+struct HBRS_MPL_API incompatible_matrix_vector_exception;
+struct HBRS_MPL_API incompatible_matrices_exception;
+struct HBRS_MPL_API mpi_exception;
+struct HBRS_MPL_API io_exception;
+struct HBRS_MPL_API not_supported_exception;
 
 typedef boost::error_info<struct errinfo_sequence_size_, std::size_t > errinfo_sequence_size;
 typedef boost::error_info<
@@ -64,7 +64,7 @@ typedef boost::error_info<
 	>
 > errinfo_matrix_sizes;
 
-struct mpi_error_info;
+struct HBRS_MPL_API mpi_error_info;
 typedef boost::error_info<struct errinfo_mpi_error_info_, mpi_error_info> errinfo_mpi_error_info;
 
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL

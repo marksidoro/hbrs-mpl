@@ -29,6 +29,7 @@ extern "C" {
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
+HBRS_MPL_API
 ml_column_vector<creal_T>
 complex_impl_ml_vector::operator()(ml_column_vector<real_T> const& real, real_T const& imag) const {
 	ml_column_vector<creal_T> v;
@@ -36,6 +37,7 @@ complex_impl_ml_vector::operator()(ml_column_vector<real_T> const& real, real_T 
 	return v;
 }
 
+HBRS_MPL_API
 ml_column_vector<creal_T>
 complex_impl_ml_vector::operator()(ml_column_vector<real_T> const& real, ml_column_vector<real_T> const& imag) const {
 	ml_column_vector<creal_T> v;

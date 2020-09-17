@@ -22,6 +22,7 @@
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
+HBRS_MPL_API
 smcs<ml_matrix<real_T>>
 columns_impl_ml_matrix::operator()(ml_matrix<real_T> a) const {
 	return {a};

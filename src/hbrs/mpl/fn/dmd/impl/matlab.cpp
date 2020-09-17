@@ -32,6 +32,7 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 #define _DEF_DMD(lvl)                                                                                                  \
+	HBRS_MPL_API                                                                                                       \
 	dmd_result<                                                                                                        \
 		ml_column_vector<creal_T> /* eigenvalues */,                                                                   \
 		ml_matrix<creal_T>        /* modes */,                                                                         \

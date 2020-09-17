@@ -32,23 +32,29 @@ namespace detail {
 #ifdef HBRS_MPL_ENABLE_MATLAB
 
 struct n_impl_emxArray {
+	HBRS_MPL_API
 	int const&
 	operator()(emxArray_real_T const& a) const;
 
+	HBRS_MPL_API
 	int const&
 	operator()(emxArray_creal_T const& a) const;
 
+	HBRS_MPL_API
 	int const&
 	operator()(emxArray_boolean_T const& a) const;
 };
 
 struct n_impl_ml_matrix {
+	HBRS_MPL_API
 	int const&
 	operator()(ml_matrix<real_T> const& a) const;
 
+	HBRS_MPL_API
 	int const&
 	operator()(ml_matrix<creal_T> const& a) const;
 
+	HBRS_MPL_API
 	int const&
 	operator()(ml_matrix<boolean_T> const& a) const;
 };

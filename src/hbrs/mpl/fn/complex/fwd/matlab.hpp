@@ -32,9 +32,11 @@ namespace detail {
 #ifdef HBRS_MPL_ENABLE_MATLAB
 
 struct complex_impl_ml_vector {
+	HBRS_MPL_API
 	ml_column_vector<creal_T>
 	operator()(ml_column_vector<real_T> const& real, real_T const& imag) const;
 	
+	HBRS_MPL_API
 	ml_column_vector<creal_T>
 	operator()(ml_column_vector<real_T> const& real, ml_column_vector<real_T> const& imag) const;
 };

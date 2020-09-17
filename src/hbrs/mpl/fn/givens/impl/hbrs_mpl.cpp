@@ -33,6 +33,7 @@ namespace detail {
  * --     --    --   --         --   --
  *
  */
+HBRS_MPL_API
 givens_result<double, double>
 givens_impl::operator()(double a, double b) const {
 	givens_result<double, double> cs;

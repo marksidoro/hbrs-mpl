@@ -22,31 +22,37 @@
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
+HBRS_MPL_API
 int const&
 n_impl_emxArray::operator()(emxArray_real_T const& a) const {
 	return a.size[1];
 }
 
+HBRS_MPL_API
 int const&
 n_impl_emxArray::operator()(emxArray_creal_T const& a) const {
 	return a.size[1];
 }
 
+HBRS_MPL_API
 int const&
 n_impl_emxArray::operator()(emxArray_boolean_T const& a) const {
 	return a.size[1];
 }
 
+HBRS_MPL_API
 int const&
 n_impl_ml_matrix::operator()(ml_matrix<real_T> const& a) const {
 	return a.n();
 }
 
+HBRS_MPL_API
 int const&
 n_impl_ml_matrix::operator()(ml_matrix<creal_T> const& a) const {
 	return a.n();
 }
 
+HBRS_MPL_API
 int const&
 n_impl_ml_matrix::operator()(ml_matrix<boolean_T> const& a) const {
 	return a.n();

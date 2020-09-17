@@ -38,6 +38,7 @@ namespace detail {
 
 #define _DEC_BIDIAG(lvl)                                                                                               \
 	struct bidiag_impl_level ## lvl ## _ml_matrix {                                                                    \
+		HBRS_MPL_API                                                                                                   \
 		bidiag_result<                                                                                                 \
 			ml_matrix<real_T> /* U */,                                                                                 \
 			ml_matrix<real_T> /* B */,                                                                                 \

@@ -27,6 +27,7 @@
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
+HBRS_MPL_API
 eig_result<ml_column_vector<real_T>, ml_matrix<real_T>>
 sort_impl_ml_eig_result::operator()(
 	eig_result<ml_column_vector<real_T>, ml_matrix<real_T>> const& r,
@@ -35,6 +36,7 @@ sort_impl_ml_eig_result::operator()(
 	return sort_eig_result(r,p);
 }
 
+HBRS_MPL_API
 eig_result<ml_column_vector<creal_T>, ml_matrix<creal_T>>
 sort_impl_ml_eig_result::operator()(
 	eig_result<ml_column_vector<creal_T>, ml_matrix<creal_T>> const& r,

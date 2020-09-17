@@ -13,7 +13,7 @@ configure_file(
 
 #################### build ####################
 
-add_library(hbrs_mpl STATIC)
+add_library(hbrs_mpl SHARED)
 
 get_target_property(hbrs_mpl_TARGET_TYPE hbrs_mpl TYPE)
 if (hbrs_mpl_TARGET_TYPE STREQUAL "STATIC_LIBRARY")

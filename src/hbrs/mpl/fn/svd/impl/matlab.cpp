@@ -33,6 +33,7 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 #define _DEF_SVD(lvl)                                                                                                  \
+	HBRS_MPL_API                                                                                                       \
 	svd_result<                                                                                                        \
 		ml_matrix<real_T> /* U */,                                                                                     \
 		ml_matrix<real_T> /* S */,                                                                                     \

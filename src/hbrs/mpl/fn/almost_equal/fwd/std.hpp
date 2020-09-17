@@ -26,6 +26,7 @@ HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
 struct almost_equal_impl_double {
+	HBRS_MPL_API
 	bool
 	operator()(double a, double b, almost_equal_control<int,int> const& ctrl) const;
 };

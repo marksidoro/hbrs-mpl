@@ -35,7 +35,7 @@
 	HBRS_MPL_NAMESPACE_BEGIN                                                                                           \
                                                                                                                        \
 	template<>                                                                                                         \
-	struct ml_ ## vector_kind ## _vector<base_type> {                                                                  \
+	struct HBRS_MPL_API ml_ ## vector_kind ## _vector<base_type> {                                                     \
 		friend struct ml_column_vector<base_type>;                                                                     \
 		friend struct ml_row_vector<base_type>;                                                                        \
 		                                                                                                               \

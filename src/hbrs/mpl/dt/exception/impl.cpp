@@ -20,9 +20,9 @@ HBRS_MPL_NAMESPACE_BEGIN
 
 mpi_error_info::mpi_error_info(int code) : code_{code}, class__{0}, string_{} {
 	char c_str[MPI_MAX_ERROR_STRING];
-    int c_str_len;
-    
-    int ec = MPI_Error_string(code, c_str, &c_str_len);
+	int c_str_len;
+
+	int ec = MPI_Error_string(code, c_str, &c_str_len);
 	if(ec == MPI_SUCCESS) {
 		string_ = std::string(c_str, c_str_len);
 	}

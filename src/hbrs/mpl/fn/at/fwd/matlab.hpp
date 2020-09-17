@@ -37,40 +37,52 @@ namespace detail {
 #ifdef HBRS_MPL_ENABLE_MATLAB
 
 struct at_impl_emxArray {
-	real_T & 
+	HBRS_MPL_API
+	real_T &
 	operator()(emxArray_real_T & v, int d0) const;
 
-	creal_T & 
+	HBRS_MPL_API
+	creal_T &
 	operator()(emxArray_creal_T & v, int d0) const;
 
-	boolean_T & 
+	HBRS_MPL_API
+	boolean_T &
 	operator()(emxArray_boolean_T & v, int d0) const;
 
-	real_T const& 
+	HBRS_MPL_API
+	real_T const&
 	operator()(emxArray_real_T const& v, int d0) const;
 
-	creal_T const& 
+	HBRS_MPL_API
+	creal_T const&
 	operator()(emxArray_creal_T const& v, int d0) const;
 
-	boolean_T const& 
+	HBRS_MPL_API
+	boolean_T const&
 	operator()(emxArray_boolean_T const& v, int d0) const;
 
-	real_T & 
+	HBRS_MPL_API
+	real_T &
 	operator()(emxArray_real_T & a, matrix_index<int,int> i) const;
 
-	creal_T & 
+	HBRS_MPL_API
+	creal_T &
 	operator()(emxArray_creal_T & a, matrix_index<int,int> i) const;
 
-	boolean_T & 
+	HBRS_MPL_API
+	boolean_T &
 	operator()(emxArray_boolean_T & a, matrix_index<int,int> i) const;
 
-	real_T const& 
+	HBRS_MPL_API
+	real_T const&
 	operator()(emxArray_real_T const& a, matrix_index<int,int> i) const;
 
-	creal_T const& 
+	HBRS_MPL_API
+	creal_T const&
 	operator()(emxArray_creal_T const& a, matrix_index<int,int> i) const;
 
-	boolean_T const& 
+	HBRS_MPL_API
+	boolean_T const&
 	operator()(emxArray_boolean_T const& a, matrix_index<int,int> i) const;
 };
 

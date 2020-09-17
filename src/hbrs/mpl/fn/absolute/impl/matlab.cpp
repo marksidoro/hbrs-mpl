@@ -25,6 +25,7 @@ extern "C" {
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
+HBRS_MPL_API
 real_T
 absolute_impl_ml_creal_T::operator()(creal_T const& a) const {
 	return absolute_cd(a);

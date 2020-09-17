@@ -35,6 +35,7 @@ namespace detail {
 
 #define _DEC_SVD(lvl)                                                                                                  \
 	struct svd_impl_level ## lvl ## _ml_matrix {                                                                       \
+        HBRS_MPL_API                                                                                                   \
 		svd_result<                                                                                                    \
 			ml_matrix<real_T> /* U */,                                                                                 \
 			ml_matrix<real_T> /* S */,                                                                                 \

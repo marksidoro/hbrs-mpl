@@ -32,6 +32,7 @@ extern "C" {
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
+HBRS_MPL_API
 smc<ml_matrix<real_T>, int>
 mean_impl_ml_matrix::operator()(smrs<ml_matrix<real_T>> const& a) const {
 	ml_matrix<real_T> b;
@@ -39,6 +40,7 @@ mean_impl_ml_matrix::operator()(smrs<ml_matrix<real_T>> const& a) const {
 	return {b, 0};
 }
 
+HBRS_MPL_API
 smr<ml_matrix<real_T>, int>
 mean_impl_ml_matrix::operator()(smcs<ml_matrix<real_T>> const& a) const {
 	ml_matrix<real_T> b;

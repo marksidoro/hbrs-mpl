@@ -35,12 +35,14 @@ namespace detail {
 #ifdef HBRS_MPL_ENABLE_MATLAB
 
 struct sort_impl_ml_eig_result {
+	HBRS_MPL_API
 	eig_result<ml_column_vector<real_T>, ml_matrix<real_T>>
 	operator()(
 		eig_result<ml_column_vector<real_T>, ml_matrix<real_T>> const&,
 		std::function<bool(real_T, real_T)> const&
 	) const;
 	
+	HBRS_MPL_API
 	eig_result<ml_column_vector<creal_T>, ml_matrix<creal_T>>
 	operator()(
 		eig_result<ml_column_vector<creal_T>, ml_matrix<creal_T>> const&,

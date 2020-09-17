@@ -25,7 +25,7 @@
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-struct /*HBRS_MPL_API*/ environment {
+struct HBRS_MPL_API environment {
 	environment();
 	environment(int & argc, char ** &argv);
 	virtual ~environment();

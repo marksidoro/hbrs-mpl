@@ -28,6 +28,7 @@ extern "C" {
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
+HBRS_MPL_API
 ml_matrix<real_T>
 plus_impl_ml_matrix_scalar::operator()(ml_matrix<real_T> const& a, real_T b) const {
 	ml_matrix<real_T> c;
@@ -35,6 +36,7 @@ plus_impl_ml_matrix_scalar::operator()(ml_matrix<real_T> const& a, real_T b) con
 	return c;
 }
 
+HBRS_MPL_API
 ml_matrix<real_T>
 plus_impl_ml_matrix_ml_matrix::operator()(ml_matrix<real_T> const& a, ml_matrix<real_T> const& b) const {
 	ml_matrix<real_T> c;

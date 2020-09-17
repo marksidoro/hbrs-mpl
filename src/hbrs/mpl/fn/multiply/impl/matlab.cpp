@@ -31,6 +31,7 @@ extern "C" {
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
+HBRS_MPL_API
 ml_matrix<real_T>
 multiply_impl_ml_matrix_ml_matrix::operator()(ml_matrix<real_T> const& a, ml_matrix<real_T> const& b) const {
 	ml_matrix<real_T> c;
@@ -38,6 +39,7 @@ multiply_impl_ml_matrix_ml_matrix::operator()(ml_matrix<real_T> const& a, ml_mat
 	return c;
 }
 
+HBRS_MPL_API
 ml_matrix<creal_T>
 multiply_impl_ml_matrix_ml_matrix::operator()(ml_matrix<real_T> const& a, ml_matrix<creal_T> const& b) const {
 	ml_matrix<creal_T> c;
@@ -45,6 +47,7 @@ multiply_impl_ml_matrix_ml_matrix::operator()(ml_matrix<real_T> const& a, ml_mat
 	return c;
 }
 
+HBRS_MPL_API
 ml_matrix<creal_T>
 multiply_impl_ml_matrix_ml_matrix::operator()(ml_matrix<creal_T> const& a, ml_matrix<creal_T> const& b) const {
 	ml_matrix<creal_T> c;
@@ -52,6 +55,7 @@ multiply_impl_ml_matrix_ml_matrix::operator()(ml_matrix<creal_T> const& a, ml_ma
 	return c;
 }
 
+HBRS_MPL_API
 ml_column_vector<real_T>
 multiply_impl_ml_matrix_ml_vector::operator()(ml_matrix<real_T> const& a, ml_column_vector<real_T> const& b) const {
 	ml_column_vector<real_T> c;
@@ -59,6 +63,7 @@ multiply_impl_ml_matrix_ml_vector::operator()(ml_matrix<real_T> const& a, ml_col
 	return c;
 }
 
+HBRS_MPL_API
 ml_column_vector<creal_T>
 multiply_impl_ml_matrix_ml_vector::operator()(ml_matrix<creal_T> const& a, ml_column_vector<creal_T> const& b) const {
 	ml_column_vector<creal_T> c;

@@ -22,26 +22,31 @@
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
+HBRS_MPL_API
 bool
 equal_impl_ml_creal_T::operator()(real_T const& lhs, creal_T const& rhs) const {
 	return (rhs.re == lhs) && (rhs.im == 0.);
 }
 
+HBRS_MPL_API
 bool
 equal_impl_ml_creal_T::operator()(creal_T const& lhs, real_T const& rhs) const {
 	return (lhs.re == rhs) && (lhs.im == 0.);
 }
 
+HBRS_MPL_API
 bool
 equal_impl_ml_creal_T::operator()(creal_T const& lhs, creal_T const& rhs) const {
 	return (lhs.re == rhs.re) && (lhs.im == rhs.im);
 }
 
+HBRS_MPL_API
 bool
 equal_impl_ml_creal_T::operator()(creal_T const& lhs, std::complex<real_T> const& rhs) const {
 	return (lhs.re == rhs.real()) && (lhs.im == rhs.imag());
 }
 
+HBRS_MPL_API
 bool
 equal_impl_ml_creal_T::operator()(std::complex<real_T> const& lhs, creal_T const& rhs) const {
 	return (lhs.real() == rhs.re) && (lhs.imag() == rhs.im);

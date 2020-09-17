@@ -30,6 +30,7 @@
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
+HBRS_MPL_API
 bool
 almost_equal_impl_rtsam::operator()(
 	rtsam<double,storage_order::row_major> const& lhs,
@@ -59,6 +60,7 @@ almost_equal_impl_rtsam::operator()(
 	return true;
 }
 
+HBRS_MPL_API
 bool
 almost_equal_impl_rtsam::operator()(
 	rtsam<double,storage_order::column_major> const& lhs,

@@ -39,6 +39,7 @@ namespace detail {
 
 #define _DEC_PCA(lvl)                                                                                                  \
 	struct pca_impl_level ## lvl ## _ml_matrix {                                                                       \
+		HBRS_MPL_API                                                                                                   \
 		pca_result<                                                                                                    \
 			ml_matrix<real_T>           /* coeff */,                                                                   \
 			ml_matrix<real_T>           /* score */,                                                                   \

@@ -33,14 +33,17 @@ namespace detail {
 #ifdef HBRS_MPL_ENABLE_MATLAB
 
 struct transpose_impl_ml_matrix {
+	HBRS_MPL_API
 	ml_matrix<real_T>
 	operator()(ml_matrix<real_T> const& a) const;
 };
 
 struct transpose_impl_ml_vector {
+	HBRS_MPL_API
 	ml_row_vector<real_T>
 	operator()(ml_column_vector<real_T> const& v) const;
 	
+	HBRS_MPL_API
 	ml_column_vector<real_T>
 	operator()(ml_row_vector<real_T> const& v) const;
 };

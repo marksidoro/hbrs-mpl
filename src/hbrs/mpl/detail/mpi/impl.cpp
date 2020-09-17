@@ -36,51 +36,61 @@ safe(int ec) {
 	}
 }
 
+HBRS_MPL_API
 MPI_Datatype
 datatype(hana::basic_type<double>) {
 	return MPI_DOUBLE;
 }
 
+HBRS_MPL_API
 MPI_Datatype
 datatype(hana::basic_type<int>) {
 	return MPI_INT;
 }
 
+HBRS_MPL_API
 MPI_Datatype
 datatype(hana::basic_type<unsigned long>) {
 	return MPI_UNSIGNED_LONG;
 }
 
+HBRS_MPL_API
 MPI_Datatype
 datatype(hana::basic_type<unsigned long long>) {
 	return MPI_UNSIGNED_LONG_LONG;
 }
 
+HBRS_MPL_API
 MPI_Datatype
 datatype(hana::basic_type<pair<int,int>>) {
 	return MPI_2INT;
 }
 
+HBRS_MPL_API
 MPI_Datatype
 datatype(hana::basic_type<pair<short,int>>) {
 	return MPI_SHORT_INT;
 }
 
+HBRS_MPL_API
 MPI_Datatype
 datatype(hana::basic_type<pair<long,int>>) {
 	return MPI_LONG_INT;
 }
 
+HBRS_MPL_API
 MPI_Datatype
 datatype(hana::basic_type<pair<float,int>>) {
 	return MPI_FLOAT_INT;
 }
 
+HBRS_MPL_API
 MPI_Datatype
 datatype(hana::basic_type<pair<double,int>>) {
 	return MPI_DOUBLE_INT;
 }
 
+HBRS_MPL_API
 bool
 initialized() {
 	int flag;
@@ -88,6 +98,7 @@ initialized() {
 	return flag;
 }
 
+HBRS_MPL_API
 int
 comm_rank(MPI_Comm comm) {
 	BOOST_ASSERT(initialized());
@@ -96,6 +107,7 @@ comm_rank(MPI_Comm comm) {
 	return rank;
 }
 
+HBRS_MPL_API
 int
 comm_size(MPI_Comm comm) {
 	BOOST_ASSERT(initialized());
@@ -104,18 +116,21 @@ comm_size(MPI_Comm comm) {
 	return size;
 }
 
+HBRS_MPL_API
 void
 barrier(MPI_Comm comm) {
 	BOOST_ASSERT(initialized());
 	safe(MPI_Barrier(comm));
 }
 
+HBRS_MPL_API
 void
 abort(MPI_Comm comm, int errorcode) {
 	BOOST_ASSERT(initialized());
 	safe(MPI_Abort(comm, errorcode));
 }
 
+HBRS_MPL_API
 MPI_Request
 ibcast(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm) {
 	BOOST_ASSERT(initialized());
@@ -124,6 +139,7 @@ ibcast(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm) 
 	return request;
 }
 
+HBRS_MPL_API
 MPI_Status
 wait(MPI_Request & request) {
 	BOOST_ASSERT(initialized());
@@ -132,6 +148,7 @@ wait(MPI_Request & request) {
 	return status;
 }
 
+HBRS_MPL_API
 MPI_Status
 probe(int source, int tag, MPI_Comm comm) {
 	BOOST_ASSERT(initialized());
@@ -140,6 +157,7 @@ probe(int source, int tag, MPI_Comm comm) {
 	return status;
 }
 
+HBRS_MPL_API
 int
 get_count(MPI_Status const& status, MPI_Datatype datatype) {
 	BOOST_ASSERT(initialized());
@@ -148,6 +166,7 @@ get_count(MPI_Status const& status, MPI_Datatype datatype) {
 	return count;
 }
 
+HBRS_MPL_API
 MPI_Request
 isend(void const *buffer, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm) {
 	BOOST_ASSERT(initialized());
@@ -156,6 +175,7 @@ isend(void const *buffer, int count, MPI_Datatype datatype, int dest, int tag, M
 	return request;
 }
 
+HBRS_MPL_API
 MPI_Request
 irecv(void *buffer, int count, MPI_Datatype datatype, int source, int tag, MPI_Comm comm) {
 	BOOST_ASSERT(initialized());
@@ -164,12 +184,14 @@ irecv(void *buffer, int count, MPI_Datatype datatype, int source, int tag, MPI_C
 	return request;
 }
 
+HBRS_MPL_API
 void
 allreduce(const void *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, MPI_Comm comm) {
 	BOOST_ASSERT(initialized());
 	safe(MPI_Allreduce(sendbuf, recvbuf, count, datatype, op, comm));
 }
 
+HBRS_MPL_API
 MPI_Request
 iallreduce(void const *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, MPI_Op op, MPI_Comm comm) {
 	BOOST_ASSERT(initialized());
@@ -178,12 +200,14 @@ iallreduce(void const *sendbuf, void *recvbuf, int count, MPI_Datatype datatype,
 	return request;
 }
 
+HBRS_MPL_API
 void
 allgather(void const* sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm) {
 	BOOST_ASSERT(initialized());
 	safe(MPI_Allgather(sendbuf, sendcount, sendtype, recvbuf, recvcount, recvtype, comm));
 }
 
+HBRS_MPL_API
 MPI_Request
 iallgather(void const* sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount, MPI_Datatype recvtype, MPI_Comm comm) {
 	BOOST_ASSERT(initialized());

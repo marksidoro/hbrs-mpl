@@ -384,7 +384,7 @@ compare_fpv(
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-struct environment_fixture {
+struct HBRS_MPL_API environment_fixture {
 	environment_fixture(boost::unit_test::master_test_suite_t & ts = boost::unit_test::framework::master_test_suite());
 	environment env;
 };

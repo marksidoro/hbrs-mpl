@@ -28,6 +28,7 @@ namespace detail {
  * Read about ULP here:
  * https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/
  */
+HBRS_MPL_API
 bool
 almost_equal_impl_double::operator()(double a, double b, almost_equal_control<int,int> const& ctrl) const {
 	//TODO: Check implementation!

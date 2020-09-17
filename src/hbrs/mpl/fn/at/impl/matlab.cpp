@@ -32,44 +32,50 @@ namespace detail {
 /* NOTE: MATLAB is column-major. 
  * Ref.: https://www.mathworks.com/programs/products/files/matlab-coder-code-generation-quick-start-guide-r2015a.pdf
  */
-
-real_T & 
+HBRS_MPL_API
+real_T &
 at_impl_emxArray::operator()(emxArray_real_T & v, int d0) const {
 	BOOST_ASSERT(d0 < v.allocatedSize);
 	return v.data[d0];
 }
 
-creal_T & 
+HBRS_MPL_API
+creal_T &
 at_impl_emxArray::operator()(emxArray_creal_T & v, int d0) const {
 	BOOST_ASSERT(d0 < v.allocatedSize);
 	return v.data[d0];
 }
 
-boolean_T & 
+HBRS_MPL_API
+boolean_T &
 at_impl_emxArray::operator()(emxArray_boolean_T & v, int d0) const {
 	BOOST_ASSERT(d0 < v.allocatedSize);
 	return v.data[d0];
 }
 
-real_T const& 
+HBRS_MPL_API
+real_T const&
 at_impl_emxArray::operator()(emxArray_real_T const& v, int d0) const {
 	BOOST_ASSERT(d0 < v.allocatedSize);
 	return v.data[d0];
 }
 
-creal_T const& 
+HBRS_MPL_API
+creal_T const&
 at_impl_emxArray::operator()(emxArray_creal_T const& v, int d0) const {
 	BOOST_ASSERT(d0 < v.allocatedSize);
 	return v.data[d0];
 }
 
-boolean_T const& 
+HBRS_MPL_API
+boolean_T const&
 at_impl_emxArray::operator()(emxArray_boolean_T const& v, int d0) const {
 	BOOST_ASSERT(d0 < v.allocatedSize);
 	return v.data[d0];
 }
 
-real_T & 
+HBRS_MPL_API
+real_T &
 at_impl_emxArray::operator()(emxArray_real_T & a, matrix_index<int,int> i) const {
 	using namespace mpl;
 	
@@ -81,7 +87,8 @@ at_impl_emxArray::operator()(emxArray_real_T & a, matrix_index<int,int> i) const
 	return a.data[i_];
 }
 
-creal_T & 
+HBRS_MPL_API
+creal_T &
 at_impl_emxArray::operator()(emxArray_creal_T & a, matrix_index<int,int> i) const {
 	using namespace mpl;
 	
@@ -93,7 +100,8 @@ at_impl_emxArray::operator()(emxArray_creal_T & a, matrix_index<int,int> i) cons
 	return a.data[i_];
 }
 
-boolean_T & 
+HBRS_MPL_API
+boolean_T &
 at_impl_emxArray::operator()(emxArray_boolean_T & a, matrix_index<int,int> i) const {
 	using namespace mpl;
 	
@@ -102,7 +110,8 @@ at_impl_emxArray::operator()(emxArray_boolean_T & a, matrix_index<int,int> i) co
 	return a.data[i_];
 }
 
-real_T const& 
+HBRS_MPL_API
+real_T const&
 at_impl_emxArray::operator()(emxArray_real_T const& a, matrix_index<int,int> i) const {
 	using namespace mpl;
 	
@@ -111,7 +120,8 @@ at_impl_emxArray::operator()(emxArray_real_T const& a, matrix_index<int,int> i) 
 	return a.data[i_];
 }
 
-creal_T const& 
+HBRS_MPL_API
+creal_T const&
 at_impl_emxArray::operator()(emxArray_creal_T const& a, matrix_index<int,int> i) const {
 	using namespace mpl;
 	
@@ -120,7 +130,8 @@ at_impl_emxArray::operator()(emxArray_creal_T const& a, matrix_index<int,int> i)
 	return a.data[i_];
 }
 
-boolean_T const& 
+HBRS_MPL_API
+boolean_T const&
 at_impl_emxArray::operator()(emxArray_boolean_T const& a, matrix_index<int,int> i) const {
 	using namespace mpl;
 	

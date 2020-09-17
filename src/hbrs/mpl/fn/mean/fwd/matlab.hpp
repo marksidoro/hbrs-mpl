@@ -36,9 +36,11 @@ namespace detail {
 #ifdef HBRS_MPL_ENABLE_MATLAB
 
 struct mean_impl_ml_matrix {
+	HBRS_MPL_API
 	smc<ml_matrix<real_T>, int>
 	operator()(smrs<ml_matrix<real_T>> const& a) const;
 	
+	HBRS_MPL_API
 	smr<ml_matrix<real_T>, int>
 	operator()(smcs<ml_matrix<real_T>> const& a) const;
 };

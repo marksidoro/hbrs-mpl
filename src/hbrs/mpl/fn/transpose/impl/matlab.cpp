@@ -28,6 +28,7 @@ extern "C" {
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
+HBRS_MPL_API
 ml_matrix<real_T>
 transpose_impl_ml_matrix::operator()(ml_matrix<real_T> const& a) const {
 	ml_matrix<real_T> b;
@@ -35,11 +36,13 @@ transpose_impl_ml_matrix::operator()(ml_matrix<real_T> const& a) const {
 	return b;
 }
 
+HBRS_MPL_API
 ml_row_vector<real_T>
 transpose_impl_ml_vector::operator()(ml_column_vector<real_T> const& v) const {
 	return {v};
 }
 
+HBRS_MPL_API
 ml_column_vector<real_T>
 transpose_impl_ml_vector::operator()(ml_row_vector<real_T> const& v) const {
 	return {v};

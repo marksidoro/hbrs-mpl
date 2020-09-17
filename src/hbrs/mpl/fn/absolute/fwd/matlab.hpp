@@ -34,6 +34,7 @@ namespace detail {
 #ifdef HBRS_MPL_ENABLE_MATLAB
 
 struct absolute_impl_ml_creal_T {
+	HBRS_MPL_API
 	real_T
 	operator()(creal_T const& a) const;
 };

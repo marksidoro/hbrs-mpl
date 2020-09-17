@@ -27,17 +27,17 @@
 
 HBRS_MPL_NAMESPACE_BEGIN
 
-struct exception : virtual boost::exception, virtual std::exception {};
-struct incompatible_sequence_exception : virtual exception {};
-struct incompatible_sequences_exception : virtual exception {};
-struct incompatible_vectors_exception : virtual exception {};
-struct incompatible_matrix_exception : virtual exception {};
-struct incompatible_matrix_sequence_exception : virtual exception {};
-struct incompatible_matrix_vector_exception : virtual exception {};
-struct incompatible_matrices_exception : virtual exception {};
-struct mpi_exception : virtual exception {};
-struct io_exception : virtual exception {};
-struct not_supported_exception : virtual exception {};
+struct HBRS_MPL_API exception : virtual boost::exception, virtual std::exception {};
+struct HBRS_MPL_API incompatible_sequence_exception : virtual exception {};
+struct HBRS_MPL_API incompatible_sequences_exception : virtual exception {};
+struct HBRS_MPL_API incompatible_vectors_exception : virtual exception {};
+struct HBRS_MPL_API incompatible_matrix_exception : virtual exception {};
+struct HBRS_MPL_API incompatible_matrix_sequence_exception : virtual exception {};
+struct HBRS_MPL_API incompatible_matrix_vector_exception : virtual exception {};
+struct HBRS_MPL_API incompatible_matrices_exception : virtual exception {};
+struct HBRS_MPL_API mpi_exception : virtual exception {};
+struct HBRS_MPL_API io_exception : virtual exception {};
+struct HBRS_MPL_API not_supported_exception : virtual exception {};
 
 struct mpi_error_info {
 	mpi_error_info(int code);

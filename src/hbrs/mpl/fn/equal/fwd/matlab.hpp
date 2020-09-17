@@ -32,18 +32,23 @@ namespace detail {
 #ifdef HBRS_MPL_ENABLE_MATLAB
 
 struct equal_impl_ml_creal_T {
+	HBRS_MPL_API
 	bool
 	operator()(real_T const& lhs, creal_T const& rhs) const;
 	
+	HBRS_MPL_API
 	bool
 	operator()(creal_T const& lhs, real_T const& rhs) const;
 	
+	HBRS_MPL_API
 	bool
 	operator()(creal_T const& lhs, creal_T const& rhs) const;
 	
+	HBRS_MPL_API
 	bool
 	operator()(creal_T const& lhs, std::complex<real_T> const& rhs) const;
 	
+	HBRS_MPL_API
 	bool
 	operator()(std::complex<real_T> const& lhs, creal_T const& rhs) const;
 };

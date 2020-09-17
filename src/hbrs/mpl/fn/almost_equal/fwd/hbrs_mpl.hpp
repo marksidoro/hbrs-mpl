@@ -29,6 +29,7 @@ namespace detail {
 
 struct almost_equal_impl_rtsam {
 	//TODO: Join both functions
+	HBRS_MPL_API
 	bool
 	operator()(
 		rtsam<double,storage_order::row_major> const& lhs,
@@ -36,6 +37,7 @@ struct almost_equal_impl_rtsam {
 		almost_equal_control<int,int> const& ctrl
 	) const;
 
+	HBRS_MPL_API
 	bool
 	operator()(
 		rtsam<double,storage_order::column_major> const& lhs,
