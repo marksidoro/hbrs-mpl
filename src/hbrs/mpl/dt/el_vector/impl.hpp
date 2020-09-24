@@ -122,13 +122,13 @@ _HBRS_MPL_DEF_EL_VECTOR(row)
 HBRS_MPL_NAMESPACE_BEGIN
 
 template<typename Ring>
-el_column_vector<Ring>::el_column_vector(El::Matrix<Ring> data) : data_{data} {
+el_column_vector<Ring>::el_column_vector(El::Matrix<Ring> data) : data_{std::move(data)} {
 	BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
 	BOOST_ASSERT(data_.Width() == 1);
 }
 
 template<typename Ring>
-el_row_vector<Ring>::el_row_vector(El::Matrix<Ring> data) : data_{data} {
+el_row_vector<Ring>::el_row_vector(El::Matrix<Ring> data) : data_{std::move(data)} {
 	BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
 	BOOST_ASSERT(data_.Height() == 1);
 }

@@ -53,7 +53,7 @@ struct el_matrix {
 			std::is_same_v<std::remove_const_t<Ring>, Ring_>
 		>* = nullptr
 	>
-	el_matrix(El::Matrix<Ring_> data) : data_{data} {
+	el_matrix(El::Matrix<Ring_> data) : data_{std::move(data)} {
 		//NOTE: This assertion does not hold always, e.g. El::Matrix<double>{El::Matrix<double> const}.Locked() == true!
 		BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
 	}
@@ -133,15 +133,15 @@ struct tag_of< hbrs::mpl::el_matrix<Ring> > {
 template <>
 struct make_impl<hbrs::mpl::el_matrix_tag> {
 	template <typename Ring>
-	static hbrs::mpl::el_matrix<Ring> 
+	static hbrs::mpl::el_matrix<Ring>
 	apply(basic_type<Ring>, hbrs::mpl::matrix_size<El::Int, El::Int> sz) {
 		return {sz.m(), sz.n()};
 	}
 	
-	template <typename Ring> 
+	template <typename Ring>
 	static hbrs::mpl::el_matrix<Ring>
 	apply(El::Matrix<Ring> data) {
-		return {data}; 
+		return {std::move(data)};
 	}
 	
 	template<typename Ring>

@@ -84,7 +84,7 @@ struct el_dist_matrix {
 			std::is_same_v<std::remove_const_t<Ring>, Ring_>
 		>* = nullptr
 	>
-	el_dist_matrix(El::DistMatrix<Ring_, Columnwise_, Rowwise_, Wrapping_> data) : data_{data} {
+	el_dist_matrix(El::DistMatrix<Ring_, Columnwise_, Rowwise_, Wrapping_> data) : data_{std::move(data)} {
 		BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
 	}
 	
@@ -173,7 +173,7 @@ struct make_impl<hbrs::mpl::el_dist_matrix_tag> {
 	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
 	static hbrs::mpl::el_dist_matrix<Ring, Columnwise, Rowwise, Wrapping>
 	apply(El::DistMatrix<Ring, Columnwise, Rowwise, Wrapping> dmat) {
-		return { dmat };
+		return { std::move(dmat) };
 	}
 	
 	template <typename Ring>
@@ -185,7 +185,7 @@ struct make_impl<hbrs::mpl::el_dist_matrix_tag> {
 		El::DistMatrix<Ring, El::STAR, El::STAR, El::ELEMENT> dmat{grid};
 		dmat.Resize(local.Height(), local.Width());
 		dmat.Matrix() = local;
-		return { dmat };
+		return { std::move(dmat) };
 	}
 	
 	template <typename Ring>
