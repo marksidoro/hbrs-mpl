@@ -28,13 +28,13 @@ namespace hana = boost::hana;
 
 template<typename Ring>
 struct el_column_vector;
-struct el_column_vector_tag;
+struct el_column_vector_tag{};
 constexpr auto make_el_column_vector = hana::make<el_column_vector_tag>;
 constexpr auto to_el_column_vector = hana::to<el_column_vector_tag>;
 
 template<typename Ring>
 struct el_row_vector;
-struct el_row_vector_tag;
+struct el_row_vector_tag{};
 constexpr auto make_el_row_vector = hana::make<el_row_vector_tag>;
 constexpr auto to_el_row_vector = hana::to<el_row_vector_tag>;
 

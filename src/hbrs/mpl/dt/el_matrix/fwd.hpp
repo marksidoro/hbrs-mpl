@@ -28,7 +28,7 @@ namespace hana = boost::hana;
 
 template<typename Ring>
 struct el_matrix;
-struct el_matrix_tag;
+struct el_matrix_tag{};
 constexpr auto make_el_matrix = hana::make<el_matrix_tag>;
 constexpr auto to_el_matrix = hana::to<el_matrix_tag>;
 

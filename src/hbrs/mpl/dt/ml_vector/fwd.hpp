@@ -29,13 +29,13 @@ namespace hana = boost::hana;
 
 template<typename BaseType>
 struct ml_column_vector;
-struct ml_column_vector_tag;
+struct ml_column_vector_tag{};
 constexpr auto make_ml_column_vector = hana::make<ml_column_vector_tag>;
 constexpr auto to_ml_column_vector = hana::to<ml_column_vector_tag>;
 
 template<typename BaseType>
 struct ml_row_vector;
-struct ml_row_vector_tag;
+struct ml_row_vector_tag{};
 constexpr auto make_ml_row_vector = hana::make<ml_row_vector_tag>;
 constexpr auto to_ml_row_vector = hana::to<ml_row_vector_tag>;
 
