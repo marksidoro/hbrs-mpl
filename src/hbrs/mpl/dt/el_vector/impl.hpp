@@ -34,13 +34,20 @@
 #include <boost/assert.hpp>
 #include <array>
 #include <El.hpp>
+#include <type_traits>
 
 #define _HBRS_MPL_DEF_EL_VECTOR(vector_kind)                                                                           \
 	HBRS_MPL_NAMESPACE_BEGIN                                                                                           \
                                                                                                                        \
 	template<typename Ring>                                                                                            \
 	struct el_ ## vector_kind ## _vector {                                                                             \
-		el_ ## vector_kind ## _vector(El::Matrix<Ring> data);                                                          \
+		template<                                                                                                      \
+			typename Ring_ = Ring,                                                                                     \
+			typename std::enable_if_t<                                                                                 \
+				std::is_same_v<std::remove_const_t<Ring>, Ring_>                                                       \
+			>* = nullptr                                                                                               \
+		>                                                                                                              \
+		el_ ## vector_kind ## _vector(El::Matrix<Ring_> data);                                                         \
 		el_ ## vector_kind ## _vector(El::Int sz);                                                                     \
 		                                                                                                               \
 		el_ ## vector_kind ## _vector(Ring const* data, El::Int sz)                                                    \
@@ -122,13 +129,25 @@ _HBRS_MPL_DEF_EL_VECTOR(row)
 HBRS_MPL_NAMESPACE_BEGIN
 
 template<typename Ring>
-el_column_vector<Ring>::el_column_vector(El::Matrix<Ring> data) : data_{std::move(data)} {
+template<
+	typename Ring_ /* = Ring */,
+	typename std::enable_if_t<
+		std::is_same_v<std::remove_const_t<Ring>, Ring_>
+	>* /* = nullptr */
+>
+el_column_vector<Ring>::el_column_vector(El::Matrix<Ring_> data) : data_{std::move(data)} {
 	BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
 	BOOST_ASSERT(data_.Width() == 1);
 }
 
 template<typename Ring>
-el_row_vector<Ring>::el_row_vector(El::Matrix<Ring> data) : data_{std::move(data)} {
+template<
+	typename Ring_ /* = Ring */,
+	typename std::enable_if_t<
+		std::is_same_v<std::remove_const_t<Ring>, Ring_>
+	>* /* = nullptr */
+>
+el_row_vector<Ring>::el_row_vector(El::Matrix<Ring_> data) : data_{std::move(data)} {
 	BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
 	BOOST_ASSERT(data_.Height() == 1);
 }
