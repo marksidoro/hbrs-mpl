@@ -270,6 +270,10 @@ bool
 initialized();
 
 HBRS_MPL_API
+bool
+finalized();
+
+HBRS_MPL_API
 int
 comm_rank(MPI_Comm comm = MPI_COMM_WORLD);
 

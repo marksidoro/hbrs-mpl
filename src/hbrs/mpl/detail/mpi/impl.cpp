@@ -99,6 +99,14 @@ initialized() {
 }
 
 HBRS_MPL_API
+bool
+finalized() {
+	int flag;
+	safe(MPI_Finalized(&flag));
+	return flag;
+}
+
+HBRS_MPL_API
 int
 comm_rank(MPI_Comm comm) {
 	BOOST_ASSERT(initialized());
