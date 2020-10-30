@@ -18,6 +18,8 @@
 
 #include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/dt/exception.hpp>
+#include <hbrs/mpl/detail/mpi.hpp>
+#include <boost/assert.hpp>
 #include <boost/throw_exception.hpp>
 #include <algorithm>
 #include <iostream>
@@ -31,23 +33,40 @@
 HBRS_MPL_NAMESPACE_BEGIN
 namespace detail {
 
-struct mpi {
-	mpi() {
+struct mpi_environment {
+	mpi_environment() {
 		setup(nullptr, nullptr);
 	}
 	
-	mpi(int & argc, char** &argv) {
+	mpi_environment(int & argc, char** &argv) {
 		setup(&argc, &argv);
 	}
 	
-	~mpi() {
-		MPI_Finalize();
+	~mpi_environment() {
+		--initialize_count;
+		
+		if (initialize_count == 0 && do_initialize) {
+			BOOST_ASSERT(!detail::mpi::finalized());
+			// only finalize if we did initialize
+			MPI_Finalize();
+		}
 	}
 	
 	void
 	setup(int * argc, char*** argv) {
+		++initialize_count;
+		
+		if (initialize_count > 1) {
+			return; // already initialized
+		}
+		
+		do_initialize = !detail::mpi::initialized();
+		if (!do_initialize) {
+			return;
+		}
+		
 		#if defined(HBRS_MPL_ENABLE_ELEMENTAL) && defined(EL_HYBRID)
-			/* Ref.: 
+			/* Ref.:
 			 *  https://github.com/elemental/Elemental/blob/master/src/core/environment.cpp#L150
 			 *  https://github.com/elemental/Elemental/blob/master/src/core/imports/mpi.cpp#L69
 			 */
@@ -59,13 +78,19 @@ struct mpi {
 		
 		if (ec != MPI_SUCCESS) {
 			BOOST_THROW_EXCEPTION((
-				mpi_exception{} 
+				mpi_exception{}
 				<< errinfo_mpi_error_info{mpi_error_info{ec}}
 			));
 		}
 	}
 	
+private:
+	static int initialize_count;
+	static bool do_initialize;
 };
+
+int mpi_environment::initialize_count = 0;
+bool mpi_environment::do_initialize = false;
 
 struct environment::pimpl {
 	pimpl()
@@ -83,7 +108,7 @@ struct environment::pimpl {
 	{}
 	
 private:
-	mpi mpi_;
+	mpi_environment mpi_;
 #ifdef HBRS_MPL_ENABLE_ELEMENTAL
 	El::Environment elemental_;
 #endif
@@ -100,13 +125,13 @@ environment::~environment() {}
 environment::environment(environment const& other)
 : m{std::make_unique<pimpl>(*other.m)} {}
 
-environment::environment(environment&& other) 
-: m{std::make_unique<pimpl>()} 
-	/* it's also possible to initialize m with m{}, but then 
-	 * the following code will crash: 
-	 *  environment a; 
-	 *  environment b = std::move(a); 
-	 *  a.addOne(); 
+environment::environment(environment&& other)
+: m{std::make_unique<pimpl>()}
+	/* it's also possible to initialize m with m{}, but then
+	 * the following code will crash:
+	 *  environment a;
+	 *  environment b = std::move(a);
+	 *  a.addOne();
 	 */
 {
 	using std::swap;
