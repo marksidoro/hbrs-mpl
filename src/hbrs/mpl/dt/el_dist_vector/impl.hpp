@@ -66,6 +66,11 @@
 		decltype(auto)                                                                                                 \
 		length() const;                                                                                                \
 		                                                                                                               \
+		auto                                                                                                           \
+		participating() const {                                                                                        \
+			return data_.Participating();                                                                              \
+		}                                                                                                              \
+		                                                                                                               \
 	private:                                                                                                           \
 		El::DistMatrix<                                                                                                \
 			std::remove_const_t<Ring>,                                                                                 \

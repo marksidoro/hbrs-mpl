@@ -127,6 +127,11 @@ struct el_dist_matrix {
 		return { m(), n() };
 	}
 	
+	auto
+	participating() const {
+		return data_.Participating();
+	}
+	
 	decltype(auto)
 	data() & { return (data_); };
 
