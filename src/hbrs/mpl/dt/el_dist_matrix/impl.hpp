@@ -189,7 +189,7 @@ struct make_impl<hbrs::mpl::el_dist_matrix_tag> {
 	) {
 		El::DistMatrix<Ring, El::STAR, El::STAR, El::ELEMENT> dmat{grid};
 		dmat.Resize(local.Height(), local.Width());
-		dmat.Matrix() = local;
+		dmat.Matrix() = std::move(local);
 		return { std::move(dmat) };
 	}
 	

@@ -115,11 +115,11 @@
 		static hbrs::mpl::el_dist_ ## vector_kind ## _vector<Ring, El::STAR, El::STAR, El::ELEMENT>                    \
 		apply(                                                                                                         \
 			El::Grid const& grid,                                                                                      \
-			hbrs::mpl::el_ ## vector_kind ## _vector<Ring> const& local                                                \
+			hbrs::mpl::el_ ## vector_kind ## _vector<Ring> local                                                       \
 		) {                                                                                                            \
 			El::DistMatrix<Ring, El::STAR, El::STAR, El::ELEMENT> dmat{grid};                                          \
 			dmat.Resize(local.data().Height(), local.data().Width());                                                  \
-			dmat.Matrix() = local.data();                                                                              \
+			dmat.Matrix() = std::move(local).data();                                                                   \
 			return { std::move(dmat) };                                                                                \
 		}                                                                                                              \
 		                                                                                                               \
@@ -178,7 +178,7 @@ template<
 	>*
 >
 el_dist_column_vector<Ring, Columnwise, Rowwise, Wrapping>::
-el_dist_column_vector(El::DistMatrix<Ring_, Columnwise_, Rowwise_, Wrapping_> data) : data_{data} {
+el_dist_column_vector(El::DistMatrix<Ring_, Columnwise_, Rowwise_, Wrapping_> data) : data_{std::move(data)} {
 	BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
 	BOOST_ASSERT(data_.Width() == 1);
 }
@@ -201,7 +201,7 @@ template<
 	>*
 >
 el_dist_row_vector<Ring, Columnwise, Rowwise, Wrapping>::
-el_dist_row_vector(El::DistMatrix<Ring_, Columnwise_, Rowwise_, Wrapping_> data) : data_{data} {
+el_dist_row_vector(El::DistMatrix<Ring_, Columnwise_, Rowwise_, Wrapping_> data) : data_{std::move(data)} {
 	BOOST_ASSERT(!std::is_const_v<Ring> ? !data_.Locked() : true);
 	BOOST_ASSERT(data_.Height() == 1);
 }
