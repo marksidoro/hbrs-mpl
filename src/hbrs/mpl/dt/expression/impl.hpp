@@ -21,6 +21,7 @@
 
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/core/to.hpp>
+#include <hbrs/mpl/core/preprocessor.hpp>
 #include <hbrs/mpl/detail/is_braces_constructible.hpp>
 
 #include <type_traits>
