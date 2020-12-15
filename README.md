@@ -1,5 +1,4 @@
 # `hbrs-mpl`
-[![Build Status](https://travis-ci.com/JM1/hbrs-mpl.svg?branch=master)](https://travis-ci.com/JM1/hbrs-mpl)
 
 `hbrs-mpl` is a experimental generic [C++17](https://en.wikipedia.org/wiki/C++17) library for distributed scientific computing at HPC clusters.
 Our research goal is to codify complex algorithms like [singular value decomposition (SVD)](https://en.wikipedia.org/wiki/Singular_value_decomposition) using abstract, mathematical notation without sacrificing space and time efficiency.
@@ -34,7 +33,6 @@ Its development started in 2015 as a research project at Bonn-Rhein-Sieg Univers
    [pca](https://github.com/JM1/hbrs-mpl/blob/master/src/hbrs/mpl/fn/pca/test/hbrs_mpl.cpp))
    are written with [Boost.Test](https://www.boost.org/doc/libs/release/libs/test/).
 - [CMake 3](https://cmake.org/cmake/help/latest/guide/tutorial/index.html) is used to [build, export and install our library](https://github.com/JM1/hbrs-mpl/blob/master/CMakeLists.txt)
-- We use [Travis CI](https://travis-ci.com/JM1/hbrs-mpl) to build and test our code against different compilers.
 
 # How to build this code using Docker
 
@@ -102,5 +100,3 @@ make -j$(nproc)
 ctest --output-on-failure
 make install
 ```
-
-For more examples on how to build and test this code see [`.travis.yml`](https://github.com/JM1/hbrs-mpl/blob/master/.travis.yml).
