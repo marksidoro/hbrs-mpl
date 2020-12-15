@@ -74,7 +74,7 @@ default:
 .test-linux: &test-linux
   script:
     - cd "$CI_PROJECT_DIR/build"
-    - for i in $(seq 5); do ctest --output-on-failure || break; done
+    - for i in $(seq 5); do ctest --output-on-failure || exit 255; done
 
 .matrix-gcc7-clang7: &matrix-gcc7-clang7
   parallel:
