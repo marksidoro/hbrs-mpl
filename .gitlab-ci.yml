@@ -76,20 +76,20 @@ default:
     - cd "$CI_PROJECT_DIR/build"
     - for i in $(seq 5); do ctest --output-on-failure || break; done
 
-.matrix-gcc8-clang7: &matrix-gcc8-clang7
+.matrix-gcc7-clang7: &matrix-gcc7-clang7
   parallel:
     matrix:
-      - CC: gcc-8
-        CXX: g++-8
+      - CC: gcc-7
+        CXX: g++-7
         BUILD_TYPE: Debug
-      - CC: gcc-8
-        CXX: g++-8
+      - CC: gcc-7
+        CXX: g++-7
         BUILD_TYPE: MinSizeRel
-      - CC: gcc-8
-        CXX: g++-8
+      - CC: gcc-7
+        CXX: g++-7
         BUILD_TYPE: RelWithDebInfo
-      - CC: gcc-8
-        CXX: g++-8
+      - CC: gcc-7
+        CXX: g++-7
         BUILD_TYPE: Release
       - CC: clang-7
         CXX: clang++-7
@@ -104,14 +104,14 @@ build-linux-debian-buster:
   image: jm1337/debian-dev-hbrs:buster
   cache:
     key: "linux-debian-buster"
-  <<: *matrix-gcc8-clang7
+  <<: *matrix-gcc7-clang7
 
 test-linux-debian-buster:
   extends: .test-linux
   stage: test
   image: jm1337/debian-dev-hbrs:buster
   cache: {}
-  <<: *matrix-gcc8-clang7
+  <<: *matrix-gcc7-clang7
   needs:
     - build-linux-debian-buster
   dependencies:
