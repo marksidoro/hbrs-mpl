@@ -107,10 +107,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # C++14 is required e.g. because of decltype(auto) as return type and constexpr std::forward_as_tuple()!
 # C++17 is required for constexpr lambdas, if constexpr(...), constexpr std::array, inline variables, class template argument deduction, std::is_invocable, std::void_t
 
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(CMAKE_C_VISIBILITY_PRESET hidden)
-set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON CACHE BOOL   "Whether to create a position-independent target")
+set(CMAKE_C_VISIBILITY_PRESET hidden   CACHE STRING "Value for symbol visibility C compile flags")
+set(CMAKE_CXX_VISIBILITY_PRESET hidden CACHE STRING "Value for symbol visibility C++ compile flags")
+set(CMAKE_VISIBILITY_INLINES_HIDDEN ON CACHE BOOL   "Whether to add a compile flag to hide symbols of inline functions")
 
 # "CMake will generate tests only if the enable_testing() command has been invoked." [1]
 # "Note that ctest expects to find a test file in the build directory root. Therefore, this command should be in the 
