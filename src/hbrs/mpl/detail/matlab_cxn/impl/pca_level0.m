@@ -1,4 +1,4 @@
-% Copyright (c) 2018 Jakob Meng, <jakobmeng@web.de>
+% Copyright (c) 2018-2020 Jakob Meng, <jakobmeng@web.de>
 % 
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -43,11 +43,18 @@ function [coeff,score,latent,mu] = pca_level0(A, Economy, Center, Normalize)
         % replace all inf's in vw with 1's and thus "skipping" normalization.
         vVariableWeights = 1./nanvar(x,0,1);
         vVariableWeights(isinf(vVariableWeights)) = 1;
-        
-        [coeff,score,latent,~,~,mu] = pca(x, 'Economy', Economy, ...
-            'Centered', Center, 'VariableWeights', vVariableWeights);
     else
-        [coeff,score,latent,~,~,mu] = pca(x, 'Economy', Economy, ...
-            'Centered', Center, 'VariableWeights', ones(1,n,'like',x));
-    end
+		vVariableWeights = ones(1,n,'like',x);
+	end
+
+	% In MATLAB 2020b the 'Economy' name-value pair argument must be a compile-time constant
+	if Economy
+		[coeff,score,latent,~,~,mu] = pca(x, 'Economy', true, ...
+			'Centered', Center, ...
+			'VariableWeights', vVariableWeights);
+	else
+		[coeff,score,latent,~,~,mu] = pca(x, 'Economy', false, ...
+			'Centered', Center, ...
+			'VariableWeights', vVariableWeights);
+	end
 end
