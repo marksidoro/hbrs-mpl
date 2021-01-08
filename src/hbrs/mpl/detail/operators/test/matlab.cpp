@@ -19,6 +19,9 @@
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
+#include <boost/function_types/parameter_types.hpp>
+#include <boost/mpl/front.hpp>
+
 #include <hbrs/mpl/dt/range.hpp>
 #include <hbrs/mpl/dt/matrix_index.hpp>
 #include <hbrs/mpl/dt/matrix_size.hpp>
@@ -107,7 +110,13 @@ BOOST_AUTO_TEST_CASE(matrix_base, * utf::tolerance(_TOL)) {
 	auto const a0_m = (*m)(a0_size);
 	auto const a0_n = (*n)(a0_size);
 	{
-		cell_6 ds;
+		using cell_t = std::remove_pointer_t<std::remove_pointer_t<
+			boost::mpl::front<
+				boost::function_types::parameter_types<decltype(&samples)>
+			>::type
+		>>;
+		
+		cell_t ds;
 		samples(&ds);
 		std::copy(ds.f4, ds.f4+8, a0.data().data);
 	}
@@ -211,7 +220,13 @@ BOOST_AUTO_TEST_CASE(matrix_pca, * utf::tolerance(_TOL)) {
 	BOOST_TEST(a3_n == detail::mat_g_n);
 	
 	{
-		cell_6 ds;
+		using cell_t = std::remove_pointer_t<std::remove_pointer_t<
+			boost::mpl::front<
+				boost::function_types::parameter_types<decltype(&samples)>
+			>::type
+		>>;
+		
+		cell_t ds;
 		samples(&ds);
 		double * a3_ref = ds.f1;
 		
