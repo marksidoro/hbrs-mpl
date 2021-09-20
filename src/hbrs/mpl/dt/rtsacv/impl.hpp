@@ -33,6 +33,12 @@ HBRS_MPL_NAMESPACE_BEGIN
 template<typename /* type of vector entries */ Ring>
 //TODO: Merge with rtsarv
 struct rtsacv {
+    /* Creating a new instance with std::vector<Ring> data is by design: It shows that this class always holds a copy
+     * of std::vector internally. Moving data into std::vector is still possible, but it has to be done explicitly.
+     */
+    //TODO: Do we have to change data_{data} to data_{std::move(data)} to move data into data_ and prevent creating an
+    //      unnecessary copy? One would have to look throught the C++ standard and/or verify that GCC and Clang are able
+    //      to generate optimal code.
 	rtsacv(std::vector<Ring> data) : data_{data} {}
 	
 	explicit rtsacv(std::size_t size) : data_(size, Ring{0}) {}
