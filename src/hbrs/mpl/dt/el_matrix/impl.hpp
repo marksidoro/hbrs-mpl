@@ -123,7 +123,7 @@ private:
 
 HBRS_MPL_NAMESPACE_END
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
 
 template <typename Ring> 
 struct tag_of< hbrs::mpl::el_matrix<Ring> > { 
@@ -253,7 +253,7 @@ struct make_impl<hbrs::mpl::el_matrix_tag> {
 	}
 }; 
 
-BOOST_HANA_NAMESPACE_END
+}}
 
 #endif // !HBRS_MPL_ENABLE_ELEMENTAL
 #endif // !HBRS_MPL_DT_EL_MATRIX_IMPL_HPP

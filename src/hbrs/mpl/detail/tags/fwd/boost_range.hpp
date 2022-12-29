@@ -21,7 +21,7 @@
 #include <boost/hana/fwd/core/tag_of.hpp>
 #include <boost/range/irange.hpp>
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
 
 namespace ext { namespace boost { struct integer_range_tag; }}
 
@@ -30,6 +30,6 @@ struct tag_of<boost::integer_range<Integer>> {
 	using type = ext::boost::integer_range_tag;
 };
 
-BOOST_HANA_NAMESPACE_END
+}}
 
 #endif // !HBRS_MPL_EXT_BOOST_HANA_EXT_BOOST_RANGE_IRANGE_HPP

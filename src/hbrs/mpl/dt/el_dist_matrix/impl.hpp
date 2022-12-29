@@ -150,7 +150,7 @@ private:
 
 HBRS_MPL_NAMESPACE_END
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
 
 /* Ref.: Elemental/include/El/core.hpp */
 template<typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>
@@ -237,7 +237,7 @@ struct make_impl<hbrs::mpl::el_dist_matrix_tag> {
 	}
 };
 
-BOOST_HANA_NAMESPACE_END
+}}
 
 #endif // !HBRS_MPL_ENABLE_ELEMENTAL
 #endif // !HBRS_MPL_DT_EL_DIST_MATRIX_IMPL_HPP

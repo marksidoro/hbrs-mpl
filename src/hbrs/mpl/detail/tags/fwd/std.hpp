@@ -21,7 +21,7 @@
 #include <boost/hana/fwd/core/tag_of.hpp>
 #include <map>
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
 
 namespace ext { namespace std { struct map_tag; }}
 
@@ -30,6 +30,6 @@ struct tag_of<std::map<Key, T, Compare, Allocator>> {
 	using type = ext::std::map_tag;
 };
 
-BOOST_HANA_NAMESPACE_END
+}}
 
 #endif // !HBRS_MPL_EXT_BOOST_HANA_EXT_STD_MAP_HPP

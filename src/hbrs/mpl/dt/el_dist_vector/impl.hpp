@@ -83,7 +83,7 @@
 	                                                                                                                   \
 	HBRS_MPL_NAMESPACE_END                                                                                             \
 	                                                                                                                   \
-	BOOST_HANA_NAMESPACE_BEGIN                                                                                         \
+	namespace boost { namespace hana {                                                                                         \
                                                                                                                        \
 	template <typename Ring, El::Dist Columnwise, El::Dist Rowwise, El::DistWrap Wrapping>                             \
 	struct tag_of< hbrs::mpl::el_dist_ ## vector_kind ## _vector<Ring, Columnwise, Rowwise, Wrapping> > {              \
@@ -158,7 +158,7 @@
 		}                                                                                                              \
 	};                                                                                                                 \
                                                                                                                        \
-	BOOST_HANA_NAMESPACE_END
+	}}
 
 _HBRS_MPL_DEF_EL_DIST_VECTOR(column)
 _HBRS_MPL_DEF_EL_DIST_VECTOR(row)
